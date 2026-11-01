@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-01T12:00:00Z",
+      "lastCloseTimeUTC": "2026-11-01T13:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -334,23 +334,16 @@
       "counts": {
         "activeCandidateOB": 2,
         "openFVG": 6,
-        "structureEventsInLookback": 18
+        "structureEventsInLookback": 17
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-01T12:00:00Z",
+      "lastCloseTimeUTC": "2026-11-01T13:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "CHoCH",
-          "direction": "bullish",
-          "at": 1793023200,
-          "brokenSwingAt": 1792965600,
-          "brokenLevel": 102.05
-        },
         {
           "event": "CHoCH",
           "direction": "bearish",
@@ -427,6 +420,13 @@
           "at": 1793322000,
           "brokenSwingAt": 1793304000,
           "brokenLevel": 94.81
+        },
+        {
+          "event": "BOS",
+          "direction": "bearish",
+          "at": 1793534400,
+          "brokenSwingAt": 1793505600,
+          "brokenLevel": 95.27
         }
       ],
       "candidateOrderBlocks": [
@@ -513,6 +513,28 @@
           },
           "volumeRatio": 8.514,
           "fvgConfluence": true,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
+        },
+        {
+          "side": "bearish",
+          "event": "BOS",
+          "originAt": 1793520000,
+          "confirmedAt": 1793538000,
+          "breakAt": 1793534400,
+          "brokenLevel": 95.27,
+          "body": {
+            "low": 95.51,
+            "high": 95.86
+          },
+          "wick": {
+            "low": 95.27,
+            "high": 95.9
+          },
+          "volumeRatio": 5.289,
+          "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "fresh",
           "retests": 0,
@@ -680,7 +702,7 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 4,
+        "activeCandidateOB": 5,
         "openFVG": 4,
         "structureEventsInLookback": 20
       }
