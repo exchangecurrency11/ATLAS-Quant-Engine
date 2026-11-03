@@ -1,0 +1,55 @@
+name: V7 Experimental Paper Quality Audit
+
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - backtest_retest_long_v4.py
+      - signal_quality_v7.py
+      - v7_paper_comparison.py
+      - tests/test_signal_quality_v7.py
+      - .github/workflows/v7-paper-quality.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  paper-audit:
+    name: V7 historical replay, no live orders
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run deterministic tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Download already verified historical archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p history
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+            -n btc-sol-official-binance-verified-through-2026-11-02 \
+            -D history
+          for tf in 1hour 4hour daily; do
+            test -s "history/history_$tf.json"
+          done
+      - name: Compare full chronological V4 and V7 paper runs
+        run: |
+          python3 v7_paper_comparison.py \
+            --hour history/history_1hour.json \
+            --four history/history_4hour.json \
+            --daily history/history_daily.json \
+            --as-of-utc 2026-11-03T00:00:00Z \
+            --output v7-paper-comparison.json
+      - name: Preserve comparison results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v7-paper-quality-report
+          path: v7-paper-comparison.json
+          if-no-files-found: ignore
+          retention-days: 90
