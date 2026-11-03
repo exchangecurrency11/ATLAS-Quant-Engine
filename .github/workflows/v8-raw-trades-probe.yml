@@ -34,3 +34,29 @@ jobs:
                   except Exception as e:
                       print("RAW_ARCHIVE_ERROR",symbol,suffix,repr(e),flush=True)
           PY
+
+      - name: Validate raw-trade ZIP checksum and inspect exact CSV schema
+        run: |
+          python3 - <<'PY'
+          import csv,io,hashlib
+          from zipfile import ZipFile
+          from urllib.request import urlopen
+          from pathlib import Path
+          for symbol in ("BTCUSDT","SOLUSDT"):
+              prefix=f"https://data.binance.vision/data/futures/um/daily/trades/{symbol}/{symbol}-trades-2026-10-28.zip"
+              data=urlopen(prefix,timeout=50).read()
+              expected=urlopen(prefix+".CHECKSUM",timeout=20).read().decode().strip().split()[0]
+              actual=hashlib.sha256(data).hexdigest()
+              assert actual==expected,(symbol,"CHECKSUM_MISMATCH")
+              Path(symbol+"-Oct28-trades.zip").write_bytes(data)
+              with ZipFile(io.BytesIO(data)) as archive:
+                  print("RAW_SCHEMA",symbol,"ZIP bytes",len(data),"members",
+                        [(v.filename,v.file_size) for v in archive.infolist()])
+                  for name in archive.namelist():
+                      with archive.open(name) as f:
+                          rows=csv.reader(io.TextIOWrapper(f,encoding="utf-8-sig"))
+                          for i,row in enumerate(rows):
+                              if i==3:break
+                              print("RAW_FIRST_ROWS",symbol,repr(row)[:300],flush=True)
+              print("RAW_SHA256_VERIFIED",symbol,actual,flush=True)
+          PY
