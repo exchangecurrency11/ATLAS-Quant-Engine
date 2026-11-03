@@ -1,0 +1,42 @@
+name: V8 Diagnose Official Binance Trade OHLCV Difference
+
+on:
+  push:
+    branches:
+      - experiment/early-signals-v1-20261022
+    paths:
+      - .github/workflows/v8-trade-volume-discrepancy.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - name: Quantify raw-trade vs Binance 1H volume mismatch on adjacent day
+        run: |
+          python3 - <<'PY'
+          import math,json
+          from reconstruct_binance_oct28_raw_v8 import download_raw_day
+          from extend_binance_archive_october_v6 import download_day
+          for symbol in ("BTCUSDT","SOLUSDT"):
+              _,_,computed,trade_proof=download_raw_day(symbol,"2026-10-29")
+              _,_,published,kline_proof=download_day(symbol,"2026-10-29")
+              bad=[]
+              all_ok=True
+              for i,(a,b) in enumerate(zip(computed,published)):
+                  fields={f:(a[f],b[f]) for f in ("o","h","l","c")
+                          if not math.isclose(a[f],b[f],rel_tol=1e-10,abs_tol=1e-7)}
+                  abs_delta=a["v"]-b["v"]
+                  pct=100*abs_delta/b["v"] if b["v"] else None
+                  if fields:all_ok=False
+                  bad.append({"utcHour":i,"volRaw":round(a["v"],6),"volOfficial":round(b["v"],6),
+                              "pctDiff":round(pct,5) if pct is not None else None,
+                              "priceDifferences":fields})
+              print("DIAGNOSTIC",symbol,"OHLCExactAllHours",all_ok,
+                    "rawTrades",trade_proof["rawTrades"],"hourly",json.dumps(bad),flush=True)
+          PY
