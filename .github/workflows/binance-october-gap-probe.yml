@@ -1,0 +1,66 @@
+name: Binance October Gap Probe (read-only)
+
+on:
+  push:
+    branches:
+      - experiment/early-signals-v1-20261022
+    paths:
+      - .github/workflows/binance-october-gap-probe.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-gap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check Oct 28-31 and Nov 1-2 completed BTC/SOL 1H futures archives
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from concurrent.futures import ThreadPoolExecutor, as_completed
+          from download_binance_um_history import download_month
+          from extend_binance_archive_october_v6 import download_day
+          DATES=['2026-10-28','2026-10-29','2026-10-30','2026-10-31','2026-11-01','2026-11-02']
+          SYMBOLS=['BTCUSDT','SOLUSDT']
+          checks=[(s,d) for s in SYMBOLS for d in DATES]
+          def check(item):
+              s,d=item
+              try:
+                  _,_,bars,proof=download_day(s,d)
+                  return {'symbol':s,'date':d,'status':'VERIFIED','closed1h':len(bars),'sha256':proof['sha256']}
+              except Exception as e:
+                  reason=str(e)
+                  return {'symbol':s,'date':d,'status':'NOT_PUBLISHED_404' if '404' in reason else 'ERROR','reason':reason[:240]}
+          with ThreadPoolExecutor(max_workers=4) as pool:
+              rows=sorted(pool.map(check,checks),key=lambda x:(x['date'],x['symbol']))
+          for row in rows:
+              print('DAILY_CHECK',json.dumps(row,ensure_ascii=False),flush=True)
+          monthly=[]
+          for sym in SYMBOLS:
+              try:
+                  _,_,bars,proof=download_month(sym,'2026-10')
+                  item={'symbol':sym,'month':'2026-10','status':'VERIFIED','closed1h':len(bars),'sha256':proof['sha256']}
+              except Exception as e:
+                  reason=str(e)
+                  item={'symbol':sym,'month':'2026-10','status':'NOT_PUBLISHED_404' if '404' in reason else 'ERROR','reason':reason[:240]}
+              monthly.append(item)
+              print('MONTHLY_CHECK',json.dumps(item,ensure_ascii=False),flush=True)
+          summary={'checkedAtUTC':datetime.now(timezone.utc).isoformat(),'mode':'READ_ONLY_BINANCE_ARCHIVE_AVAILABILITY','daily':rows,'monthly':monthly}
+          Path('archive_gap_availability.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+          print('SUMMARY',json.dumps({k:sum(r['status']==k for r in rows) for k in ('VERIFIED','NOT_PUBLISHED_404','ERROR')}),flush=True)
+          PY
+      - name: Upload verification record
+        uses: actions/upload-artifact@v4
+        with:
+          name: binance-oct-nov-gap-availability
+          path: archive_gap_availability.json
+          retention-days: 14
+      - name: Explicit safety boundary
+        run: echo 'No changes to main branch, no orders, no archive overwrite, no alert tasks changed'
