@@ -1,0 +1,58 @@
+name: V9 Compare Coinalyze Worker to Binance Official October OHLCV
+
+on:
+  push:
+    branches:
+      - experiment/early-signals-v1-20261022
+    paths:
+      - .github/workflows/v9-coinalyze-gap-compare.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check Coinalyze Binance-perpetual 1H Oct 28 and official Binance adjacent days
+        run: |
+          python3 - <<'PY'
+          import json,math
+          from urllib.request import urlopen
+          from datetime import datetime,timezone
+          from extend_binance_archive_october_v6 import download_day,day_bound
+          url="https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=1hour"
+          with urlopen(url,timeout=45) as response:
+              payload=json.loads(response.read(300000))
+          assert isinstance(payload,list)
+          print("WORKER_SOURCE",[(x.get("symbol"),len(x.get("history",[]))) for x in payload],flush=True)
+          data={x["symbol"]:x["history"] for x in payload}
+          for symbol in ("BTCUSDT","SOLUSDT"):
+              name=symbol+"_PERP.A"
+              history=data[name]
+              for day in ("2026-10-27","2026-10-28","2026-10-29"):
+                  start,end=day_bound(day)
+                  rows=[x for x in history if start<=int(x["t"])<end]
+                  result={"symbol":symbol,"day":day,"hours":len(rows),
+                          "first":rows[0]["t"] if rows else None,
+                          "last":rows[-1]["t"] if rows else None}
+                  if day!="2026-10-28":
+                      _,_,official,proof=download_day(symbol,day)
+                      org={int(x["t"]):x for x in official}
+                      field_mismatch={k:[] for k in ("o","h","l","c","v")}
+                      for item in rows:
+                          for field in field_mismatch:
+                              expected=org[int(item["t"])][field]
+                              actual=float(item[field])
+                              if not math.isclose(actual,expected,rel_tol=1e-8,abs_tol=1e-7):
+                                  field_mismatch[field].append({
+                                      "UTC":item["t"],"worker":actual,"official":expected,
+                                      "deltaPct":round(100*(actual/expected-1),5) if expected else None
+                                  })
+                      result["mismatchCounts"]={k:len(v) for k,v in field_mismatch.items()}
+                      result["firstMismatches"]={k:v[:2] for k,v in field_mismatch.items() if v}
+                  print("WORKER_BINANCE_COMPARE",json.dumps(result),flush=True)
+          PY
