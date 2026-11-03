@@ -1,0 +1,99 @@
+name: V7 Binance Futures Missing Oct28 Recovery
+
+on:
+  push:
+    branches:
+      - experiment/early-signals-v1-20261022
+    paths:
+      - recover_binance_oct28_fapi_v7.py
+      - tests/test_recover_binance_oct28_fapi_v7.py
+      - .github/workflows/v7-binance-gap-recovery.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gap-source-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v5
+      - name: Run all offline regression tests
+        run: python3 -m unittest discover -s tests -p "test_*.py" -v
+      - name: Attempt official Binance USD-M API for 2026-10-28
+        run: |
+          python3 recover_binance_oct28_fapi_v7.py --probe-only
+      - name: Source proof
+        run: echo "28 Oct: only real official Binance Futures REST 1H candles, never interpolation"
+
+  full-contiguous-rebuild:
+    needs: gap-source-verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v5
+      - name: Restore 24-month verified Binance futures 1H monthly history
+        run: |
+          python3 download_binance_um_history.py --start 2024-10 --end 2026-09 \
+            --workers 4 --output-dir binance_2y
+      - name: Extend through Nov 2 using official Futures API gap and daily ZIP checksums
+        run: |
+          python3 recover_binance_oct28_fapi_v7.py \
+            --base-dir binance_2y --output-dir binance_v7 --workers 4
+          python3 - <<'PY'
+          import json
+          p=json.load(open("binance_v7/provenance_manifest.json"))
+          assert p["gapNotInterpolated"] and p["noSpotData"]
+          assert p["addedFileCount"] == 66
+          assert p["endExclusiveUTC"] == "2026-11-03T00:00:00+00:00"
+          for sym in ("BTCUSDT","SOLUSDT"):
+              assert p["counts"][sym] == {
+                "1hour":18312,"4hour":4578,"daily":763
+              },p["counts"][sym]
+          print("V7_INTEGRITY_OK",p["counts"])
+          PY
+      - name: Replay UNMODIFIED v4 entry method on 25 months of history
+        run: |
+          python3 backtest_retest_long_v4.py \
+            --hour binance_v7/history_1hour.json \
+            --four binance_v7/history_4hour.json \
+            --daily binance_v7/history_daily.json \
+            --as-of 1793664000 \
+            --split-utc 2026-04-01T00:00:00+00:00 \
+            --output binance_v7/contiguous_v7_paper.json
+          python3 analyze_failure_patterns_v6.py \
+            --input binance_v7/contiguous_v7_paper.json \
+            --output binance_v7/descriptive_failures.json
+      - name: Assert all Oct 27 baseline alerts and closed trades unchanged
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh run download 41117088756 --repo "${{ github.repository }}" \
+            --name btc-sol-oct27-forensics-v6 --dir baseline
+          python3 - <<'PY'
+          import json
+          older=json.load(open("baseline/october_extended_paper.json"))
+          newer=json.load(open("binance_v7/contiguous_v7_paper.json"))
+          cutoff=1793145600
+          for sym in ("BTCUSDT_PERP.A","SOLUSDT_PERP.A"):
+              old=older["results"][sym]
+              new=newer["results"][sym]
+              assert old["alerts"]==[x for x in new["alerts"] if x["knownUTC"]<=cutoff],sym
+              assert old["trades"]==[x for x in new["trades"] if x["entryOpenUTC"]<cutoff],sym
+              print("PREVIOUS_TEST_UNCHANGED",sym,len(old["alerts"]),len(old["trades"]))
+          PY
+      - name: Publish provenance and results; NO Git push
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-sol-binance-gap-repair-v7
+          path: |
+            binance_v7/provenance_manifest.json
+            binance_v7/contiguous_v7_paper.json
+            binance_v7/descriptive_failures.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Explicit production boundary
+        run: echo "Paper-only; GitHub main and real 1H/4H notifications remain untouched"
