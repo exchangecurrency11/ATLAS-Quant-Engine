@@ -165,6 +165,51 @@ def validate_method_against_adjacent_day(symbol,day="2026-10-29"):
     return confidence
 
 
+def crosscheck_gap_against_fixed_coinalyze(symbol, reconstructed,
+                                               reference_path="validation_refs/coinalyze_oct28_1h_reference.json"):
+    """Corroborate real Binance raw trades using frozen third-party perp 1H.
+
+    Secondary Coinalyze data are NOT Binance-signed native klines.
+    Raw trade ZIP authenticity is verified separately via official SHA256.
+    """
+    ref=json.loads(Path(reference_path).read_text())
+    items=[x for x in ref["data"] if x["symbol"]==symbol and x["day"]==GAP_DAY]
+    if len(items)!=1 or len(items[0]["bars"])!=24 or len(reconstructed)!=24:
+        raise ValueError("Missing immutable independent October 28 reference")
+    max_volume_pct=0.0
+    max_open_abs=0.0
+    openings_different=0
+    tick=0.1000001 if symbol=="BTCUSDT" else 0.0100001
+    for n,(raw,second) in enumerate(zip(reconstructed,items[0]["bars"])):
+        if raw["t"]!=int(second["t"]):
+            raise ValueError(f"Missing or misplaced independent UTC hour {n}")
+        for field in ("h","l","c"):
+            if not math.isclose(raw[field],float(second[field]),rel_tol=1e-10,abs_tol=1e-7):
+                raise ValueError(f"Cross-source 28 Oct {symbol} mismatch hour {n}, {field}")
+        abs_open=abs(raw["o"]-float(second["o"]))
+        if abs_open>tick:
+            raise ValueError(f"Cross-source 28 Oct opening discrepancy >1 tick {symbol} {n}")
+        if abs_open>1e-7:
+            openings_different+=1
+        max_open_abs=max(max_open_abs,abs_open)
+        if raw["v"]<=0:
+            raise ValueError("Non-positive true futures volume")
+        volume_diff_pct=abs(float(second["v"])/raw["v"]-1)*100
+        max_volume_pct=max(max_volume_pct,volume_diff_pct)
+        if volume_diff_pct>0.5:
+            raise ValueError(f"Cross-source 28 Oct volume difference exceeds 0.5% {symbol} {n}")
+    return {
+        "symbol":symbol,"gapDay":GAP_DAY,"checkedHours":24,
+        "officialRawTradesZipChecksumConfirmedSeparately":True,
+        "secondarySource":"Fixed independent Coinalyze perpetual 1H snapshot, not a Binance native Kline",
+        "highLowCloseMatchAll24":True,
+        "maximumOpeningDifferenceUSD":max_open_abs,
+        "openingHoursDifferent":openings_different,
+        "maxAbsoluteVolumeDifferencePct":max_volume_pct,
+        "allHourlyVolumesWithinHalfPercent":True,
+    }
+
+
 def main():
     cli=argparse.ArgumentParser(description=__doc__)
     cli.add_argument("--probe-only",action="store_true")
@@ -175,18 +220,17 @@ def main():
     if not 1<=args.workers<=6:
         cli.error("workers 1..6")
     checks=[]
-    for symbol in SYMBOLS:
-        r=validate_method_against_adjacent_day(symbol)
-        checks.append(r)
-        print("RECONSTRUCTION_METHOD_CROSSCHECK_OK",json.dumps(r),flush=True)
     recovered={}
     proofs=[]
     for symbol in SYMBOLS:
         s,d,rows,proof=download_raw_day(symbol,GAP_DAY)
+        quality=crosscheck_gap_against_fixed_coinalyze(symbol,rows)
+        checks.append(quality)
         recovered[(s,d)]=rows
         proofs.append(proof)
-        print("28_OCT_RECOVERED_FROM_VERIFIED_RAW_FUTURES_TRADES",
-              s,proof["rawTrades"],len(rows),proof["officialZipSHA256"],flush=True)
+        print("28_OCT_RECOVERED_AND_CROSSCHECKED",
+              s,proof["rawTrades"],len(rows),proof["officialZipSHA256"],
+              json.dumps(quality),flush=True)
     if args.probe_only:
         print("RAW_TRADE_GAP_PROBE_OK",flush=True)
         return
@@ -221,11 +265,11 @@ def main():
         "gapSource":"BTC/SOL official Binance USD-M Futures raw trades ZIP archives, SHA256 verified",
         "gapFilledWithRealTrades":True,
         "interpolationOrSpotUsed":False,
-        "adjacentDayMethodCrosschecks":checks,
+        "oct28SecondaryCrosschecks":checks,
         "fileProofs":sorted(proofs,key=lambda p:(p["symbol"],p["date"])),
         "endExclusiveUTC":"2026-11-03T00:00:00+00:00",
         "counts":counts,
-        "verificationCaveat":"28 Oct OHLCV reconstructed from Binance raw trade-level records and not a published Binance native 1H kline; trade ZIP checksum verified; adjacent 29 Oct native kline matches reconstruction; may differ from native exchange candles for unusual exchange-specific handling",
+        "verificationCaveat":"28 Oct OHLCV reconstructed from Binance raw trade-level records (ZIP SHA256 verified), not published native 1H; independently crosschecked against frozen Coinalyze 1H for all 24 hours with max 0.5pct volume difference and one-tick open tolerance. 29 Oct raw-trades archive is incomplete late in day and is NOT used for authoritative validation. This reconstruction may differ from native exchange candles.",
         "tradingCaveat":"No live fills, funding, mark price liquidation or orders modeled",
     }
     (dest/"provenance_manifest.json").write_text(
