@@ -1,0 +1,35 @@
+# V7 Paper-Forward Test — Başlangıç ve İzleme
+
+## Başladı
+**İlk doğrulanmış gözlem:** 2026-11-03 16:00:00 UTC (3 Kasım 19:00 TSİ kapanışı).
+**Snapshot:** `forward/snapshots/2026-11-03T16-00Z.json`
+**Sistem:** BTCUSDT_PERP.A + SOLUSDT_PERP.A; V4 baseline, V7 BOS filtresi, V7 BOS+güçlü retest varyantları.
+**İlk gözlem:** kaynak status `VERIFIED_PAPER_OBSERVATION`; BTC/SOL'da üç varyantın hiçbirinde yeni BOS uyarısı veya yeni sonuçlanan paper işlem yok.
+
+## Zamanlayıcı
+ChatGPT planındaki etkin görev limiti (5) nedeniyle yeni ChatGPT görevi oluşturulmadı. Alternatif olarak **yalnız bağımsız saatlik tetikleyici** olan yeni `main/.github/workflows/v7-hourly-trigger.yml` dosyası eklendi. Var olan main kodu, fiyat verisi, Cloudflare ve 1H/4H/Daily analiz iş akışları **değiştirilmedi**. GitHub Actions `schedule: 35 * * * *` UTC (TSİ saat xx:35); saatlik tetikleyici yalnız `experiment/v7-signal-quality-20261103` dalında tekil `forward/triggers/YYYY/MM/DD/HH.json` dosyası oluşturur.
+
+Bu commit, deney dalındaki `.github/workflows/v7-forward-paper.yml` çalışmasını başlatır:
+1. Güncel `main/market_data.json` ve Cloudflare `/history?interval=1hour|4hour|daily` (yalnız kapanmış Coinalyze Binance perpetual) verisini yeniden indirir.
+2. BTC/SOL 1H + 4H + Daily zamanları, 250 mum bütünlüğü, checkedAt ve fiyat eşleşmesi doğrulanmazsa `DATA_REJECTED` veya `DATA_FETCH_FAILED` kaydeder; **sinyal üretmez**.
+3. Doğrulanmış veriyle **önceden sabitlenen** V4 + V7 + V7-retetst metotlarını aynı anlık mumlarda yeniden yürütür. Uyarıyı yalnız o yeni kapanışla teyit edilmişse loglar.
+4. Gözlem dosyasını **yalnız deney dalına** `forward/snapshots/YYYY-MM-DDTHH-00Z.json` olarak yazar. Eski snapshot üzerine yazmaya gerek yoktur; her saat ayrı bir dosya.
+5. Kullanılan girdileri ve son gözlemi kısa süreli Actions artifact'inde saklar (14 gün).
+
+**GitHub Actions schedule zamanında teslim garantisi vermez.** Gecikmiş yürütmeler xx:25–55 penceresi dışında kalıyorsa tetikleyici o saati atlar; geçmişi sanki canlı takip edilmiş gibi doldurmaz.
+
+## Yorum sınırları
+- Bu bir **kağıt üstü gözlem ve simülasyon**; canlı emir, kullanıcıya otomatik işlem tavsiyesi veya gerçekleşmiş getiri değildir.
+- Retest mum kapanışı anında izlenir, varsayımsal **sonraki mum açılış fiyatı** ise kapanmış geçmiş bar erişilebilir olduktan sonra kayda girer. Bu nedenle varsayımsal fill daha sonra doğrulanır, gerçek emir verilmiş gibi gösterilmez.
+- Funding, emir defteri, değişken spread, gerçek slipaj, gerçekleşme gecikmesi ve likidasyon modellenmez.
+- Yeni veriyle yeterli sayıda bağımsız paper işlem görmeden kazanç ihtimali, başarı vaadi veya canlı kullanım kararı yok.
+- Değerlendirmede veri kalitesi/atlanan saat sayısı da sayılmalı; yalnız olumlu sinyal saatlerini seçmek yanlılık yaratır.
+
+## İzleme bağlantıları
+- [V7 deneysel dalı](https://github.com/exchangecurrency11/BTC-SOL-ANALYS-S/tree/experiment/v7-signal-quality-20261103)
+- [İlk snapshot](https://github.com/exchangecurrency11/BTC-SOL-ANALYS-S/blob/experiment/v7-signal-quality-20261103/forward/snapshots/2026-11-03T16-00Z.json)
+- [GitHub Actions](https://github.com/exchangecurrency11/BTC-SOL-ANALYS-S/actions)
+- [Saatlik tetikleyici (main, bağımsız tek dosya)](https://github.com/exchangecurrency11/BTC-SOL-ANALYS-S/blob/main/.github/workflows/v7-hourly-trigger.yml)
+
+## Devam
+Her yeni saat için kayıt ve sinyal sonuçlarını biriktir. Yeni tarihlerde minimum örneklem oluşunca BTC/SOL ayrı ayrı win-rate, net R, maliyet stresi, max sıralı R-drawdown, missing-hour veri kalitesi ve veri dağılımı ile kıyas yap. V7 parametrelerini sonuçlara bakarak değiştirme. Ana sinyal/bildirim metodu bu deneyden otomatik olarak etkilenmez.
