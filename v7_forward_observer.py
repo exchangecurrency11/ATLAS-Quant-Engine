@@ -239,6 +239,108 @@ def build_market_context(main, histories, target):
     return result
 
 
+def render_report(snapshot):
+    """Human-readable audit, even when there are zero signals or stale inputs."""
+    lines = [
+        "# BTC/SOL V7 Saatlik Paper-Forward Teknik Durum",
+        "",
+        "**Hedef kapanış (UTC):** " + snapshot["targetClosed1HUTC"],
+        "**Gözlem (UTC):** " + snapshot["observedAtUTC"],
+        "**Veri durumu:** " + snapshot["status"],
+        "",
+        "Bu rapor yatırım işlemi değildir. Canlı emir, gerçekleşmiş fill veya "
+        "doğrulanmış getiri iddiası içermez.",
+        "",
+    ]
+    if snapshot["status"] != "VERIFIED_PAPER_OBSERVATION":
+        lines += ["**Sinyal üretilmedi.** Kaynak reddedildi: " +
+                  str(snapshot.get("rejectionReason", snapshot["status"])), ""]
+        return "\n".join(lines) + "\n"
+    lines += [
+        "**Piyasa verisi kontrolü (UTC):** " + str(snapshot["marketDataCheckedAtUTC"]),
+        "**Kaynak:** Coinalyze / Binance USDT perpetual, KAPANMIŞ mumlar.",
+        "",
+    ]
+    for pair in PAIRS:
+        context = snapshot["marketContext"][pair]
+        lines += ["## " + ("BTC" if pair.startswith("BTC") else "SOL") +
+                  " — " + pair, ""]
+        lines += [
+            "| Süre | Kapanış (UTC) | Fiyat | RSI14 | MACD hist | EMA20 / EMA50 / EMA200 | Hacim değişimi | Yön oyu |",
+            "|---|---|---:|---:|---:|---|---:|---|",
+        ]
+        for tf in ("1hour", "4hour", "daily"):
+            row = context["timeframes"][tf]
+            c,ind = row["candle"],row["indicators"]
+            pct = c.get("volumeChangePct")
+            pct_text = "N/A" if pct is None else f"{pct:+.2f}%"
+            lines.append(
+                "| " + tf + " | " + row["closeTimeUTC"] +
+                f" | {c['close']:.4f} | {ind['RSI14']:.2f} | "
+                f"{ind['MACDHistogram']:+.4f} | "
+                f"{ind['EMA20']:.4f} / {ind['EMA50']:.4f} / {ind['EMA200']:.4f} | "
+                + pct_text + " | " +
+                row["directionVotes"]["label"] +
+                " (" + str(row["directionVotes"]["score"]) + ") |"
+            )
+        lines += [
+            "",
+            f"**1H ATR14:** {context['atr14_1H']}; "
+            f"**1H göreli hacim (önceki 20 mum):** {context['relativeVolume20_1H']}.",
+            "**4H / Daily aynı yönde mi?** " +
+            ("Evet" if context["higherTimeframesAgree"] else "Hayır"),
+            "**Bu kapanışta yeni 1H BOS:** " + str(context["newBOSCount"]),
+            "**Sinyal açıklaması:** " + context["noSignalExplanation"],
+            "",
+        ]
+        if context["newStructureEventsAtClose"]:
+            lines.append("**Yeni yapı olayları (işlem teyidi değil):**")
+            for event in context["newStructureEventsAtClose"]:
+                lines.append(
+                    "- " + event["event"] + " " + event["direction"] +
+                    " | seviye " + str(event["brokenLevel"]) +
+                    " | ilk doğrulanabilir kapanış " + event["knownAtUTC"])
+        if context["bosQualityBreakdown"]:
+            lines.append("**BOS kalite filtresi:**")
+            for event in context["bosQualityBreakdown"]:
+                q = event["gate"]
+                lines.append("- " + event["direction"] +
+                             " | passed=" + str(q["passed"]) +
+                             " | reasons=" + str(q["reasons"]) +
+                             " | features=" + str(q.get("features", {})) +
+                             " | 4H/Daily uyumu=" +
+                             str(event["higherTFalignedWithBOS"]) +
+                             " | hacim>=+20%=" +
+                             str(event["previousHourVolumeIncrease20Pct"]))
+        lines += [
+            "",
+            "| Deneysel varyant | Bu kapanışta yeni erken uyarı | Bu kapanışta paper çıkış | Açık paper pozisyon |",
+            "|---|---:|---:|---|",
+        ]
+        for name, info in snapshot["results"][pair].items():
+            state = info["currentPaperState"]
+            lines.append(
+                "| " + name + " | " +
+                str(len(info["newWatchAtThisClose"])) + " | " +
+                str(len(info["paperTradeExitsObservedAtThisClose"])) + " | " +
+                ("Var" if state.get("openHypotheticalPosition") else "Yok") + " |"
+            )
+        lines += [
+            "",
+            "**Yorum:** 0 yeni uyarı, 0 analiz demek değildir. Bu saatte yeni BOS-"
+            "retest olayının strateji koşullarına dönüşmediği anlamına gelir.",
+            "",
+        ]
+    lines += [
+        "## Sınırlar",
+        "4H/Daily yön oyu yalnızca kural bazlı piyasa bağlamıdır, kazanç olasılığı değildir. "
+        "BOS–retest stratejisi giriş açmak için retest ve sonraki mum açılışını bekler. "
+        "Fonlama, gerçek fill, likidasyon, order-book ve değişken maliyetler modellenmez.",
+        "",
+    ]
+    return "\n".join(lines) + "\n"
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--main-data", required=True)
@@ -247,6 +349,7 @@ def main():
     parser.add_argument("--daily", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--artifact-output", default=None)
+    parser.add_argument("--report-output", default=None)
     parser.add_argument("--now-utc", default=None, help="ONLY for deterministic tests")
     args = parser.parse_args()
     now = epoch(args.now_utc) if args.now_utc else int(datetime.now(timezone.utc).timestamp())
@@ -287,6 +390,9 @@ def main():
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     Path(args.output).write_text(
         json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    if args.report_output:
+        Path(args.report_output).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.report_output).write_text(render_report(snapshot), encoding="utf-8")
     if args.artifact_output:
         Path(args.artifact_output).write_text(
             json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
