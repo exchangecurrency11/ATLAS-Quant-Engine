@@ -143,7 +143,8 @@ def assess_candle(pos, bar, *, max_hold_bars=24):
 
 
 def replay_pair(hour_history, four_history, daily_history, *, as_of,
-                retest_hours=6, fee_bps=6, slippage_bps=3):
+                retest_hours=6, fee_bps=6, slippage_bps=3,
+                bos_quality_filter=None, retest_quality_filter=None):
     """Sequential 1H watch -> later retest -> next-open hypothetical trade."""
     bars = candles_from_history(hour_history, "1hour", as_of)
     bars4 = candles_from_history(four_history, "4hour", as_of)
@@ -159,6 +160,9 @@ def replay_pair(hour_history, four_history, daily_history, *, as_of,
     trades = []
     no_retest = 0
     rejected_risk = 0
+    rejected_bos = 0
+    rejected_retest = 0
+    quality_reasons = {}
     close4=[b["t"]+14400 for b in bars4]
     closeD=[b["t"]+86400 for b in barsD]
     bias4_cache={}
@@ -192,7 +196,14 @@ def replay_pair(hour_history, four_history, daily_history, *, as_of,
             active = None
         # A retest after a previously confirmed BOS; NO same-bar entry.
         if active is not None and position is None and pending is None:
-            if reaction_confirmed(active["side"], bar, bars[i-1], active["level"]):
+            valid_reaction = reaction_confirmed(active["side"], bar, bars[i-1], active["level"])
+            if valid_reaction and retest_quality_filter is not None:
+                retest_decision = retest_quality_filter(
+                    bars[max(0, i-249):i+1], active, bar)
+                if not retest_decision["passed"]:
+                    rejected_retest += 1
+                    valid_reaction = False
+            if valid_reaction:
                 atr = average_true_range(bars, i)
                 pending = {"side": active["side"], "watchKnownUTC": active["knownUTC"],
                            "retestKnownUTC": ts, "level": active["level"],
@@ -243,12 +254,20 @@ def replay_pair(hour_history, four_history, daily_history, *, as_of,
                 continue
             if side == "bullish" and not (ind["RSI14"] > 50 and ind["hist"] > 0):
                 continue
+            quality = (bos_quality_filter(window, bos, ind)
+                       if bos_quality_filter is not None else None)
+            if quality is not None and not quality["passed"]:
+                rejected_bos += 1
+                for reason in quality["reasons"]:
+                    quality_reasons[reason] = quality_reasons.get(reason, 0) + 1
+                continue
             active = {"index": i, "side": side, "knownUTC": ts,
                       "level": bos["brokenLevel"], "bosBar": bar}
             alerts.append({"knownUTC": ts, "side": side, "BOSLevel": bos["brokenLevel"],
                            "hourClose": bar["c"], "RSI14": ind["RSI14"],
                            "hist": ind["hist"], "volumeChangePct": vol_pct,
-                           "higherTimeframes": tf_bias})
+                           "higherTimeframes": tf_bias,
+                           **({"v7Quality": quality} if quality is not None else {})})
             break
 
     # Unresolved positions are NOT assigned optimistic exits.
@@ -264,6 +283,9 @@ def replay_pair(hour_history, four_history, daily_history, *, as_of,
         "hypotheticalWinRate": wins/complete if complete else None,
         "netRAverageIllustrative": mean_r,
         "riskRuleRejected": rejected_risk,
+        "qualityGateRejectedBOS": rejected_bos,
+        "qualityGateRejectedRetest": rejected_retest,
+        "qualityGateRejectionReasons": quality_reasons,
         "unresolvedPositionExcluded": position is not None,
         "pendingEntryExcluded": pending is not None,
         "trades": trades,
