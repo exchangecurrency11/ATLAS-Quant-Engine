@@ -1,0 +1,114 @@
+name: V7 Hourly Paper Forward (isolated)
+
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - 'forward/triggers/**'
+  workflow_dispatch:
+
+# This is a paper-only study; it does not call broker order endpoints,
+# production webhooks or the Cloudflare secret/key.
+permissions:
+  contents: write
+
+concurrency:
+  group: v7-hourly-forward-branch
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    name: Observe latest closed 1H and persist paper snapshot
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          persist-credentials: true
+
+      - name: Run V7 regression tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -q
+
+      - name: Fetch main snapshot + independent closed 1H/4H/Daily history
+        id: fetch
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/tmp
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/tmp/main_market_data.json
+          for tf in 1hour 4hour daily; do
+            curl --fail --location --silent --show-error \
+              --retry 2 --retry-delay 2 --max-time 80 \
+              -H 'Cache-Control: no-cache' \
+              "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=$tf" \
+              -o "forward/tmp/history_$tf.json"
+          done
+
+      - name: Produce exactly one timestamped point-in-time audit snapshot
+        shell: bash
+        env:
+          FETCH_RESULT: ${{ steps.fetch.outcome }}
+        run: |
+          set -euo pipefail
+          mkdir -p forward/snapshots
+          target="$(date -u +%Y-%m-%dT%H-00Z)"
+          snapshot="forward/snapshots/$target.json"
+          if test "$FETCH_RESULT" = success; then
+            python3 v7_forward_observer.py \
+              --main-data forward/tmp/main_market_data.json \
+              --hour forward/tmp/history_1hour.json \
+              --four forward/tmp/history_4hour.json \
+              --daily forward/tmp/history_daily.json \
+              --output "$snapshot" \
+              --artifact-output forward/tmp/latest-observation.json
+          else
+            SNAPSHOT="$snapshot" python3 - <<'PY'
+          import json, os
+          from datetime import datetime, timezone
+          now=datetime.now(timezone.utc)
+          target=now.replace(minute=0,second=0,microsecond=0)
+          out={"mode":"PAPER_FORWARD_OBSERVATION_NO_ORDERS",
+               "status":"DATA_FETCH_FAILED","observedAtUTC":now.isoformat(),
+               "targetClosed1HUTC":target.isoformat(),
+               "rejectionReason":"Failed to retrieve fresh current source; NO SIGNAL",
+               "productionSystemModified":False,"brokerOrders":False}
+          with open(os.environ["SNAPSHOT"],"w") as f:
+              json.dump(out,f,indent=2);f.write("\n")
+          PY
+            cp "$snapshot" forward/tmp/latest-observation.json
+          fi
+          cat forward/tmp/latest-observation.json | head -c 400
+          echo
+
+      - name: Persist append-only observation in V7 branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/snapshots/
+          if git diff --cached --quiet; then
+            echo "No new observation to commit"
+          else
+            git commit -m "V7 paper forward: capture hourly observation"
+            git pull --rebase origin experiment/v7-signal-quality-20261103
+            git push origin HEAD:experiment/v7-signal-quality-20261103
+          fi
+
+      - name: Preserve source audit bundle (short retention)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v7-forward-observation-${{ github.run_id }}
+          path: |
+            forward/tmp/history_*.json
+            forward/tmp/main_market_data.json
+            forward/tmp/latest-observation.json
+          if-no-files-found: ignore
+          retention-days: 14
