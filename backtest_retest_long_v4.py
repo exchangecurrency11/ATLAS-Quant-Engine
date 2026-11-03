@@ -288,6 +288,14 @@ def replay_pair(hour_history, four_history, daily_history, *, as_of,
         "qualityGateRejectionReasons": quality_reasons,
         "unresolvedPositionExcluded": position is not None,
         "pendingEntryExcluded": pending is not None,
+        "forwardStateAtLastClose": {
+            "activeBOSWatch": {k: v for k, v in active.items() if k != "bosBar"}
+                              if active is not None else None,
+            "pendingNextOpenPaperEntry": pending,
+            "openHypotheticalPosition": {k: v for k, v in position.items()
+                                          if k != "bosBar"}
+                                        if position is not None else None,
+        },
         "trades": trades,
     }
 
