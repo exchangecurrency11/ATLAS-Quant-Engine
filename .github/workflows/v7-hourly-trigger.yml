@@ -1,0 +1,56 @@
+name: V7 Independent Paper Forward Trigger
+
+# Scheduled workflows only run on GitHub's default branch.
+# This file only writes a unique trigger marker to the V7 EXPERIMENT branch.
+# No main market_data, Cloudflare, 1H/4H report or user notification changes.
+on:
+  schedule:
+    - cron: '35 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v7-independent-hourly-trigger
+  cancel-in-progress: false
+
+jobs:
+  trigger-v7:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Add one unique V7 experiment-only trigger
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # GitHub cron is UTC. TSİ=UTC+3, so minute :35 remains :35.
+          # Scheduled runs can be delayed; do not backfill or imply old
+          # snapshots were observed on time.
+          minute="$(date -u +%M)"
+          if (( 10#$minute < 25 || 10#$minute > 55 )); then
+            echo "Run outside fresh-source window; no trigger."
+            exit 0
+          fi
+          branch="experiment/v7-signal-quality-20261103"
+          hourpath="$(date -u +%Y/%m/%d/%H)"
+          close="$(date -u +%Y-%m-%dT%H:00:00Z)"
+          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          file="forward/triggers/$hourpath.json"
+          # Ref must be the experimental branch; never main.
+          encoded_ref="experiment%2Fv7-signal-quality-20261103"
+          if gh api "repos/$REPO/contents/$file?ref=$encoded_ref" >/dev/null 2>&1; then
+            echo "Already triggered $close; no duplicate."
+            exit 0
+          fi
+          data="$(printf '{"mode":"V7_PAPER_FORWARD_TRIGGER_NO_ORDERS","targetClosedUTC":"%s","createdAtUTC":"%s","source":"github-hourly-schedule","restriction":"experiment-branch-only; no live orders"}' "$close" "$now")"
+          content="$(printf '%s\n' "$data" | base64 -w0)"
+          gh api --method PUT "repos/$REPO/contents/$file" \
+            --field "branch=$branch" \
+            --field "message=V7 paper forward: trigger closed hour $close" \
+            --field "content=$content" \
+            --jq '.commit.sha'
+          echo "Triggered isolated V7 observation for $close."
