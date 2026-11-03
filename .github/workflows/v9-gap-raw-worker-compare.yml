@@ -33,6 +33,7 @@ jobs:
               rows=[x for x in source[symbol+"_PERP.A"] if start<=x["t"]<end]
               if len(rows)!=24:
                   raise ValueError(f"Worker missing Oct28 {symbol} hourly candles {len(rows)}")
+              print("COINALYZE_OCT28_FULL",json.dumps({"symbol":symbol,"day":"2026-10-28","bars":rows}),flush=True)
               compare=[]
               for n,(ours,theirs) in enumerate(zip(raw,rows)):
                   assert ours["t"]==theirs["t"]
