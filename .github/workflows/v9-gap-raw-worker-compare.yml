@@ -1,0 +1,47 @@
+name: V9 Audit Coinalyze vs Verified Binance Raw Trades Oct28
+
+on:
+  push:
+    branches:
+      - experiment/early-signals-v1-20261022
+    paths:
+      - .github/workflows/v9-gap-raw-worker-compare.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - name: Compare 28 October OHLCV between independent raw-trade and Coinalyze sources
+        run: |
+          curl --fail --location --silent --show-error --retry 2 --max-time 45 \
+            "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=1hour" \
+            -o worker_1h.json
+          python3 - <<'PY'
+          import json,math
+          from reconstruct_binance_oct28_raw_v8 import download_raw_day
+          from extend_binance_archive_october_v6 import day_bound
+          source={x["symbol"]:x["history"] for x in json.load(open("worker_1h.json"))}
+          for symbol in ("BTCUSDT","SOLUSDT"):
+              _,_,raw,proof=download_raw_day(symbol,"2026-10-28")
+              start,end=day_bound("2026-10-28")
+              rows=[x for x in source[symbol+"_PERP.A"] if start<=x["t"]<end]
+              if len(rows)!=24:
+                  raise ValueError(f"Worker missing Oct28 {symbol} hourly candles {len(rows)}")
+              compare=[]
+              for n,(ours,theirs) in enumerate(zip(raw,rows)):
+                  assert ours["t"]==theirs["t"]
+                  mismatch={f:{"raw":ours[f],"coinalyze":theirs[f]}
+                            for f in ("o","h","l","c")
+                            if not math.isclose(ours[f],theirs[f],rel_tol=1e-8,abs_tol=1e-7)}
+                  percent=100*(float(theirs["v"])/ours["v"]-1)
+                  compare.append({"hour":n,"OHLCmismatches":mismatch,
+                                  "coinalyzeVsRawVolumePct":round(percent,4)})
+              print("28OCT_CROSS_SOURCE",symbol,"nTrades",proof["rawTrades"],
+                    json.dumps(compare),flush=True)
+          PY
