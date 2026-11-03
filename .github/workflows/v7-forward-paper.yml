@@ -56,7 +56,7 @@ jobs:
           FETCH_RESULT: ${{ steps.fetch.outcome }}
         run: |
           set -euo pipefail
-          mkdir -p forward/snapshots
+          mkdir -p forward/snapshots forward/reports
           target="$(date -u +%Y-%m-%dT%H-00Z)"
           snapshot="forward/snapshots/$target.json"
           if test "$FETCH_RESULT" = success; then
@@ -66,7 +66,8 @@ jobs:
               --four forward/tmp/history_4hour.json \
               --daily forward/tmp/history_daily.json \
               --output "$snapshot" \
-              --artifact-output forward/tmp/latest-observation.json
+              --artifact-output forward/tmp/latest-observation.json \
+              --report-output "forward/reports/$target.md"
           else
             SNAPSHOT="$snapshot" python3 - <<'PY'
           import json, os
@@ -82,6 +83,7 @@ jobs:
               json.dump(out,f,indent=2);f.write("\n")
           PY
             cp "$snapshot" forward/tmp/latest-observation.json
+            printf "# V7 paper-forward veri reddi\\n\\nHedef: %s\\n\\nKaynaklar alınamadı, sinyal üretilmedi.\\n" "$target" > "forward/reports/$target.md"
           fi
           cat forward/tmp/latest-observation.json | head -c 400
           echo
@@ -92,7 +94,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add forward/snapshots/
+          git add forward/snapshots/ forward/reports/
           if git diff --cached --quiet; then
             echo "No new observation to commit"
           else
@@ -110,5 +112,6 @@ jobs:
             forward/tmp/history_*.json
             forward/tmp/main_market_data.json
             forward/tmp/latest-observation.json
+            forward/reports/*.md
           if-no-files-found: ignore
           retention-days: 14
