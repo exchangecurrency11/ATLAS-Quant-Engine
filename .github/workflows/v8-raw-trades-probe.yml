@@ -1,0 +1,36 @@
+name: Probe Official Binance Oct28 Raw Futures Trades
+
+on:
+  push:
+    branches:
+      - experiment/early-signals-v1-20261022
+    paths:
+      - .github/workflows/v8-raw-trades-probe.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v5
+      - name: Inspect exact raw futures trades archive HEAD and checksum availability
+        run: |
+          python3 - <<'PY'
+          from urllib.request import Request,urlopen
+          from urllib.error import HTTPError
+          for symbol in ("BTCUSDT","SOLUSDT"):
+              base=f"https://data.binance.vision/data/futures/um/daily/trades/{symbol}/{symbol}-trades-2026-10-28.zip"
+              for suffix in ("",".CHECKSUM"):
+                  try:
+                      with urlopen(Request(base+suffix,method="HEAD"),timeout=20) as resp:
+                          print("RAW_ARCHIVE_HEAD",symbol,suffix or "ZIP",
+                                "status",resp.status,
+                                "length",resp.headers.get("Content-Length"),
+                                "type",resp.headers.get("Content-Type"),flush=True)
+                  except Exception as e:
+                      print("RAW_ARCHIVE_ERROR",symbol,suffix,repr(e),flush=True)
+          PY
