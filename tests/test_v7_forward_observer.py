@@ -1,7 +1,8 @@
 """V7 forward observer regression: reject stale, incomplete or future data."""
 import unittest
 from datetime import datetime, timezone
-from v7_forward_observer import validate_inputs, latest_events, iso, HOUR, PAIRS, TF_SECONDS
+from v7_forward_observer import (validate_inputs, latest_events, build_market_context, render_report,
+                                 iso, HOUR, PAIRS, TF_SECONDS)
 
 TARGET = int(datetime(2026, 11, 3, 16, tzinfo=timezone.utc).timestamp())
 NOW = TARGET + 35*60
@@ -22,7 +23,9 @@ def good_data():
             all_history[tf].append({"symbol": symbol, "history": history})
             results.append({"symbol": symbol, "interval": tf, "status":"READY",
                             "closeTimeUTC": iso(close),
-                            "candle": {"close": 100.0}})
+                            "candle": {"close": 100.0, "open":100., "high":101., "low":99., "volume":200., "volumeChangePct":0.},
+                            "indicators": {"EMA20": 99.0, "EMA50": 101.0, "EMA200":105.0,
+                                           "RSI14": 48.0, "MACDHistogram": -0.1}})
     return {
         "ok": True, "provider": "Coinalyze", "market":"Perpetual Futures",
         "checkedAtUTC": iso(TARGET+5*60), "results": results,
@@ -58,6 +61,34 @@ class ForwardObserverTests(unittest.TestCase):
         histories["1hour"][0]["history"][-2]["t"] -= HOUR
         with self.assertRaisesRegex(ValueError, "missing or duplicate"):
             validate_inputs(main, histories, TARGET, NOW)
+
+    def test_zero_signal_still_has_full_market_analysis(self):
+        main, histories = good_data()
+        ctx = build_market_context(main, histories, TARGET)
+        self.assertEqual(ctx[PAIRS[0]]["newBOSCount"], 0)
+        self.assertIn("NO_NEW_1H_BOS", ctx[PAIRS[1]]["noSignalExplanation"])
+        self.assertEqual(set(ctx[PAIRS[0]]["timeframes"]),
+                         {"1hour", "4hour", "daily"})
+        snapshot = {
+            "status": "VERIFIED_PAPER_OBSERVATION",
+            "targetClosed1HUTC": iso(TARGET),
+            "observedAtUTC": iso(NOW),
+            "marketDataCheckedAtUTC": main["checkedAtUTC"],
+            "marketContext": ctx,
+            "results": {
+                pair: {"V7_signal_filter": {
+                    "newWatchAtThisClose": [],
+                    "paperTradeExitsObservedAtThisClose": [],
+                    "currentPaperState": {"openHypotheticalPosition": None},
+                }} for pair in PAIRS
+            },
+        }
+        doc = render_report(snapshot)
+        self.assertIn("BTC", doc)
+        self.assertIn("SOL", doc)
+        self.assertIn("RSI14", doc)
+        self.assertIn("EMA20", doc)
+        self.assertIn("NO_NEW_1H_BOS", doc)
 
     def test_only_current_close_events_recorded(self):
         report={"status":"PAPER_BACKTEST_NOT_LIVE",
