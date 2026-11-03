@@ -26,7 +26,8 @@ jobs:
         run: |
           python3 recover_binance_oct28_fapi_v7.py --probe-only
       - name: Source proof
-        run: echo "28 Oct: only real official Binance Futures REST 1H candles, never interpolation"
+        run: |
+          echo "28 Oct: only real official Binance Futures REST 1H candles, never interpolation"
 
   full-contiguous-rebuild:
     needs: gap-source-verification
