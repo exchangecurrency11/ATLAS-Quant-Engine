@@ -19,14 +19,16 @@ jobs:
       - uses: actions/checkout@v5
       - name: Check Coinalyze Binance-perpetual 1H Oct 28 and official Binance adjacent days
         run: |
+          curl --fail --location --silent --show-error --retry 2 --retry-delay 3 --max-time 45 \
+            "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=1hour" \
+            -o worker_history_1h.json
           python3 - <<'PY'
           import json,math
-          from urllib.request import urlopen
           from datetime import datetime,timezone
           from extend_binance_archive_october_v6 import download_day,day_bound
           url="https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=1hour"
-          with urlopen(url,timeout=45) as response:
-              payload=json.loads(response.read(300000))
+          with open("worker_history_1h.json",encoding="utf-8") as response:
+              payload=json.load(response)
           assert isinstance(payload,list)
           print("WORKER_SOURCE",[(x.get("symbol"),len(x.get("history",[]))) for x in payload],flush=True)
           data={x["symbol"]:x["history"] for x in payload}
