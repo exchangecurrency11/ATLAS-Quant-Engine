@@ -13,7 +13,8 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
-from backtest_retest_long_v4 import replay_pair
+from backtest_retest_long_v4 import replay_pair, indicators
+from market_structure import analyze, average_true_range
 from signal_quality_v7 import evaluate_bos_quality, evaluate_retest_quality
 
 HOUR = 3600
@@ -139,6 +140,105 @@ def observe(main, data, *, target, now):
     return results
 
 
+def _vote_bias(row):
+    """Explicit 4-vote directional context; NOT a winning probability."""
+    ind = row["indicators"]
+    c = row["candle"]["close"]
+    def vote(x, y):
+        return 1 if x > y else -1 if x < y else 0
+    score = (vote(c, ind["EMA20"]) + vote(c, ind["EMA50"]) +
+             vote(ind["MACDHistogram"], 0) + vote(ind["RSI14"], 50))
+    return {
+        "score": score,
+        "label": "bullish" if score >= 3 else "bearish" if score <= -3 else "mixed",
+        "votesFrom": "close vs EMA20/EMA50, MACD histogram sign, RSI50",
+        "notProbability": True,
+    }
+
+
+def build_market_context(main, histories, target):
+    """Provide explainable context for EVERY checked hour, including zero signals.
+
+    Source closes/indicators are checked against 1H/4H/D history in validate_inputs.
+    Do not convert a structural observation into an actionable trade signal.
+    """
+    groups = {(x["symbol"], x["interval"]): x for x in main["results"]}
+    result = {}
+    for symbol in PAIRS:
+        h = next(x["history"] for x in histories["1hour"] if x["symbol"] == symbol)
+        # Last 250 closed bars are the same lookback used by V4 BOS detection.
+        window = h[-250:]
+        structure = analyze(window, "1hour", as_of=target)
+        events = [
+            {**e, "knownAtUTC": iso(target)}
+            for e in structure.get("structure", [])
+            if int(e["at"]) + HOUR == target
+        ]
+        bos = [e for e in events if e["event"] == "BOS"]
+        rows = {tf: groups[(symbol, tf)] for tf in TF_SECONDS}
+        h1, h4, d1 = (rows[tf] for tf in ("1hour", "4hour", "daily"))
+        bias = {tf: _vote_bias(rows[tf]) for tf in TF_SECONDS}
+        direction_aligned = (
+            bias["4hour"]["label"] == bias["daily"]["label"] and
+            bias["4hour"]["label"] in ("bullish", "bearish"))
+        atr = average_true_range(window, len(window)-1, 14)
+        prev20 = [float(b["v"]) for b in window[-21:-1]]
+        rvol = float(window[-1]["v"]) / (sum(prev20)/len(prev20)) if sum(prev20)>0 else None
+        quality = []
+        if bos:
+            ind = indicators(h)
+            for e in bos:
+                quality.append({
+                    "direction": e["direction"],
+                    "level": e["brokenLevel"],
+                    "gate": evaluate_bos_quality(window, e, ind),
+                    "higherTFalignedWithBOS":
+                        direction_aligned and bias["daily"]["label"] == e["direction"],
+                    "momentumAlignedWithBOS":
+                        ((h1["indicators"]["RSI14"]>50 and
+                          h1["indicators"]["MACDHistogram"]>0)
+                         if e["direction"] == "bullish" else
+                         (h1["indicators"]["RSI14"]<50 and
+                          h1["indicators"]["MACDHistogram"]<0)),
+                    "previousHourVolumeIncrease20Pct":
+                        h1["candle"]["volumeChangePct"] is not None and
+                        h1["candle"]["volumeChangePct"] >= 20,
+                })
+        if not bos:
+            explanation = (
+                "NO_NEW_1H_BOS: BOS/retest entry engine did not receive a fresh BOS "
+                "at this close. This is a valid no-trigger observation, not a missed analysis.")
+        elif not direction_aligned:
+            explanation = "HIGHER_TIMEFRAMES_NOT_ALIGNED: 4H and Daily directional votes differ or are mixed."
+        elif not all(e["gate"]["passed"] for e in quality):
+            explanation = "BOS_QUALITY_FILTER_REJECTED: see specific quality gate reasons."
+        else:
+            explanation = "BOS_PRESENT: follow V4/V7 newWatch and retest state; no same-candle entry."
+        result[symbol] = {
+            "checkedClosed1HUTC": iso(target),
+            "timeframes": {
+                tf: {
+                    "closeTimeUTC": rows[tf]["closeTimeUTC"],
+                    "candle": rows[tf]["candle"],
+                    "indicators": rows[tf]["indicators"],
+                    "directionVotes": bias[tf],
+                } for tf in TF_SECONDS
+            },
+            "atr14_1H": round(atr, 8) if atr is not None else None,
+            "relativeVolume20_1H": round(rvol, 5) if rvol is not None else None,
+            "higherTimeframesAgree": direction_aligned,
+            "newStructureEventsAtClose": events,
+            "newBOSCount": len(bos),
+            "bosQualityBreakdown": quality,
+            "noSignalExplanation": explanation,
+            "caution": (
+                "Trend votes and quality filters are descriptive; no live fill or entry "
+                "confirmation follows from them. BOS analysis uses only closed hourly candles."
+            ),
+        }
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--main-data", required=True)
@@ -173,6 +273,7 @@ def main():
         snapshot["inputSHA256"] = source_hashes
         snapshot["marketDataCheckedAtUTC"] = main_data.get("checkedAtUTC")
         snapshot["results"] = observe(main_data, histories, target=target, now=now)
+        snapshot["marketContext"] = build_market_context(main_data, histories, target)
         snapshot["status"] = "VERIFIED_PAPER_OBSERVATION"
         print("VALIDATED:", snapshot["targetClosed1HUTC"])
         for symbol, variants in snapshot["results"].items():
