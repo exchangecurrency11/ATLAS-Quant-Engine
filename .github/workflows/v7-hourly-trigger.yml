@@ -9,7 +9,10 @@ name: V7 Hourly Paper Forward Runner
 # push workflows. Run the observer directly rather than chaining a push.
 on:
   schedule:
+    # Multiple independent opportunities per hour; each existing snapshot is immutable.
+    - cron: '17 * * * *'
     - cron: '35 * * * *'
+    - cron: '50 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -49,6 +52,20 @@ jobs:
       - name: Run observer and strategy unit tests
         if: steps.timing.outputs.run == 'true'
         run: python3 -m unittest discover -s tests -p 'test_*.py' -q
+
+      - name: Audit PAST missing hours without inventing historical signals
+        if: steps.timing.outputs.run == 'true'
+        env:
+          TARGET: ${{ steps.timing.outputs.target }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Current hour is excluded. Any absent PAST snapshot is clearly
+          # labeled MISSED_OBSERVATION, never zero-signal or trade.
+          python3 v7_coverage.py \
+            --snapshots forward/snapshots \
+            --coverage forward/coverage \
+            --target "${TARGET/-00Z/:00:00Z}"
 
       - name: Fetch fresh closed perpetual candles and main source
         if: steps.timing.outputs.run == 'true'
@@ -127,7 +144,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add forward/snapshots/ forward/reports/
+          git add forward/snapshots/ forward/reports/ forward/coverage/
           if ! git diff --cached --quiet; then
             git commit -m "V7 paper: hourly source-verified observation and report"
             # GitHub can occasionally reject an otherwise-valid ref update.
@@ -156,5 +173,6 @@ jobs:
           path: |
             forward/tmp/latest-observation.json
             forward/reports/*.md
+            forward/coverage/latest.json
           if-no-files-found: ignore
           retention-days: 14
