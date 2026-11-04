@@ -1,5 +1,17 @@
 # V7 Paper-Forward Test — Başlangıç ve İzleme
 
+## 4 Kasım 2026 09:59 TSİ — Otomatik takip sorunu tespit edildi ve iş akışı düzeltildi
+
+**Doğrulanmış durum:** İlk deneysel snapshot 3 Kasım 19:00 TSİ kapanışındadır. 4 Kasım 09:59 TSİ kontrolünde sonraki saatlerin snapshot veya raporu kaydedilmemişti. Saatlik GitHub Actions "tetikleyici" çalışmış, ancak onun `GITHUB_TOKEN` ile deneysel dala attığı commit, `push` temelli ikinci analizi tetiklememiştir. GitHub Actions'ın resmi çalışma kuralı gereği bu zincir kendiliğinden başlamaz.
+
+**Kod düzeltmesi (ana sistemden bağımsız):** `main/.github/workflows/v7-hourly-trigger.yml` tek başına çalışan bir **doğrudan analiz zamanlayıcısı** olarak değiştirildi. Artık deneysel dalı checkout ederek V7 kodunu bizzat çalıştırır, yeni 1H/4H/Daily Coinalyze verilerini ve main fiyat snapshot zamanlarını doğrular, `forward/snapshots/` JSON ile `forward/reports/` Markdown dosyalarını **yalnız deneysel dala** kaydeder. Saatlik tetikleyici dosyası yazıp başka iş akışının başlayacağını varsaymaz. Değiştirilen ana dal dosyası sadece bu V7 iş akışıdır; `market_data.json`, Cloudflare, gerçek alım/satım, 1H/4H ChatGPT görevleri değiştirilmedi.
+
+**Canlı çalışma teyidi henüz yok:** Bu kod güncellemesinin sonraki saatlik zamanlanmış çalışmada gerçekten bir snapshot ürettiğini ayrıca doğrulamak gerekir. `workflow completed/success` tek başına "sinyal analizi yapıldı" kanıtı değildir; `VERIFIED_PAPER_OBSERVATION` durumlu yeni JSON ve açıklamalı Markdown raporu kontrol edilmelidir. Veri hazır değilse DATA_REJECTED / DATA_FETCH_FAILED görünmelidir.
+
+**Kaynak:** https://docs.github.com/en/actions/concepts/security/github_token
+
+
+
 ## Başladı
 **İlk doğrulanmış gözlem:** 2026-11-03 16:00:00 UTC (3 Kasım 19:00 TSİ kapanışı).
 **Snapshot:** `forward/snapshots/2026-11-03T16-00Z.json`
