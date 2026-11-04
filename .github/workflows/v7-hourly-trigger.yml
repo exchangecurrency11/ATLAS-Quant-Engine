@@ -1,8 +1,12 @@
-name: V7 Independent Paper Forward Trigger
+name: V7 Hourly Paper Forward Runner
 
-# Scheduled workflows only run on GitHub's default branch.
-# This file only writes a unique trigger marker to the V7 EXPERIMENT branch.
-# No main market_data, Cloudflare, 1H/4H report or user notification changes.
+# GitHub scheduled workflows run on the default branch. This MAIN-only
+# workflow checks out, executes and writes results SOLELY on the isolated
+# V7 experiment branch. It DOES NOT modify any live market-data workflow,
+# Cloudflare endpoint, ChatGPT alert or broker account.
+#
+# Important: GITHUB_TOKEN-created push commits do not trigger additional
+# push workflows. Run the observer directly rather than chaining a push.
 on:
   schedule:
     - cron: '35 * * * *'
@@ -12,45 +16,133 @@ permissions:
   contents: write
 
 concurrency:
-  group: v7-independent-hourly-trigger
+  group: v7-hourly-direct-observer
   cancel-in-progress: false
 
 jobs:
-  trigger-v7:
+  v7-hourly-paper:
+    name: Analyze latest closed hour (paper only)
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 25
     steps:
-      - name: Add one unique V7 experiment-only trigger
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
+      - name: Ensure scheduled run is inside fresh-source window
+        id: timing
         shell: bash
         run: |
           set -euo pipefail
-          # GitHub cron is UTC. TSİ=UTC+3, so minute :35 remains :35.
-          # Scheduled runs can be delayed; do not backfill or imply old
-          # snapshots were observed on time.
           minute="$(date -u +%M)"
           if (( 10#$minute < 25 || 10#$minute > 55 )); then
-            echo "Run outside fresh-source window; no trigger."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "SCHEDULE_DELAY: no in-time forward observation; do not backfill."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "target=$(date -u +%Y-%m-%dT%H-00Z)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout isolated experiment (NEVER main)
+        if: steps.timing.outputs.run == 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          persist-credentials: true
+
+      - name: Run observer and strategy unit tests
+        if: steps.timing.outputs.run == 'true'
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -q
+
+      - name: Fetch fresh closed perpetual candles and main source
+        if: steps.timing.outputs.run == 'true'
+        id: fetch
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/tmp
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/tmp/main_market_data.json
+          for tf in 1hour 4hour daily; do
+            curl --fail --location --silent --show-error \
+              --retry 2 --retry-delay 2 --max-time 80 \
+              -H 'Cache-Control: no-cache' \
+              "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=$tf" \
+              -o "forward/tmp/history_$tf.json"
+          done
+
+      - name: Write audit and human-readable report for target hour
+        if: steps.timing.outputs.run == 'true'
+        shell: bash
+        env:
+          FETCH_RESULT: ${{ steps.fetch.outcome }}
+          TARGET: ${{ steps.timing.outputs.target }}
+        run: |
+          set -euo pipefail
+          mkdir -p forward/snapshots forward/reports
+          snapshot="forward/snapshots/$TARGET.json"
+          report="forward/reports/$TARGET.md"
+          if test -e "$snapshot"; then
+            echo "Snapshot already exists for $TARGET, preserving original observation."
             exit 0
           fi
-          branch="experiment/v7-signal-quality-20261103"
-          hourpath="$(date -u +%Y/%m/%d/%H)"
-          close="$(date -u +%Y-%m-%dT%H:00:00Z)"
-          now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          file="forward/triggers/$hourpath.json"
-          # Ref must be the experimental branch; never main.
-          encoded_ref="experiment%2Fv7-signal-quality-20261103"
-          if gh api "repos/$REPO/contents/$file?ref=$encoded_ref" >/dev/null 2>&1; then
-            echo "Already triggered $close; no duplicate."
-            exit 0
+          if test "$FETCH_RESULT" = success; then
+            python3 v7_forward_observer.py \
+              --main-data forward/tmp/main_market_data.json \
+              --hour forward/tmp/history_1hour.json \
+              --four forward/tmp/history_4hour.json \
+              --daily forward/tmp/history_daily.json \
+              --output "$snapshot" \
+              --report-output "$report" \
+              --artifact-output forward/tmp/latest-observation.json
+          else
+            SNAPSHOT="$snapshot" REPORT="$report" TARGET="$TARGET" python3 - <<'PY'
+          import os,json
+          from datetime import datetime,timezone
+          now=datetime.now(timezone.utc).isoformat()
+          close=os.environ["TARGET"].replace("-",":",1) if False else os.environ["TARGET"]
+          data={
+            "mode":"PAPER_FORWARD_OBSERVATION_NO_ORDERS",
+            "status":"DATA_FETCH_FAILED",
+            "observedAtUTC":now,
+            "targetClosed1HUTC":close.replace("-00Z",":00:00Z"),
+            "rejectionReason":"Source download failed; NO SIGNAL",
+            "productionSystemModified":False,
+            "brokerOrders":False,
+          }
+          with open(os.environ["SNAPSHOT"],"w") as f:
+              json.dump(data,f,indent=2);f.write("\n")
+          with open(os.environ["REPORT"],"w") as f:
+              f.write("# V7 hourly paper audit: DATA_FETCH_FAILED\n\n")
+              f.write("Target: "+data["targetClosed1HUTC"]+"\n\n")
+              f.write("Closed candle source was unavailable; no signal was inferred.\n")
+          PY
+            cp "$snapshot" forward/tmp/latest-observation.json
           fi
-          data="$(printf '{"mode":"V7_PAPER_FORWARD_TRIGGER_NO_ORDERS","targetClosedUTC":"%s","createdAtUTC":"%s","source":"github-hourly-schedule","restriction":"experiment-branch-only; no live orders"}' "$close" "$now")"
-          content="$(printf '%s\n' "$data" | base64 -w0)"
-          gh api --method PUT "repos/$REPO/contents/$file" \
-            --field "branch=$branch" \
-            --field "message=V7 paper forward: trigger closed hour $close" \
-            --field "content=$content" \
-            --jq '.commit.sha'
-          echo "Triggered isolated V7 observation for $close."
+          python3 -c 'import json; s=json.load(open("forward/tmp/latest-observation.json")); print("V7",s["status"],s["targetClosed1HUTC"])'
+
+      - name: Commit ONLY experimental observations/reports
+        if: steps.timing.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/snapshots/ forward/reports/
+          if ! git diff --cached --quiet; then
+            git commit -m "V7 paper: hourly source-verified observation and report"
+            git pull --rebase origin experiment/v7-signal-quality-20261103
+            git push origin HEAD:experiment/v7-signal-quality-20261103
+          else
+            echo "No new experimental observations."
+          fi
+
+      - name: Save compact verification artifacts
+        if: always() && steps.timing.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: v7-hourly-report-${{ github.run_id }}
+          path: |
+            forward/tmp/latest-observation.json
+            forward/reports/*.md
+          if-no-files-found: ignore
+          retention-days: 14
