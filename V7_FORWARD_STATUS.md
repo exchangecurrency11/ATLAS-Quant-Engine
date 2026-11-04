@@ -1,5 +1,16 @@
 # V7 Paper-Forward Test — Başlangıç ve İzleme
 
+## 5 Kasım 2026 — V7 gözlem sürekliliği iyileştirmesi
+
+- **Başlangıç verileri:** 3 Kasım 16:00 UTC ilk gözleminden sonra, 4 Kasım 22:00 UTC kapanışına kadar GitHub deney dalında toplam 9 doğrulanmış saatlik V7 snapshot'ı bulundu. Kontrol edilen son iki kapanış (4 Kasım 21:00 ve 22:00 UTC) doğrulandı; BTC/SOL için o anlarda yeni V7 uyarısı çıkmadı.
+- **Yeni saatlik çalışma:** Sadece `main/.github/workflows/v7-hourly-trigger.yml` güncellendi: UTC dakika 17, 35 ve 50'de ayrı çalışma fırsatları var. GitHub'ın saatlik tetikleme gecikmeleri / atlanan çalışmaları tamamen ortadan kaldırmak garanti edilemez.
+- **Eksik saat dökümü:** `v7_coverage.py` geçmiş her saatte `forward/snapshots/` altında gerçek zamanında kaydedilmiş snapshot var mı diye bakar. Eksikse **ayrı** `forward/coverage/YYYY-MM-DDTHH-00Z.json` dosyasına `MISSED_OBSERVATION` yazar. Bu durum **sıfır sinyal değildir, işlem değildir ve geçmişi yeniden analiz etmek değildir**. Nedenin kesin olarak bilinmediği açıkça yazılır.
+- **Güncel özet:** `forward/coverage/latest.json` kaç saatin doğrulandığını, veri hatasıyla bittiğini ve kaçının kaçırıldığını sayar. Özetin kapsadığı dönem `upToExcludingUTC` alanıyla sınırlıdır; o anda devam eden saat hesaba katılmaz.
+- **İdempotent kayıt:** Aynı saatin gerçek snapshot'ı korunur. GitHub'a kalıcı kayıt gönderimi arıza verirse en fazla üç kez denenir.
+- **Canlı yatırım sistemi:** Değişmedi. V7 yalnız deneysel gözlem, analiz ve raporlama içindir. Eksik saatleri sahte forward sonuç olarak eklemek yasaktır.
+
+**Doğrulama şartı:** İlk yeni zamanlanmış çalışmanın `forward/coverage/latest.json` dosyasını oluşturması ve aynı kapanışın `forward/snapshots/` ile `forward/reports/` dosyalarını yazması gerekir. Başarılı GitHub job tek başına yeterli değildir. Normal çalışma yoksa sistem eksik gözlem olarak raporlanır.
+
 ## 4 Kasım 2026 09:59 TSİ — Otomatik takip sorunu tespit edildi ve iş akışı düzeltildi
 
 **Doğrulanmış durum:** İlk deneysel snapshot 3 Kasım 19:00 TSİ kapanışındadır. 4 Kasım 09:59 TSİ kontrolünde sonraki saatlerin snapshot veya raporu kaydedilmemişti. Saatlik GitHub Actions "tetikleyici" çalışmış, ancak onun `GITHUB_TOKEN` ile deneysel dala attığı commit, `push` temelli ikinci analizi tetiklememiştir. GitHub Actions'ın resmi çalışma kuralı gereği bu zincir kendiliğinden başlamaz.
