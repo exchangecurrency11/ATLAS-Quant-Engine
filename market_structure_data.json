@@ -7,16 +7,9 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-04T07:00:00Z",
+      "lastCloseTimeUTC": "2026-11-04T08:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "BOS",
-          "direction": "bullish",
-          "at": 1793174400,
-          "brokenSwingAt": 1793156400,
-          "brokenLevel": 81199.9
-        },
         {
           "event": "CHoCH",
           "direction": "bearish",
@@ -93,6 +86,13 @@
           "at": 1793757600,
           "brokenSwingAt": 1793685600,
           "brokenLevel": 76351.6
+        },
+        {
+          "event": "CHoCH",
+          "direction": "bullish",
+          "at": 1793775600,
+          "brokenSwingAt": 1793739600,
+          "brokenLevel": 78039.4
         }
       ],
       "candidateOrderBlocks": [
@@ -119,51 +119,29 @@
           "invalidatedAt": null
         },
         {
-          "side": "bearish",
+          "side": "bullish",
           "event": "CHoCH",
-          "originAt": 1793739600,
-          "confirmedAt": 1793761200,
-          "breakAt": 1793757600,
-          "brokenLevel": 76351.6,
+          "originAt": 1793757600,
+          "confirmedAt": 1793779200,
+          "breakAt": 1793775600,
+          "brokenLevel": 78039.4,
           "body": {
-            "low": 77842.1,
-            "high": 77869.3
+            "low": 76127.8,
+            "high": 77014.1
           },
           "wick": {
-            "low": 77788.4,
-            "high": 78039.4
+            "low": 76127.4,
+            "high": 77191.9
           },
-          "volumeRatio": 2.221,
+          "volumeRatio": 1.044,
           "fvgConfluence": true,
           "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "retested",
-          "retests": 1,
+          "state": "fresh",
+          "retests": 0,
           "invalidatedAt": null
         }
       ],
       "recentInvalidatedOrderBlocks": [
-        {
-          "side": "bullish",
-          "event": "BOS",
-          "originAt": 1793570400,
-          "confirmedAt": 1793577600,
-          "breakAt": 1793574000,
-          "brokenLevel": 78144.4,
-          "body": {
-            "low": 77791.4,
-            "high": 77855.6
-          },
-          "wick": {
-            "low": 77561.9,
-            "high": 77878.8
-          },
-          "volumeRatio": 2.317,
-          "fvgConfluence": false,
-          "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "invalidated",
-          "retests": 1,
-          "invalidatedAt": 1793631600
-        },
         {
           "side": "bearish",
           "event": "BOS",
@@ -207,6 +185,28 @@
           "state": "invalidated",
           "retests": 2,
           "invalidatedAt": 1793754000
+        },
+        {
+          "side": "bearish",
+          "event": "CHoCH",
+          "originAt": 1793739600,
+          "confirmedAt": 1793761200,
+          "breakAt": 1793757600,
+          "brokenLevel": 76351.6,
+          "body": {
+            "low": 77842.1,
+            "high": 77869.3
+          },
+          "wick": {
+            "low": 77788.4,
+            "high": 78039.4
+          },
+          "volumeRatio": 2.221,
+          "fvgConfluence": true,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "invalidated",
+          "retests": 1,
+          "invalidatedAt": 1793775600
         }
       ],
       "openFVG": [
@@ -318,14 +318,14 @@
       "counts": {
         "activeCandidateOB": 2,
         "openFVG": 4,
-        "structureEventsInLookback": 19
+        "structureEventsInLookback": 20
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-04T07:00:00Z",
+      "lastCloseTimeUTC": "2026-11-04T08:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -637,6 +637,13 @@
         },
         {
           "kind": "equal_highs",
+          "level": 96.29,
+          "firstPivotAt": 1793448000,
+          "secondPivotAt": 1793469600,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_highs",
           "level": 96.205,
           "firstPivotAt": 1793469600,
           "secondPivotAt": 1793484000,
@@ -688,7 +695,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-04T04:00:00Z",
+      "lastCloseTimeUTC": "2026-11-04T08:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -862,7 +869,7 @@
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "retested",
-          "retests": 1,
+          "retests": 2,
           "invalidatedAt": null
         }
       ],
@@ -992,6 +999,13 @@
         },
         {
           "kind": "equal_highs",
+          "level": 80909.65,
+          "firstPivotAt": 1792886400,
+          "secondPivotAt": 1793016000,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_highs",
           "level": 81876.85,
           "firstPivotAt": 1793174400,
           "secondPivotAt": 1793289600,
@@ -1024,6 +1038,13 @@
           "firstPivotAt": 1792972800,
           "secondPivotAt": 1793088000,
           "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_lows",
+          "level": 76357.0,
+          "firstPivotAt": 1793318400,
+          "secondPivotAt": 1793376000,
+          "note": "Potential chart liquidity; not live order-book data"
         }
       ],
       "counts": {
@@ -1036,7 +1057,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-04T04:00:00Z",
+      "lastCloseTimeUTC": "2026-11-04T08:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
