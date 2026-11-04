@@ -31,7 +31,7 @@ jobs:
         run: |
           set -euo pipefail
           minute="$(date -u +%M)"
-          if (( 10#$minute < 25 || 10#$minute > 55 )); then
+          if (( 10#$minute < 12 || 10#$minute > 58 )); then
             echo "run=false" >> "$GITHUB_OUTPUT"
             echo "SCHEDULE_DELAY: no in-time forward observation; do not backfill."
           else
@@ -130,8 +130,20 @@ jobs:
           git add forward/snapshots/ forward/reports/
           if ! git diff --cached --quiet; then
             git commit -m "V7 paper: hourly source-verified observation and report"
-            git pull --rebase origin experiment/v7-signal-quality-20261103
-            git push origin HEAD:experiment/v7-signal-quality-20261103
+            # GitHub can occasionally reject an otherwise-valid ref update.
+            # Retry with a fresh rebase without changing the observation time.
+            for attempt in 1 2 3; do
+              git pull --rebase origin experiment/v7-signal-quality-20261103
+              if git push origin HEAD:experiment/v7-signal-quality-20261103; then
+                echo "V7 paper observation persisted to experiment branch."
+                break
+              fi
+              if [[ "$attempt" == 3 ]]; then
+                echo "V7 experiment push failed after three attempts." >&2
+                exit 1
+              fi
+              sleep 5
+            done
           else
             echo "No new experimental observations."
           fi
