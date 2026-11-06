@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-06T14:00:00Z",
+      "lastCloseTimeUTC": "2026-11-06T15:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -303,16 +303,9 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-06T14:00:00Z",
+      "lastCloseTimeUTC": "2026-11-06T15:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "BOS",
-          "direction": "bullish",
-          "at": 1793174400,
-          "brokenSwingAt": 1793156400,
-          "brokenLevel": 102.41
-        },
         {
           "event": "CHoCH",
           "direction": "bearish",
@@ -389,6 +382,13 @@
           "at": 1793880000,
           "brokenSwingAt": 1793858400,
           "brokenLevel": 95.59
+        },
+        {
+          "event": "CHoCH",
+          "direction": "bullish",
+          "at": 1793973600,
+          "brokenSwingAt": 1793930400,
+          "brokenLevel": 90.53
         }
       ],
       "candidateOrderBlocks": [
@@ -452,6 +452,28 @@
             "high": 96.87
           },
           "volumeRatio": 2.316,
+          "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
+        },
+        {
+          "side": "bullish",
+          "event": "CHoCH",
+          "originAt": 1793966400,
+          "confirmedAt": 1793977200,
+          "breakAt": 1793973600,
+          "brokenLevel": 90.53,
+          "body": {
+            "low": 90.18,
+            "high": 90.38
+          },
+          "wick": {
+            "low": 90.15,
+            "high": 90.86
+          },
+          "volumeRatio": 2.556,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "fresh",
@@ -636,9 +658,9 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 3,
+        "activeCandidateOB": 4,
         "openFVG": 6,
-        "structureEventsInLookback": 19
+        "structureEventsInLookback": 20
       }
     },
     {
