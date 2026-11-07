@@ -7,16 +7,9 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T08:00:00Z",
+      "lastCloseTimeUTC": "2026-11-07T09:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "BOS",
-          "direction": "bearish",
-          "at": 1793235600,
-          "brokenSwingAt": 1793203200,
-          "brokenLevel": 80355.4
-        },
         {
           "event": "CHoCH",
           "direction": "bullish",
@@ -93,6 +86,13 @@
           "at": 1793880000,
           "brokenSwingAt": 1793818800,
           "brokenLevel": 79905.4
+        },
+        {
+          "event": "CHoCH",
+          "direction": "bullish",
+          "at": 1794038400,
+          "brokenSwingAt": 1794020400,
+          "brokenLevel": 76068.9
         }
       ],
       "candidateOrderBlocks": [
@@ -135,6 +135,28 @@
           },
           "volumeRatio": 3.244,
           "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
+        },
+        {
+          "side": "bullish",
+          "event": "CHoCH",
+          "originAt": 1794020400,
+          "confirmedAt": 1794042000,
+          "breakAt": 1794038400,
+          "brokenLevel": 76068.9,
+          "body": {
+            "low": 75864.0,
+            "high": 76008.0
+          },
+          "wick": {
+            "low": 75742.3,
+            "high": 76068.9
+          },
+          "volumeRatio": 0.276,
+          "fvgConfluence": true,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "fresh",
           "retests": 0,
@@ -323,16 +345,16 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 2,
+        "activeCandidateOB": 3,
         "openFVG": 4,
-        "structureEventsInLookback": 17
+        "structureEventsInLookback": 18
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T08:00:00Z",
+      "lastCloseTimeUTC": "2026-11-07T09:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
