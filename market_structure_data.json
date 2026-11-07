@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T20:00:00Z",
+      "lastCloseTimeUTC": "2026-11-07T21:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -354,16 +354,9 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T20:00:00Z",
+      "lastCloseTimeUTC": "2026-11-07T21:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "BOS",
-          "direction": "bearish",
-          "at": 1793235600,
-          "brokenSwingAt": 1793196000,
-          "brokenLevel": 100.4
-        },
         {
           "event": "CHoCH",
           "direction": "bullish",
@@ -440,6 +433,13 @@
           "at": 1794063600,
           "brokenSwingAt": 1794020400,
           "brokenLevel": 89.71
+        },
+        {
+          "event": "BOS",
+          "direction": "bearish",
+          "at": 1794081600,
+          "brokenSwingAt": 1794063600,
+          "brokenLevel": 89.13
         }
       ],
       "candidateOrderBlocks": [
@@ -529,6 +529,28 @@
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "retested",
           "retests": 1,
+          "invalidatedAt": null
+        },
+        {
+          "side": "bearish",
+          "event": "BOS",
+          "originAt": 1794074400,
+          "confirmedAt": 1794085200,
+          "breakAt": 1794081600,
+          "brokenLevel": 89.13,
+          "body": {
+            "low": 89.71,
+            "high": 89.75
+          },
+          "wick": {
+            "low": 89.54,
+            "high": 89.9
+          },
+          "volumeRatio": 2.04,
+          "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
           "invalidatedAt": null
         }
       ],
@@ -730,7 +752,7 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 4,
+        "activeCandidateOB": 5,
         "openFVG": 6,
         "structureEventsInLookback": 19
       }
