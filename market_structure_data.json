@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T23:00:00Z",
+      "lastCloseTimeUTC": "2026-11-08T00:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -158,8 +158,8 @@
           "volumeRatio": 1.785,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "fresh",
-          "retests": 0,
+          "state": "retested",
+          "retests": 1,
           "invalidatedAt": null
         }
       ],
@@ -255,14 +255,6 @@
           "high": 78011.0,
           "state": "open",
           "fullyFilledAt": null
-        },
-        {
-          "side": "bearish",
-          "formedAt": 1794067200,
-          "low": 75770.8,
-          "high": 75895.0,
-          "state": "open",
-          "fullyFilledAt": null
         }
       ],
       "liquidity": [
@@ -346,7 +338,7 @@
       ],
       "counts": {
         "activeCandidateOB": 3,
-        "openFVG": 4,
+        "openFVG": 3,
         "structureEventsInLookback": 19
       }
     },
@@ -354,7 +346,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T23:00:00Z",
+      "lastCloseTimeUTC": "2026-11-08T00:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -528,7 +520,7 @@
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "retested",
-          "retests": 1,
+          "retests": 2,
           "invalidatedAt": null
         },
         {
@@ -549,8 +541,8 @@
           "volumeRatio": 2.04,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "fresh",
-          "retests": 0,
+          "state": "retested",
+          "retests": 1,
           "invalidatedAt": null
         }
       ],
@@ -670,14 +662,6 @@
           "high": 92.54,
           "state": "open",
           "fullyFilledAt": null
-        },
-        {
-          "side": "bearish",
-          "formedAt": 1794085200,
-          "low": 89.25,
-          "high": 89.5,
-          "state": "open",
-          "fullyFilledAt": null
         }
       ],
       "liquidity": [
@@ -761,7 +745,7 @@
       ],
       "counts": {
         "activeCandidateOB": 5,
-        "openFVG": 7,
+        "openFVG": 6,
         "structureEventsInLookback": 19
       }
     },
@@ -769,7 +753,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T20:00:00Z",
+      "lastCloseTimeUTC": "2026-11-08T00:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -860,7 +844,7 @@
       "candidateOrderBlocks": [
         {
           "side": "bearish",
-          "event": "CHoCH",
+          "event": "BOS",
           "originAt": 1790121600,
           "confirmedAt": 1790179200,
           "breakAt": 1790164800,
@@ -1030,13 +1014,6 @@
       "liquidity": [
         {
           "kind": "equal_highs",
-          "level": 87316.2,
-          "firstPivotAt": 1790020800,
-          "secondPivotAt": 1790136000,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_highs",
           "level": 85185.2,
           "firstPivotAt": 1790323200,
           "secondPivotAt": 1790510400,
@@ -1047,20 +1024,6 @@
           "level": 84125.9,
           "firstPivotAt": 1791878400,
           "secondPivotAt": 1791964800,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_highs",
-          "level": 80909.65,
-          "firstPivotAt": 1792886400,
-          "secondPivotAt": 1793016000,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_highs",
-          "level": 81876.85,
-          "firstPivotAt": 1793174400,
-          "secondPivotAt": 1793289600,
           "note": "Potential chart liquidity; not live order-book data"
         },
         {
@@ -1076,40 +1039,19 @@
           "firstPivotAt": 1792267200,
           "secondPivotAt": 1792353600,
           "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_lows",
-          "level": 79250.2,
-          "firstPivotAt": 1792843200,
-          "secondPivotAt": 1792972800,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_lows",
-          "level": 79395.05,
-          "firstPivotAt": 1792972800,
-          "secondPivotAt": 1793088000,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_lows",
-          "level": 76357.0,
-          "firstPivotAt": 1793318400,
-          "secondPivotAt": 1793376000,
-          "note": "Potential chart liquidity; not live order-book data"
         }
       ],
       "counts": {
         "activeCandidateOB": 3,
         "openFVG": 4,
-        "structureEventsInLookback": 16
+        "structureEventsInLookback": 15
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T20:00:00Z",
+      "lastCloseTimeUTC": "2026-11-08T00:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -1454,20 +1396,6 @@
       "liquidity": [
         {
           "kind": "equal_highs",
-          "level": 119.835,
-          "firstPivotAt": 1790020800,
-          "secondPivotAt": 1790136000,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_highs",
-          "level": 122.125,
-          "firstPivotAt": 1791144000,
-          "secondPivotAt": 1791288000,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_highs",
           "level": 102.72,
           "firstPivotAt": 1792900800,
           "secondPivotAt": 1793016000,
@@ -1505,7 +1433,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "daily",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T00:00:00Z",
+      "lastCloseTimeUTC": "2026-11-08T00:00:00Z",
       "closedCandles": 259,
       "structure": [
         {
@@ -1927,7 +1855,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "daily",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-07T00:00:00Z",
+      "lastCloseTimeUTC": "2026-11-08T00:00:00Z",
       "closedCandles": 259,
       "structure": [
         {
