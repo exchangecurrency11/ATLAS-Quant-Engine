@@ -1,0 +1,314 @@
+{
+  "mode": "PAPER_FORWARD_OBSERVATION_NO_ORDERS",
+  "observedAtUTC": "2026-11-08T22:18:41Z",
+  "targetClosed1HUTC": "2026-11-08T22:00:00Z",
+  "status": "VERIFIED_PAPER_OBSERVATION",
+  "productionSystemModified": false,
+  "brokerOrders": false,
+  "caution": "Retest is observed at close. Hypothetical next-open fills and subsequent outcomes are reconstructed from later CLOSED candles; not actual orders, funding or orderbook fills. No missed-hour backfill.",
+  "inputSHA256": {
+    "main": "74b88fd3848332b23bad229f48d6ce906c32fef2e5f63abf14b7385c8d2c084d",
+    "1hour": "00440cdc95f033d3e22dfb57e24015c6640a75334b9a0eaefc86590c084c487d",
+    "4hour": "f8d52e1953df37b18e8a219b0f4d95c70eeb8a18ed173d84cf080eb5e84a5eab",
+    "daily": "2de570f1493586742e69cbed099a8b313bc6a9526c105bda2abaea2499d53e50"
+  },
+  "marketDataCheckedAtUTC": "2026-11-08T22:04:24.771Z",
+  "results": {
+    "BTCUSDT_PERP.A": {
+      "V4_baseline": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 0,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_filter": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 0,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_plus_retest": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 0,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      }
+    },
+    "SOLUSDT_PERP.A": {
+      "V4_baseline": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 1
+      },
+      "V7_signal_filter": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 1
+      },
+      "V7_signal_plus_retest": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 1
+      }
+    }
+  },
+  "marketContext": {
+    "BTCUSDT_PERP.A": {
+      "checkedClosed1HUTC": "2026-11-08T22:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "closeTimeUTC": "2026-11-08T22:00:00.000Z",
+          "candle": {
+            "open": 75715.9,
+            "high": 75756.6,
+            "low": 73333,
+            "close": 74097.4,
+            "volume": 28026.818999999967,
+            "volumeChangePct": 2922.1114
+          },
+          "indicators": {
+            "RSI14": 17.7051,
+            "EMA20": 75689.605,
+            "EMA50": 75937.2519,
+            "EMA200": 77149.2792,
+            "MACD": -153.5669,
+            "MACDSignal": -36.4647,
+            "MACDHistogram": -117.1023
+          },
+          "directionVotes": {
+            "score": -4,
+            "label": "bearish",
+            "votesFrom": "close vs EMA20/EMA50, MACD histogram sign, RSI50",
+            "notProbability": true
+          }
+        },
+        "4hour": {
+          "closeTimeUTC": "2026-11-08T20:00:00.000Z",
+          "candle": {
+            "open": 76038.9,
+            "high": 76070,
+            "low": 75634,
+            "close": 75894.7,
+            "volume": 7686.783000000686,
+            "volumeChangePct": 24.6494
+          },
+          "indicators": {
+            "RSI14": 40.7223,
+            "EMA20": 76309.151,
+            "EMA50": 77230.1476,
+            "EMA200": 79838.2741,
+            "MACD": -482.0143,
+            "MACDSignal": -546.6179,
+            "MACDHistogram": 64.6036
+          },
+          "directionVotes": {
+            "score": -2,
+            "label": "mixed",
+            "votesFrom": "close vs EMA20/EMA50, MACD histogram sign, RSI50",
+            "notProbability": true
+          }
+        },
+        "daily": {
+          "closeTimeUTC": "2026-11-08T00:00:00.000Z",
+          "candle": {
+            "open": 75810,
+            "high": 76210.4,
+            "low": 75526.9,
+            "close": 75836,
+            "volume": 33477.54100001068,
+            "volumeChangePct": -77.915
+          },
+          "indicators": {
+            "RSI14": 38.0184,
+            "EMA20": 78865.4948,
+            "EMA50": 79632.8225,
+            "EMA200": 74622.0991,
+            "MACD": -1473.4248,
+            "MACDSignal": -1142.4414,
+            "MACDHistogram": -330.9834
+          },
+          "directionVotes": {
+            "score": -4,
+            "label": "bearish",
+            "votesFrom": "close vs EMA20/EMA50, MACD histogram sign, RSI50",
+            "notProbability": true
+          }
+        }
+      },
+      "atr14_1H": 333.12142857,
+      "relativeVolume20_1H": 21.90615,
+      "higherTimeframesAgree": false,
+      "newStructureEventsAtClose": [
+        {
+          "event": "BOS",
+          "direction": "bearish",
+          "at": 1794171600,
+          "confirmedAt": 1794175200,
+          "brokenSwingAt": 1794157200,
+          "brokenLevel": 75634.0,
+          "knownAtUTC": "2026-11-08T22:00:00Z"
+        }
+      ],
+      "newBOSCount": 1,
+      "bosQualityBreakdown": [
+        {
+          "direction": "bearish",
+          "level": 75634.0,
+          "gate": {
+            "passed": false,
+            "reasons": [
+              "EMA20_OVEREXTENDED"
+            ],
+            "warnings": [
+              "RSI_EXTREME_NOT_A_HARD_REJECTION"
+            ],
+            "features": {
+              "breakATR": 4.612732,
+              "relativeVolume20": 21.906154,
+              "ema20ExtensionATR": 4.779654
+            }
+          },
+          "higherTFalignedWithBOS": false,
+          "momentumAlignedWithBOS": true,
+          "previousHourVolumeIncrease20Pct": true
+        }
+      ],
+      "noSignalExplanation": "HIGHER_TIMEFRAMES_NOT_ALIGNED: 4H and Daily directional votes differ or are mixed.",
+      "caution": "Trend votes and quality filters are descriptive; no live fill or entry confirmation follows from them. BOS analysis uses only closed hourly candles."
+    },
+    "SOLUSDT_PERP.A": {
+      "checkedClosed1HUTC": "2026-11-08T22:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "closeTimeUTC": "2026-11-08T22:00:00.000Z",
+          "candle": {
+            "open": 89.07,
+            "high": 89.17,
+            "low": 84.66,
+            "close": 85.91,
+            "volume": 4102698.759999992,
+            "volumeChangePct": 1191.0787
+          },
+          "indicators": {
+            "RSI14": 22.7869,
+            "EMA20": 89.0302,
+            "EMA50": 89.6033,
+            "EMA200": 92.4203,
+            "MACD": -0.3494,
+            "MACDSignal": -0.1565,
+            "MACDHistogram": -0.1928
+          },
+          "directionVotes": {
+            "score": -4,
+            "label": "bearish",
+            "votesFrom": "close vs EMA20/EMA50, MACD histogram sign, RSI50",
+            "notProbability": true
+          }
+        },
+        "4hour": {
+          "closeTimeUTC": "2026-11-08T20:00:00.000Z",
+          "candle": {
+            "open": 89.69,
+            "high": 89.98,
+            "low": 88.83,
+            "close": 89.54,
+            "volume": 1723561.6500000777,
+            "volumeChangePct": 45.3256
+          },
+          "indicators": {
+            "RSI14": 39.7452,
+            "EMA20": 90.3962,
+            "EMA50": 92.5973,
+            "EMA200": 100.647,
+            "MACD": -0.9766,
+            "MACDSignal": -1.0906,
+            "MACDHistogram": 0.114
+          },
+          "directionVotes": {
+            "score": -2,
+            "label": "mixed",
+            "votesFrom": "close vs EMA20/EMA50, MACD histogram sign, RSI50",
+            "notProbability": true
+          }
+        },
+        "daily": {
+          "closeTimeUTC": "2026-11-08T00:00:00.000Z",
+          "candle": {
+            "open": 90.09,
+            "high": 90.63,
+            "low": 88.67,
+            "close": 89.77,
+            "volume": 5435885.829999713,
+            "volumeChangePct": -60.6344
+          },
+          "indicators": {
+            "RSI14": 30.3588,
+            "EMA20": 97.2052,
+            "EMA50": 101.4134,
+            "EMA200": 93.3304,
+            "MACD": -4.593,
+            "MACDSignal": -3.975,
+            "MACDHistogram": -0.618
+          },
+          "directionVotes": {
+            "score": -4,
+            "label": "bearish",
+            "votesFrom": "close vs EMA20/EMA50, MACD histogram sign, RSI50",
+            "notProbability": true
+          }
+        }
+      },
+      "atr14_1H": 0.82642857,
+      "relativeVolume20_1H": 15.12014,
+      "higherTimeframesAgree": false,
+      "newStructureEventsAtClose": [
+        {
+          "event": "CHoCH",
+          "direction": "bearish",
+          "at": 1794171600,
+          "confirmedAt": 1794175200,
+          "brokenSwingAt": 1794153600,
+          "brokenLevel": 88.83,
+          "knownAtUTC": "2026-11-08T22:00:00Z"
+        }
+      ],
+      "newBOSCount": 0,
+      "bosQualityBreakdown": [],
+      "noSignalExplanation": "NO_NEW_1H_BOS: BOS/retest entry engine did not receive a fresh BOS at this close. This is a valid no-trigger observation, not a missed analysis.",
+      "caution": "Trend votes and quality filters are descriptive; no live fill or entry confirmation follows from them. BOS analysis uses only closed hourly candles."
+    }
+  }
+}
