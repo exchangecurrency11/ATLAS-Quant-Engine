@@ -1,0 +1,114 @@
+name: V7 Daily Rejected BOS Study (isolated paper-only)
+
+# Scheduled events require a workflow on main. This ONLY checks out V7
+# experiment and writes forensic results to the experiment. No trading,
+# production market data changes, position sizing, or alert changes.
+on:
+  schedule:
+    - cron: '45 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v7-daily-shadow-quality
+  cancel-in-progress: false
+
+jobs:
+  shadow-audit:
+    name: Measure rejected BOS after subsequent closed 1H candles
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout the isolated experiment only
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          persist-credentials: true
+
+      - name: Test no-lookahead and paper entry/exit safeguards
+        run: python3 -m unittest discover -s tests -p 'test_v7_missed_signal_audit.py' -v
+
+      - name: Download latest CLOSED 1H research feed
+        run: |
+          set -euo pipefail
+          mkdir -p forward/forensics/history
+          curl --fail --location --silent --show-error \
+            --retry 3 --retry-delay 3 --max-time 100 \
+            -H 'Cache-Control: no-cache' \
+            'https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=1hour' \
+            -o forward/forensics/history/history_1hour.json
+          test -s forward/forensics/history/history_1hour.json
+
+      - name: Verify that historical 1H inputs are continuous and closed
+        id: closed
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          from datetime import datetime, timezone
+          from v7_missed_signal_audit import load_provider,stamp,HOUR
+          source='forward/forensics/history/history_1hour.json'
+          data,_=load_provider(source)
+          closes=[bars[-1]['t']+HOUR for bars in data.values()]
+          assert len(set(closes))==1,'Provider closes differ between pairs'
+          close=closes[0]
+          now=datetime.now(timezone.utc).timestamp()
+          assert 0<=now-close<3*HOUR,'No fresh COMPLETED source window'
+          with open(os.environ['GITHUB_OUTPUT'],'a',encoding='utf-8') as f:
+              f.write('cutoff='+stamp(close)+'\n')
+              f.write('suffix='+datetime.fromtimestamp(close,timezone.utc).strftime('%Y-%m-%dT%H-00Z')+'\n')
+          print('Paper audit as-of closed 1H',stamp(close))
+          PY
+
+      - name: Score paper counterfactuals, do NOT tune V7 thresholds
+        env:
+          CLOSE: ${{ steps.closed.outputs.cutoff }}
+          TAG: ${{ steps.closed.outputs.suffix }}
+        run: |
+          set -euo pipefail
+          python3 v7_missed_signal_audit.py \
+            --hour forward/forensics/history/history_1hour.json \
+            --snapshots forward/snapshots \
+            --as-of-utc "$CLOSE" \
+            --json-output "forward/forensics/veto-study-$TAG.json" \
+            --report-output "forward/forensics/veto-study-$TAG.md"
+          cp "forward/forensics/veto-study-$TAG.json" forward/forensics/latest.json
+          cp "forward/forensics/veto-study-$TAG.md" forward/forensics/latest.md
+
+      - name: Save forensic evidence if GitHub branch update fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v7-daily-veto-paper-${{ github.run_id }}
+          path: |
+            forward/forensics/veto-study-*.json
+            forward/forensics/veto-study-*.md
+            forward/forensics/latest.json
+            forward/forensics/latest.md
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Persist results ONLY to V7 experimental branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/forensics/latest.json forward/forensics/latest.md
+          git add forward/forensics/veto-study-*.json forward/forensics/veto-study-*.md
+          if git diff --cached --quiet; then
+            echo 'No audit changes to persist'
+            exit 0
+          fi
+          git commit -m 'V7 paper: daily rejected signal outcome audit'
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v7-signal-quality-20261103
+            if git push origin HEAD:experiment/v7-signal-quality-20261103; then
+              echo 'V7 shadow quality report persisted to experiment only'
+              exit 0
+            fi
+            sleep 4
+          done
+          echo 'Daily V7 report failed to persist after 3 attempts' >&2
+          exit 1
