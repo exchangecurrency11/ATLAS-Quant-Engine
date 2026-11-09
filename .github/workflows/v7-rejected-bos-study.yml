@@ -1,0 +1,121 @@
+name: V7 Rejected BOS Counterfactual Study (paper-only)
+
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - 'v7_missed_signal_audit.py'
+      - 'tests/test_v7_missed_signal_audit.py'
+      - '.github/workflows/v7-rejected-bos-study.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v7-rejected-bos-study
+  cancel-in-progress: false
+
+jobs:
+  evaluate-observed-vetoes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated V7 branch (never production main)
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          persist-credentials: true
+
+      - name: Test rules with artificial positive/negative/no-retest cases
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v7_missed_signal_audit.py' -v
+
+      - name: Fetch current CLOSED 1H history for post-signal outcomes
+        run: |
+          set -euo pipefail
+          mkdir -p forward/forensics/history
+          curl --fail --location --silent --show-error \
+            --retry 3 --retry-delay 2 --max-time 100 \
+            -H 'Cache-Control: no-cache' \
+            'https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=1hour' \
+            -o forward/forensics/history/history_1hour.json
+          test -s forward/forensics/history/history_1hour.json
+
+      - name: Independently verify chronology and source freshness
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os
+          from datetime import datetime,timezone
+          from v7_missed_signal_audit import load_provider,stamp,HOUR
+          path="forward/forensics/history/history_1hour.json"
+          hist,_=load_provider(path)
+          last_closed=[rows[-1]["t"]+HOUR for rows in hist.values()]
+          assert len(set(last_closed))==1,"Two pairs have mismatched closing hours"
+          now=datetime.now(timezone.utc).timestamp()
+          close=last_closed[0]
+          assert close<=now, "Future/unclosed candle reported by source"
+          assert now-close < 7200, "Source is too stale to serve as recent audit"
+          earliest=[rows[0]["t"] for rows in hist.values()]
+          print("History 1H cutoff:",stamp(close))
+          print("Earliest source 1H:",[stamp(x) for x in earliest])
+          print("Source freshness sec:",int(now-close))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("as_of_utc="+stamp(close)+"\n")
+              f.write("report_tag="+datetime.fromtimestamp(close,timezone.utc).strftime("%Y-%m-%dT%H-00Z")+"\n")
+          PY
+
+      - name: Compare point-in-time rejected BOS to later retest/stop/TP
+        shell: bash
+        env:
+          AS_OF_UTC: ${{ steps.source.outputs.as_of_utc }}
+          REPORT_TAG: ${{ steps.source.outputs.report_tag }}
+        run: |
+          set -euo pipefail
+          python3 v7_missed_signal_audit.py \
+            --hour forward/forensics/history/history_1hour.json \
+            --snapshots forward/snapshots \
+            --as-of-utc "$AS_OF_UTC" \
+            --json-output "forward/forensics/veto-study-$REPORT_TAG.json" \
+            --report-output "forward/forensics/veto-study-$REPORT_TAG.md"
+          cp "forward/forensics/veto-study-$REPORT_TAG.json" forward/forensics/latest.json
+          cp "forward/forensics/veto-study-$REPORT_TAG.md" forward/forensics/latest.md
+
+      - name: Preserve forensic outputs even if GitHub push fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v7-rejected-bos-study-${{ github.run_id }}
+          path: |
+            forward/forensics/veto-study-*.json
+            forward/forensics/veto-study-*.md
+          if-no-files-found: ignore
+          retention-days: 35
+
+      - name: Commit ONLY paper forensic report to experiment branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/forensics/latest.json forward/forensics/latest.md
+          git add forward/forensics/veto-study-*.json forward/forensics/veto-study-*.md
+          if git diff --cached --quiet; then
+            echo 'No new forensic report.'
+            exit 0
+          fi
+          git commit -m "V7 forensic: frozen BOS veto and subsequent counterfactual outcomes"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v7-signal-quality-20261103
+            if git push origin HEAD:experiment/v7-signal-quality-20261103; then
+              echo 'V7 forensic evidence stored in experimental branch.'
+              exit 0
+            fi
+            sleep 4
+          done
+          echo 'Could not save report to experiment branch' >&2
+          exit 1
