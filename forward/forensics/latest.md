@@ -7,12 +7,18 @@
 | Ölçüm | Sonuç |
 |---|---:|
 | Gerçek zamanında kaydedilmiş BOS | 4 |
+| Eski V4 tarafından kabul edilen BOS | 1 |
 | V7 tarafından kabul edilen BOS | 1 |
 | V7 tarafından engellenen BOS | 3 |
+| **Yalnız yeni V7 filtrelerinin ek reddi** | **0** |
+| Yalnız yeni V7 filtreleri sayesinde kaçınılan zarar | 0 |
+| Yalnız yeni V7 filtreleri nedeniyle kaçırılan kârlı paper | 0 |
 | Engellenip karşıolgusal işlem kapanan | 1 |
 | Bunlardan maliyet sonrası zarar/sıfır | 1 |
 | Bunlardan maliyet sonrası kâr | 0 |
 | Henüz kesin karşıolgusal işlem sonucu yok | 2 |
+
+**Atıf uyarısı:** Engellenen BOS'lardan kaçınılan zarar, otomatik olarak yeni V7 filtrelerine atfedilemez. V4 de reddediyorsa bu eski filtrelerin etkisidir.
 
 ## BTC ve SOL ayrı sonuç
 
