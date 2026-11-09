@@ -245,6 +245,13 @@ def evaluate(snapshots_path, hourly_path, *, as_of):
             row["classification"]="UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
         results.append(row)
     rejection=[r for r in results if not r["acceptedByV7"]]
+    # Crucial attribution: the old V4 rules also veto many BOS events.
+    # Count V7's INCREMENTAL protection separately, never credit old
+    # 4H/Daily or prior-hour-volume vetoes to new ATR/RVOL/EMA gates.
+    incremental_v7=[r for r in results
+                    if r["acceptedByV4"] and not r["acceptedByV7"]]
+    incremental_closed=[r for r in incremental_v7
+                        if r["counterfactual"]["status"]=="CLOSED_COUNTERFACTUAL_PAPER"]
     closed=[r for r in rejection if r["counterfactual"]["status"]=="CLOSED_COUNTERFACTUAL_PAPER"]
     positive=[r for r in closed if r["counterfactual"]["assumedNetR"]>0]
     negative=[r for r in closed if r["counterfactual"]["assumedNetR"]<=0]
@@ -286,8 +293,14 @@ def evaluate(snapshots_path, hourly_path, *, as_of):
         ],
         "summary":{
             "forwardObservedBOS":len(results),
+            "v4AcceptedBOS":sum(r["acceptedByV4"] for r in results),
             "v7AcceptedBOS":sum(r["acceptedByV7"] for r in results),
             "v7RejectedBOS":len(rejection),
+            "incrementalV7VetoOfV4AcceptedBOS":len(incremental_v7),
+            "incrementalV7AvoidedNegativePaper":sum(
+                r["counterfactual"]["assumedNetR"]<=0 for r in incremental_closed),
+            "incrementalV7MissedPositivePaper":sum(
+                r["counterfactual"]["assumedNetR"]>0 for r in incremental_closed),
             "rejectedWithClosedCounterfactualPaperTrade":len(closed),
             "avoidedNegativeOrFlatPaper":len(negative),
             "potentiallyMissedPositivePaper":len(positive),
@@ -315,12 +328,18 @@ def fmt_report(obj):
         "",
         "| Ölçüm | Sonuç |","|---|---:|",
         "| Gerçek zamanında kaydedilmiş BOS | "+str(s["forwardObservedBOS"])+" |",
+        "| Eski V4 tarafından kabul edilen BOS | "+str(s["v4AcceptedBOS"])+" |",
         "| V7 tarafından kabul edilen BOS | "+str(s["v7AcceptedBOS"])+" |",
         "| V7 tarafından engellenen BOS | "+str(s["v7RejectedBOS"])+" |",
+        "| **Yalnız yeni V7 filtrelerinin ek reddi** | **"+str(s["incrementalV7VetoOfV4AcceptedBOS"])+"** |",
+        "| Yalnız yeni V7 filtreleri sayesinde kaçınılan zarar | "+str(s["incrementalV7AvoidedNegativePaper"])+" |",
+        "| Yalnız yeni V7 filtreleri nedeniyle kaçırılan kârlı paper | "+str(s["incrementalV7MissedPositivePaper"])+" |",
         "| Engellenip karşıolgusal işlem kapanan | "+str(s["rejectedWithClosedCounterfactualPaperTrade"])+" |",
         "| Bunlardan maliyet sonrası zarar/sıfır | "+str(s["avoidedNegativeOrFlatPaper"])+" |",
         "| Bunlardan maliyet sonrası kâr | "+str(s["potentiallyMissedPositivePaper"])+" |",
         "| Henüz kesin karşıolgusal işlem sonucu yok | "+str(s["rejectedWithoutCompletedActionableCounterfactual"])+" |",
+        "",
+        "**Atıf uyarısı:** Engellenen BOS'lardan kaçınılan zarar, otomatik olarak yeni V7 filtrelerine atfedilemez. V4 de reddediyorsa bu eski filtrelerin etkisidir.",
         "",
         "## BTC ve SOL ayrı sonuç",
         "",
