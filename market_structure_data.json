@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-10T16:00:00Z",
+      "lastCloseTimeUTC": "2026-11-10T17:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -111,8 +111,8 @@
             "low": 81155.4,
             "high": 81898.7
           },
-          "volumeRatio": 5.911,
-          "fvgConfluence": true,
+          "volumeRatio": 5.921,
+          "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "retested",
           "retests": 1,
@@ -312,13 +312,6 @@
       "liquidity": [
         {
           "kind": "equal_highs",
-          "level": 77738.3,
-          "firstPivotAt": 1793448000,
-          "secondPivotAt": 1793466000,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_highs",
           "level": 78187.85,
           "firstPivotAt": 1793523600,
           "secondPivotAt": 1793541600,
@@ -382,6 +375,13 @@
         },
         {
           "kind": "equal_lows",
+          "level": 75681.45,
+          "firstPivotAt": 1794103200,
+          "secondPivotAt": 1794117600,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_lows",
           "level": 75755.4,
           "firstPivotAt": 1794117600,
           "secondPivotAt": 1794132000,
@@ -405,7 +405,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-10T16:00:00Z",
+      "lastCloseTimeUTC": "2026-11-10T17:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -713,6 +713,14 @@
           "high": 86.01,
           "state": "open",
           "fullyFilledAt": null
+        },
+        {
+          "side": "bearish",
+          "formedAt": 1794326400,
+          "low": 82.67,
+          "high": 83.41,
+          "state": "open",
+          "fullyFilledAt": null
         }
       ],
       "liquidity": [
@@ -803,7 +811,7 @@
       ],
       "counts": {
         "activeCandidateOB": 5,
-        "openFVG": 5,
+        "openFVG": 6,
         "structureEventsInLookback": 15
       }
     },
