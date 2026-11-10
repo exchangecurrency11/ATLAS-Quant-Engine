@@ -200,7 +200,10 @@ def make_gates(h4,day):
         ts=bos["at"]+3600
         n4=bisect_right(closes4,ts)
         nD=bisect_right(closesD,ts)
-        if (n4,nD) not in cache:
+        # Direction is part of the cache key. Reusing a bullish EMA vote
+        # for a bearish BOS at the same 4H/D closure is an invalid signal.
+        trend_key=(n4,nD,side)
+        if trend_key not in cache:
             checks=[]
             for h,n in ((h4,n4),(day,nD)):
                 if n<205:
@@ -208,8 +211,8 @@ def make_gates(h4,day):
                 else:
                     h200=ema([bar["c"] for bar in h[:n]],200)
                     checks.append(signed*(h[n-1]["c"]-h200)>0)
-            cache[(n4,nD)]=checks
-        score+=sum(cache[(n4,nD)])
+            cache[trend_key]=checks
+        score+=sum(cache[trend_key])
         if score<3:
             reasons.append("EMA20_50_200_MULTI_TF_SCORE_BELOW_3_OF_4")
         # RSI14 / MACD sign and V7 bos volume/retest are already V4+V7 gates.
