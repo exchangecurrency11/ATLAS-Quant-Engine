@@ -1,0 +1,90 @@
+name: V8 BTC ETH SOL full MTF confluence backtest (paper, no orders)
+
+# Research-only. 63 checksum-verified Binance monthly 1H archives 2025-01
+# to 2026-09. 4H/D from exact closed 1H. No trading or main branch writes.
+on:
+  push:
+    branches:
+      - experiment/v8-three-asset-confluence-paper-20261110
+    paths:
+      - v8_three_asset_confluence_backtest.py
+      - tests/test_v8_three_asset_confluence_backtest.py
+      - .github/workflows/v8-three-asset-paper-backtest.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-btc-eth-sol-threeasset-paper
+  cancel-in-progress: false
+
+jobs:
+  multi-tf-backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout research branch only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Verify causal entry, stop-first, Fibonacci and leverage risk tests
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v8_three_asset_confluence_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_signal_quality_v7.py' -q
+
+      - name: Fetch Binance BTC ETH SOL 1H SHA256 archives and replay paper strategies
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/v8_three_asset_paper
+          python3 -u v8_three_asset_confluence_backtest.py \
+            --start 2025-01 --end 2026-09 \
+            --split 2026-07-01T00:00:00Z \
+            --workers 6 \
+            --output forward/v8_three_asset_paper/latest.json \
+            --report forward/v8_three_asset_paper/latest.md
+
+      - name: Save research result even if run fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8-three-asset-paper-${{ github.run_id }}
+          path: forward/v8_three_asset_paper/
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Commit only historical paper report to experiment
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s forward/v8_three_asset_paper/latest.json
+          python3 - <<'PY'
+          import json
+          obj=json.load(open("forward/v8_three_asset_paper/latest.json"))
+          assert obj["mode"]=="V8_BTC_ETH_SOL_HISTORICAL_PAPER_BACKTEST_NO_ORDERS"
+          assert obj["archiveSHA256VerifiedCount"]==63
+          assert set(obj["results"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert obj["brokerOrders"] is False and obj["liveSignalEnabled"] is False
+          assert obj["productionSystemModified"] is False
+          for coin in obj["results"].values():
+              assert coin["candles"]["daily"]>=600
+              assert set(coin["variants"])=={"V4_baseline","V7_quality_retest",
+                                            "V8_all_OHLCV_confluence"}
+          print("V8_COMPLETED_PAPER_REPORT_VERIFIED")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v8_three_asset_paper/latest.json forward/v8_three_asset_paper/latest.md
+          git commit -m "V8 paper: BTC ETH SOL 1H 4H Daily confluence benchmark and risk audit"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v8-three-asset-confluence-paper-20261110
+            if git push origin HEAD:experiment/v8-three-asset-confluence-paper-20261110; then
+              echo "V8_PAPER_RESULTS_SAVED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
