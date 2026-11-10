@@ -94,11 +94,17 @@ def parse_metrics(rows,day):
         raise ValueError("Unexpected metrics column names")
     data={}
     bad=Counter()
+    previous_source_timestamp=None
     for fields in rows[1:]:
         try:
             if len(fields)<8 or fields[1]!=SYMBOL:raise ValueError("symbol/schema")
             t=unix(fields[0].strip().replace(" ","T")+"Z")
             if not start<=t<start+DAY or t%FIVE:raise ValueError("not on 5-min boundary")
+            if previous_source_timestamp is not None and t<previous_source_timestamp:
+                # Source CSV rows are not necessarily sorted; timestamps still
+                # identify 5m buckets uniquely. Warn, then sort by key for QA.
+                bad["UNSORTED_SOURCE_ROW_TRANSITIONS"]+=1
+            previous_source_timestamp=t
             if t in data:bad["DUPLICATE"]+=1;continue
             oi=valid_float(fields[2]);oi_usdt=valid_float(fields[3])
             if oi<=0 or oi_usdt<=0:bad["NONPOSITIVE_OI"]+=1;continue
@@ -229,11 +235,17 @@ def audit(start_date,end_date):
     holes_5m=summarize_holes(klines_5m,begin,FIVE,expected_5m)
     taker_recon=verify_granularity(klines_1h,klines_5m)
     ratios=[]
+    ratio_outliers=[]
     for t,r in oi.items():
         candle=klines_5m.get(t)
         if candle and r["takerRatio"] is not None and candle["takerSellBase"]>0:
             calculated=candle["takerBuyBase"]/candle["takerSellBase"]
-            ratios.append(abs(calculated-r["takerRatio"]))
+            difference=abs(calculated-r["takerRatio"])
+            ratios.append(difference)
+            if difference>0.05:
+                ratio_outliers.append({"utc":utc(t),"difference":round(difference,7),
+                                       "metricRatio":r["takerRatio"],
+                                       "klineDerivedRatio":round(calculated,7)})
     monthly={
         "lastAvailableMonthlyArchive":funding_month if funding else None,
         "records":len(funding) if funding else 0,
@@ -282,6 +294,9 @@ def audit(start_date,end_date):
             "pairedSamples":len(ratios),
             "medianAbsoluteRatioDifference":round(median(ratios),7) if ratios else None,
             "maxAbsoluteRatioDifference":round(max(ratios),7) if ratios else None,
+            "above0p01AbsoluteDifference":sum(v>0.01 for v in ratios),
+            "above0p05AbsoluteDifference":sum(v>0.05 for v in ratios),
+            "topOutliers":sorted(ratio_outliers,key=lambda x:-x["difference"])[:8],
             "note":"Post-June2026 metric start label T compared to same-period [T,T+5m) Binance taker_buy/(total-taker_buy); evaluation only retrospective.",
         },
         "fundingRate":monthly,
@@ -311,7 +326,8 @@ def render(d):
         f"- Boş 5m dilimleri: {oi['holes']['missingCount']}. Kayıp aralık grubu: {oi['holes']['missingGroups']}.",
         f"- En büyük kesinti: {oi['holes']['largestGapCandles']} adet 5m dilimi.",
         f"- Son OI etiketi: {oi['latestRecordedLabelUTC']}. En erken kullanılabilir kapanış: {oi['latestSafeAvailabilityUTC']}.",
-        f"- Geçersiz kayıt türleri: {oi['invalid']}.",
+        f"- Kaynak satırları zaman sırasından sapma: {oi['invalid'].get('UNSORTED_SOURCE_ROW_TRANSITIONS',0)} (içeriğin kayıp olduğu anlamına gelmez; zaman damgasına göre sıralanmalı).",
+        f"- Geçersiz/uyarı kayıt türleri: {oi['invalid']}.",
         "- Önemli: 2026-06-25 sonrası Binance metrics create_time başlangıç etiketlidir. T+5m öncesi stratejiye verilirse ileriye bakma hatası olur.",
         "",
         "## Taker hacmi tutarlılığı",
@@ -320,6 +336,7 @@ def render(d):
         f"- 5m verisi eksik olduğu için test edilemeyen 1H: {m['hourlyBarsMissing5mInput']}.",
         f"- Metrikteki taker ratio ve resmî 5m mumlardan eşleşen örnek: {r['pairedSamples']}.",
         f"- Aynı pencere için median ratio mutlak farkı: {r['medianAbsoluteRatioDifference']}.",
+        f"- 0,01 üzerinde ratio farkı: {r['above0p01AbsoluteDifference']}; 0,05 üzerinde: {r['above0p05AbsoluteDifference']}.",
         "",
         "## Funding Rate",
         f"- En son bu çalışmada doğrulanan aylık paket: {f['lastAvailableMonthlyArchive']}.",
