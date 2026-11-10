@@ -1,0 +1,70 @@
+name: 'V9 BTC ETH SOL prestart data compatibility read-only probe'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_prestart_data_compatibility_probe.py
+      - .github/workflows/v9-prestart-live-data-compatibility.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit-input:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout paper research only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Validate code syntax and previous signal safety tests
+        run: |
+          python3 -m py_compile v9_prestart_data_compatibility_probe.py v9_next4h_prestart_paper_capture.py
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_prestart_paper_capture.py' -v
+      - name: Probe source fields WITHOUT predicting a candle
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v9_prestart_data_compatibility_probe.py
+      - name: Assert three real perpetual sources and preserve status
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open('forward/v9_next_4h_color/live_source_compatibility.json'))
+          assert x["status"]=="LIVE_SOURCE_ONLY_READONLY_NO_PREDICTIONS"
+          assert x["noOrders"] and x["noProductionEdits"]
+          assert set(x["assets"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert all(z["takerBuyBaseAvailable"] and z["tradeCountAvailable"]
+                     for z in x["assets"].values())
+          print("V9_THREE_ASSET_LIVE_SOURCE_PROBE_RECORDED",x["allThreeReadyForInput"])
+          PY
+      - name: Upload captured evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-three-assets-source-probe-${{ github.run_id }}
+          path: forward/v9_next_4h_color/live_source_compatibility.json
+          if-no-files-found: ignore
+          retention-days: 45
+      - name: Save only research compatibility report
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_next_4h_color/live_source_compatibility.json
+          git commit -m "V9 BTC ETH SOL OHLCV+tx+bv prestart source audit"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_SOURCE_AUDIT_RESEARCH_ONLY_PUBLISHED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
