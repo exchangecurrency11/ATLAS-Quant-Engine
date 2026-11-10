@@ -1,0 +1,96 @@
+name: 'V9 predict NEXT 4H own GREEN RED before start: BTC ETH SOL'
+
+on:
+  push:
+    branches: [research/v9-next-4h-green-red-20261111]
+    paths:
+      - v9_next_4h_color_research.py
+      - tests/test_v9_next_4h_color_research.py
+      - .github/workflows/v9-next-4h-green-red.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-next4h-before-start-3-assets
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 58
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Install fixed transparent logistic baseline
+        run: |
+          python3 -m pip install --disable-pip-version-check 'scikit-learn==1.7.2'
+      - name: Assert model predicts next OWN 4H candle color at T minus 5 minutes only
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_next_4h_color_research.py' -v
+          python3 -m unittest discover -s tests -p 'test_download_binance_um_history.py' -q
+      - name: SHA256 verify 45 historical Binance USD-M months per BTC ETH SOL and run fixed six-fold chronology
+        run: |
+          python3 -u v9_next_4h_color_research.py \
+            --json forward/v9_next_4h_color/latest.json \
+            --markdown forward/v9_next_4h_color/latest.md
+      - name: Enforce true before-start timestamp and own-open-close labels
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open('forward/v9_next_4h_color/latest.json'))
+          assert x["mode"]=="V9_NEXT_4H_OWN_OPEN_CLOSE_COLOR_PREDICT_T_MINUS_5M"
+          assert x["status"]=="HISTORICAL_CAUSAL_WALK_FORWARD_RESEARCH_ONLY"
+          assert x["decisionLeadMinutes"]==5
+          assert "future4H.close>future4H.open" in x["targetDefinition"]
+          assert x["latestFullyClosed4HAtDecisionEndsHoursBeforeTargetStart"]==4
+          assert x["latestFullyClosed1HAtDecisionEndsHoursBeforeTargetStart"]==1
+          assert x["noTarget4HOpenAvailableAtDecision"] is True
+          assert len(x["sixPredeclaredWalkForwardFolds"])==6
+          assert x["fixedConfidenceThresholds"]==[.55,.6,.65]
+          assert x["fixedRegularizationC"]==.2
+          assert x["previouslyInspectedHistoricalDataNotProspective"] is True
+          assert x["brokerOrders"] is False and x["productionModified"] is False
+          assert x["liveTradingApproved"] is False
+          assert set(x["overall"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert sum(r["verifiedMonthlyZIPs"] for r in x["sources"].values())==135
+          for s,z in x["overall"].items():
+            assert z["samples"]>=2000
+            for name in ("majorityBaseline","lastClosed4HColorBaseline","logisticAll","logistic55","logistic60","logistic65"):
+              r=z[name]
+              assert 0<=r["correct"]<=r["predictions"]<=z["samples"]
+              assert r["userGoal75Observed"] is False or r["hitRatePct"]>=75
+            assert z["logistic60"]["predictions"]<=z["logistic55"]["predictions"]
+            assert z["logistic65"]["predictions"]<=z["logistic60"]["predictions"]
+            assert len(x["folds"][s])==6
+          print("V9_PREDICT_NEXT_4H_OWN_OPEN_CLOSE_GREEN_RED_CAUSAL_AUDIT_PASSED")
+          PY
+      - name: Preserve report even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-next4h-color-${{ github.run_id }}
+          path: forward/v9_next_4h_color/
+          if-no-files-found: ignore
+          retention-days: 90
+      - name: Commit research results ONLY to experiment branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_next_4h_color/latest.json forward/v9_next_4h_color/latest.md
+          git commit -m "V9: benchmark next 4H own candle GREEN RED at T-5m 3 assets 6 chronological folds"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-next-4h-green-red-20261111
+            if git push origin HEAD:research/v9-next-4h-green-red-20261111; then
+              echo "V9_NEXT4H_GREEN_RED_CAUSAL_RESULTS_PUBLISHED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
