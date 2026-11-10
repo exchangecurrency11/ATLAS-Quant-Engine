@@ -36,7 +36,8 @@ jobs:
         run: |
           python3 -u v9_next_4h_color_research.py \
             --json forward/v9_next_4h_color/latest.json \
-            --markdown forward/v9_next_4h_color/latest.md
+            --markdown forward/v9_next_4h_color/latest.md \
+            --models forward/v9_next_4h_color/frozen_models.json
       - name: Enforce true before-start timestamp and own-open-close labels
         run: |
           python3 - <<'PY'
@@ -54,6 +55,15 @@ jobs:
           assert x["fixedRegularizationC"]==.2
           assert x["previouslyInspectedHistoricalDataNotProspective"] is True
           assert x["brokerOrders"] is False and x["productionModified"] is False
+          m=json.load(open('forward/v9_next_4h_color/frozen_models.json'))
+          assert m["status"]=="FROZEN_SHADOW_PAPER_MODELS_NOT_PRODUCTION"
+          assert m["cutoffUTC"]=="2026-10-01T00:00:00Z"
+          assert m["noProspectiveTrackRecordYet"] and not m["currentTradingSignalsAuthorized"]
+          assert set(m["symbols"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          for model in m["symbols"].values():
+            assert model["predictBefore4HStartsMinutes"]==5
+            n=model["featureCount"]
+            assert n==len(model["scalerMean"])==len(model["scalerScale"])==len(model["logisticCoefficients"])
           assert x["liveTradingApproved"] is False
           assert set(x["overall"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
           assert sum(r["verifiedMonthlyZIPs"] for r in x["sources"].values())==135
@@ -83,7 +93,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add forward/v9_next_4h_color/latest.json forward/v9_next_4h_color/latest.md
+          git add forward/v9_next_4h_color/latest.json forward/v9_next_4h_color/latest.md forward/v9_next_4h_color/frozen_models.json
           git commit -m "V9: benchmark next 4H own candle GREEN RED at T-5m 3 assets 6 chronological folds"
           for attempt in 1 2 3; do
             git pull --rebase origin research/v9-next-4h-green-red-20261111
