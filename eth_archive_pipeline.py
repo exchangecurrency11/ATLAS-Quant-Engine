@@ -78,15 +78,28 @@ def verify_chunk(entry, step):
     end=(month_start(month_after(date)) if package=="monthly" else start+86400)
     if not rows or rows[0]["t"]<start or rows[-1]["t"]>=end:
         raise ValueError(f"Out-of-period or empty: {entry}")
-    if any(row["t"]%step or (i and row["t"]-rows[i-1]["t"]!=step)
-           for i,row in enumerate(rows)):
-        raise ValueError(f"Gaps or misaligned candles: {entry}")
+    # Archive ZIP can contain missing exchange candles: verify every published
+    # candle, preserve gaps transparently; NEVER interpolate / forward-fill.
+    gaps=[]
+    for i,row in enumerate(rows):
+        if row["t"] % step:
+            raise ValueError(f"Misaligned candle: {entry}")
+        if i:
+            gap=row["t"]-rows[i-1]["t"]
+            if gap<=0 or gap%step:
+                raise ValueError(f"Reordered, duplicated or invalid timestamps: {entry}")
+            if gap!=step:
+                gaps.append({"fromCloseUTC":iso(rows[i-1]["t"]+step),
+                             "toOpenUTC":iso(row["t"]),
+                             "missingCandles":gap//step-1})
     # Contract launch month 2019-11 is partial, but every subsequent
     # interval and month MUST be complete. Last finished day must be complete.
     launch_partial=(date=="2019-11" and interval=="1h")
     if not launch_partial and (rows[0]["t"]!=start or rows[-1]["t"]+step!=end):
-        raise ValueError(f"Incomplete package: {entry}, rows={len(rows)}")
+        raise ValueError(f"Incomplete package edges: {entry}, rows={len(rows)}")
     return entry,rows,{"url":url,"zipSha256":actual,"bars":len(rows),
+                       "missingInsidePackage":sum(g["missingCandles"] for g in gaps),
+                       "gaps":gaps,
                        "firstUTC":iso(rows[0]["t"]),"lastCloseUTC":iso(rows[-1]["t"]+step)}
 
 
@@ -118,8 +131,10 @@ def concatenate(files, interval):
     for entry,chunk,proof in sorted(files,key=lambda x:x[1][0]["t"]):
         if entry[1]!=interval:
             continue
-        if rows and chunk[0]["t"]-rows[-1]["t"]!=STEP[interval]:
-            raise ValueError(f"Cross-package gap in {interval} at {iso(chunk[0]['t'])}")
+        if rows:
+            gap=chunk[0]["t"]-rows[-1]["t"]
+            if gap<=0 or gap%STEP[interval]:
+                raise ValueError(f"Overlapping or misaligned packages in {interval}")
         rows+=chunk
     return rows
 
@@ -130,16 +145,18 @@ def aggregate(bars, tf):
         return bars
     if not bars:
         raise ValueError("Missing 1h data")
-    # Start from first aligned COMPLETE 4H or 1D UTC group.
-    first=next((i for i,b in enumerate(bars) if b["t"]%secs==0),None)
-    if first is None:
-        raise ValueError("No aligned timeframe start")
+    # A missing 1h candle invalidates its parent 4h/1d candle.
+    # Exclude incomplete groups explicitly; NEVER fabricate an OHLCV.
+    groups={}
+    for b in bars:
+        period=(b["t"]//secs)*secs
+        groups.setdefault(period,[]).append(b)
     output=[]
-    for i in range(first,len(bars)-parts+1,parts):
-        block=bars[i:i+parts]
-        if any(x["t"]!=block[0]["t"]+j*3600 for j,x in enumerate(block)):
-            raise ValueError("Gap in source 1h aggregation")
-        output.append({"t":block[0]["t"],"o":block[0]["o"],
+    for period,block in sorted(groups.items()):
+        if len(block)!=parts or any(b["t"]!=period+i*3600
+                                     for i,b in enumerate(block)):
+            continue
+        output.append({"t":period,"o":block[0]["o"],
                        "h":max(x["h"] for x in block),
                        "l":min(x["l"] for x in block),
                        "c":block[-1]["c"],"v":sum(x["v"] for x in block)})
@@ -158,14 +175,26 @@ def produce(entries, results, dest):
     by_interval["4h"]=aggregate(by_interval["1h"],"4h")
     by_interval["1d"]=aggregate(by_interval["1h"],"1d")
     counts={}
+    gap_list={}
     for tf,bars in by_interval.items():
         # Only CLOSED candles; first/last source package excludes current date.
         path=dest/f"ETHUSDT_{tf}.json"
         path.write_text(json.dumps({"symbol":"ETHUSDT","market":"Binance USDT-M perpetual",
                                     "interval":tf,"history":bars},
                                    separators=(",",":"))+"\n",encoding="utf-8")
+        gaps=[]
+        for prev,next_bar in zip(bars,bars[1:]):
+            missing=(next_bar["t"]-prev["t"])//STEP[tf]-1
+            if missing>0:
+                gaps.append({"fromCloseUTC":iso(prev["t"]+STEP[tf]),
+                             "toOpenUTC":iso(next_bar["t"]),
+                             "missingCandles":missing})
+            elif missing<0:
+                raise ValueError("Invalid derived candle chronology")
+        gap_list[tf]=gaps
         counts[tf]={"candles":len(bars),"firstOpenUTC":iso(bars[0]["t"]),
                     "lastCloseUTC":iso(bars[-1]["t"]+STEP[tf]),
+                    "missingCandles":sum(g["missingCandles"] for g in gaps),
                     "file":path.name}
     manifest={
         "status":"BINANCE_OFFICIAL_ARCHIVE_SHA256_VERIFIED",
@@ -173,6 +202,8 @@ def produce(entries, results, dest):
         "inputPackages":len(results),
         "preArchiveGap":"ETHUSDT contract launched Nov 2019, but Nov/Dec 2019 monthly 1h ZIP files returned HTTP 404; import starts Jan 2020",
         "intervals":counts,
+        "knownMissingIntervals":gap_list,
+        "dataQualityNote":"Archive is SHA256 verified, but source contains missing UTC bars. Gaps are reported and never filled.",
         "sourceFiles":sorted([dict(package=e[0],interval=e[1],date=e[2],**proof)
                               for e,_,proof in results],
                              key=lambda x:(x["interval"],x["date"])),
@@ -182,8 +213,8 @@ def produce(entries, results, dest):
     (dest/"STATUS.md").write_text(
         "# ETHUSDT Binance USD-M perpetual — verified historical candles\n\n"
         "Data: Binance official monthly/daily kline ZIP files; SHA256 checksums verified.\n\n"
-        "| Interval | Candles | First open UTC | Last close UTC |\n|---|---:|---|---|\n"+
-        "\n".join(f"| {tf} | {row['candles']} | {row['firstOpenUTC']} | {row['lastCloseUTC']} |"
+        "| Interval | Available candles | Missing candles | First open UTC | Last close UTC |\n|---|---:|---:|---|---|\n"+
+        "\n".join(f"| {tf} | {row['candles']} | {row['missingCandles']} | {row['firstOpenUTC']} | {row['lastCloseUTC']} |"
                   for tf,row in counts.items())+
         "\n\nNo same-day live candle, funding or real order information is claimed. "
         "The 4H and Daily candles are resampled from exact continuous Binance 1H data. "
