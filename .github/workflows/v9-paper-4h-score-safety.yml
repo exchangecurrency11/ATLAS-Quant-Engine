@@ -1,0 +1,69 @@
+name: 'V9 4H green red after-close scorer unit and empty-ledger safety'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_next4h_paper_outcome_score.py
+      - tests/test_v9_next4h_paper_outcome_score.py
+      - v9_next4h_prestart_paper_capture.py
+      - .github/workflows/v9-paper-4h-score-safety.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout only experimental branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Verify finished target candle scoring, no future and tamper detection
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_paper_outcome_score.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_prestart_paper_capture.py' -v
+      - name: Verify empty prospective ledger cannot fabricate success
+        run: |
+          python3 v9_next4h_paper_outcome_score.py
+          python3 - <<'PY'
+          import json
+          x=json.load(open('forward/v9_next_4h_color/paper_scoreboard.json'))
+          assert x["status"]=="V9_FORWARD_PAPER_SCOREBOARD_RESEARCH_ONLY"
+          assert x["totalPriorTargetForecasts"]==0
+          assert x["completedTargetForecasts"]==0
+          for v in x["allSymbols"].values():
+            assert v["all"]["hitRatePct"] is None
+            assert v["all"]["evaluable"]==0
+          assert x["no75PercentClaimUntilProspectiveEfficacy"]
+          assert x["realOrders"] is False and x["productionModified"] is False
+          print("V9_EMPTY_PAPER_LEDGER_CORRECTLY_NOT_A_SUCCESS")
+          PY
+      - name: Preserve ledger verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-next4h-score-safety-${{ github.run_id }}
+          path: forward/v9_next_4h_color/paper_scoreboard.json
+          if-no-files-found: ignore
+      - name: Save only ZERO-FORECAST baseline scoreboard on research branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_next_4h_color/paper_scoreboard.json
+          git commit -m "V9: zero-forward-forecast ledger baseline, after-close scoring audit"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_SCORE_SAFETY_COMMITTED"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
