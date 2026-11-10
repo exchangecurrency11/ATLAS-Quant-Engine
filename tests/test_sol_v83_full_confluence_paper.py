@@ -36,6 +36,7 @@ class V83FullConfluenceTest(unittest.TestCase):
         f,_=data()
         br,rt=435,437
         f[br]={"t":br*SECS4,"o":91,"h":92,"l":87,"c":87.3,"v":250}
+        f[br-1]["h"]=96
         f[rt]={"t":rt*SECS4,"o":89.5,"h":90.5,"l":86,"c":87.2,"v":110}
         first=wyckoff_proxy(f,br,rt)
         self.assertTrue(first["wyckoffSOWProxy"])
@@ -56,6 +57,7 @@ class V83FullConfluenceTest(unittest.TestCase):
           {"t":start+j*3600,"o":candle["o"],"h":candle["h"],
            "l":candle["l"],"c":candle["c"]+(2-j)*.04,"v":100}
           for j in range(4)]
+        hours[-2]["c"]=candle["c"]+.3
         hours[-1]["o"]=hours[-1]["c"]+.3
         hours[-1]["c"]=candle["c"]
         z=last_hour_rejection(hours,f,i)
@@ -70,7 +72,7 @@ class V83FullConfluenceTest(unittest.TestCase):
         i=430
         four[i+1]={"t":four[i+1]["t"],"o":88,"h":110,
                    "l":50,"c":91,"v":100}
-        event={"boxHigh":92}
+        event={"boxHigh":90}
         paper=paper_short_next4h(four,event,i,2)
         self.assertEqual(paper["status"],"ILLUSTRATIVE_PAPER_ONLY")
         self.assertEqual(paper["reason"],"STOP_FIRST")
@@ -83,7 +85,7 @@ class V83FullConfluenceTest(unittest.TestCase):
         i=430
         four[i+1]={"t":four[i+1]["t"],"o":88,"h":89,"l":85,"c":88,"v":100}
         four[i+2]={"t":four[i+2]["t"],"o":103,"h":105,"l":90,"c":95,"v":100}
-        paper=paper_short_next4h(four,{"boxHigh":92},i,2)
+        paper=paper_short_next4h(four,{"boxHigh":90},i,2)
         self.assertEqual(paper["reason"],"STOP_GAP_THROUGH")
         self.assertTrue(paper["gapsCanExceedPlannedRisk"])
         self.assertLess(paper["netPnLUSDT"],-.5)
