@@ -1,0 +1,2190 @@
+{
+  "mode": "V8_BTC_ETH_SOL_HISTORICAL_PAPER_BACKTEST_NO_ORDERS",
+  "status": "RESEARCH_ONLY_NOT_LIVE_SIGNAL",
+  "createdUTC": "2026-11-10T17:15:59.857539+00:00",
+  "period": {
+    "start": "2025-01",
+    "end": "2026-09",
+    "holdoutStartsUTC": "2026-07-01T00:00:00Z"
+  },
+  "universe": [
+    "BTCUSDT_PERP.A",
+    "ETHUSDT_PERP.A",
+    "SOLUSDT_PERP.A"
+  ],
+  "assumedCostsBpsPerSide": 9,
+  "riskCapPerTradeUSDT": 0.5,
+  "startingEquityUSDTPerCoin": 100.0,
+  "leverageCapIsolated": 10,
+  "archiveSHA256VerifiedCount": 63,
+  "sourceManifest": [
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-01",
+      "sha256": "9ebc05c9b3d5ab3591edf65bc5c7e5dbc2f96c1efc4adc4ea198c651a99a41b1",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-01.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-02",
+      "sha256": "077d761098eb5f2dbde65457833b9edab41ea6475284a77fcce0d4bec1bfb5cf",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-02.zip",
+      "bars": 672
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-03",
+      "sha256": "08043384c3336b0fa3eeee06e113a6f1eceb6d3fbe7b2971e9b9fa83625fdfb9",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-03.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-04",
+      "sha256": "2adf7c1be412e43b04a128e997f4cb1e5e7f895f55b6e1bf66621807f221f274",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-04.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-05",
+      "sha256": "2e736b9e792d5ae9d4607d7426e4530020762cb898d580b18d3fb0faf9d2ba8e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-05.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-06",
+      "sha256": "d1d9d5dbc540c19dd882305937f864f59ffffe3f5449a6b05b3f95efe7ca4fbc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-06.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-07",
+      "sha256": "3f471677b97cd3c5c21e9c1420bd7d58c1fe4041a3d2e195369277298ca01ea2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-07.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-08",
+      "sha256": "a240d3f766cd5c3db4e0702cf660ae54e327ec67aba169dda55abc90cae055f2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-08.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-09",
+      "sha256": "b15817c45e6ca13a907772591664a57e00b711fecbd4285f2a16ced3c7023019",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-09.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-10",
+      "sha256": "b173469216acad36058ecfb0a5432471ec58b3c49032246d4d687dd3af8ae34a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-10.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-11",
+      "sha256": "75c4069b8ff93aa5e4064e885077426fd60f1cf6239a728b2d4ca543c0210d5a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-11.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2025-12",
+      "sha256": "41e977a06b7806ce1398aca5f9075befffd1e6303db891795f3b179c762709ec",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2025-12.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-01",
+      "sha256": "6c15ac5fd895f26bf8e12b99df6ab9aff637dc94b37128e92c75c19887d0e3b3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-01.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-02",
+      "sha256": "886fca9764139a1d71d97ca28e0a2cb30fe7d6f44df9be2539452c02e3c4e775",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-02.zip",
+      "bars": 672
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-03",
+      "sha256": "41199df2dd62c333ea306d28de331bfffbbfed03609d100c63b2de1d173f7414",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-03.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-04",
+      "sha256": "c822801b16eb317f4672e376a73664f2e5f9180409c57b6c7517707f4f873e8c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-04.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-05",
+      "sha256": "9a367708c90de999a7a9d3114fd111ff28203b13c8daef77d154b5216fb571f7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-05.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-06",
+      "sha256": "30bba473837a672a6a00a181a447446852414e6927bbda6684f873571788e9aa",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-06.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-07",
+      "sha256": "a09f135066ace6925ce051ddbbdd4345c103423fbe35d32b568942de978dcc7c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-07.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-08",
+      "sha256": "b594301740cbb39818ba60f2835e4636aa06ad53308e25b1b312f1443fe0ccfe",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-08.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "BTCUSDT",
+      "month": "2026-09",
+      "sha256": "07ab960882feb6d3120673a851f2a654c4c3f31f3a74d1f3fc4b0351a8ee1483",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/BTCUSDT/1h/BTCUSDT-1h-2026-09.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-01",
+      "sha256": "99928eb8fdc5d565d317b0e9685e07fc5f9487510a39b8675d7374cfdfcbec82",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-01.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-02",
+      "sha256": "d7466620f50bb4048080ece1deab8eb0298274413a3eb2a9f4c728536ab3c647",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-02.zip",
+      "bars": 672
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-03",
+      "sha256": "9dbad1e542ff8344fe8610450cf71d5cb98e1af2e8f2d7a31dbe8679ef263535",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-03.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-04",
+      "sha256": "238c691129962d9fe08aaca46ea367f911e62c58a820a8e5ded371bff7f4eec4",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-04.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-05",
+      "sha256": "201829c864a26677ad0b53df5b0491e9eab00e6f48e1a8bf5204dc7d794dd7ea",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-05.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-06",
+      "sha256": "45763ee27ad110703c6f71d9ec80711de151b8211b14ad98cc978c4d5ede82ce",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-06.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-07",
+      "sha256": "e9c3dcdc09de72386d465800c665169c9bb011f35d350f9ba9bc7b4d7a69876a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-07.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-08",
+      "sha256": "51e3ca163e71691ebb43b55d32698fc5c25506ee2e663a195d8e5863194908c2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-08.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-09",
+      "sha256": "9bab9763c1cb2514df907fe6e746405428c6b92cbba12ff987e4820b2a8726f0",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-09.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-10",
+      "sha256": "6c51ad0250f4174431c659a3c78f604be087e844c6357e5feb48ba66e6bb1862",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-10.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-11",
+      "sha256": "4b5622c5a4021b1a0bbd2d1fa754bb9d13f16b996d79b153b423bce0ec154f26",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-11.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2025-12",
+      "sha256": "80080e1303ab2c291e53103d703b5364ef7a3da36dff5eaf45044cca74e764ca",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2025-12.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-01",
+      "sha256": "d710e68cf0dc90759814647dff64be482b4ddd05bf332adb73126885cb2979d7",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-01.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-02",
+      "sha256": "97a6c569361290917a525d54d5f964af1642dc2d281e162834b4685157016540",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-02.zip",
+      "bars": 672
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-03",
+      "sha256": "9ec5e28db1e0cf093d5c756b85329b43db730d6f95d6ed142a9717044b1423c2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-03.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-04",
+      "sha256": "b72f5a102bd468d1e3d0c3b88619f1354a29e81616f9a55935d2e00837958e4b",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-04.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-05",
+      "sha256": "5353c7cd71f610eca5a58824606ba1016efe34ea62fd6e6cd4b7be4b99277915",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-05.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-06",
+      "sha256": "138bcb6c7c8be4c5bdd8048fa417be551fbeffe4024f64e5bef5ed30d3069d8c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-06.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-07",
+      "sha256": "2036043c65c50a1d9c817db4c93db0c97366851d7cc972efb8c5e951cb3b5cdd",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-07.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-08",
+      "sha256": "52ede96e424bdc696b4b7a30aa4f2f56cd32e58c6598400f25f7b3a8dc6cf50a",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-08.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "ETHUSDT",
+      "month": "2026-09",
+      "sha256": "f4331baae4c38dea1c123836808f3353473cc28e6c434ef38669698ae79599fc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/ETHUSDT/1h/ETHUSDT-1h-2026-09.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-01",
+      "sha256": "372c98abd2da7bbf5e3cbe39e77296efe8ef4e94790c3566da3e7313049be7b8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-01.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-02",
+      "sha256": "863aeb10c3a31a5a9da82bfbcd120740c0dfad5078a579366caf166f58aa9b34",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-02.zip",
+      "bars": 672
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-03",
+      "sha256": "04b504d8b18dd7e1dce1783add7bf40df0132e6aeb9932a46aa950abb36534c8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-03.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-04",
+      "sha256": "6d8784d0f2a936547897208aada8b57d65104bd3307cfad32fb39070fdec061c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-04.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-05",
+      "sha256": "b20e5bf7b4b3b3d5c0720ab2d845e03933ef08f15d3f06570b009463ba12bad9",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-05.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-06",
+      "sha256": "72d6fb9cab913d98220a06a08eab70a361b5d3fe84ea9701420e5f2cc6600c7c",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-06.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-07",
+      "sha256": "5493328c22d7804c5d64298e8ac475786eba0810cdb31ed6e6134f5720c5a2bc",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-07.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-08",
+      "sha256": "ff753c960ffa6954d3ffbd9cf6f6a0f8d2b280753cf868ebe4732d0afa5a14fd",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-08.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-09",
+      "sha256": "9cbc37023b21bc91802c38689466e2bb69eff22e55d6012c6feb0bb0bce56004",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-09.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-10",
+      "sha256": "8d96a116ab53375ce88316e027fed319d625a35756122ed4af79d75584133b97",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-10.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-11",
+      "sha256": "2a74a61262338c2cf49d65d3c2d8e5a27ccda3aadedeaeed87da0544b13fb372",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-11.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2025-12",
+      "sha256": "7c25b753fd893dc697b5e7e8a1d0db904150181be7b7991cc05ba5b08f81cdf8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2025-12.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-01",
+      "sha256": "cc16e807c075689a73f096b7603c34f1eb289bb2d782ca8f6147e4c42632ed0e",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-01.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-02",
+      "sha256": "fa733e5400163477fa7eb544a9a7e04b5c679656720ccb7f92787fcf33b739a3",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-02.zip",
+      "bars": 672
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-03",
+      "sha256": "5e9440665d3e4209c320e2dab897b5c3cec578800e669e1c8fd3503f157e49f1",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-03.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-04",
+      "sha256": "2f466580c7e6d2e02a67a968428c0f9b987108cc1a3d2ba73061e329aacc208d",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-04.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-05",
+      "sha256": "0d1aef19746005c140421825e55e482813330b19a82cbc24c792aaa0464778c2",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-05.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-06",
+      "sha256": "5b6913a64843d8fbadeb1783a2ef064291355a33e6eee84f1a03c7e8786acfc8",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-06.zip",
+      "bars": 720
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-07",
+      "sha256": "4a88a47617d14ba94ae2154732ba724497a8cad66b1d7fd0dc4f88216101e0be",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-07.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-08",
+      "sha256": "a25ab3dfcabcf739bd8bdd0aa9b1302865d5c571a5af1ffbb6e4a2b5c26ab833",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-08.zip",
+      "bars": 744
+    },
+    {
+      "symbol": "SOLUSDT",
+      "month": "2026-09",
+      "sha256": "e57f44b7df1f4269a06395c161d3618d9bc3d56e623825fc77c615d713a19263",
+      "url": "https://data.binance.vision/data/futures/um/monthly/klines/SOLUSDT/1h/SOLUSDT-1h-2026-09.zip",
+      "bars": 720
+    }
+  ],
+  "derivativesStatus": "OI/funding/taker unavailable point-in-time throughout common history; EXCLUDED, not faked.",
+  "results": {
+    "BTCUSDT": {
+      "candles": {
+        "1hour": 15312,
+        "4hour": 3828,
+        "daily": 638
+      },
+      "variants": {
+        "V4_baseline": {
+          "alertsAll": 56,
+          "completedTradesAll": 17,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 16,
+            "positive": 7,
+            "winRatePct": 43.75,
+            "avgNetR": 0.07809,
+            "sumNetR": 1.24946,
+            "profitFactor": 1.1346,
+            "maxSequentialDrawdownR": 5.26023,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 100.7798,
+            "netPnLUSDT": 0.7798,
+            "maxEquityDrawdownUSDT": 2.23708,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-02-26T23:00:00Z",
+                "side": "bearish",
+                "entry": 84390.9,
+                "stop": 86602.9264286,
+                "exitKnownUTC": "2025-02-27T07:00:00Z",
+                "netR": -1.06867,
+                "hypotheticalQty": 0.00021151,
+                "illustrativeInitialMarginUSDT": 1.785,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-03-10T04:00:00Z",
+                "side": "bearish",
+                "entry": 82000.1,
+                "stop": 83168.2342857,
+                "exitKnownUTC": "2025-03-10T10:00:00Z",
+                "netR": -1.12636,
+                "hypotheticalQty": 0.00037812,
+                "illustrativeInitialMarginUSDT": 3.1006,
+                "netPnlUSDT": -0.4975,
+                "equityAfterUSDT": 99.0025,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-04-07T06:00:00Z",
+                "side": "bearish",
+                "entry": 76915.9,
+                "stop": 78070.2557143,
+                "exitKnownUTC": "2025-04-07T14:00:00Z",
+                "netR": 0.54673,
+                "hypotheticalQty": 0.0003829,
+                "illustrativeInitialMarginUSDT": 2.9451,
+                "netPnlUSDT": 0.24166,
+                "equityAfterUSDT": 99.24416,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-05-02T18:00:00Z",
+                "side": "bullish",
+                "entry": 97340.9,
+                "stop": 96578.8507143,
+                "exitKnownUTC": "2025-05-02T22:00:00Z",
+                "netR": -1.22992,
+                "hypotheticalQty": 0.00052944,
+                "illustrativeInitialMarginUSDT": 5.1536,
+                "netPnlUSDT": -0.49622,
+                "equityAfterUSDT": 98.74793,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-08-25T08:00:00Z",
+                "side": "bearish",
+                "entry": 111469.7,
+                "stop": 112538.66,
+                "exitKnownUTC": "2025-08-25T17:00:00Z",
+                "netR": -1.1877,
+                "hypotheticalQty": 0.00038889,
+                "illustrativeInitialMarginUSDT": 4.335,
+                "netPnlUSDT": -0.49374,
+                "equityAfterUSDT": 98.25419,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-08-30T02:00:00Z",
+                "side": "bearish",
+                "entry": 107405.0,
+                "stop": 108399.96,
+                "exitKnownUTC": "2025-08-30T05:00:00Z",
+                "netR": -1.19431,
+                "hypotheticalQty": 0.00041343,
+                "illustrativeInitialMarginUSDT": 4.4404,
+                "netPnlUSDT": -0.49127,
+                "equityAfterUSDT": 97.76292,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-11-14T06:00:00Z",
+                "side": "bearish",
+                "entry": 97491.8,
+                "stop": 99268.2335714,
+                "exitKnownUTC": "2025-11-15T06:00:00Z",
+                "netR": 0.68031,
+                "hypotheticalQty": 0.00025043,
+                "illustrativeInitialMarginUSDT": 2.4415,
+                "netPnlUSDT": 0.30265,
+                "equityAfterUSDT": 98.06557,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "entry": 85541.4,
+                "stop": 87145.6971429,
+                "exitKnownUTC": "2025-11-21T13:00:00Z",
+                "netR": 1.90402,
+                "hypotheticalQty": 0.00027887,
+                "illustrativeInitialMarginUSDT": 2.3855,
+                "netPnlUSDT": 0.85184,
+                "equityAfterUSDT": 98.91741,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-02-05T04:00:00Z",
+                "side": "bearish",
+                "entry": 71199.0,
+                "stop": 72962.8378571,
+                "exitKnownUTC": "2026-02-05T19:00:00Z",
+                "netR": 1.92734,
+                "hypotheticalQty": 0.00026141,
+                "illustrativeInitialMarginUSDT": 1.8612,
+                "netPnlUSDT": 0.88867,
+                "equityAfterUSDT": 99.80608,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-02-11T16:00:00Z",
+                "side": "bearish",
+                "entry": 66489.4,
+                "stop": 66943.5742857,
+                "exitKnownUTC": "2026-02-11T17:00:00Z",
+                "netR": -1.26351,
+                "hypotheticalQty": 0.00086961,
+                "illustrativeInitialMarginUSDT": 5.782,
+                "netPnlUSDT": -0.49903,
+                "equityAfterUSDT": 99.30705,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-03-16T10:00:00Z",
+                "side": "bullish",
+                "entry": 73219.7,
+                "stop": 72323.2085714,
+                "exitKnownUTC": "2026-03-17T02:00:00Z",
+                "netR": 1.85299,
+                "hypotheticalQty": 0.00048288,
+                "illustrativeInitialMarginUSDT": 3.5356,
+                "netPnlUSDT": 0.80215,
+                "equityAfterUSDT": 100.1092,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-05-05T15:00:00Z",
+                "side": "bullish",
+                "entry": 81284.0,
+                "stop": 80851.1928571,
+                "exitKnownUTC": "2026-05-05T23:00:00Z",
+                "netR": -0.67139,
+                "hypotheticalQty": 0.00086338,
+                "illustrativeInitialMarginUSDT": 7.0179,
+                "netPnlUSDT": -0.25088,
+                "equityAfterUSDT": 99.85832,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-05-27T05:00:00Z",
+                "side": "bearish",
+                "entry": 75543.0,
+                "stop": 75979.2371429,
+                "exitKnownUTC": "2026-05-27T09:00:00Z",
+                "netR": -1.31171,
+                "hypotheticalQty": 0.00087256,
+                "illustrativeInitialMarginUSDT": 6.5916,
+                "netPnlUSDT": -0.49929,
+                "equityAfterUSDT": 99.35902,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-05-27T17:00:00Z",
+                "side": "bearish",
+                "entry": 75273.9,
+                "stop": 75773.715,
+                "exitKnownUTC": "2026-05-28T04:00:00Z",
+                "netR": 1.72891,
+                "hypotheticalQty": 0.00078198,
+                "illustrativeInitialMarginUSDT": 5.8862,
+                "netPnlUSDT": 0.67573,
+                "equityAfterUSDT": 100.03476,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-06-02T06:00:00Z",
+                "side": "bearish",
+                "entry": 70235.1,
+                "stop": 71405.9857143,
+                "exitKnownUTC": "2026-06-02T20:00:00Z",
+                "netR": 1.89203,
+                "hypotheticalQty": 0.00038541,
+                "illustrativeInitialMarginUSDT": 2.707,
+                "netPnlUSDT": 0.85382,
+                "equityAfterUSDT": 100.88858,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-06-05T16:00:00Z",
+                "side": "bearish",
+                "entry": 60400.8,
+                "stop": 62415.5978571,
+                "exitKnownUTC": "2026-06-06T16:00:00Z",
+                "netR": -0.22931,
+                "hypotheticalQty": 0.00023546,
+                "illustrativeInitialMarginUSDT": 1.4222,
+                "netPnlUSDT": -0.10879,
+                "equityAfterUSDT": 100.7798,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 1,
+            "positive": 0,
+            "winRatePct": 0.0,
+            "avgNetR": -1.4772,
+            "sumNetR": -1.4772,
+            "profitFactor": 0.0,
+            "maxSequentialDrawdownR": 1.4772,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 99.5,
+            "netPnLUSDT": -0.5,
+            "maxEquityDrawdownUSDT": 0.5,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2026-08-14T15:00:00Z",
+                "side": "bearish",
+                "entry": 62581.0,
+                "stop": 62817.0542857,
+                "exitKnownUTC": "2026-08-14T16:00:00Z",
+                "netR": -1.4772,
+                "hypotheticalQty": 0.0014339,
+                "illustrativeInitialMarginUSDT": 8.9735,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "qualityGateRejectedBOS": 0,
+          "qualityGateRejectedRetest": 0
+        },
+        "V7_quality_retest": {
+          "alertsAll": 22,
+          "completedTradesAll": 8,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 8,
+            "positive": 3,
+            "winRatePct": 37.5,
+            "avgNetR": 0.03185,
+            "sumNetR": 0.25481,
+            "profitFactor": 1.052,
+            "maxSequentialDrawdownR": 4.67286,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 100.22389,
+            "netPnLUSDT": 0.22389,
+            "maxEquityDrawdownUSDT": 1.98505,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-03-10T04:00:00Z",
+                "side": "bearish",
+                "entry": 82000.1,
+                "stop": 83168.2342857,
+                "exitKnownUTC": "2025-03-10T10:00:00Z",
+                "netR": -1.12636,
+                "hypotheticalQty": 0.00038002,
+                "illustrativeInitialMarginUSDT": 3.1161,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-05-02T18:00:00Z",
+                "side": "bullish",
+                "entry": 97340.9,
+                "stop": 96578.8507143,
+                "exitKnownUTC": "2025-05-02T22:00:00Z",
+                "netR": -1.22992,
+                "hypotheticalQty": 0.0005308,
+                "illustrativeInitialMarginUSDT": 5.1669,
+                "netPnlUSDT": -0.4975,
+                "equityAfterUSDT": 99.0025,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-08-30T02:00:00Z",
+                "side": "bearish",
+                "entry": 107405.0,
+                "stop": 108399.96,
+                "exitKnownUTC": "2025-08-30T05:00:00Z",
+                "netR": -1.19431,
+                "hypotheticalQty": 0.00041658,
+                "illustrativeInitialMarginUSDT": 4.4742,
+                "netPnlUSDT": -0.49501,
+                "equityAfterUSDT": 98.50749,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-11-14T19:00:00Z",
+                "side": "bearish",
+                "entry": 95023.9,
+                "stop": 96422.7671429,
+                "exitKnownUTC": "2025-11-15T03:00:00Z",
+                "netR": -1.12227,
+                "hypotheticalQty": 0.00031374,
+                "illustrativeInitialMarginUSDT": 2.9812,
+                "netPnlUSDT": -0.49254,
+                "equityAfterUSDT": 98.01495,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "entry": 85541.4,
+                "stop": 87145.6971429,
+                "exitKnownUTC": "2025-11-21T13:00:00Z",
+                "netR": 1.90402,
+                "hypotheticalQty": 0.00027873,
+                "illustrativeInitialMarginUSDT": 2.3843,
+                "netPnlUSDT": 0.8514,
+                "equityAfterUSDT": 98.86635,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-02-05T04:00:00Z",
+                "side": "bearish",
+                "entry": 71199.0,
+                "stop": 72962.8378571,
+                "exitKnownUTC": "2026-02-05T19:00:00Z",
+                "netR": 1.92734,
+                "hypotheticalQty": 0.00026128,
+                "illustrativeInitialMarginUSDT": 1.8603,
+                "netPnlUSDT": 0.88821,
+                "equityAfterUSDT": 99.75456,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-05-27T18:00:00Z",
+                "side": "bearish",
+                "entry": 74838.2,
+                "stop": 75775.7642857,
+                "exitKnownUTC": "2026-05-28T18:00:00Z",
+                "netR": 1.32562,
+                "hypotheticalQty": 0.00046515,
+                "illustrativeInitialMarginUSDT": 3.4811,
+                "netPnlUSDT": 0.57812,
+                "equityAfterUSDT": 100.33268,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-06-05T16:00:00Z",
+                "side": "bearish",
+                "entry": 60400.8,
+                "stop": 62415.5978571,
+                "exitKnownUTC": "2026-06-06T16:00:00Z",
+                "netR": -0.22931,
+                "hypotheticalQty": 0.00023546,
+                "illustrativeInitialMarginUSDT": 1.4222,
+                "netPnlUSDT": -0.10879,
+                "equityAfterUSDT": 100.22389,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 0,
+            "positive": 0,
+            "winRatePct": null,
+            "avgNetR": null,
+            "sumNetR": 0,
+            "profitFactor": null,
+            "maxSequentialDrawdownR": null,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 100.0,
+            "netPnLUSDT": 0.0,
+            "maxEquityDrawdownUSDT": 0.0,
+            "tradesDetail": []
+          },
+          "qualityGateRejectedBOS": 35,
+          "qualityGateRejectedRetest": 3
+        },
+        "V8_all_OHLCV_confluence": {
+          "alertsAll": 23,
+          "completedTradesAll": 4,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 4,
+            "positive": 3,
+            "winRatePct": 75.0,
+            "avgNetR": 0.73924,
+            "sumNetR": 2.95694,
+            "profitFactor": 3.4042,
+            "maxSequentialDrawdownR": 1.22992,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 101.4244,
+            "netPnLUSDT": 1.4244,
+            "maxEquityDrawdownUSDT": 0.5,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-05-02T18:00:00Z",
+                "side": "bullish",
+                "entry": 97340.9,
+                "stop": 96578.8507143,
+                "exitKnownUTC": "2025-05-02T22:00:00Z",
+                "netR": -1.22992,
+                "hypotheticalQty": 0.00053347,
+                "illustrativeInitialMarginUSDT": 5.1928,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "entry": 85541.4,
+                "stop": 87145.6971429,
+                "exitKnownUTC": "2025-11-21T13:00:00Z",
+                "netR": 1.90402,
+                "hypotheticalQty": 0.00028295,
+                "illustrativeInitialMarginUSDT": 2.4204,
+                "netPnlUSDT": 0.8643,
+                "equityAfterUSDT": 100.3643,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-02-05T15:00:00Z",
+                "side": "bearish",
+                "entry": 69365.4,
+                "stop": 70953.8735714,
+                "exitKnownUTC": "2026-02-05T21:00:00Z",
+                "netR": 1.9214,
+                "hypotheticalQty": 0.00029183,
+                "illustrativeInitialMarginUSDT": 2.0243,
+                "netPnlUSDT": 0.89069,
+                "equityAfterUSDT": 101.25499,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-06-05T18:00:00Z",
+                "side": "bearish",
+                "entry": 60786.5,
+                "stop": 62424.54,
+                "exitKnownUTC": "2026-06-06T18:00:00Z",
+                "netR": 0.36145,
+                "hypotheticalQty": 0.00028613,
+                "illustrativeInitialMarginUSDT": 1.7393,
+                "netPnlUSDT": 0.16941,
+                "equityAfterUSDT": 101.4244,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 0,
+            "positive": 0,
+            "winRatePct": null,
+            "avgNetR": null,
+            "sumNetR": 0,
+            "profitFactor": null,
+            "maxSequentialDrawdownR": null,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 100.0,
+            "netPnLUSDT": 0.0,
+            "maxEquityDrawdownUSDT": 0.0,
+            "tradesDetail": []
+          },
+          "qualityGateRejectedBOS": 37,
+          "qualityGateRejectedRetest": 9
+        }
+      },
+      "V8GateDiagnostics": {
+        "bosEvaluated": 60,
+        "bosRejectedReasons": {
+          "EMA20_OVEREXTENDED": 23,
+          "WEAK_BREAK_ATR": 14,
+          "LOW_RELATIVE_VOLUME": 11
+        },
+        "retestEvaluated": 13,
+        "retestRejectedReasons": {
+          "FIB_OB_FVG_LIQUIDITY_PATTERN_SCORE_BELOW_2_OF_6": 8,
+          "WEAK_RETEST_REJECTION": 3
+        },
+        "retestFeatureObserved": {
+          "FVGTouch": 9,
+          "candlestickEngulfingOrPinbar": 5,
+          "orderBlockRetest": 4
+        }
+      }
+    },
+    "ETHUSDT": {
+      "candles": {
+        "1hour": 15312,
+        "4hour": 3828,
+        "daily": 638
+      },
+      "variants": {
+        "V4_baseline": {
+          "alertsAll": 51,
+          "completedTradesAll": 19,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 15,
+            "positive": 6,
+            "winRatePct": 40.0,
+            "avgNetR": -0.06,
+            "sumNetR": -0.89994,
+            "profitFactor": 0.8873,
+            "maxSequentialDrawdownR": 5.48854,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 99.37784,
+            "netPnLUSDT": -0.62216,
+            "maxEquityDrawdownUSDT": 2.47512,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-03-04T08:00:00Z",
+                "side": "bearish",
+                "entry": 2079.67,
+                "stop": 2138.6092857,
+                "exitKnownUTC": "2025-03-04T15:00:00Z",
+                "netR": -1.06351,
+                "hypotheticalQty": 0.00797668,
+                "illustrativeInitialMarginUSDT": 1.6589,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-03-08T02:00:00Z",
+                "side": "bearish",
+                "entry": 2131.95,
+                "stop": 2168.2097143,
+                "exitKnownUTC": "2025-03-08T13:00:00Z",
+                "netR": -1.10583,
+                "hypotheticalQty": 0.01240734,
+                "illustrativeInitialMarginUSDT": 2.6452,
+                "netPnlUSDT": -0.4975,
+                "equityAfterUSDT": 99.0025,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-04-09T03:00:00Z",
+                "side": "bearish",
+                "entry": 1418.48,
+                "stop": 1472.0795,
+                "exitKnownUTC": "2025-04-09T07:00:00Z",
+                "netR": -1.04764,
+                "hypotheticalQty": 0.00881546,
+                "illustrativeInitialMarginUSDT": 1.2505,
+                "netPnlUSDT": -0.49501,
+                "equityAfterUSDT": 98.50749,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-05-20T05:00:00Z",
+                "side": "bullish",
+                "entry": 2570.0,
+                "stop": 2534.917,
+                "exitKnownUTC": "2025-05-20T07:00:00Z",
+                "netR": -1.13186,
+                "hypotheticalQty": 0.01240367,
+                "illustrativeInitialMarginUSDT": 3.1877,
+                "netPnlUSDT": -0.49254,
+                "equityAfterUSDT": 98.01495,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-05-22T13:00:00Z",
+                "side": "bullish",
+                "entry": 2656.72,
+                "stop": 2622.4875714,
+                "exitKnownUTC": "2025-05-22T14:00:00Z",
+                "netR": -1.13969,
+                "hypotheticalQty": 0.01256134,
+                "illustrativeInitialMarginUSDT": 3.3372,
+                "netPnlUSDT": -0.49007,
+                "equityAfterUSDT": 97.52488,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-07-08T22:00:00Z",
+                "side": "bullish",
+                "entry": 2608.1,
+                "stop": 2572.0986429,
+                "exitKnownUTC": "2025-07-09T19:00:00Z",
+                "netR": 1.8696,
+                "hypotheticalQty": 0.01198214,
+                "illustrativeInitialMarginUSDT": 3.1251,
+                "netPnlUSDT": 0.8065,
+                "equityAfterUSDT": 98.33137,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2025-07-20T17:00:00Z",
+                "side": "bullish",
+                "entry": 3808.96,
+                "stop": 3742.9978571,
+                "exitKnownUTC": "2025-07-20T18:00:00Z",
+                "netR": -1.10394,
+                "hypotheticalQty": 0.00675183,
+                "illustrativeInitialMarginUSDT": 2.5717,
+                "netPnlUSDT": -0.49166,
+                "equityAfterUSDT": 97.83971,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-07-27T13:00:00Z",
+                "side": "bullish",
+                "entry": 3825.08,
+                "stop": 3759.1318571,
+                "exitKnownUTC": "2025-07-28T13:00:00Z",
+                "netR": 0.68121,
+                "hypotheticalQty": 0.00671669,
+                "illustrativeInitialMarginUSDT": 2.5692,
+                "netPnlUSDT": 0.30174,
+                "equityAfterUSDT": 98.14146,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2025-08-13T10:00:00Z",
+                "side": "bullish",
+                "entry": 4706.8,
+                "stop": 4600.6235714,
+                "exitKnownUTC": "2025-08-14T10:00:00Z",
+                "netR": 0.40478,
+                "hypotheticalQty": 0.0042801,
+                "illustrativeInitialMarginUSDT": 2.0146,
+                "netPnlUSDT": 0.18395,
+                "equityAfterUSDT": 98.3254,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2025-09-25T20:00:00Z",
+                "side": "bearish",
+                "entry": 3910.36,
+                "stop": 3952.6491429,
+                "exitKnownUTC": "2025-09-26T02:00:00Z",
+                "netR": -0.49977,
+                "hypotheticalQty": 0.00996653,
+                "illustrativeInitialMarginUSDT": 3.8973,
+                "netPnlUSDT": -0.21064,
+                "equityAfterUSDT": 98.11476,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-10-22T11:00:00Z",
+                "side": "bearish",
+                "entry": 3818.83,
+                "stop": 3860.8827143,
+                "exitKnownUTC": "2025-10-22T14:00:00Z",
+                "netR": -0.49679,
+                "hypotheticalQty": 0.01002673,
+                "illustrativeInitialMarginUSDT": 3.829,
+                "netPnlUSDT": -0.20947,
+                "equityAfterUSDT": 97.90529,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-01-29T14:00:00Z",
+                "side": "bearish",
+                "entry": 2934.59,
+                "stop": 2946.1627143,
+                "exitKnownUTC": "2026-01-29T15:00:00Z",
+                "netR": 1.54356,
+                "hypotheticalQty": 0.02904344,
+                "illustrativeInitialMarginUSDT": 8.5231,
+                "netPnlUSDT": 0.51881,
+                "equityAfterUSDT": 98.4241,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-01-30T06:00:00Z",
+                "side": "bearish",
+                "entry": 2745.78,
+                "stop": 2816.2022143,
+                "exitKnownUTC": "2026-01-31T06:00:00Z",
+                "netR": 0.72513,
+                "hypotheticalQty": 0.00652986,
+                "illustrativeInitialMarginUSDT": 1.793,
+                "netPnlUSDT": 0.33345,
+                "equityAfterUSDT": 98.75754,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-02-02T03:00:00Z",
+                "side": "bearish",
+                "entry": 2260.53,
+                "stop": 2326.4506429,
+                "exitKnownUTC": "2026-02-02T14:00:00Z",
+                "netR": -0.39506,
+                "hypotheticalQty": 0.00705516,
+                "illustrativeInitialMarginUSDT": 1.5948,
+                "netPnlUSDT": -0.18373,
+                "equityAfterUSDT": 98.57381,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-06-04T00:00:00Z",
+                "side": "bearish",
+                "entry": 1812.45,
+                "stop": 1835.7353571,
+                "exitKnownUTC": "2026-06-04T03:00:00Z",
+                "netR": 1.85989,
+                "hypotheticalQty": 0.01856537,
+                "illustrativeInitialMarginUSDT": 3.3649,
+                "netPnlUSDT": 0.80403,
+                "equityAfterUSDT": 99.37784,
+                "exitReason": "TP3_COMPLETE"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 4,
+            "positive": 3,
+            "winRatePct": 75.0,
+            "avgNetR": 0.65762,
+            "sumNetR": 2.63047,
+            "profitFactor": 2.8752,
+            "maxSequentialDrawdownR": 1.40279,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 101.20671,
+            "netPnLUSDT": 1.20671,
+            "maxEquityDrawdownUSDT": 0.5,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2026-07-20T18:00:00Z",
+                "side": "bullish",
+                "entry": 1906.94,
+                "stop": 1864.6120714,
+                "exitKnownUTC": "2026-07-21T18:00:00Z",
+                "netR": 0.42549,
+                "hypotheticalQty": 0.01092647,
+                "illustrativeInitialMarginUSDT": 2.0836,
+                "netPnlUSDT": 0.19679,
+                "equityAfterUSDT": 100.19679,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-08-21T13:00:00Z",
+                "side": "bullish",
+                "entry": 2387.75,
+                "stop": 2361.5487857,
+                "exitKnownUTC": "2026-08-21T22:00:00Z",
+                "netR": 1.83596,
+                "hypotheticalQty": 0.01639389,
+                "illustrativeInitialMarginUSDT": 3.9145,
+                "netPnlUSDT": 0.78862,
+                "equityAfterUSDT": 100.98541,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-09-21T03:00:00Z",
+                "side": "bullish",
+                "entry": 2660.76,
+                "stop": 2639.7718571,
+                "exitKnownUTC": "2026-09-21T10:00:00Z",
+                "netR": 1.77181,
+                "hypotheticalQty": 0.01939675,
+                "illustrativeInitialMarginUSDT": 5.161,
+                "netPnlUSDT": 0.72131,
+                "equityAfterUSDT": 101.70671,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-09-27T10:00:00Z",
+                "side": "bullish",
+                "entry": 2715.13,
+                "stop": 2702.9964286,
+                "exitKnownUTC": "2026-09-27T14:00:00Z",
+                "netR": -1.40279,
+                "hypotheticalQty": 0.02937581,
+                "illustrativeInitialMarginUSDT": 7.9759,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 101.20671,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "qualityGateRejectedBOS": 0,
+          "qualityGateRejectedRetest": 0
+        },
+        "V7_quality_retest": {
+          "alertsAll": 16,
+          "completedTradesAll": 5,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 3,
+            "positive": 0,
+            "winRatePct": 0.0,
+            "avgNetR": -0.85818,
+            "sumNetR": -2.57455,
+            "profitFactor": 0.0,
+            "maxSequentialDrawdownR": 2.57455,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 98.81831,
+            "netPnLUSDT": -1.18169,
+            "maxEquityDrawdownUSDT": 1.18169,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-04-09T03:00:00Z",
+                "side": "bearish",
+                "entry": 1418.48,
+                "stop": 1472.0795,
+                "exitKnownUTC": "2025-04-09T07:00:00Z",
+                "netR": -1.04764,
+                "hypotheticalQty": 0.00890428,
+                "illustrativeInitialMarginUSDT": 1.2631,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-05-20T05:00:00Z",
+                "side": "bullish",
+                "entry": 2570.0,
+                "stop": 2534.917,
+                "exitKnownUTC": "2025-05-20T07:00:00Z",
+                "netR": -1.13186,
+                "hypotheticalQty": 0.01252865,
+                "illustrativeInitialMarginUSDT": 3.2199,
+                "netPnlUSDT": -0.4975,
+                "equityAfterUSDT": 99.0025,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-02-02T03:00:00Z",
+                "side": "bearish",
+                "entry": 2260.53,
+                "stop": 2326.4506429,
+                "exitKnownUTC": "2026-02-02T14:00:00Z",
+                "netR": -0.39506,
+                "hypotheticalQty": 0.00707266,
+                "illustrativeInitialMarginUSDT": 1.5988,
+                "netPnlUSDT": -0.18419,
+                "equityAfterUSDT": 98.81831,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 2,
+            "positive": 1,
+            "winRatePct": 50.0,
+            "avgNetR": -0.48865,
+            "sumNetR": -0.9773,
+            "profitFactor": 0.3033,
+            "maxSequentialDrawdownR": 1.40279,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 99.69679,
+            "netPnLUSDT": -0.30321,
+            "maxEquityDrawdownUSDT": 0.5,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2026-07-20T18:00:00Z",
+                "side": "bullish",
+                "entry": 1906.94,
+                "stop": 1864.6120714,
+                "exitKnownUTC": "2026-07-21T18:00:00Z",
+                "netR": 0.42549,
+                "hypotheticalQty": 0.01092647,
+                "illustrativeInitialMarginUSDT": 2.0836,
+                "netPnlUSDT": 0.19679,
+                "equityAfterUSDT": 100.19679,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-09-27T10:00:00Z",
+                "side": "bullish",
+                "entry": 2715.13,
+                "stop": 2702.9964286,
+                "exitKnownUTC": "2026-09-27T14:00:00Z",
+                "netR": -1.40279,
+                "hypotheticalQty": 0.02937581,
+                "illustrativeInitialMarginUSDT": 7.9759,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.69679,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "qualityGateRejectedBOS": 38,
+          "qualityGateRejectedRetest": 1
+        },
+        "V8_all_OHLCV_confluence": {
+          "alertsAll": 16,
+          "completedTradesAll": 3,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 1,
+            "positive": 0,
+            "winRatePct": 0.0,
+            "avgNetR": -1.13186,
+            "sumNetR": -1.13186,
+            "profitFactor": 0.0,
+            "maxSequentialDrawdownR": 1.13186,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 99.5,
+            "netPnLUSDT": -0.5,
+            "maxEquityDrawdownUSDT": 0.5,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-05-20T05:00:00Z",
+                "side": "bullish",
+                "entry": 2570.0,
+                "stop": 2534.917,
+                "exitKnownUTC": "2025-05-20T07:00:00Z",
+                "netR": -1.13186,
+                "hypotheticalQty": 0.0125916,
+                "illustrativeInitialMarginUSDT": 3.236,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 2,
+            "positive": 1,
+            "winRatePct": 50.0,
+            "avgNetR": -0.48865,
+            "sumNetR": -0.9773,
+            "profitFactor": 0.3033,
+            "maxSequentialDrawdownR": 1.40279,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 99.69679,
+            "netPnLUSDT": -0.30321,
+            "maxEquityDrawdownUSDT": 0.5,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2026-07-20T18:00:00Z",
+                "side": "bullish",
+                "entry": 1906.94,
+                "stop": 1864.6120714,
+                "exitKnownUTC": "2026-07-21T18:00:00Z",
+                "netR": 0.42549,
+                "hypotheticalQty": 0.01092647,
+                "illustrativeInitialMarginUSDT": 2.0836,
+                "netPnlUSDT": 0.19679,
+                "equityAfterUSDT": 100.19679,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-09-27T10:00:00Z",
+                "side": "bullish",
+                "entry": 2715.13,
+                "stop": 2702.9964286,
+                "exitKnownUTC": "2026-09-27T14:00:00Z",
+                "netR": -1.40279,
+                "hypotheticalQty": 0.02937581,
+                "illustrativeInitialMarginUSDT": 7.9759,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.69679,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "qualityGateRejectedBOS": 38,
+          "qualityGateRejectedRetest": 3
+        }
+      },
+      "V8GateDiagnostics": {
+        "bosEvaluated": 54,
+        "bosRejectedReasons": {
+          "EMA20_OVEREXTENDED": 28,
+          "WEAK_BREAK_ATR": 12,
+          "LOW_RELATIVE_VOLUME": 4
+        },
+        "retestEvaluated": 7,
+        "retestRejectedReasons": {
+          "FIB_OB_FVG_LIQUIDITY_PATTERN_SCORE_BELOW_2_OF_6": 2,
+          "WEAK_RETEST_REJECTION": 1
+        },
+        "retestFeatureObserved": {
+          "orderBlockRetest": 4,
+          "FVGTouch": 5,
+          "candlestickEngulfingOrPinbar": 3,
+          "equalHighLowLiquidity": 2,
+          "fib382to618": 1
+        }
+      }
+    },
+    "SOLUSDT": {
+      "candles": {
+        "1hour": 15312,
+        "4hour": 3828,
+        "daily": 638
+      },
+      "variants": {
+        "V4_baseline": {
+          "alertsAll": 62,
+          "completedTradesAll": 29,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 26,
+            "positive": 10,
+            "winRatePct": 38.46,
+            "avgNetR": -0.05998,
+            "sumNetR": -1.55946,
+            "profitFactor": 0.8918,
+            "maxSequentialDrawdownR": 6.69747,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 99.28302,
+            "netPnLUSDT": -0.71698,
+            "maxEquityDrawdownUSDT": 2.95622,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-02-25T10:00:00Z",
+                "side": "bearish",
+                "entry": 134.46,
+                "stop": 139.3012857,
+                "exitKnownUTC": "2025-02-25T12:00:00Z",
+                "netR": -1.04999,
+                "hypotheticalQty": 0.09836104,
+                "illustrativeInitialMarginUSDT": 1.3226,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-04-22T23:00:00Z",
+                "side": "bullish",
+                "entry": 149.04,
+                "stop": 144.0177857,
+                "exitKnownUTC": "2025-04-23T23:00:00Z",
+                "netR": 0.58788,
+                "hypotheticalQty": 0.09403672,
+                "illustrativeInitialMarginUSDT": 1.4015,
+                "netPnlUSDT": 0.27764,
+                "equityAfterUSDT": 99.77764,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2025-04-25T12:00:00Z",
+                "side": "bullish",
+                "entry": 154.7,
+                "stop": 152.4974286,
+                "exitKnownUTC": "2025-04-25T14:00:00Z",
+                "netR": -0.45976,
+                "hypotheticalQty": 0.20108097,
+                "illustrativeInitialMarginUSDT": 3.1107,
+                "netPnlUSDT": -0.20362,
+                "equityAfterUSDT": 99.57402,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-05-01T09:00:00Z",
+                "side": "bullish",
+                "entry": 150.66,
+                "stop": 148.2233571,
+                "exitKnownUTC": "2025-05-02T09:00:00Z",
+                "netR": -0.17195,
+                "hypotheticalQty": 0.18386306,
+                "illustrativeInitialMarginUSDT": 2.7701,
+                "netPnlUSDT": -0.07703,
+                "equityAfterUSDT": 99.49698,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2025-05-09T02:00:00Z",
+                "side": "bullish",
+                "entry": 163.53,
+                "stop": 160.7882857,
+                "exitKnownUTC": "2025-05-09T11:00:00Z",
+                "netR": 1.89264,
+                "hypotheticalQty": 0.16385827,
+                "illustrativeInitialMarginUSDT": 2.6796,
+                "netPnlUSDT": 0.85027,
+                "equityAfterUSDT": 100.34725,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2025-06-05T07:00:00Z",
+                "side": "bearish",
+                "entry": 152.07,
+                "stop": 154.223,
+                "exitKnownUTC": "2025-06-05T13:00:00Z",
+                "netR": -1.12714,
+                "hypotheticalQty": 0.20603892,
+                "illustrativeInitialMarginUSDT": 3.1332,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.84725,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-06-22T19:00:00Z",
+                "side": "bearish",
+                "entry": 129.37,
+                "stop": 133.9206429,
+                "exitKnownUTC": "2025-06-23T06:00:00Z",
+                "netR": -1.05117,
+                "hypotheticalQty": 0.10436612,
+                "illustrativeInitialMarginUSDT": 1.3502,
+                "netPnlUSDT": -0.49924,
+                "equityAfterUSDT": 99.34802,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-07-09T10:00:00Z",
+                "side": "bullish",
+                "entry": 152.78,
+                "stop": 150.9606429,
+                "exitKnownUTC": "2025-07-10T03:00:00Z",
+                "netR": 1.84885,
+                "hypotheticalQty": 0.23717977,
+                "illustrativeInitialMarginUSDT": 3.6236,
+                "netPnlUSDT": 0.7978,
+                "equityAfterUSDT": 100.14582,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2025-07-10T09:00:00Z",
+                "side": "bullish",
+                "entry": 158.86,
+                "stop": 157.3811429,
+                "exitKnownUTC": "2025-07-10T11:00:00Z",
+                "netR": -1.19336,
+                "hypotheticalQty": 0.2833174,
+                "illustrativeInitialMarginUSDT": 4.5008,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.64582,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-07-17T13:00:00Z",
+                "side": "bullish",
+                "entry": 176.74,
+                "stop": 173.1969286,
+                "exitKnownUTC": "2025-07-17T14:00:00Z",
+                "netR": -1.08979,
+                "hypotheticalQty": 0.12903467,
+                "illustrativeInitialMarginUSDT": 2.2806,
+                "netPnlUSDT": -0.49823,
+                "equityAfterUSDT": 99.14759,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-08-27T21:00:00Z",
+                "side": "bullish",
+                "entry": 208.55,
+                "stop": 202.6463571,
+                "exitKnownUTC": "2025-08-28T00:00:00Z",
+                "netR": -1.06359,
+                "hypotheticalQty": 0.07895133,
+                "illustrativeInitialMarginUSDT": 1.6465,
+                "netPnlUSDT": -0.49574,
+                "equityAfterUSDT": 98.65186,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-09-10T12:00:00Z",
+                "side": "bullish",
+                "entry": 220.14,
+                "stop": 218.613,
+                "exitKnownUTC": "2025-09-10T13:00:00Z",
+                "netR": 1.7405,
+                "hypotheticalQty": 0.25647147,
+                "illustrativeInitialMarginUSDT": 5.646,
+                "netPnlUSDT": 0.68164,
+                "equityAfterUSDT": 99.33349,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2025-09-10T14:00:00Z",
+                "side": "bullish",
+                "entry": 224.06,
+                "stop": 219.3957143,
+                "exitKnownUTC": "2025-09-11T14:00:00Z",
+                "netR": 0.82716,
+                "hypotheticalQty": 0.09800854,
+                "illustrativeInitialMarginUSDT": 2.196,
+                "netPnlUSDT": 0.37813,
+                "equityAfterUSDT": 99.71162,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2025-09-12T18:00:00Z",
+                "side": "bullish",
+                "entry": 240.15,
+                "stop": 237.9317143,
+                "exitKnownUTC": "2025-09-13T14:00:00Z",
+                "netR": -0.5282,
+                "hypotheticalQty": 0.18809569,
+                "illustrativeInitialMarginUSDT": 4.5171,
+                "netPnlUSDT": -0.22039,
+                "equityAfterUSDT": 99.49123,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-10-17T13:00:00Z",
+                "side": "bearish",
+                "entry": 179.99,
+                "stop": 186.7345714,
+                "exitKnownUTC": "2025-10-18T08:00:00Z",
+                "netR": -1.04804,
+                "hypotheticalQty": 0.07037595,
+                "illustrativeInitialMarginUSDT": 1.2667,
+                "netPnlUSDT": -0.49746,
+                "equityAfterUSDT": 98.99377,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-10-22T20:00:00Z",
+                "side": "bearish",
+                "entry": 180.09,
+                "stop": 182.7565,
+                "exitKnownUTC": "2025-10-23T04:00:00Z",
+                "netR": -0.4549,
+                "hypotheticalQty": 0.16550478,
+                "illustrativeInitialMarginUSDT": 2.9806,
+                "netPnlUSDT": -0.20076,
+                "equityAfterUSDT": 98.79302,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-01-21T00:00:00Z",
+                "side": "bearish",
+                "entry": 125.72,
+                "stop": 127.5542143,
+                "exitKnownUTC": "2026-01-21T02:00:00Z",
+                "netR": -1.12337,
+                "hypotheticalQty": 0.23972949,
+                "illustrativeInitialMarginUSDT": 3.0139,
+                "netPnlUSDT": -0.49397,
+                "equityAfterUSDT": 98.29905,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-01-30T03:00:00Z",
+                "side": "bearish",
+                "entry": 114.05,
+                "stop": 118.0382143,
+                "exitKnownUTC": "2026-01-30T19:00:00Z",
+                "netR": -1.05147,
+                "hypotheticalQty": 0.11720395,
+                "illustrativeInitialMarginUSDT": 1.3367,
+                "netPnlUSDT": -0.4915,
+                "equityAfterUSDT": 97.80756,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-02-04T14:00:00Z",
+                "side": "bearish",
+                "entry": 94.3,
+                "stop": 97.1666429,
+                "exitKnownUTC": "2026-02-05T14:00:00Z",
+                "netR": 1.62219,
+                "hypotheticalQty": 0.16105933,
+                "illustrativeInitialMarginUSDT": 1.5188,
+                "netPnlUSDT": 0.74896,
+                "equityAfterUSDT": 98.55652,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-03-29T20:00:00Z",
+                "side": "bearish",
+                "entry": 81.55,
+                "stop": 81.8854286,
+                "exitKnownUTC": "2026-03-29T21:00:00Z",
+                "netR": -1.43762,
+                "hypotheticalQty": 1.02190714,
+                "illustrativeInitialMarginUSDT": 8.3337,
+                "netPnlUSDT": -0.49278,
+                "equityAfterUSDT": 98.06374,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-04-02T14:00:00Z",
+                "side": "bearish",
+                "entry": 77.7,
+                "stop": 78.6397857,
+                "exitKnownUTC": "2026-04-02T15:00:00Z",
+                "netR": -1.14882,
+                "hypotheticalQty": 0.45414776,
+                "illustrativeInitialMarginUSDT": 3.5287,
+                "netPnlUSDT": -0.49032,
+                "equityAfterUSDT": 97.57342,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-05-09T06:00:00Z",
+                "side": "bullish",
+                "entry": 93.7,
+                "stop": 92.2940714,
+                "exitKnownUTC": "2026-05-10T06:00:00Z",
+                "netR": -0.4187,
+                "hypotheticalQty": 0.30983782,
+                "illustrativeInitialMarginUSDT": 2.9032,
+                "netPnlUSDT": -0.18239,
+                "equityAfterUSDT": 97.39103,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-05-10T22:00:00Z",
+                "side": "bullish",
+                "entry": 95.01,
+                "stop": 94.3125714,
+                "exitKnownUTC": "2026-05-11T15:00:00Z",
+                "netR": 0.42145,
+                "hypotheticalQty": 0.56071975,
+                "illustrativeInitialMarginUSDT": 5.3274,
+                "netPnlUSDT": 0.16481,
+                "equityAfterUSDT": 97.55584,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-06-02T12:00:00Z",
+                "side": "bearish",
+                "entry": 78.89,
+                "stop": 79.6849286,
+                "exitKnownUTC": "2026-06-02T16:00:00Z",
+                "netR": 1.82137,
+                "hypotheticalQty": 0.52061405,
+                "illustrativeInitialMarginUSDT": 4.1071,
+                "netPnlUSDT": 0.75377,
+                "equityAfterUSDT": 98.30962,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-06-03T21:00:00Z",
+                "side": "bearish",
+                "entry": 71.17,
+                "stop": 73.2315,
+                "exitKnownUTC": "2026-06-04T21:00:00Z",
+                "netR": 1.32592,
+                "hypotheticalQty": 0.22449157,
+                "illustrativeInitialMarginUSDT": 1.5977,
+                "netPnlUSDT": 0.61362,
+                "equityAfterUSDT": 98.92324,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-06-06T00:00:00Z",
+                "side": "bearish",
+                "entry": 63.6,
+                "stop": 65.5343571,
+                "exitKnownUTC": "2026-06-07T00:00:00Z",
+                "netR": 0.77044,
+                "hypotheticalQty": 0.24141314,
+                "illustrativeInitialMarginUSDT": 1.5354,
+                "netPnlUSDT": 0.35978,
+                "equityAfterUSDT": 99.28302,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 3,
+            "positive": 2,
+            "winRatePct": 66.67,
+            "avgNetR": 1.12036,
+            "sumNetR": 3.36109,
+            "profitFactor": 9.3535,
+            "maxSequentialDrawdownR": 0.40236,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 101.49503,
+            "netPnLUSDT": 1.49503,
+            "maxEquityDrawdownUSDT": 0.18819,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2026-08-18T15:00:00Z",
+                "side": "bullish",
+                "entry": 76.77,
+                "stop": 75.7366429,
+                "exitKnownUTC": "2026-08-19T15:00:00Z",
+                "netR": 1.86627,
+                "hypotheticalQty": 0.42678753,
+                "illustrativeInitialMarginUSDT": 3.2764,
+                "netPnlUSDT": 0.82307,
+                "equityAfterUSDT": 100.82307,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-08-20T11:00:00Z",
+                "side": "bullish",
+                "entry": 87.45,
+                "stop": 85.9191429,
+                "exitKnownUTC": "2026-08-21T09:00:00Z",
+                "netR": 1.89718,
+                "hypotheticalQty": 0.29616166,
+                "illustrativeInitialMarginUSDT": 2.5899,
+                "netPnlUSDT": 0.86014,
+                "equityAfterUSDT": 101.68322,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-08-27T15:00:00Z",
+                "side": "bullish",
+                "entry": 106.73,
+                "stop": 103.9467857,
+                "exitKnownUTC": "2026-08-28T15:00:00Z",
+                "netR": -0.40236,
+                "hypotheticalQty": 0.16804868,
+                "illustrativeInitialMarginUSDT": 1.7936,
+                "netPnlUSDT": -0.18819,
+                "equityAfterUSDT": 101.49503,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "qualityGateRejectedBOS": 0,
+          "qualityGateRejectedRetest": 0
+        },
+        "V7_quality_retest": {
+          "alertsAll": 27,
+          "completedTradesAll": 10,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 10,
+            "positive": 5,
+            "winRatePct": 50.0,
+            "avgNetR": 0.2149,
+            "sumNetR": 2.14903,
+            "profitFactor": 1.3969,
+            "maxSequentialDrawdownR": 2.15338,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 100.76256,
+            "netPnLUSDT": 0.76256,
+            "maxEquityDrawdownUSDT": 0.999,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-06-05T07:00:00Z",
+                "side": "bearish",
+                "entry": 152.07,
+                "stop": 154.223,
+                "exitKnownUTC": "2025-06-05T13:00:00Z",
+                "netR": -1.12714,
+                "hypotheticalQty": 0.20603892,
+                "illustrativeInitialMarginUSDT": 3.1332,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-07-09T10:00:00Z",
+                "side": "bullish",
+                "entry": 152.78,
+                "stop": 150.9606429,
+                "exitKnownUTC": "2025-07-10T03:00:00Z",
+                "netR": 1.84885,
+                "hypotheticalQty": 0.2375426,
+                "illustrativeInitialMarginUSDT": 3.6292,
+                "netPnlUSDT": 0.79902,
+                "equityAfterUSDT": 100.29902,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2025-07-17T13:00:00Z",
+                "side": "bullish",
+                "entry": 176.74,
+                "stop": 173.1969286,
+                "exitKnownUTC": "2025-07-17T14:00:00Z",
+                "netR": -1.08979,
+                "hypotheticalQty": 0.12949331,
+                "illustrativeInitialMarginUSDT": 2.2887,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.79902,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-08-27T21:00:00Z",
+                "side": "bullish",
+                "entry": 208.55,
+                "stop": 202.6463571,
+                "exitKnownUTC": "2025-08-28T00:00:00Z",
+                "netR": -1.06359,
+                "hypotheticalQty": 0.07947006,
+                "illustrativeInitialMarginUSDT": 1.6573,
+                "netPnlUSDT": -0.499,
+                "equityAfterUSDT": 99.30003,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-09-10T12:00:00Z",
+                "side": "bullish",
+                "entry": 220.14,
+                "stop": 218.613,
+                "exitKnownUTC": "2025-09-10T13:00:00Z",
+                "netR": 1.7405,
+                "hypotheticalQty": 0.25815657,
+                "illustrativeInitialMarginUSDT": 5.6831,
+                "netPnlUSDT": 0.68612,
+                "equityAfterUSDT": 99.98614,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2025-09-10T14:00:00Z",
+                "side": "bullish",
+                "entry": 224.06,
+                "stop": 219.3957143,
+                "exitKnownUTC": "2025-09-11T14:00:00Z",
+                "netR": 0.82716,
+                "hypotheticalQty": 0.09865249,
+                "illustrativeInitialMarginUSDT": 2.2104,
+                "netPnlUSDT": 0.38061,
+                "equityAfterUSDT": 100.36676,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2025-10-17T13:00:00Z",
+                "side": "bearish",
+                "entry": 179.99,
+                "stop": 186.7345714,
+                "exitKnownUTC": "2025-10-18T08:00:00Z",
+                "netR": -1.04804,
+                "hypotheticalQty": 0.07073583,
+                "illustrativeInitialMarginUSDT": 1.2732,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.86676,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2026-06-02T12:00:00Z",
+                "side": "bearish",
+                "entry": 78.89,
+                "stop": 79.6849286,
+                "exitKnownUTC": "2026-06-02T16:00:00Z",
+                "netR": 1.82137,
+                "hypotheticalQty": 0.53294641,
+                "illustrativeInitialMarginUSDT": 4.2044,
+                "netPnlUSDT": 0.77163,
+                "equityAfterUSDT": 100.63839,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-06-03T21:00:00Z",
+                "side": "bearish",
+                "entry": 71.17,
+                "stop": 73.2315,
+                "exitKnownUTC": "2026-06-04T21:00:00Z",
+                "netR": 1.32592,
+                "hypotheticalQty": 0.22835158,
+                "illustrativeInitialMarginUSDT": 1.6252,
+                "netPnlUSDT": 0.62417,
+                "equityAfterUSDT": 101.26256,
+                "exitReason": "TIME_EXIT_AT_CLOSE"
+              },
+              {
+                "entryOpenUTC": "2026-06-06T07:00:00Z",
+                "side": "bearish",
+                "entry": 62.18,
+                "stop": 63.4781429,
+                "exitKnownUTC": "2026-06-06T09:00:00Z",
+                "netR": -1.08622,
+                "hypotheticalQty": 0.35459312,
+                "illustrativeInitialMarginUSDT": 2.2049,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 100.76256,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 0,
+            "positive": 0,
+            "winRatePct": null,
+            "avgNetR": null,
+            "sumNetR": 0,
+            "profitFactor": null,
+            "maxSequentialDrawdownR": null,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 100.0,
+            "netPnLUSDT": 0.0,
+            "maxEquityDrawdownUSDT": 0.0,
+            "tradesDetail": []
+          },
+          "qualityGateRejectedBOS": 38,
+          "qualityGateRejectedRetest": 1
+        },
+        "V8_all_OHLCV_confluence": {
+          "alertsAll": 27,
+          "completedTradesAll": 5,
+          "unresolvedExcluded": false,
+          "pendingEntryExcluded": false,
+          "preSplit": {
+            "trades": 5,
+            "positive": 1,
+            "winRatePct": 20.0,
+            "avgNetR": -0.52525,
+            "sumNetR": -2.62623,
+            "profitFactor": 0.3986,
+            "maxSequentialDrawdownR": 3.28051,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 98.69219,
+            "netPnLUSDT": -1.30781,
+            "maxEquityDrawdownUSDT": 1.49251,
+            "tradesDetail": [
+              {
+                "entryOpenUTC": "2025-06-05T07:00:00Z",
+                "side": "bearish",
+                "entry": 152.07,
+                "stop": 154.223,
+                "exitKnownUTC": "2025-06-05T13:00:00Z",
+                "netR": -1.12714,
+                "hypotheticalQty": 0.20603892,
+                "illustrativeInitialMarginUSDT": 3.1332,
+                "netPnlUSDT": -0.5,
+                "equityAfterUSDT": 99.5,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-07-17T13:00:00Z",
+                "side": "bullish",
+                "entry": 176.74,
+                "stop": 173.1969286,
+                "exitKnownUTC": "2025-07-17T14:00:00Z",
+                "netR": -1.08979,
+                "hypotheticalQty": 0.12884584,
+                "illustrativeInitialMarginUSDT": 2.2772,
+                "netPnlUSDT": -0.4975,
+                "equityAfterUSDT": 99.0025,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-08-27T21:00:00Z",
+                "side": "bullish",
+                "entry": 208.55,
+                "stop": 202.6463571,
+                "exitKnownUTC": "2025-08-28T00:00:00Z",
+                "netR": -1.06359,
+                "hypotheticalQty": 0.07883579,
+                "illustrativeInitialMarginUSDT": 1.6441,
+                "netPnlUSDT": -0.49501,
+                "equityAfterUSDT": 98.50749,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              },
+              {
+                "entryOpenUTC": "2025-09-10T12:00:00Z",
+                "side": "bullish",
+                "entry": 220.14,
+                "stop": 218.613,
+                "exitKnownUTC": "2025-09-10T13:00:00Z",
+                "netR": 1.7405,
+                "hypotheticalQty": 0.25609615,
+                "illustrativeInitialMarginUSDT": 5.6377,
+                "netPnlUSDT": 0.68064,
+                "equityAfterUSDT": 99.18813,
+                "exitReason": "TP3_COMPLETE"
+              },
+              {
+                "entryOpenUTC": "2026-06-06T07:00:00Z",
+                "side": "bearish",
+                "entry": 62.18,
+                "stop": 63.4781429,
+                "exitKnownUTC": "2026-06-06T09:00:00Z",
+                "netR": -1.08622,
+                "hypotheticalQty": 0.35171427,
+                "illustrativeInitialMarginUSDT": 2.187,
+                "netPnlUSDT": -0.49594,
+                "equityAfterUSDT": 98.69219,
+                "exitReason": "STOP_FIRST_OR_AFTER_TP"
+              }
+            ]
+          },
+          "holdout": {
+            "trades": 0,
+            "positive": 0,
+            "winRatePct": null,
+            "avgNetR": null,
+            "sumNetR": 0,
+            "profitFactor": null,
+            "maxSequentialDrawdownR": null,
+            "hypotheticalStartUSDT": 100.0,
+            "hypotheticalEndUSDT": 100.0,
+            "netPnLUSDT": 0.0,
+            "maxEquityDrawdownUSDT": 0.0,
+            "tradesDetail": []
+          },
+          "qualityGateRejectedBOS": 41,
+          "qualityGateRejectedRetest": 11
+        }
+      },
+      "V8GateDiagnostics": {
+        "bosEvaluated": 68,
+        "bosRejectedReasons": {
+          "WEAK_BREAK_ATR": 20,
+          "EMA20_OVEREXTENDED": 22,
+          "LOW_RELATIVE_VOLUME": 6
+        },
+        "retestEvaluated": 17,
+        "retestRejectedReasons": {
+          "FIB_OB_FVG_LIQUIDITY_PATTERN_SCORE_BELOW_2_OF_6": 10,
+          "WEAK_RETEST_REJECTION": 3
+        },
+        "retestFeatureObserved": {
+          "candlestickEngulfingOrPinbar": 5,
+          "FVGTouch": 11,
+          "orderBlockRetest": 9
+        }
+      }
+    }
+  },
+  "brokerOrders": false,
+  "productionSystemModified": false,
+  "liveSignalEnabled": false
+}
