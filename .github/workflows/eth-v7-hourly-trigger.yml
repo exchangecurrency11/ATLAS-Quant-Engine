@@ -1,0 +1,114 @@
+name: ETH V7 Independent Hourly Paper Forward (no orders)
+
+# Main hosts GitHub scheduler. All analysis runs from the experiment branch.
+on:
+  schedule:
+    - cron: '18,37,52 * * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/eth-v7-hourly-trigger.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eth-v7-independent-hourly-paper
+  cancel-in-progress: false
+
+jobs:
+  eth-paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Guard last closed UTC hour observation window
+        id: timing
+        shell: bash
+        run: |
+          set -euo pipefail
+          minute="$(date -u +%M)"
+          if (( 10#$minute < 12 || 10#$minute > 58 )); then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "SCHEDULE_DELAY: no ETH live paper observation for this attempt"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "target=$(date -u +%Y-%m-%dT%H-00Z)" >> "$GITHUB_OUTPUT"
+            echo "target_iso=$(date -u +%Y-%m-%dT%H:00:00Z)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout ETH isolated experiment only
+        if: steps.timing.outputs.run == 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          persist-credentials: true
+
+      - name: Run ETH and V7 unit tests
+        if: steps.timing.outputs.run == 'true'
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -q
+
+      - name: Query verified ETHUSDT perpetual 1H, 4H, Daily
+        if: steps.timing.outputs.run == 'true'
+        env:
+          TARGET: ${{ steps.timing.outputs.target }}
+          TARGET_ISO: ${{ steps.timing.outputs.target_iso }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/eth/snapshots forward/eth/reports forward/eth/tmp
+          snapshot="forward/eth/snapshots/$TARGET.json"
+          report="forward/eth/reports/$TARGET.md"
+          if test -f "$snapshot" && grep -q '"status": "VERIFIED_PAPER_OBSERVATION"' "$snapshot"; then
+            echo "An actual verified ETH paper observation already exists; preserve it."
+            exit 0
+          fi
+          python3 eth_v7_hourly_observer.py \
+            --target-utc "$TARGET_ISO" \
+            --output "forward/eth/tmp/$TARGET.json" \
+            --report "forward/eth/tmp/$TARGET.md"
+          if test -f "$snapshot" && \
+             grep -q '"status": "SOURCE_UNAVAILABLE_NO_SIGNAL"' "forward/eth/tmp/$TARGET.json"; then
+            echo "Existing no-source evidence kept; no fictitious trade or signal."
+          else
+            mv "forward/eth/tmp/$TARGET.json" "$snapshot"
+            mv "forward/eth/tmp/$TARGET.md" "$report"
+          fi
+          python3 -c 'import json,sys; p=json.load(open(sys.argv[1])); print("ETH_V7_ACTUAL_STATUS",p["status"],p["targetClosed1HUTC"])' "$snapshot"
+
+      - name: Preserve independent ETH audit artifacts
+        if: always() && steps.timing.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: eth-v7-hourly-${{ github.run_id }}
+          path: |
+            forward/eth/tmp/*.json
+            forward/eth/snapshots/*.json
+            forward/eth/reports/*.md
+          if-no-files-found: ignore
+          retention-days: 20
+
+      - name: Commit ONLY ETH experimental paper observation
+        if: steps.timing.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/eth/snapshots/ forward/eth/reports/
+          if git diff --cached --quiet; then
+            echo "No new ETH observation to commit"
+            exit 0
+          fi
+          git commit -m "ETH V7: independent hourly paper audit or explicit source refusal"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v7-signal-quality-20261103
+            if git push origin HEAD:experiment/v7-signal-quality-20261103; then
+              echo "ETH paper audit persisted to isolated V7 experiment"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "ETH paper audit persistence failed after 3 attempts" >&2
+          exit 1
