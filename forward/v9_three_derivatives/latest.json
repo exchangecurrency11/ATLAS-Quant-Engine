@@ -1,0 +1,513 @@
+{
+  "mode": "V9_BTC_ETH_SOL_CVD_OI_FUNDING_HISTORICAL_ABLATION",
+  "status": "HISTORICAL_DIRECTION_ONLY_NO_SIGNAL",
+  "generatedUTC": "2026-11-10T21:21:56Z",
+  "expectedLastClosed1HUTC": "2026-11-10T21:00:00Z",
+  "source": "Coinalyze read-only Binance USD-M perpetual OHLCV, OI, funding-rate histories",
+  "contracts": {
+    "BTCUSDT_PERP.A": {
+      "windowStartUTC": "2026-11-03T20:00:00Z",
+      "windowEndUTC": "2026-11-10T20:00:00Z",
+      "intended4HCheckpoints": 42,
+      "fullyAlignedEvaluable": 42,
+      "rejectedMissingOrIncomplete": 0,
+      "results": {
+        "A_priceMomentum": {
+          "predictions": 42,
+          "correct": 17,
+          "hitRatePct": 40.48,
+          "wilson95LowerBoundPct": 27.04,
+          "noSignal": 0,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "B_momentumAndCVD": {
+          "predictions": 35,
+          "correct": 15,
+          "hitRatePct": 42.86,
+          "wilson95LowerBoundPct": 27.98,
+          "noSignal": 7,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "C_BplusRisingOI": {
+          "predictions": 18,
+          "correct": 6,
+          "hitRatePct": 33.33,
+          "wilson95LowerBoundPct": 16.28,
+          "noSignal": 24,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "D_CplusFundingContext": {
+          "predictions": 12,
+          "correct": 3,
+          "hitRatePct": 25.0,
+          "wilson95LowerBoundPct": 8.89,
+          "noSignal": 30,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "E_takerCVDOnly": {
+          "predictions": 42,
+          "correct": 20,
+          "hitRatePct": 47.62,
+          "wilson95LowerBoundPct": 33.36,
+          "noSignal": 0,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        }
+      },
+      "earliestExamples": [
+        {
+          "features": {
+            "asOfUTC": "2026-11-03T20:00:00Z",
+            "4HClose": 77585.6,
+            "prev4HChangePct": -0.101334,
+            "CVD4hBaseProxy": -405.934,
+            "CVD4hPctOfVolume": -3.00734,
+            "buyShare4H": 0.484963,
+            "OI4hChangePct": -0.251198,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": false,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 77441.7,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": null,
+            "D_CplusFundingContext": null,
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T00:00:00Z"
+        },
+        {
+          "features": {
+            "asOfUTC": "2026-11-04T00:00:00Z",
+            "4HClose": 77441.7,
+            "prev4HChangePct": -0.185473,
+            "CVD4hBaseProxy": -364.216,
+            "CVD4hPctOfVolume": -3.05409,
+            "buyShare4H": 0.48473,
+            "OI4hChangePct": -0.661258,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": false,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 76465.7,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": null,
+            "D_CplusFundingContext": null,
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T04:00:00Z"
+        },
+        {
+          "features": {
+            "asOfUTC": "2026-11-04T04:00:00Z",
+            "4HClose": 76465.7,
+            "prev4HChangePct": -1.260303,
+            "CVD4hBaseProxy": -1556.865,
+            "CVD4hPctOfVolume": -2.98163,
+            "buyShare4H": 0.485092,
+            "OI4hChangePct": 0.158181,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": true,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 78117.0,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": "SHORT",
+            "D_CplusFundingContext": "SHORT",
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T08:00:00Z"
+        }
+      ],
+      "noOptimizationFromResults": true,
+      "notActualTrades": true,
+      "inputQuality": {
+        "ohlcv-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        },
+        "open-interest-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        },
+        "funding-rate-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        }
+      },
+      "sourceFreshEnoughForCurrentHourlySnapshot": true
+    },
+    "ETHUSDT_PERP.A": {
+      "windowStartUTC": "2026-11-03T20:00:00Z",
+      "windowEndUTC": "2026-11-10T20:00:00Z",
+      "intended4HCheckpoints": 42,
+      "fullyAlignedEvaluable": 42,
+      "rejectedMissingOrIncomplete": 0,
+      "results": {
+        "A_priceMomentum": {
+          "predictions": 41,
+          "correct": 14,
+          "hitRatePct": 34.15,
+          "wilson95LowerBoundPct": 21.56,
+          "noSignal": 1,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "B_momentumAndCVD": {
+          "predictions": 31,
+          "correct": 12,
+          "hitRatePct": 38.71,
+          "wilson95LowerBoundPct": 23.73,
+          "noSignal": 11,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "C_BplusRisingOI": {
+          "predictions": 17,
+          "correct": 6,
+          "hitRatePct": 35.29,
+          "wilson95LowerBoundPct": 17.31,
+          "noSignal": 25,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "D_CplusFundingContext": {
+          "predictions": 15,
+          "correct": 6,
+          "hitRatePct": 40.0,
+          "wilson95LowerBoundPct": 19.82,
+          "noSignal": 27,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "E_takerCVDOnly": {
+          "predictions": 42,
+          "correct": 20,
+          "hitRatePct": 47.62,
+          "wilson95LowerBoundPct": 33.36,
+          "noSignal": 0,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        }
+      },
+      "earliestExamples": [
+        {
+          "features": {
+            "asOfUTC": "2026-11-03T20:00:00Z",
+            "4HClose": 2286.14,
+            "prev4HChangePct": -0.545098,
+            "CVD4hBaseProxy": -2929.219,
+            "CVD4hPctOfVolume": -0.97486,
+            "buyShare4H": 0.495126,
+            "OI4hChangePct": -0.491463,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": false,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 2273.85,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": null,
+            "D_CplusFundingContext": null,
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T00:00:00Z"
+        },
+        {
+          "features": {
+            "asOfUTC": "2026-11-04T00:00:00Z",
+            "4HClose": 2273.85,
+            "prev4HChangePct": -0.537587,
+            "CVD4hBaseProxy": -55627.825,
+            "CVD4hPctOfVolume": -21.5478,
+            "buyShare4H": 0.392261,
+            "OI4hChangePct": 0.419432,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": true,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 2248.43,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": "SHORT",
+            "D_CplusFundingContext": "SHORT",
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T04:00:00Z"
+        },
+        {
+          "features": {
+            "asOfUTC": "2026-11-04T04:00:00Z",
+            "4HClose": 2248.43,
+            "prev4HChangePct": -1.117928,
+            "CVD4hBaseProxy": -40672.86,
+            "CVD4hPctOfVolume": -4.73488,
+            "buyShare4H": 0.476326,
+            "OI4hChangePct": -0.527719,
+            "fundingHistoryLastClosed": 0.008833,
+            "fundingPercentileRelativePrior24": 0.125,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": false,
+            "fundingNotExtremeAgainstSide": false,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 2302.99,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": null,
+            "D_CplusFundingContext": null,
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T08:00:00Z"
+        }
+      ],
+      "noOptimizationFromResults": true,
+      "notActualTrades": true,
+      "inputQuality": {
+        "ohlcv-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        },
+        "open-interest-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        },
+        "funding-rate-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        }
+      },
+      "sourceFreshEnoughForCurrentHourlySnapshot": true
+    },
+    "SOLUSDT_PERP.A": {
+      "windowStartUTC": "2026-11-03T20:00:00Z",
+      "windowEndUTC": "2026-11-10T20:00:00Z",
+      "intended4HCheckpoints": 42,
+      "fullyAlignedEvaluable": 42,
+      "rejectedMissingOrIncomplete": 0,
+      "results": {
+        "A_priceMomentum": {
+          "predictions": 42,
+          "correct": 17,
+          "hitRatePct": 40.48,
+          "wilson95LowerBoundPct": 27.04,
+          "noSignal": 0,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "B_momentumAndCVD": {
+          "predictions": 27,
+          "correct": 11,
+          "hitRatePct": 40.74,
+          "wilson95LowerBoundPct": 24.51,
+          "noSignal": 15,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "C_BplusRisingOI": {
+          "predictions": 14,
+          "correct": 7,
+          "hitRatePct": 50.0,
+          "wilson95LowerBoundPct": 26.8,
+          "noSignal": 28,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "D_CplusFundingContext": {
+          "predictions": 9,
+          "correct": 4,
+          "hitRatePct": 44.44,
+          "wilson95LowerBoundPct": 18.88,
+          "noSignal": 33,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        },
+        "E_takerCVDOnly": {
+          "predictions": 42,
+          "correct": 20,
+          "hitRatePct": 47.62,
+          "wilson95LowerBoundPct": 33.36,
+          "noSignal": 0,
+          "directionalOnlyNoPnL": true,
+          "notIndependentAcrossAssets": true
+        }
+      },
+      "earliestExamples": [
+        {
+          "features": {
+            "asOfUTC": "2026-11-03T20:00:00Z",
+            "4HClose": 93.26,
+            "prev4HChangePct": -0.490824,
+            "CVD4hBaseProxy": 39102.68,
+            "CVD4hPctOfVolume": 3.0986,
+            "buyShare4H": 0.515493,
+            "OI4hChangePct": -0.073946,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "LONG",
+            "OIAdded": false,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 92.81,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": null,
+            "C_BplusRisingOI": null,
+            "D_CplusFundingContext": null,
+            "E_takerCVDOnly": "LONG"
+          },
+          "outcomeKnownUTC": "2026-11-04T00:00:00Z"
+        },
+        {
+          "features": {
+            "asOfUTC": "2026-11-04T00:00:00Z",
+            "4HClose": 92.81,
+            "prev4HChangePct": -0.482522,
+            "CVD4hBaseProxy": -96196.16,
+            "CVD4hPctOfVolume": -7.64472,
+            "buyShare4H": 0.461776,
+            "OI4hChangePct": -0.392107,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": false,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 91.03,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": null,
+            "D_CplusFundingContext": null,
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T04:00:00Z"
+        },
+        {
+          "features": {
+            "asOfUTC": "2026-11-04T04:00:00Z",
+            "4HClose": 91.03,
+            "prev4HChangePct": -1.917897,
+            "CVD4hBaseProxy": -312026.68,
+            "CVD4hPctOfVolume": -6.89432,
+            "buyShare4H": 0.465528,
+            "OI4hChangePct": 0.85337,
+            "fundingHistoryLastClosed": 0.01,
+            "fundingPercentileRelativePrior24": 1.0,
+            "momentumSide": "SHORT",
+            "takerPressureSide": "SHORT",
+            "OIAdded": true,
+            "fundingNotExtremeAgainstSide": true,
+            "sourceAlignedComplete28Hours": true
+          },
+          "forward4HPrice": 93.02,
+          "prediction": {
+            "A_priceMomentum": "SHORT",
+            "B_momentumAndCVD": "SHORT",
+            "C_BplusRisingOI": "SHORT",
+            "D_CplusFundingContext": "SHORT",
+            "E_takerCVDOnly": "SHORT"
+          },
+          "outcomeKnownUTC": "2026-11-04T08:00:00Z"
+        }
+      ],
+      "noOptimizationFromResults": true,
+      "notActualTrades": true,
+      "inputQuality": {
+        "ohlcv-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        },
+        "open-interest-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        },
+        "funding-rate-history": {
+          "barsReceived": 240,
+          "latestClosedUTC": "2026-11-10T21:00:00Z",
+          "lagFromTargetHours": 0.0,
+          "last24HoursPresent": 24,
+          "latestAgeTooOld": false
+        }
+      },
+      "sourceFreshEnoughForCurrentHourlySnapshot": true
+    }
+  },
+  "sourceSHA256": {
+    "ohlcv-history": "7cff04663c0db47691cffe728cb97b5f795be6fb59baf86e5663e5377756c271",
+    "open-interest-history": "da953829a4565fb17d14ab53fe29b10bc2db2126c0c50fce291fa97fc96ba802",
+    "funding-rate-history": "8e7fae8266afa3a55edf169b7712d9b3d7649df5b01ff0f527367bc32624db14"
+  },
+  "fundingFieldSemantics": "1H provider funding-rate-history series; not certified exchange paid funding settlement or fee",
+  "OIFieldSemantics": "1H provider open interest c (convert_to_usd=false); point-in-time after bar close",
+  "takerFieldSemantics": "Coinalyze bv; independently reconciled with Binance on limited historical SOL sample only",
+  "noFutureFeatures": true,
+  "fourHourOutcomesNonOverlappingWithinEachAsset": true,
+  "samplesAcrossBTCETHSOLCorrelated": true,
+  "previousHistoricalAnalysesMakeThisExploratoryNotProspective": true,
+  "brokerOrders": false,
+  "productionEdited": false,
+  "liveTradingApproved": false
+}
