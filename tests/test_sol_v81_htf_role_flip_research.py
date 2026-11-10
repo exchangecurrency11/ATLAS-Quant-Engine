@@ -15,7 +15,7 @@ def bar(i, o, h, l, c, v=100):
 def mock_history():
     bars=[]
     for i in range(90):
-        if i<37: bars.append(bar(i,103.7,105,102.7,104))
+        if i<37: bars.append(bar(i,104.7,106.2,103.9,105.4))
         elif i==37:bars.append(bar(i,103,103.8,98,98.8,500))
         elif i==38:bars.append(bar(i,100.8,101.5,98.7,99.4,180))
         elif i==39:bars.append(bar(i,99,99.2,95.7,96.8,180))
