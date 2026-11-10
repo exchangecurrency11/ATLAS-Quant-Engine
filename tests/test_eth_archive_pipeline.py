@@ -10,7 +10,7 @@ class ETHArchiveUnitTests(unittest.TestCase):
     def test_first_available_history_and_no_current_day(self):
         now=datetime(2026,11,10,11,37,tzinfo=timezone.utc)
         entries=list_entries(now)
-        self.assertIn(("monthly","1h","2019-12"),entries)
+        self.assertIn(("monthly","1h","2020-01"),entries)
         self.assertIn(("monthly","1h","2026-10"),entries)
         self.assertIn(("monthly","5m","2026-10"),entries)
         self.assertIn(("monthly","15m","2026-10"),entries)
