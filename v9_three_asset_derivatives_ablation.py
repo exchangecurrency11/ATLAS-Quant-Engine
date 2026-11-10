@@ -161,9 +161,13 @@ def features(kline,oi,funding,checkpoint):
         return None
     price_move=price/price4-1
     oi_change=oi_last/oi_prev-1
-    # Funding percentile from PAST 24 complete readings only. This is a
-    # context-based risk filter, not a funding settlement/cashflow model.
-    percentile=sum(v<=funding_now for v in funding_history)/24.
+    # Funding percentile from PAST 24 complete readings only. When
+    # near-constant provider candles have little or no information, NEVER
+    # promote the funding indicator to a trade filter.
+    unique_funding=len(set(round(v,10) for v in funding_history))
+    funding_informative=unique_funding>=4
+    percentile=(sum(v<=funding_now for v in funding_history)/24.
+                if funding_informative else None)
     momentum="LONG" if price_move>0 else "SHORT" if price_move<0 else None
     pressure="LONG" if delta>0 else "SHORT" if delta<0 else None
     return {"asOfUTC":iso(checkpoint),"4HClose":price,
@@ -173,11 +177,14 @@ def features(kline,oi,funding,checkpoint):
             "buyShare4H":round((vol+delta)/(2*vol),6),
             "OI4hChangePct":round(oi_change*100,6),
             "fundingHistoryLastClosed":funding_now,
-            "fundingPercentileRelativePrior24":round(percentile,6),
+            "fundingPercentileRelativePrior24":round(percentile,6) if percentile is not None else None,
+            "fundingPrior24UniqueValues":unique_funding,
+            "fundingVariationSufficient":funding_informative,
             "momentumSide":momentum,"takerPressureSide":pressure,
             "OIAdded":oi_change>0,
-            "fundingNotExtremeAgainstSide":(percentile<=.75 if momentum=="LONG"
-                   else percentile>=.25 if momentum=="SHORT" else False),
+            "fundingNotExtremeAgainstSide":(
+                   (percentile<=.75 if momentum=="LONG" else percentile>=.25)
+                   if funding_informative and momentum is not None else False),
             "sourceAlignedComplete28Hours":True}
 
 
@@ -258,11 +265,37 @@ def evaluate_one(kline,oi,funding,days=7):
                              "forward4HPrice":future,
                              "prediction":pred,
                              "outcomeKnownUTC":iso(t+FOUR)})
+    # A retained subgroup has to be compared against the BASELINE ON
+    # IDENTICAL checkpoints, not against its broader 42-case denominator.
+    # In these predeclared filters B/C/D the direction is the SAME
+    # momentum direction; only the no-trade/coverage changes.
+    matched={}
+    for key in ("B_momentumAndCVD","C_BplusRisingOI","D_CplusFundingContext"):
+        retained=[(base,other) for base,other in zip(per["A_priceMomentum"],per[key])
+                  if other["prediction"] is not None]
+        total=len(retained)
+        base_correct=sum(bool(base["correct"]) for base,other in retained)
+        filtered_correct=sum(bool(other["correct"]) for base,other in retained)
+        if base_correct!=filtered_correct:
+            raise ValueError("MATCHED_BASELINE_DIRECTION_WAS_MODIFIED")
+        matched[key]={
+            "matchedEvents":total,
+            "baselineCorrectSameEvents":base_correct,
+            "filteredCorrectSameEvents":filtered_correct,
+            "sameCaseBaselineHitRatePct":round(100*base_correct/total,2) if total else None,
+            "noDirectionalEdgeInferredFromSelection":True}
+    funding_good=0
+    for t in checkpoints:
+        row=features(kline,oi,funding,t)
+        if row and row["fundingVariationSufficient"]:
+            funding_good+=1
     return {"windowStartUTC":iso(start),"windowEndUTC":iso(end),
             "intended4HCheckpoints":len(checkpoints),
             "fullyAlignedEvaluable":eligible,
             "rejectedMissingOrIncomplete":skipped,
+            "fundingCheckpointsWithMeaningfulVariation":funding_good,
             "results":{k:metric(x) for k,x in per.items()},
+            "matchedBaselineComparisons":matched,
             "earliestExamples":examples,
             "noOptimizationFromResults":True,
             "notActualTrades":True}
@@ -274,11 +307,15 @@ def one_source_quality(group,expected_target):
         end=items[-1]["t"]+HOUR
         data={x["t"] for x in items}
         recent=range(end-24*HOUR,end,HOUR)
+        close_vals=[x["c"] for x in items]
         results[symbol]={
            "barsReceived":len(items),
            "latestClosedUTC":iso(end),
            "lagFromTargetHours":round((expected_target-end)/HOUR,2),
            "last24HoursPresent":sum(t in data for t in recent),
+           "uniqueRecentClosedValues":len(set(round(x,10) for x in close_vals[-168:])),
+           "recentMinimumClose":min(close_vals[-168:]),
+           "recentMaximumClose":max(close_vals[-168:]),
            "latestAgeTooOld":(expected_target-end)>4*HOUR}
     return results
 
