@@ -1,0 +1,76 @@
+name: V8 Blind 4H 15 to 19 TSİ Paper Review
+
+on:
+  push:
+    branches: [experiment/v8-blind-4h-review-20261110]
+    paths:
+      - v8_blind4h_review.py
+      - .github/workflows/v8-blind4h-review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  retrospective-blind-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Reconstruct BTC ETH SOL as-of 15 TSİ without later candles
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v8_blind4h_review.py
+
+      - name: Verify all three paired 4H records and paper-only safety
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('forward/v8_blind4h/2026-11-10_15-to-19-TSI.json')
+          obj=json.loads(p.read_text())
+          assert obj['status']=='RETROSPECTIVE_BLIND_CUTOFF_RECONSTRUCTED_NO_ORDERS'
+          assert obj['brokerOrders'] is False and obj['notLivePrediction'] is True
+          assert set(obj['coins'])=={'BTCUSDT_PERP.A','ETHUSDT_PERP.A','SOLUSDT_PERP.A'}
+          for coin,x in obj['coins'].items():
+            assert x['asOf15TSI']['targetUTC']=='2026-11-10T12:00:00Z'
+            assert x['asOf19TSI']['targetUTC']=='2026-11-10T16:00:00Z'
+            assert x['comparison']['noPaperEntryVerified'] is True
+            assert x['comparison']['previous4HClose']>0
+            assert x['comparison']['next4HClose']>0
+          assert obj['coins']['BTCUSDT_PERP.A']['asOf15TSI']['verifiedAgainstContemporaryArchive'] is True
+          assert obj['coins']['SOLUSDT_PERP.A']['asOf15TSI']['verifiedAgainstContemporaryArchive'] is True
+          assert obj['coins']['ETHUSDT_PERP.A']['asOf15TSI']['verifiedAgainstContemporaryArchive'] is False
+          print('V8 BLIND 4H 15TSI 19TSI REPORT VERIFIED; ETH is retrospective only')
+          PY
+
+      - name: Preserve audit even if incomplete
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8-blind-4h-${{ github.run_id }}
+          path: forward/v8_blind4h/
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Commit independent historical paper evidence only
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v8_blind4h/2026-11-10_15-to-19-TSI.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'V8: frozen 15 TSİ analysis vs 19 TSİ 4H outcome (paper only)'
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v8-blind-4h-review-20261110
+            if git push origin HEAD:experiment/v8-blind-4h-review-20261110; then exit 0; fi
+            sleep 3
+          done
+          exit 1
