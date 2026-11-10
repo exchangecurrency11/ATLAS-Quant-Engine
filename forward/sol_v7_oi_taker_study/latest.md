@@ -11,6 +11,17 @@
 | Kazanan | 7 | +1.006% (n=7) | +0.0838 (n=7) | 7 |
 | Kayıplı/başa baş | 7 | +0.354% (n=7) | +0.1024 (n=7) | 6 |
 
+## Sonuç ayrımı (yalnız keşif amaçlı, 14 işlem)
+
+| Özellik | Sıra-AUC | Etiket permütasyon p |
+|---|---:|---:|
+| OI 1H değişimi | 0.632653 | 0.455711 |
+| OI 4H değişimi | 0.632653 | 0.455711 |
+| Taker sinyal yönlü baskı | 0.408163 | 0.620047 |
+| Funding | 0.452381 | 0.835664 |
+
+AUC 0,5 rastgele ayırt etmeye karşılık gelir; bu küçük, önceden incelenmiş veri setinde hesaplanan AUC **gelecek sinyali öngörme başarısı değildir**. Birden fazla özellik incelendi; p değerleri düzeltmesizdir.
+
 **Veri tamlığı:** Tarihsel 14 V7 paper işleminin kaçında OI/taker/funding var?
 
 | Alan | Elde | Eksik |
