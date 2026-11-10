@@ -90,6 +90,21 @@ class V83FullConfluenceTest(unittest.TestCase):
         self.assertTrue(paper["gapsCanExceedPlannedRisk"])
         self.assertLess(paper["netPnLUSDT"],-.5)
 
+    def test_local_wick_stop_is_alternative_not_same_as_full_box(self):
+        f,_=data()
+        i=430
+        f[i]["h"]=89.7
+        f[i+1]={"t":f[i+1]["t"],"o":88,"h":89,
+                "l":85,"c":86,"v":100}
+        event={"boxHigh":99}
+        from sol_v83_full_confluence_paper import paper_short_next4h
+        full=paper_short_next4h(f,event,i,2,stop_style="full_box")
+        local=paper_short_next4h(f,event,i,2,stop_style="local_retest_wick")
+        self.assertEqual(full["status"],"SKIPPED_INVALID_STOP_OR_GAP")
+        self.assertEqual(local["status"],"ILLUSTRATIVE_PAPER_ONLY")
+        self.assertEqual(local["stopStyle"],"local_retest_wick")
+        self.assertLess(local["marginUSDT"],100)
+
     def test_all_eight_flags_are_included(self):
         inputs={key:True for key in [
             "Fibonacci","PreviousDayPivot","RSI14_Daily4H",
@@ -97,7 +112,7 @@ class V83FullConfluenceTest(unittest.TestCase):
             "OrderBlock_4H","BreakHighVolume","LastClosed1HRejection"]}
         row={"features":inputs,"confluenceScore8":8,
              "aux":{"FVG_4H":False},"future24hPct":-2.0,
-             "paperNext4H":None}
+             "paperNext4H":None,"paperAlternativeLocalRetestStop":None}
         filters=all_filters()
         self.assertTrue(filters["11_AllEightMandatory"](row))
         self.assertTrue(filters["12_Score4of8"](row))
