@@ -1,0 +1,99 @@
+name: SOL V7 Frozen Trades OI Taker Funding Association (paper study)
+
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - sol_v7_oi_taker_trade_study.py
+      - tests/test_sol_v7_oi_taker_trade_study.py
+      - .github/workflows/sol-v7-oi-taker-association.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: sol-v7-original-trades-derivatives-association
+  cancel-in-progress: false
+
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          persist-credentials: true
+
+      - name: Verify no-look-ahead and immutable-outcome tests
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v7_oi_taker_trade_study.py' -v
+          python3 -m unittest discover -s tests -p 'test_sol_derivatives_quality_audit.py' -v
+
+      - name: Retrieve original immutable historical V7 paper-trade artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/tmp/v7-original
+          gh run download 41673983963 \
+            --name v7-paper-quality-report \
+            --dir forward/tmp/v7-original \
+            --repo "$GITHUB_REPOSITORY"
+          test -s forward/tmp/v7-original/v7-paper-comparison.json
+          python3 - <<'PY'
+          import json
+          j=json.load(open("forward/tmp/v7-original/v7-paper-comparison.json"))
+          assert j["mode"]=="V7_HISTORICAL_PAPER_DIAGNOSTIC_ONLY"
+          assert j["asOfUTC"].startswith("2026-11-03")
+          v7=j["results"]["SOLUSDT_PERP.A"]["paperTradesByVariant"]["V7_signal_gate"]
+          assert len(v7)==14, "Original sample is not frozen 14-trade archive"
+          print("Original immutable SOL V7 paper trades:",len(v7))
+          PY
+
+      - name: Join closed-time OI and taker with original V7 paper trades
+        run: |
+          set -euo pipefail
+          python3 sol_v7_oi_taker_trade_study.py \
+            --v7-report forward/tmp/v7-original/v7-paper-comparison.json \
+            --forward-forensic forward/forensics/latest.json \
+            --workers 8 \
+            --output forward/sol_v7_oi_taker_study/latest.json \
+            --markdown forward/sol_v7_oi_taker_study/latest.md
+
+      - name: Store reproducible report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-v7-oi-taker-association-${{ github.run_id }}
+          path: |
+            forward/sol_v7_oi_taker_study/
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Commit research study ONLY to experiment
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/sol_v7_oi_taker_study/
+          if git diff --cached --quiet; then
+            echo "No changed research report"
+            exit 0
+          fi
+          git commit -m "SOL research: frozen V7 paper outcomes vs timestamp-aligned OI/taker"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v7-signal-quality-20261103
+            if git push origin HEAD:experiment/v7-signal-quality-20261103; then
+              echo "Frozen paper-association report persisted on experimental branch"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
