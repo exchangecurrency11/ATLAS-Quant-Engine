@@ -1,0 +1,74 @@
+name: V8.2 SOL Fibonacci Pivot older 2023-24 robustness check
+
+on:
+  push:
+    branches: [experiment/v82-sol-fib-pivot-confluence-20261110]
+    paths:
+      - sol_v82_older_period_replication.py
+      - .github/workflows/v82-sol-older-2023-24-replication.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v82-sol-2023-2024-replication
+  cancel-in-progress: false
+
+jobs:
+  replicate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Test frozen indicator rules
+        run: python3 -m unittest discover -s tests -p 'test_sol_v82_fib_pivot_confluence.py' -v
+      - name: Verify 24 older monthly archives and reproduce identical indicator rules
+        run: python3 -u sol_v82_older_period_replication.py
+      - name: Fail closed unless evidence is complete
+        run: |
+          python3 - <<'PY'
+          import json
+          obj=json.load(open("forward/v82_fib_pivot/older_2023_2024.json"))
+          assert obj["status"]=="HISTORICAL_ROBUSTNESS_CHECK_NO_LIVE_SIGNAL"
+          assert obj["earlierVerifiedChecksumArchives"]==24
+          assert obj["rulesUnchangedFrom2025_2026"] is True
+          assert obj["frozenParameters"]["thresholdTunedToOutcomes"] is False
+          assert obj["frozenParameters"]["MACDUsed"] is False
+          assert obj["brokerOrders"] is False and obj["liveTradingApproved"] is False
+          assert obj["productionModified"] is False
+          for name,row in obj["combinedHistorical"].items():
+            assert row["complete24hObservations"]==(
+                obj["earlier"][name]["complete24hObservations"]+
+                obj["recent2025_2026"][name]["complete24hObservations"])
+            assert row["provenPredictiveAdvantage"] is False
+          print("OLDER_UNMODIFIED_FIB_PIVOT_RESEARCH_VERIFIED")
+          PY
+      - name: Upload older historical replication even if incomplete
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-sol-older-fib-pivot-${{ github.run_id }}
+          path: |
+            forward/v82_fib_pivot/older_2023_2024.json
+            forward/v82_fib_pivot/older_2023_2024.md
+          if-no-files-found: ignore
+          retention-days: 60
+      - name: Commit verified result to isolated experiment
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v82_fib_pivot/older_2023_2024.json forward/v82_fib_pivot/older_2023_2024.md
+          git commit -m "V8.2 research: unchanged Fib and pivot rules on older SOL 2023–24 archived history"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v82-sol-fib-pivot-confluence-20261110
+            if git push origin HEAD:experiment/v82-sol-fib-pivot-confluence-20261110; then exit 0; fi
+            sleep 4
+          done
+          exit 1
