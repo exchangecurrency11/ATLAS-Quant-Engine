@@ -176,7 +176,8 @@ def snapshot(now,models,key,fetch=None):
         expected_daily_close=((target-LEAD_SECONDS)//DAY)*DAY
         if d[-1]["t"]+DAY!=expected_daily_close:
             raise ValueError("MOST_RECENT_DAILY_CLOSE_UNAVAILABLE_"+symbol)
-        verify_daily_vs_hours(hrs,d,now)
+        if not verify_daily_vs_hours(hrs,d,now):
+            raise ValueError("DAILY_VS_1H_RECONCILIATION_INCOMPLETE_"+symbol)
         # The [T-4H,T) candle has NOT yet closed. Use no 4H of it.
         old=hrs[:HISTORY_1H-4]
         four=aggregate_closed_four(old)
