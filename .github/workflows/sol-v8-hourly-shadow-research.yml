@@ -1,0 +1,108 @@
+name: SOL V8 hourly V7 shadow quality join (research only)
+
+# Runs from main scheduler; reads V7 paper snapshot, writes only V8 experiment.
+# NO broker orders, no signal gating, no entry simulation, no hindsight backfill.
+on:
+  schedule:
+    - cron: '46,55 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sol-v8-hourly-shadow-research
+  cancel-in-progress: false
+
+jobs:
+  shadow-paper-pair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Guard genuine last closed hour
+        id: timing
+        shell: bash
+        run: |
+          set -euo pipefail
+          minute="$(date -u +%M)"
+          if (( 10#$minute < 20 || 10#$minute > 58 )); then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "NO_PAIRING: not a trustworthy fresh observation window"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "target=$(date -u +%Y-%m-%dT%H-00Z)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout isolated SOL V8 experiment (not main)
+        if: steps.timing.outputs.run == 'true'
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v8-sol-derivatives-probe-20261110
+          persist-credentials: true
+
+      - name: Test zero-lookahead causal pairing
+        if: steps.timing.outputs.run == 'true'
+        run: python3 -m unittest discover -s tests -p 'test_sol_v8_shadow_join.py' -v
+
+      - name: Fetch matching immutable V7 paper snapshot
+        if: steps.timing.outputs.run == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ steps.timing.outputs.target }}
+        run: |
+          set -euo pipefail
+          mkdir -p forward/sol_v8_shadow/tmp
+          gh api "repos/$GITHUB_REPOSITORY/contents/forward/snapshots/$TARGET.json?ref=experiment/v7-signal-quality-20261103" \
+            --jq '.content' | base64 --decode > forward/sol_v8_shadow/tmp/v7.json
+          test -s forward/sol_v8_shadow/tmp/v7.json
+
+      - name: Record only independently observed matching-hour shadow evidence
+        if: steps.timing.outputs.run == 'true'
+        env:
+          TARGET: ${{ steps.timing.outputs.target }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="forward/sol_v8_shadow/$TARGET.json"
+          if test -f "$output"; then
+            python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); assert o["status"]=="PAIRED_RESEARCH_ONLY_NO_SIGNAL"; assert o["signalsEnabled"] is False' "$output"
+            echo "EXISTING_VERIFIED_SHADOW_PAIR_PRESERVED $TARGET"
+            exit 0
+          fi
+          python3 sol_v8_shadow_join.py \
+            --v7 forward/sol_v8_shadow/tmp/v7.json \
+            --v8 "forward/sol_v8_derivatives_probe/snapshots/$TARGET.json" \
+            --output "$output"
+
+      - name: Save paired evidence artifact
+        if: always() && steps.timing.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-v8-shadow-hourly-${{ github.run_id }}
+          path: forward/sol_v8_shadow/*.json
+          if-no-files-found: ignore
+          retention-days: 45
+
+      - name: Commit ONLY V8 experimental shadow audit
+        if: success() && steps.timing.outputs.run == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/sol_v8_shadow/*.json
+          if git diff --cached --quiet; then
+            echo "No changed shadow evidence"
+            exit 0
+          fi
+          git commit -m "SOL V8: safe hourly V7 / derivatives shadow observation"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v8-sol-derivatives-probe-20261110
+            if git push origin HEAD:experiment/v8-sol-derivatives-probe-20261110; then
+              echo "SOL_V8_SHADOW_AUDIT_PERSISTED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
