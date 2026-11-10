@@ -1,0 +1,40 @@
+{
+  "status": "RESEARCH_SNAPSHOT_NO_ORDERS",
+  "symbol": "SOLUSDT_PERP.A",
+  "runUTC": "2026-11-10T20:23:35Z",
+  "localRunTSI": "2026-11-10 23:23 TSİ",
+  "sources": "Coinalyze SOLUSDT perpetual read-only 1H,4H,Daily",
+  "responseSHA256": {
+    "1hour": "726a112a058a089f3ab1cdfc253a2b38cb7f7127ce415bd3c821633b9d2da363",
+    "4hour": "97d4639bf78c9693d2d6962e1ea75b8b977809b96a8175b3514f2e22f3a7174c",
+    "daily": "6f7cab3aa664ea3d27ab3634e83261db58f372739663be795b3289868eee5716"
+  },
+  "closeValidation": {
+    "expected4H": "2026-11-10T20:00:00Z",
+    "latestVerified4H": "2026-11-10T20:00:00Z",
+    "expected1H": "2026-11-10T20:00:00Z",
+    "latestVerified1H": "2026-11-10T20:00:00Z",
+    "latestDaily": "2026-11-10T00:00:00Z"
+  },
+  "candleCounts": {
+    "1hour": 407,
+    "4hour": 899,
+    "daily": 314
+  },
+  "liveTradeAllowed": false,
+  "productionModified": false,
+  "current4H": {
+    "open": 82.23,
+    "high": 83.26,
+    "low": 81.46,
+    "close": 82.9
+  },
+  "decision": {
+    "action": "ABSTAIN_MIXED_SMA_REGIME",
+    "reason": "Daily and 4H SMA100 vs 200 direction not aligned"
+  },
+  "technicalFeaturesAtLastVerified4HClose": {
+    "status": "ABSTAIN_MIXED_SMA_REGIME",
+    "asOfUTC": "2026-11-10T20:00:00Z"
+  }
+}
