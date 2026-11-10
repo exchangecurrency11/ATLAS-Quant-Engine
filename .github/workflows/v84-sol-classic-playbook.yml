@@ -1,0 +1,92 @@
+name: V8.4 SOL Classic SMA100 200 Wyckoff Sweep Pivot Fib 1H paper research
+
+on:
+  push:
+    branches: [experiment/v84-sol-classic-playbook-20261110]
+    paths:
+      - sol_v84_classic_sma_wyckoff_paper.py
+      - tests/test_sol_v84_classic_sma_wyckoff_paper.py
+      - .github/workflows/v84-sol-classic-playbook.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v84-sol-classic-playbook
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout isolated V8.4 research
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Causal SMA, Wyckoff sweep, 1H entry, risk and target guard tests
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v84_classic_sma_wyckoff_paper.py' -v
+          python3 -m unittest discover -s tests -p 'test_sol_v82_fib_pivot_confluence.py' -q
+
+      - name: Download and checksum verify 45 historical Binance SOL Futures months
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u sol_v84_classic_sma_wyckoff_paper.py \
+            --json forward/v84_classic_playbook/latest.json \
+            --markdown forward/v84_classic_playbook/latest.md
+
+      - name: Verify paper-only result and frozen trading constraints
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open("forward/v84_classic_playbook/latest.json"))
+          assert x["status"]=="RESEARCH_EXPERIMENT_ONLY_NO_LIVE_TRADE"
+          assert x["verifiedMonthlyArchives"]==45
+          assert x["onlyShortSideTested"] is True
+          assert x["brokerOrders"] is False and x["productionModified"] is False
+          assert x["liveSignalEnabled"] is False and x["actualInstitutionalOrderEvidence"] is False
+          assert x["frozenBeforeSeeingOutcomes"]["MACDUsed"] is False
+          assert x["frozenBeforeSeeingOutcomes"]["SMA4H"]==[100,200]
+          assert len(x["comparison"]["combined"])>=9
+          assert x["previouslyInspectedHistoricalData"] is True
+          for period,strategies in x["comparison"].items():
+            for name,r in strategies.items():
+              assert r["correctDown24hAfter1HSignal"]<=r["completed24hDirectionLabels"]
+              assert r["meets75WithMin30"] is False or (
+                r["completed24hDirectionLabels"]>=30 and r["directionAccuracyPct"]>=75)
+              assert r["portfolio"]["startingEquityUSD"]==100
+              assert r["portfolio"]["completedNonOverlappingTrades"]<=r["completed24hDirectionLabels"]
+          print("V84_CLASSIC_ALL_INDICATOR_RISK_AND_TIMELINE_VERIFIED")
+          PY
+
+      - name: Preserve report even if research fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v84-sol-classic-paper-${{ github.run_id }}
+          path: forward/v84_classic_playbook/
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Commit report only to experimental branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v84_classic_playbook/latest.json forward/v84_classic_playbook/latest.md
+          git commit -m "V8.4 SOL historic classic setup: SMA100 SMA200 Wyckoff sweep Fib pivot 1H paper"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v84-sol-classic-playbook-20261110
+            if git push origin HEAD:experiment/v84-sol-classic-playbook-20261110; then
+              echo "V84_SOL_CLASSIC_RESEARCH_PUBLISHED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
