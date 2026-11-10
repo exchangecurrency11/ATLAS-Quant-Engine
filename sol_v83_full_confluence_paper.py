@@ -161,15 +161,18 @@ def last_hour_rejection(one,four,retest_i):
             "allFourConstituentsVerified":True}
 
 
-def paper_short_next4h(four,event,at_i,atr_prev):
+def paper_short_next4h(four,event,at_i,atr_prev,stop_style="full_box"):
     """Independent event-based hypothetical short: next 4H open only."""
     if at_i+WINDOW_4H>=len(four):return None
     entry=four[at_i+1]["o"]
-    stop=max(four[at_i]["h"],event["boxHigh"])+.15*atr_prev
+    if stop_style not in ("full_box","local_retest_wick"):
+        raise ValueError("UNKNOWN_STOP_MODEL")
+    stop=(max(four[at_i]["h"],event["boxHigh"]) if stop_style=="full_box"
+          else four[at_i]["h"])+.15*atr_prev
     gap_after_close=entry
     d=stop-entry
     if not entry>0 or not .001<=d/entry<=.04:
-        return {"status":"SKIPPED_INVALID_STOP_OR_GAP"}
+        return {"status":"SKIPPED_INVALID_STOP_OR_GAP","stopStyle":stop_style}
     tp=entry-2*d
     exit_price=four[at_i+WINDOW_4H]["c"]
     reason="TIME_24H"
@@ -198,7 +201,7 @@ def paper_short_next4h(four,event,at_i,atr_prev):
     qty=min(RISK_CAP_USDT/(d+FEE_SLIP_ONE_SIDE*(entry+stop)),
             START_EQUITY_USDT*LEVERAGE_CAP/entry)
     dollars=qty*(entry-exit_price-cost)
-    return {"status":"ILLUSTRATIVE_PAPER_ONLY",
+    return {"status":"ILLUSTRATIVE_PAPER_ONLY","stopStyle":stop_style,
             "entryNext4HOpenUTC":iso(four[at_i+1]["t"]),
             "exitKnownUTC":iso(four[exit_time]["t"]+SECS4),
             "entryPrice":round(entry,5),
@@ -239,11 +242,13 @@ def features_for_event(one,four,daily,event):
     }
     aux={"FVG_4H":bool(ob["bearishFVGConfluence"])}
     score=sum(votes.values())
-    paper=paper_short_next4h(four,event,i,av)
+    paper=paper_short_next4h(four,event,i,av,stop_style="full_box")
+    local_paper=paper_short_next4h(four,event,i,av,stop_style="local_retest_wick")
     return {**event,"features":votes,"aux":aux,
             "confluenceScore8":score,"featureCount":len(votes),
             "WyckoffProxy":w,"indicators":ind,"OBFVG":ob,"last1H":h,
-            "paperNext4H":paper,"featureKnownAtUTC":event["retestClosedUTC"]}
+            "paperNext4H":paper,"paperAlternativeLocalRetestStop":local_paper,
+            "featureKnownAtUTC":event["retestClosedUTC"]}
 
 
 def segment_summary(rows,filter_fn):
@@ -252,6 +257,9 @@ def segment_summary(rows,filter_fn):
     won=[x for x in answered if x["future24hPct"]<0]
     paper=[x["paperNext4H"] for x in answered if x["paperNext4H"]
            and x["paperNext4H"]["status"]=="ILLUSTRATIVE_PAPER_ONLY"]
+    local=[x["paperAlternativeLocalRetestStop"] for x in answered
+           if x["paperAlternativeLocalRetestStop"]
+           and x["paperAlternativeLocalRetestStop"]["status"]=="ILLUSTRATIVE_PAPER_ONLY"]
     count=len(answered)
     rate=round(100*len(won)/count,2) if count else None
     return {
@@ -269,6 +277,14 @@ def segment_summary(rows,filter_fn):
        "paperWinPct":round(100*sum(x["netPnLUSDT"]>0 for x in paper)/len(paper),2) if paper else None,
        "paperNetUSDStandaloneSum":round(sum(x["netPnLUSDT"] for x in paper),4),
        "paperGapStopEvents":sum(x["gapsCanExceedPlannedRisk"] for x in paper),
+       "localRetestStopSensitivityPostHoc":{
+           "paperTrades":len(local),
+           "wins":sum(x["netPnLUSDT"]>0 for x in local),
+           "winRatePct":round(100*sum(x["netPnLUSDT"]>0 for x in local)/len(local),2) if local else None,
+           "perEventHypotheticalPnLSumUSDT":round(sum(x["netPnLUSDT"] for x in local),4),
+           "stopGapEvents":sum(x["gapsCanExceedPlannedRisk"] for x in local),
+           "notValidForwardComparison":True,
+           "source":"After discovering full-zone stop allowed zero trades, local stop added as post-hoc execution sensitivity only."},
        "notIndependentlyValidated":True}
 
 
@@ -354,10 +370,11 @@ def report_table(reports,segments):
        "- Last closed 1H rejection and prior 20-bar 4H break relative-volume recorded.",
        "- Score = sum of 8 binary votes (FVG is extra, no score); no MACD.",
        "- Paper SHORT (separate metric): next 4H OPEN, stop beyond retest/box +0.15ATR, TP2R or 24h exit, stop-first, 9bps one-way, 100 USD 10x, <=0.5 USD planned risk. Gap-through stops can exceed planned risk.",
+       "- Alternative local retest-wick stop +0.15 ATR is post-hoc sensitivity introduced after finding no full-box eligible fills; not a tested production choice.",
        "- No proof of genuine Wyckoff phases, UTAD, springs or institutional orders; chart-only proxies.",
        "",
-       "| Filter | 2023–24 hit | 2025–Sep2026 hit | Combined hit | Combined count | Paper net USDT (event sum) |",
-       "|---|---:|---:|---:|---:|---:|"]
+       "| Filter | 2023–24 hit | 2025–Sep2026 hit | Combined hit | Combined count | Full-box paper trades | Local-wick paper trades / net USDT (post-hoc) |",
+       "|---|---:|---:|---:|---:|---:|---:|"]
     for name in names:
         def render_rate(x):
             z=x[name]
@@ -369,7 +386,9 @@ def report_table(reports,segments):
         lines.append(f"| {name} | {render_rate(reports['older2023_2024'])} | "
                      f"{render_rate(reports['recent2025_2026'])} | "
                      f"{render_rate(reports['combined'])} | {c['answered24h']} | "
-                     f"{c['paperNetUSDStandaloneSum']:+.4f} |")
+                     f"{c['paperTradesCompleted']} | "
+                     f"{c['localRetestStopSensitivityPostHoc']['paperTrades']} / "
+                     f"{c['localRetestStopSensitivityPostHoc']['perEventHypotheticalPnLSumUSDT']:+.4f} |")
     lines+=["",
       "## Caveats",
       "- Both periods are previously examined; they are NOT a new independent validation cohort.",
