@@ -1,0 +1,133 @@
+name: 'V9 BTC ETH SOL separate Daily 4H close commentary research'
+
+# Produces Daily + 4H commentary, NOT the next 4H pre-start prediction.
+# Schedules ~32 minutes AFTER each closed 4H candle, allowing existing
+# main market-data/structure and independent ETH hourly publishers to run.
+# Data mismatch/stale ETH=>fail closed, no fabricated context.
+on:
+  schedule:
+    - cron: '32 0,4,8,12,16,20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-daily-4h-commentary-only
+  cancel-in-progress: false
+
+jobs:
+  commentary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout research-only V9 commentary branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          persist-credentials: true
+
+      - name: Revalidate as-of time, indicator and no future data tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "research/v9-prestart-live-data-compatibility-20261111"
+          python3 -m unittest discover -s tests -p 'test_v9_daily_4h_close_commentary.py' -q
+
+      - name: Pull main BTC SOL and ETH independent read-only verified close sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/v9_close_commentary/input
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/v9_close_commentary/input/main.json
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_structure_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/v9_close_commentary/input/structure.json
+          TIME=$(python3 - <<'PY'
+          import json,datetime
+          d=json.load(open('forward/v9_close_commentary/input/main.json'))
+          assert d.get('ok') is True
+          now=datetime.datetime.now(datetime.timezone.utc)
+          checked=datetime.datetime.fromisoformat(d['checkedAtUTC'].replace('Z','+00:00'))
+          assert -60<=(now-checked).total_seconds()<=2700,'MAIN_PROVIDER_STALE'
+          r=next(x for x in d['results'] if x['symbol']=='BTCUSDT_PERP.A' and x['interval']=='4hour')
+          t=datetime.datetime.fromisoformat(r['closeTimeUTC'].replace('Z','+00:00'))
+          expected=now.replace(hour=(now.hour//4)*4,minute=0,second=0,microsecond=0)
+          assert t==expected,f'LAST_4H_NOT_LATEST_CLOSED:{t} != {expected}'
+          print(t.strftime('%Y-%m-%dT%H-00Z'))
+          PY
+          )
+          gh api "repos/$GITHUB_REPOSITORY/contents/forward/eth/snapshots/$TIME.json?ref=experiment/v7-signal-quality-20261103" \
+            --jq '.content' | base64 --decode > forward/v9_close_commentary/input/eth.json
+
+      - name: Generate BTC ETH SOL Daily + 4H close analysis independently of predicted color
+        run: |
+          python3 -u v9_daily_4h_close_commentary.py \
+            --main forward/v9_close_commentary/input/main.json \
+            --eth forward/v9_close_commentary/input/eth.json \
+            --structure forward/v9_close_commentary/input/structure.json
+
+      - name: Attest matching candle times and append-only 4H interpretation history
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,datetime,pathlib,shutil
+          base=pathlib.Path('forward/v9_close_commentary')
+          x=json.loads((base/'latest.json').read_text())
+          assert x['status']=='V9_VERIFIED_DAILY_4H_INTERPRETATIONS_ONLY'
+          assert x['preservePreviousFrozen4HPreStartPredictions'] is True
+          assert x['commentaryNotAnEntrySignal'] is True
+          assert x['noRealOrders'] is True and x['productionModified'] is False
+          assert set(x['assets'])=={'BTC','ETH','SOL'}
+          now=datetime.datetime.now(datetime.timezone.utc)
+          t=datetime.datetime.fromisoformat(x['asOf4HCloseUTC'].replace('Z','+00:00'))
+          expected=now.replace(hour=(now.hour//4)*4,minute=0,second=0,microsecond=0)
+          assert t==expected,'COMMENTARY_MUST_USE_LAST_COMPLETE_4H'
+          token=t.strftime('%Y-%m-%dT%H-00Z')
+          for ext in ('json','md'):
+            dst=base/'history'/f'{token}.{ext}'
+            dst.parent.mkdir(exist_ok=True,parents=True)
+            if dst.exists():
+              assert dst.read_bytes()==(base/f'latest.{ext}').read_bytes(), 'IMMUTABLE_CLOSE_COMMENTARY_CHANGED'
+            else:
+              shutil.copyfile(base/f'latest.{ext}',dst)
+          print('V9_DAILY_4H_CONTEXT_SEALED',token)
+          PY
+
+      - name: Commit only interpretation reports to separate experimental branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_close_commentary/latest.json \
+                  forward/v9_close_commentary/latest.md \
+                  forward/v9_close_commentary/history/
+          if git diff --cached --quiet; then
+            echo "V9_NO_NEW_VERIFIED_CLOSE_COMMENTARY"
+            exit 0
+          fi
+          git commit -m 'V9 separate BTC ETH SOL immutable verified Daily/4H close interpretation'
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_CLOSE_CONTEXT_RESEARCH_PUBLISHED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+
+      - name: Save separate Daily + 4H audit artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-verified-close-context-${{ github.run_id }}
+          path: |
+            forward/v9_close_commentary/latest.json
+            forward/v9_close_commentary/latest.md
+          if-no-files-found: ignore
+          retention-days: 45
