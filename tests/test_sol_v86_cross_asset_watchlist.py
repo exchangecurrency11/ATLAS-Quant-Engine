@@ -36,7 +36,7 @@ class ThreeAssetAuditTests(unittest.TestCase):
         r={"BTCUSDT_PERP.A":tf(73000),
            "ETHUSDT_PERP.A":tf(2050),
            "SOLUSDT_PERP.A":tf(83)}
-        r["ETHUSDT_PERP.A"]["1hour"]["candle"]["close"]=1900
+        r["ETHUSDT_PERP.A"]["1hour"]["candle"]["close"]=2051
         with self.assertRaisesRegex(ValueError,"PRICE_MISMATCH"):
             validate_timestamp_and_candles(r)
 
