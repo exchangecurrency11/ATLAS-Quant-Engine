@@ -46,6 +46,22 @@ for date in DATES:
                                   "sample":sample}),flush=True)
         except Exception as e:
             print(json.dumps({"date":date,"type":kind+":"+interval,"status":"INVALID_CSV:"+str(e)}),flush=True)
+for month in ("2026-10","2026-09","2026-11"):
+    url=f"{ROOT}/monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-{month}.zip"
+    blob=get(url)
+    if not isinstance(blob,bytes):
+        print(json.dumps({"month":month,"kind":"monthly_fundingRate","status":blob}),flush=True)
+        continue
+    cs=get(url+".CHECKSUM",max_bytes=3000)
+    match=(isinstance(cs,bytes) and hashlib.sha256(blob).hexdigest()==cs.decode().split()[0].lower())
+    with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+        names=[n for n in archive.namelist() if n.endswith(".csv")]
+        with archive.open(names[0]) as src:
+            records=csv.reader(io.TextIOWrapper(src,encoding="utf-8-sig"))
+            sample=[next(records) for _ in range(3)]
+    print(json.dumps({"month":month,"kind":"monthly_fundingRate","status":"ZIP_OK",
+                      "sha256_verified":match,"samples":sample}),flush=True)
+
 for label,url in [
     ("OI_REST","https://fapi.binance.com/futures/data/openInterestHist?symbol=SOLUSDT&period=5m&limit=5"),
     ("FUNDING_REST","https://fapi.binance.com/fapi/v1/fundingRate?symbol=SOLUSDT&limit=5")
