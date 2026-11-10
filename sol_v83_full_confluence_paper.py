@@ -56,7 +56,7 @@ def causal_indicators(four,daily,retest_i):
     cutoff=four[retest_i]["t"]+SECS4
     day=[x for x in daily if x["t"]+DAY<=cutoff]
     bars=four[:retest_i+1]
-    if len(day)<200 or len(bars)<200:
+    if len(day)<55 or len(bars)<200:
         raise ValueError("INDICATORS_NOT_WARM")
     f_close=[b["c"] for b in bars]
     d_close=[b["c"] for b in day]
@@ -75,7 +75,8 @@ def causal_indicators(four,daily,retest_i):
       "RSIBear":f_rsi<50 and d_rsi<50,
       "RSI30OrAboveNotExtremelyOversold":f_rsi>=RSI_MIN_FOR_NO_CHASE,
       "EMA200FourContextBear":f_close[-1]<f200,
-      "EMA200DailyContextBear":d_close[-1]<d200,
+      "EMA200DailyContextBear":d_close[-1]<d200 if len(day)>=200 else None,
+      "EMA200DailyWarm":len(day)>=200,
     }
 
 
@@ -210,7 +211,8 @@ def paper_short_next4h(four,event,at_i,atr_prev):
 
 
 def features_for_event(one,four,daily,event):
-    if event["retestClosedUTC"]!=event["retestClosedUTC"]:raise ValueError("BAD_EVENT")
+    if not event.get("retestClosedUTC") or not event.get("breakUTC"):
+        raise ValueError("MISSING_CONFIRMED_BREAK_OR_RETEST")
     index={bar["t"]+SECS4:i for i,bar in enumerate(four)}
     i=index.get(int(datetime.fromisoformat(event["retestClosedUTC"].replace("Z","+00:00")).timestamp()))
     br=index.get(int(datetime.fromisoformat(event["breakUTC"].replace("Z","+00:00")).timestamp()))
@@ -313,8 +315,19 @@ def run_period(start,end):
         raise ValueError("1H_TIME_ALIGNMENT_INCOMPLETE")
     # Need historical RSI200 daily warmup. First events naturally arise later.
     retests,old_results,counts=v82_evaluate(four,daily)
-    enriched=[features_for_event(one,four,daily,e) for e in retests]
+    enriched=[]
+    skipped_warmup=0
+    for event in retests:
+        try:
+            enriched.append(features_for_event(one,four,daily,event))
+        except ValueError as e:
+            if str(e)=="INDICATORS_NOT_WARM":
+                skipped_warmup+=1
+            else:
+                raise
     return enriched,{"verifiedSHA256Months":len(proofs),
+                     "preexistingRetests":len(retests),
+                     "excludedInitialRSIEMA50WarmupRetests":skipped_warmup,
                      "1hourBars":len(one),"4hourBars":len(four),"dailyBars":len(daily),
                      "events":counts}
 
@@ -332,7 +345,7 @@ def report_table(reports,segments):
        "- SOL Binance USD-M Futures official SOLUSDT 1H monthly .zip plus .CHECKSUM verification; 45 months total across 2023-24 and 2025-Sep2026.",
        "- V8.1 wide Daily+4H support zone frozen before the break, red retest below the band.",
        "- V8.2 Fib 38.2–61.8 retracement and Classic prior completed UTC Daily P/R1/R2/S1/S2.",
-       "- RSI14 4H and Daily under 50 but 4H >=30; EMA20/50 trend below BOTH timeframes. EMA200 is context only.",
+       "- RSI14 4H and Daily under 50 but 4H >=30; EMA20/50 trend below BOTH timeframes. EMA200 is context only. First 55 Daily candles lack sufficient RSI/EMA50 warmup and are excluded for all filters.",
        "- Wyckoff SOW proxy = broken support with RVOL>=1.2 and bearish close in bottom 40% of the range.",
        "- Wyckoff LPSY proxy = after break, failed upper retest below previous 12-bar high and volume contraction or upper wick.",
        "- Bearish Order Block = CHoCH/BOS previous opposite candle from OHLCV structure, known BEFORE the 4H retest opens; FVG also recorded.",
