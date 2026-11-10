@@ -103,10 +103,30 @@ def current_audit():
     fc=[b["c"] for b in four]
     dc=[b["c"] for b in daily]
     i=len(four)-1
+    f100,f200=rolling_sma(fc,100),rolling_sma(fc,200)
+    d100,d200=rolling_sma(dc,100),rolling_sma(dc,200)
+    frsi,drsi=rolling_rsi14(fc),rolling_rsi14(dc)
+    completed_d=[k for k,bar in enumerate(daily) if bar["t"]+DAY<=latest4]
+    if not completed_d:raise ValueError("NO_COMPLETED_DAILY_CONTEXT")
+    di=completed_d[-1]
+    output["readOnlyMarketContext"]={
+       "4HCloseUTC":iso(latest4),
+       "dailyCloseUTC":iso(daily[di]["t"]+DAY),
+       "4HClose":round(fc[-1],5),
+       "dailyClose":round(dc[di],5),
+       "4HSMA100":round(f100[i],5) if f100[i] is not None else None,
+       "4HSMA200":round(f200[i],5) if f200[i] is not None else None,
+       "dailySMA100":round(d100[di],5) if d100[di] is not None else None,
+       "dailySMA200":round(d200[di],5) if d200[di] is not None else None,
+       "4HRSI14":round(frsi[i],3) if frsi[i] is not None else None,
+       "dailyRSI14":round(drsi[di],3) if drsi[di] is not None else None,
+       "4HSMA100AboveSMA200":(f100[i]>f200[i]) if f200[i] is not None else None,
+       "dailySMA100AboveSMA200":(d100[di]>d200[di]) if d200[di] is not None else None,
+       "userDrawn87_50To95SupplyZone": {"low":87.5,"high":95.0,
+                                       "signalAlgorithmInput":False,
+                                       "approxDistanceFromLowerEdgeUSD":round(87.5-fc[-1],3)}}
     features=features_at_4h_close(
-         one,four,daily,i,
-         rolling_sma(fc,100),rolling_sma(fc,200),rolling_rsi14(fc),
-         rolling_sma(dc,100),rolling_sma(dc,200),rolling_rsi14(dc))
+         one,four,daily,i,f100,f200,frsi,d100,d200,drsi)
     if features is None:
         output["decision"]={"action":"ABSTAIN_INSUFFICIENT_WARMUP",
                             "reason":"Cannot compute closed-only SMA200/RSI"}
