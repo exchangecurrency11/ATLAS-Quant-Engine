@@ -1,13 +1,13 @@
 {
   "status": "RESEARCH_SNAPSHOT_NO_ORDERS",
   "symbol": "SOLUSDT_PERP.A",
-  "runUTC": "2026-11-10T20:23:35Z",
-  "localRunTSI": "2026-11-10 23:23 TSİ",
+  "runUTC": "2026-11-10T20:24:39Z",
+  "localRunTSI": "2026-11-10 23:24 TSİ",
   "sources": "Coinalyze SOLUSDT perpetual read-only 1H,4H,Daily",
   "responseSHA256": {
-    "1hour": "726a112a058a089f3ab1cdfc253a2b38cb7f7127ce415bd3c821633b9d2da363",
-    "4hour": "97d4639bf78c9693d2d6962e1ea75b8b977809b96a8175b3514f2e22f3a7174c",
-    "daily": "6f7cab3aa664ea3d27ab3634e83261db58f372739663be795b3289868eee5716"
+    "1hour": "7ea2877f66b30bf5dc520fd7b96362894fa5396ded8522c7efccd79ab8db3166",
+    "4hour": "d01d93a805f8d51d9ef7e4fad43b44d5de8c150f3e5ea7c319f00586cca4d924",
+    "daily": "de08d8afe127af8320e64e7975a7243dbdea248ad2dceb9c31e5c8b9a6866468"
   },
   "closeValidation": {
     "expected4H": "2026-11-10T20:00:00Z",
@@ -32,6 +32,26 @@
   "decision": {
     "action": "ABSTAIN_MIXED_SMA_REGIME",
     "reason": "Daily and 4H SMA100 vs 200 direction not aligned"
+  },
+  "readOnlyMarketContext": {
+    "4HCloseUTC": "2026-11-10T20:00:00Z",
+    "dailyCloseUTC": "2026-11-10T00:00:00Z",
+    "4HClose": 82.9,
+    "dailyClose": 86.69,
+    "4HSMA100": 94.4449,
+    "4HSMA200": 100.27205,
+    "dailySMA100": 99.5105,
+    "dailySMA200": 89.01185,
+    "4HRSI14": 30.574,
+    "dailyRSI14": 27.236,
+    "4HSMA100AboveSMA200": false,
+    "dailySMA100AboveSMA200": true,
+    "userDrawn87_50To95SupplyZone": {
+      "low": 87.5,
+      "high": 95.0,
+      "signalAlgorithmInput": false,
+      "approxDistanceFromLowerEdgeUSD": 4.6
+    }
   },
   "technicalFeaturesAtLastVerified4HClose": {
     "status": "ABSTAIN_MIXED_SMA_REGIME",
