@@ -1,0 +1,91 @@
+name: 'V9 research: verify complete Binance taker and trade flow fields'
+
+on:
+  push:
+    branches: [research/v9-evidence-first-architecture-20261110]
+    paths:
+      - download_binance_um_history.py
+      - v9_binance_taker_flow.py
+      - v9_flow_data_probe.py
+      - tests/test_download_binance_um_history.py
+      - tests/test_v9_binance_taker_flow.py
+      - .github/workflows/v9-binance-full-flow-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-binance-full-flow-research
+  cancel-in-progress: false
+
+jobs:
+  full-data-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated V9 research branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Verify no-leakage flow features, backward compatibility and strict Binance CSV parser
+        run: |
+          python3 -m unittest discover -s tests -p 'test_download_binance_um_history.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_binance_taker_flow.py' -v
+          python3 -m unittest discover -s tests -p 'test_sol_v86_three_regime_research.py' -q
+
+      - name: Download Sep 2026 BTC ETH SOL archive ZIPs and validate official SHA256 and OHLCV flow fields
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u v9_flow_data_probe.py --month 2026-09 \
+            --json forward/v9_taker_flow/latest.json
+
+      - name: Fail closed unless all fields available with independent sums
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open('forward/v9_taker_flow/latest.json'))
+          assert x["status"]=="HISTORICAL_DATA_FIELDS_VERIFIED_NO_PREDICTIVE_INFERENCE"
+          assert x["monthsVerified"]==3
+          assert set(x["contracts"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          for symbol,v in x["contracts"].items():
+            assert len(v["archiveSHA256"])==64
+            assert v["allFiveFlowMeasuresAggregatedExactly"]
+            assert v["sourcePublicationNotContemporaneous"]
+            assert v["rollingLast24hTakerResearchSnapshot"]["onlyClosedCandlesUsed"]
+            assert v["rollingLast24hTakerResearchSnapshot"]["paperOnly"]
+          assert x["liveSignalEnabled"] is False
+          assert x["brokerOrders"] is False and x["productionModified"] is False
+          print("V9_FULL_FLOW_FIELDS_3_ASSETS_RESEARCH_PASSED")
+          PY
+
+      - name: Keep independent raw proof artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-binance-full-taker-${{ github.run_id }}
+          path: forward/v9_taker_flow/latest.json
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Publish only research snapshot in isolated branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_taker_flow/latest.json
+          git commit -m "V9: verified Sep 2026 BTC ETH SOL closed Binance taker CVD input audit"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-evidence-first-architecture-20261110
+            if git push origin HEAD:research/v9-evidence-first-architecture-20261110; then
+              echo "V9_FLOW_DATA_VERIFICATION_COMMITTED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
