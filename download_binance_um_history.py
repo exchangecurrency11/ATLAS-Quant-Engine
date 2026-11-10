@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from hashlib import sha256
 from io import BytesIO, TextIOWrapper
 import json
+import math
 from pathlib import Path
 import time
 from urllib.error import HTTPError, URLError
@@ -79,7 +80,7 @@ def parse_zip(zip_bytes, *, symbol, month):
             for record in reader:
                 if not record: continue
                 if record[0].strip().lower() in ("open time","open_time"): continue
-                if len(record)<6:
+                if len(record)<6 or 6<len(record)<11:
                     raise ValueError("Malformed Binance kline CSV")
                 raw_ts=int(record[0])
                 # Official UM klines are milliseconds; safely accept us if changed.
@@ -88,9 +89,31 @@ def parse_zip(zip_bytes, *, symbol, month):
                 if timestamp%3600:
                     raise ValueError("Misaligned 1H open time")
                 o,h,l,c,v=(float(x) for x in record[1:6])
-                if not (l>0 and l<=min(o,c)<=max(o,c)<=h and v>=0):
+                if not (all(math.isfinite(x) for x in (o,h,l,c,v))
+                        and l>0 and l<=min(o,c)<=max(o,c)<=h and v>=0):
                     raise ValueError("Malformed kline OHLCV")
-                output.append({"t":timestamp,"o":o,"h":h,"l":l,"c":c,"v":v})
+                candle={"t":timestamp,"o":o,"h":h,"l":l,"c":c,"v":v}
+                if len(record)>=11:
+                    # Binance UM Futures 1H archive fields (zero-based):
+                    # 7 quote asset volume, 8 number of trades,
+                    # 9 taker-buy base asset, 10 taker-buy quote asset.
+                    # Never fill missing flow as zero: zero is market data.
+                    qv=float(record[7])
+                    trades=int(record[8])
+                    tbv=float(record[9])
+                    tbq=float(record[10])
+                    if not (all(math.isfinite(x) for x in (qv,tbv,tbq))
+                            and trades>=0 and qv>=0
+                            and 0<=tbv<=v+max(1e-8,v*1e-7)
+                            and 0<=tbq<=qv+max(1e-6,qv*1e-7)):
+                        raise ValueError("Malformed Binance taker or quote volume")
+                    if v>0 and not l*.9999<=qv/v<=h*1.0001:
+                        raise ValueError("Quote/base volume inconsistent with OHLC price")
+                    if tbv>0 and not l*.9999<=tbq/tbv<=h*1.0001:
+                        raise ValueError("Taker quote/base volume inconsistent with OHLC price")
+                    candle.update({"qv":qv,"trades":trades,
+                                   "tbv":max(0.,min(v,tbv)),"tbq":max(0.,min(qv,tbq))})
+                output.append(candle)
     start,end=month_start(month),month_end(month)
     if len(output)!=(end-start)//3600:
         raise ValueError(f"Missing/extra candles in {symbol} {month}: {len(output)}")
@@ -125,14 +148,23 @@ def aggregate(rows, seconds):
         if (chunk[0]["t"]%seconds or len(chunk)!=batch or
             any(b["t"]!=chunk[0]["t"]+j*3600 for j,b in enumerate(chunk))):
             raise ValueError("Cannot aggregate noncontinuous or misaligned candles")
-        output.append({
+        combined={
             "t":chunk[0]["t"],
             "o":chunk[0]["o"],
             "h":max(b["h"] for b in chunk),
             "l":min(b["l"] for b in chunk),
             "c":chunk[-1]["c"],
             "v":sum(b["v"] for b in chunk),
-        })
+        }
+        # Preserve additional volume and trade-count fields when ALL
+        # constituents contain them; inconsistent coverage fails closed.
+        extra=("qv","trades","tbv","tbq")
+        coverage=[all(key in b for key in extra) for b in chunk]
+        if any(coverage) and not all(coverage):
+            raise ValueError("Partial Binance taker-volume history in aggregated period")
+        if all(coverage):
+            combined.update({key:sum(b[key] for b in chunk) for key in extra})
+        output.append(combined)
     return output
 
 
