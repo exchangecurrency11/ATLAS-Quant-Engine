@@ -230,6 +230,7 @@ def safe_summary(records):
 
 def render_md(report):
     a=report["summary"]
+    formed=report["boxFormationCounts"]
     lines=[
        "# SOL — Historical Daily + 4H wide support-box role-flip study",
        "",
@@ -256,7 +257,7 @@ def render_md(report):
        x=a[name]
        d=f"{x['breakFollowThroughDown6bar']}/{x['afterBreak6barObserved']}" if x['afterBreak6barObserved'] else "n/a"
        rr=f"{x['retestFollowThroughDown6bar']}/{x['afterRetest6barObserved']}" if x["afterRetest6barObserved"] else "n/a"
-       lines.append(f"| {lab} | {x['cases']} | {x['brokenSupportWithin7d']} | {x['retestRejected']} | {d} | {rr} |")
+       lines.append(f"| {lab} | {formed[name]} | {x['brokenSupportWithin7d']} | {x['retestRejected']} | {d} | {rr} |")
     lines+=["","## Selected strictly historical examples",
             "| Frozen date TSİ | Zone (USDT) | Break date TSİ | Result | 6x4H after break |",
             "|---|---|---|---|---|"]
@@ -317,6 +318,9 @@ def main():
                 "manualPriceBoundsUsedForDetection":False,
                 "MACDUsed":False},
       "allBoxesFrozenBeforeOutcome":len(all_rows),
+      "boxFormationCounts":{"all":len(all_rows),
+              "before2026Jul":sum(x["frozenTs"]<SPLIT for x in all_rows),
+              "since2026Jul":sum(x["frozenTs"]>=SPLIT for x in all_rows)},
       "uniqueBrokenEpisodes":len(episodes),
       "summary":{"all":safe_summary(episodes),
                  "before2026Jul":safe_summary(pre),
