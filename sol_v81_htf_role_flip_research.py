@@ -351,7 +351,7 @@ def historical_roleflip(bars):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--start",default="2025-01")
-    p.add_argument("--end",default="2026-10")
+    p.add_argument("--end",default="2026-09")
     p.add_argument("--workers",type=int,default=6)
     p.add_argument("--output",default="forward/v81_roleflip/latest.json")
     p.add_argument("--markdown",default="forward/v81_roleflip/latest.md")
@@ -381,6 +381,7 @@ def main():
       "historicalSource":"Binance official Futures USD-M SOLUSDT monthly 1H ZIPs + SHA256",
       "historicalMonthlySHA256Verified":len(proofs),
       "historicalMonths":[x["month"] for x in proofs],
+      "october2026Excluded":"Official October 2026 monthly 1H archive had 720 vs expected 744 rows; fail-closed, not padded.",
       "historicalLastClosed4HUTC":iso(four[-1]["t"]+14400),
       "historicalFirstOpen4HUTC":iso(four[0]["t"]),
       "coinalyzeResponseSHA256":live_hash,
