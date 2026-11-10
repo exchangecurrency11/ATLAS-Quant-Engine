@@ -57,6 +57,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add forward/v9_next_4h_color/paper_scoreboard.json
+          if git diff --cached --quiet; then
+            echo "V9_ZERO_FORECAST_BASELINE_UNCHANGED_SAFE_SUCCESS"
+            exit 0
+          fi
           git commit -m "V9: zero-forward-forecast ledger baseline, after-close scoring audit"
           for attempt in 1 2 3; do
             git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
