@@ -22,7 +22,11 @@ def synthetic(symbol, month, *, skip_index=None, shift_end=False):
         for i,t in enumerate(range(start,end,3600)):
             if i==skip_index: continue
             o,c=100+i/1000,100.05+i/1000
-            text.append(f"{t*1000},{o},{c+0.1},{o-0.1},{c},123,{(t+3600)*1000-1},0,1,0,0,0")
+            h,l=c+0.1,o-0.1
+            qv=123*(o+c)/2
+            tbv=60.
+            tbq=tbv*(o+c)/2
+            text.append(f"{t*1000},{o},{h},{l},{c},123,{(t+3600)*1000-1},{qv},11,{tbv},{tbq},0")
         z.writestr(f"{symbol}-1h-{month}.csv","\n".join(text)+"\n")
     return buf.getvalue()
 
@@ -34,6 +38,52 @@ class ArchiveTests(unittest.TestCase):
         self.assertEqual(len(candles),672)
         self.assertEqual(candles[0]["t"],utc("2025-02-01T00:00:00"))
         self.assertEqual(candles[-1]["t"],utc("2025-02-28T23:00:00"))
+
+    def test_quote_taker_and_number_trades_retained(self):
+        b=synthetic("SOLUSDT","2025-02")
+        result=parse_zip(b,symbol="SOLUSDT",month="2025-02")
+        a=result[0]
+        self.assertEqual(a["trades"],11)
+        self.assertAlmostEqual(a["tbv"],60)
+        self.assertAlmostEqual(a["tbq"]/a["tbv"],(a["o"]+a["c"])/2)
+        self.assertAlmostEqual(a["qv"]/a["v"],(a["o"]+a["c"])/2)
+        agg4=aggregate(result[:4],14400)[0]
+        self.assertEqual(agg4["trades"],44)
+        self.assertAlmostEqual(agg4["tbv"],240)
+        self.assertAlmostEqual(agg4["qv"],sum(x["qv"] for x in result[:4]))
+        aggD=aggregate(result[:24],86400)[0]
+        self.assertEqual(aggD["trades"],264)
+
+    def test_reject_taker_field_greater_than_total_volume(self):
+        month="2025-02"
+        b=synthetic("SOLUSDT",month)
+        from zipfile import ZipFile,ZIP_DEFLATED
+        from io import BytesIO
+        with ZipFile(BytesIO(b)) as archive:
+            rows=archive.read("SOLUSDT-1h-"+month+".csv").decode().splitlines()
+        parts=rows[0].split(",")
+        parts[9]="999"
+        rows[0]=",".join(parts)
+        out=BytesIO()
+        with ZipFile(out,"w",compression=ZIP_DEFLATED) as z:
+            z.writestr("SOLUSDT-1h-"+month+".csv","\\n".join(rows)+"\\n")
+        with self.assertRaisesRegex(ValueError,"Malformed Binance taker"):
+            parse_zip(out.getvalue(),symbol="SOLUSDT",month=month)
+
+    def test_mix_old_and_new_hourly_flow_fails_closed(self):
+        bars=[
+            {"t":i*3600,"o":100,"h":102,"l":99,"c":100,"v":50,
+             **({"qv":5000,"trades":4,"tbv":25,"tbq":2500} if i!=2 else {})}
+            for i in range(4)]
+        with self.assertRaisesRegex(ValueError,"Partial Binance taker"):
+            aggregate(bars,14400)
+
+    def test_legacy_bare_ohlcv_still_aggregates(self):
+        bars=[{"t":i*3600,"o":100,"h":102,"l":99,"c":100,"v":50}
+              for i in range(4)]
+        r=aggregate(bars,14400)
+        self.assertEqual(r[0]["v"],200)
+        self.assertNotIn("tbv",r[0])
 
     def test_missing_hour_fails_closed(self):
         b=synthetic("SOLUSDT","2025-02",skip_index=11)
