@@ -1,0 +1,89 @@
+name: V8.5 SOL Dual Regime SMA RSI Wyckoff Pivot Fib 1H paper research
+
+on:
+  push:
+    branches: [experiment/v85-sol-regime-two-sided-20261110]
+    paths:
+      - sol_v85_dual_regime_research.py
+      - tests/test_sol_v85_dual_regime.py
+      - .github/workflows/v85-sol-two-sided.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v85-sol-dual-regime
+  cancel-in-progress: false
+
+jobs:
+  historical-paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Checkout isolated V8.5 branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Causality, symmetric 1H entry, no look-ahead and risk tests
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v85_dual_regime.py' -v
+      - name: Verify official Binance SOL Futures 2021-2026 archives and run all periods
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u sol_v85_dual_regime_research.py \
+            --json forward/v85_two_sided/latest.json \
+            --markdown forward/v85_two_sided/latest.md
+      - name: Assert completeness, uncertainty and no real order access
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open("forward/v85_two_sided/latest.json"))
+          assert x["status"]=="RESEARCH_ONLY_NEVER_AUTO_TRADE"
+          assert x["verifiedMonths"]==69
+          assert x["brokerOrders"] is False and x["liveSignalEnabled"] is False
+          assert x["productionModified"] is False
+          assert x["configBeforeUnseenPeriod"]["NoMACD"] is True
+          assert x["configBeforeUnseenPeriod"]["SMA4H"]==[100,200]
+          assert x["configBeforeUnseenPeriod"]["SMADaily"]==[100,200]
+          assert x["configBeforeUnseenPeriod"]["eventCooldownHours"]==24
+          assert x["unseenDataIsChronologicallyEarlierNotProspective"] is True
+          assert x["historicalBacktestIsNotValidatedEdge"] is True
+          assert set(x["periods"])=={"olderUnseen2021_2022","known2023_2024","known2025_2026"}
+          for period,filters in x["comparisons"].items():
+            for name,detail in filters.items():
+              for side,summary in detail.items():
+                assert summary["correct24HourDirection"]<=summary["directionEvents"]
+                assert summary["noForwardValidation"]
+                assert summary["maxPlannedRiskUSD"]==0.5
+                assert summary["atLeast30Events"] is False or summary["directionEvents"]>=30
+          print("V85_SOL_TWO_SIDED_RESEARCH_69_ARCHIVES_VERIFIED")
+          PY
+      - name: Upload audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v85-sol-dual-regime-${{ github.run_id }}
+          path: forward/v85_two_sided/
+          if-no-files-found: ignore
+          retention-days: 60
+      - name: Commit reports to isolated experiment only
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v85_two_sided/latest.json forward/v85_two_sided/latest.md
+          git commit -m "V8.5 SOL dual sided SMA100 SMA200 RSI Wyckoff box pivot Fib paper research"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v85-sol-regime-two-sided-20261110
+            if git push origin HEAD:experiment/v85-sol-regime-two-sided-20261110; then
+              echo "V85_SOL_TWO_SIDED_RESULTS_PUBLISHED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
