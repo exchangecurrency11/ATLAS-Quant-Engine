@@ -1,0 +1,89 @@
+name: V8.2 SOL Fibonacci and Daily Pivots historical 4H test
+
+on:
+  push:
+    branches: [experiment/v82-sol-fib-pivot-confluence-20261110]
+    paths:
+      - sol_v82_fib_pivot_confluence.py
+      - tests/test_sol_v82_fib_pivot_confluence.py
+      - .github/workflows/v82-sol-fib-pivot-confluence.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v82-sol-fib-pivot-historical
+  cancel-in-progress: false
+
+jobs:
+  historical-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout isolated research branch only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Unit test no future candle leakage and meaningful sample
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v82_fib_pivot_confluence.py' -v
+          python3 -m unittest discover -s tests -p 'test_sol_v81_historical_wide_zones.py' -q
+
+      - name: Download and checksum verify 21 SOL Binance perpetual archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u sol_v82_fib_pivot_confluence.py \
+            --start 2025-01 --end 2026-09 --workers 6 \
+            --json forward/v82_fib_pivot/latest.json \
+            --markdown forward/v82_fib_pivot/latest.md
+
+      - name: Verify evidence, no live approval, no target-fitting
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          j=json.load(open("forward/v82_fib_pivot/latest.json"))
+          assert j["status"]=="HISTORICAL_EXPLORATION_NO_LIVE_SIGNAL"
+          assert j["sha256VerifiedMonths"]==21
+          assert j["frozenParameters"]["MACDUsed"] is False
+          assert j["frozenParameters"]["thresholdTunedToOutcomes"] is False
+          assert j["goalDirectionHitRatePct"]==75.0
+          assert j["brokerOrders"] is False and j["liveTradingApproved"] is False
+          assert j["mainProductionModified"] is False
+          for period,blocks in j["filterResults"].items():
+            for name,v in blocks.items():
+              assert v["complete24hObservations"]<=j["counts"]["qualifiedHistoricalRetests"]
+              assert v["meets75GoalWithMin30"] is False or v["complete24hObservations"]>=30
+          print("SOL_V82_75_GOAL_UNTUNED_REPORT_VERIFIED")
+          PY
+
+      - name: Preserve diagnostic artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v82-sol-fib-pivot-${{ github.run_id }}
+          path: forward/v82_fib_pivot/
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Persist historical report to experiment only
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v82_fib_pivot/latest.json forward/v82_fib_pivot/latest.md
+          git commit -m "V8.2 SOL historical: fib and prior daily pivot confluence, direction metrics"
+          for i in 1 2 3; do
+            git pull --rebase origin experiment/v82-sol-fib-pivot-confluence-20261110
+            if git push origin HEAD:experiment/v82-sol-fib-pivot-confluence-20261110; then
+              echo "V82_FIB_PIVOT_REPORT_SAVED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
