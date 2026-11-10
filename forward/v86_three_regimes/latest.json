@@ -1,0 +1,1768 @@
+{
+  "mode": "SOL_V86_CAUSAL_BOUNCE_CONTINUATION_REVERSAL_REGIME_RESEARCH",
+  "status": "RESEARCH_CLASSIFIER_NO_AUTOMATED_ORDER",
+  "atUTC": "2026-11-10T20:36:35.384884+00:00",
+  "source": "Official Binance Futures USD-M SOLUSDT 1H ZIPs with .CHECKSUM",
+  "checksummedMonths": 45,
+  "sourcePeriods": {
+    "older2023_2024": {
+      "monthCount": 24,
+      "firstHourUTC": "2023-01-01T00:00:00Z",
+      "lastHourCloseUTC": "2025-01-01T00:00:00Z",
+      "oneHourBars": 17544,
+      "fourHourBars": 4386,
+      "dailyBars": 731,
+      "sampledIndependent24hAnchors": 529,
+      "lastSampleUTC": "2024-12-30T20:00:00Z"
+    },
+    "recent2025_2026": {
+      "monthCount": 21,
+      "firstHourUTC": "2025-01-01T00:00:00Z",
+      "lastHourCloseUTC": "2026-10-01T00:00:00Z",
+      "oneHourBars": 15312,
+      "fourHourBars": 3828,
+      "dailyBars": 638,
+      "sampledIndependent24hAnchors": 436,
+      "lastSampleUTC": "2026-09-29T20:00:00Z"
+    }
+  },
+  "methodFrozenBeforePerformance": true,
+  "nonoverlap24hCheckpoints": true,
+  "checkpointsAtUTC": "20:00",
+  "noMACD": true,
+  "hasNoOrderCalls": true,
+  "currentBTCETHNotBacktested": true,
+  "results": {
+    "older2023_2024": {
+      "all": {
+        "allNonoverlappingDailyCheckpoints": 529,
+        "directionalSignals": 42,
+        "abstentions": 487,
+        "signalCoveragePct": 7.94,
+        "correct24H": 22,
+        "hitRate24hPct": 52.38,
+        "wilson95LowerPct": 37.72,
+        "correctNext4h": 15,
+        "hitRateNext4hPct": 35.71,
+        "min30Signals": true,
+        "reaches75Observed": false,
+        "stateCounts": {
+          "BULL_TREND_REST_NO_TRADE": 55,
+          "MIXED_REGIME_NO_SIGNAL": 227,
+          "NO_CLOSED_1H_CONFIRMATION": 98,
+          "BEAR_TREND_REST_NO_TRADE": 31,
+          "TREND_CONTINUATION_SHORT": 8,
+          "OVERSOLD_BOUNCE_RISK": 3,
+          "OVERBOUGHT_PULLBACK_RISK": 73,
+          "RELIEF_BOUNCE_SHORT": 15,
+          "TREND_CONTINUATION_LONG": 17,
+          "REVERSAL_DOWN_CANDIDATE": 2
+        },
+        "directionalBreakdown": {
+          "LONG": {
+            "signals": 17,
+            "correct": 9
+          },
+          "SHORT": {
+            "signals": 25,
+            "correct": 13
+          }
+        }
+      },
+      "byLabel": {
+        "BEAR_TREND_REST_NO_TRADE": {
+          "allNonoverlappingDailyCheckpoints": 31,
+          "directionalSignals": 0,
+          "abstentions": 31,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "BEAR_TREND_REST_NO_TRADE": 31
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "BULL_TREND_REST_NO_TRADE": {
+          "allNonoverlappingDailyCheckpoints": 55,
+          "directionalSignals": 0,
+          "abstentions": 55,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "BULL_TREND_REST_NO_TRADE": 55
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "MIXED_REGIME_NO_SIGNAL": {
+          "allNonoverlappingDailyCheckpoints": 227,
+          "directionalSignals": 0,
+          "abstentions": 227,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "MIXED_REGIME_NO_SIGNAL": 227
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "NO_CLOSED_1H_CONFIRMATION": {
+          "allNonoverlappingDailyCheckpoints": 98,
+          "directionalSignals": 0,
+          "abstentions": 98,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "NO_CLOSED_1H_CONFIRMATION": 98
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "OVERBOUGHT_PULLBACK_RISK": {
+          "allNonoverlappingDailyCheckpoints": 73,
+          "directionalSignals": 0,
+          "abstentions": 73,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "OVERBOUGHT_PULLBACK_RISK": 73
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "OVERSOLD_BOUNCE_RISK": {
+          "allNonoverlappingDailyCheckpoints": 3,
+          "directionalSignals": 0,
+          "abstentions": 3,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "OVERSOLD_BOUNCE_RISK": 3
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "RELIEF_BOUNCE_SHORT": {
+          "allNonoverlappingDailyCheckpoints": 15,
+          "directionalSignals": 15,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 7,
+          "hitRate24hPct": 46.67,
+          "wilson95LowerPct": 24.81,
+          "correctNext4h": 2,
+          "hitRateNext4hPct": 13.33,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "RELIEF_BOUNCE_SHORT": 15
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 15,
+              "correct": 7
+            }
+          }
+        },
+        "REVERSAL_DOWN_CANDIDATE": {
+          "allNonoverlappingDailyCheckpoints": 2,
+          "directionalSignals": 2,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 2,
+          "hitRate24hPct": 100.0,
+          "wilson95LowerPct": 34.24,
+          "correctNext4h": 1,
+          "hitRateNext4hPct": 50.0,
+          "min30Signals": false,
+          "reaches75Observed": true,
+          "stateCounts": {
+            "REVERSAL_DOWN_CANDIDATE": 2
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 2,
+              "correct": 2
+            }
+          }
+        },
+        "TREND_CONTINUATION_LONG": {
+          "allNonoverlappingDailyCheckpoints": 17,
+          "directionalSignals": 17,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 9,
+          "hitRate24hPct": 52.94,
+          "wilson95LowerPct": 30.96,
+          "correctNext4h": 7,
+          "hitRateNext4hPct": 41.18,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "TREND_CONTINUATION_LONG": 17
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 17,
+              "correct": 9
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "TREND_CONTINUATION_SHORT": {
+          "allNonoverlappingDailyCheckpoints": 8,
+          "directionalSignals": 8,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 4,
+          "hitRate24hPct": 50.0,
+          "wilson95LowerPct": 21.52,
+          "correctNext4h": 5,
+          "hitRateNext4hPct": 62.5,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "TREND_CONTINUATION_SHORT": 8
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 8,
+              "correct": 4
+            }
+          }
+        }
+      }
+    },
+    "recent2025_2026": {
+      "all": {
+        "allNonoverlappingDailyCheckpoints": 436,
+        "directionalSignals": 30,
+        "abstentions": 406,
+        "signalCoveragePct": 6.88,
+        "correct24H": 15,
+        "hitRate24hPct": 50.0,
+        "wilson95LowerPct": 33.15,
+        "correctNext4h": 11,
+        "hitRateNext4hPct": 36.67,
+        "min30Signals": true,
+        "reaches75Observed": false,
+        "stateCounts": {
+          "OVERBOUGHT_PULLBACK_RISK": 23,
+          "RELIEF_BOUNCE_SHORT": 4,
+          "BULL_TREND_REST_NO_TRADE": 35,
+          "NO_CLOSED_1H_CONFIRMATION": 73,
+          "MIXED_REGIME_NO_SIGNAL": 209,
+          "REVERSAL_UP_CANDIDATE": 1,
+          "TREND_CONTINUATION_LONG": 8,
+          "OVERSOLD_BOUNCE_RISK": 31,
+          "TREND_CONTINUATION_SHORT": 12,
+          "BEAR_TREND_REST_NO_TRADE": 35,
+          "REVERSAL_DOWN_CANDIDATE": 1,
+          "RELIEF_BOUNCE_LONG": 4
+        },
+        "directionalBreakdown": {
+          "LONG": {
+            "signals": 13,
+            "correct": 6
+          },
+          "SHORT": {
+            "signals": 17,
+            "correct": 9
+          }
+        }
+      },
+      "byLabel": {
+        "BEAR_TREND_REST_NO_TRADE": {
+          "allNonoverlappingDailyCheckpoints": 35,
+          "directionalSignals": 0,
+          "abstentions": 35,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "BEAR_TREND_REST_NO_TRADE": 35
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "BULL_TREND_REST_NO_TRADE": {
+          "allNonoverlappingDailyCheckpoints": 35,
+          "directionalSignals": 0,
+          "abstentions": 35,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "BULL_TREND_REST_NO_TRADE": 35
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "MIXED_REGIME_NO_SIGNAL": {
+          "allNonoverlappingDailyCheckpoints": 209,
+          "directionalSignals": 0,
+          "abstentions": 209,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "MIXED_REGIME_NO_SIGNAL": 209
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "NO_CLOSED_1H_CONFIRMATION": {
+          "allNonoverlappingDailyCheckpoints": 73,
+          "directionalSignals": 0,
+          "abstentions": 73,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "NO_CLOSED_1H_CONFIRMATION": 73
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "OVERBOUGHT_PULLBACK_RISK": {
+          "allNonoverlappingDailyCheckpoints": 23,
+          "directionalSignals": 0,
+          "abstentions": 23,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "OVERBOUGHT_PULLBACK_RISK": 23
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "OVERSOLD_BOUNCE_RISK": {
+          "allNonoverlappingDailyCheckpoints": 31,
+          "directionalSignals": 0,
+          "abstentions": 31,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "OVERSOLD_BOUNCE_RISK": 31
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "RELIEF_BOUNCE_LONG": {
+          "allNonoverlappingDailyCheckpoints": 4,
+          "directionalSignals": 4,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 1,
+          "hitRate24hPct": 25.0,
+          "wilson95LowerPct": 4.56,
+          "correctNext4h": 2,
+          "hitRateNext4hPct": 50.0,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "RELIEF_BOUNCE_LONG": 4
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 4,
+              "correct": 1
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "RELIEF_BOUNCE_SHORT": {
+          "allNonoverlappingDailyCheckpoints": 4,
+          "directionalSignals": 4,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 2,
+          "hitRate24hPct": 50.0,
+          "wilson95LowerPct": 15.0,
+          "correctNext4h": 2,
+          "hitRateNext4hPct": 50.0,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "RELIEF_BOUNCE_SHORT": 4
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 4,
+              "correct": 2
+            }
+          }
+        },
+        "REVERSAL_DOWN_CANDIDATE": {
+          "allNonoverlappingDailyCheckpoints": 1,
+          "directionalSignals": 1,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 0,
+          "hitRate24hPct": 0.0,
+          "wilson95LowerPct": 0,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": 0.0,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "REVERSAL_DOWN_CANDIDATE": 1
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 1,
+              "correct": 0
+            }
+          }
+        },
+        "REVERSAL_UP_CANDIDATE": {
+          "allNonoverlappingDailyCheckpoints": 1,
+          "directionalSignals": 1,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 1,
+          "hitRate24hPct": 100.0,
+          "wilson95LowerPct": 20.65,
+          "correctNext4h": 1,
+          "hitRateNext4hPct": 100.0,
+          "min30Signals": false,
+          "reaches75Observed": true,
+          "stateCounts": {
+            "REVERSAL_UP_CANDIDATE": 1
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 1,
+              "correct": 1
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "TREND_CONTINUATION_LONG": {
+          "allNonoverlappingDailyCheckpoints": 8,
+          "directionalSignals": 8,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 4,
+          "hitRate24hPct": 50.0,
+          "wilson95LowerPct": 21.52,
+          "correctNext4h": 3,
+          "hitRateNext4hPct": 37.5,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "TREND_CONTINUATION_LONG": 8
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 8,
+              "correct": 4
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "TREND_CONTINUATION_SHORT": {
+          "allNonoverlappingDailyCheckpoints": 12,
+          "directionalSignals": 12,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 7,
+          "hitRate24hPct": 58.33,
+          "wilson95LowerPct": 31.95,
+          "correctNext4h": 3,
+          "hitRateNext4hPct": 25.0,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "TREND_CONTINUATION_SHORT": 12
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 12,
+              "correct": 7
+            }
+          }
+        }
+      }
+    },
+    "allCombined": {
+      "all": {
+        "allNonoverlappingDailyCheckpoints": 965,
+        "directionalSignals": 72,
+        "abstentions": 893,
+        "signalCoveragePct": 7.46,
+        "correct24H": 37,
+        "hitRate24hPct": 51.39,
+        "wilson95LowerPct": 40.07,
+        "correctNext4h": 26,
+        "hitRateNext4hPct": 36.11,
+        "min30Signals": true,
+        "reaches75Observed": false,
+        "stateCounts": {
+          "BULL_TREND_REST_NO_TRADE": 90,
+          "MIXED_REGIME_NO_SIGNAL": 436,
+          "NO_CLOSED_1H_CONFIRMATION": 171,
+          "BEAR_TREND_REST_NO_TRADE": 66,
+          "TREND_CONTINUATION_SHORT": 20,
+          "OVERSOLD_BOUNCE_RISK": 34,
+          "OVERBOUGHT_PULLBACK_RISK": 96,
+          "RELIEF_BOUNCE_SHORT": 19,
+          "TREND_CONTINUATION_LONG": 25,
+          "REVERSAL_DOWN_CANDIDATE": 3,
+          "REVERSAL_UP_CANDIDATE": 1,
+          "RELIEF_BOUNCE_LONG": 4
+        },
+        "directionalBreakdown": {
+          "LONG": {
+            "signals": 30,
+            "correct": 15
+          },
+          "SHORT": {
+            "signals": 42,
+            "correct": 22
+          }
+        }
+      },
+      "byLabel": {
+        "BEAR_TREND_REST_NO_TRADE": {
+          "allNonoverlappingDailyCheckpoints": 66,
+          "directionalSignals": 0,
+          "abstentions": 66,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "BEAR_TREND_REST_NO_TRADE": 66
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "BULL_TREND_REST_NO_TRADE": {
+          "allNonoverlappingDailyCheckpoints": 90,
+          "directionalSignals": 0,
+          "abstentions": 90,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "BULL_TREND_REST_NO_TRADE": 90
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "MIXED_REGIME_NO_SIGNAL": {
+          "allNonoverlappingDailyCheckpoints": 436,
+          "directionalSignals": 0,
+          "abstentions": 436,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "MIXED_REGIME_NO_SIGNAL": 436
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "NO_CLOSED_1H_CONFIRMATION": {
+          "allNonoverlappingDailyCheckpoints": 171,
+          "directionalSignals": 0,
+          "abstentions": 171,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "NO_CLOSED_1H_CONFIRMATION": 171
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "OVERBOUGHT_PULLBACK_RISK": {
+          "allNonoverlappingDailyCheckpoints": 96,
+          "directionalSignals": 0,
+          "abstentions": 96,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "OVERBOUGHT_PULLBACK_RISK": 96
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "OVERSOLD_BOUNCE_RISK": {
+          "allNonoverlappingDailyCheckpoints": 34,
+          "directionalSignals": 0,
+          "abstentions": 34,
+          "signalCoveragePct": 0.0,
+          "correct24H": 0,
+          "hitRate24hPct": null,
+          "wilson95LowerPct": null,
+          "correctNext4h": 0,
+          "hitRateNext4hPct": null,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "OVERSOLD_BOUNCE_RISK": 34
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "RELIEF_BOUNCE_LONG": {
+          "allNonoverlappingDailyCheckpoints": 4,
+          "directionalSignals": 4,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 1,
+          "hitRate24hPct": 25.0,
+          "wilson95LowerPct": 4.56,
+          "correctNext4h": 2,
+          "hitRateNext4hPct": 50.0,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "RELIEF_BOUNCE_LONG": 4
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 4,
+              "correct": 1
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "RELIEF_BOUNCE_SHORT": {
+          "allNonoverlappingDailyCheckpoints": 19,
+          "directionalSignals": 19,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 9,
+          "hitRate24hPct": 47.37,
+          "wilson95LowerPct": 27.33,
+          "correctNext4h": 4,
+          "hitRateNext4hPct": 21.05,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "RELIEF_BOUNCE_SHORT": 19
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 19,
+              "correct": 9
+            }
+          }
+        },
+        "REVERSAL_DOWN_CANDIDATE": {
+          "allNonoverlappingDailyCheckpoints": 3,
+          "directionalSignals": 3,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 2,
+          "hitRate24hPct": 66.67,
+          "wilson95LowerPct": 20.77,
+          "correctNext4h": 1,
+          "hitRateNext4hPct": 33.33,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "REVERSAL_DOWN_CANDIDATE": 3
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 3,
+              "correct": 2
+            }
+          }
+        },
+        "REVERSAL_UP_CANDIDATE": {
+          "allNonoverlappingDailyCheckpoints": 1,
+          "directionalSignals": 1,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 1,
+          "hitRate24hPct": 100.0,
+          "wilson95LowerPct": 20.65,
+          "correctNext4h": 1,
+          "hitRateNext4hPct": 100.0,
+          "min30Signals": false,
+          "reaches75Observed": true,
+          "stateCounts": {
+            "REVERSAL_UP_CANDIDATE": 1
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 1,
+              "correct": 1
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "TREND_CONTINUATION_LONG": {
+          "allNonoverlappingDailyCheckpoints": 25,
+          "directionalSignals": 25,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 13,
+          "hitRate24hPct": 52.0,
+          "wilson95LowerPct": 33.5,
+          "correctNext4h": 10,
+          "hitRateNext4hPct": 40.0,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "TREND_CONTINUATION_LONG": 25
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 25,
+              "correct": 13
+            },
+            "SHORT": {
+              "signals": 0,
+              "correct": 0
+            }
+          }
+        },
+        "TREND_CONTINUATION_SHORT": {
+          "allNonoverlappingDailyCheckpoints": 20,
+          "directionalSignals": 20,
+          "abstentions": 0,
+          "signalCoveragePct": 100.0,
+          "correct24H": 11,
+          "hitRate24hPct": 55.0,
+          "wilson95LowerPct": 34.21,
+          "correctNext4h": 8,
+          "hitRateNext4hPct": 40.0,
+          "min30Signals": false,
+          "reaches75Observed": false,
+          "stateCounts": {
+            "TREND_CONTINUATION_SHORT": 20
+          },
+          "directionalBreakdown": {
+            "LONG": {
+              "signals": 0,
+              "correct": 0
+            },
+            "SHORT": {
+              "signals": 20,
+              "correct": 11
+            }
+          }
+        }
+      }
+    }
+  },
+  "examplesRecent": [
+    {
+      "decisionKnownUTC": "2026-09-12T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-12T00:00:00Z",
+      "label": "MIXED_REGIME_NO_SIGNAL",
+      "side": null,
+      "reason": "No causal agreement at Daily+4H with candle confirmation",
+      "close": 101.24,
+      "dailyClose": 102.4,
+      "RSI4H": 46.872,
+      "RSIDaily": 58.434,
+      "SMA1004H": 103.0496,
+      "SMA2004H": 93.5268,
+      "SMA100Daily": 80.1306,
+      "SMA200Daily": 82.9189,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.4134,
+      "prior8BarHigh": 105.77,
+      "prior8BarLow": 97.36,
+      "daily4HBearContext": false,
+      "daily4HBullContext": false,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": true,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 101.24,
+        "closedAtUTC": "2026-09-12T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -0.3062,
+      "outcomeNext4hPct": 0.45437,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-13T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-13T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-13T00:00:00Z",
+      "label": "MIXED_REGIME_NO_SIGNAL",
+      "side": null,
+      "reason": "No causal agreement at Daily+4H with candle confirmation",
+      "close": 100.93,
+      "dailyClose": 101.7,
+      "RSI4H": 47.136,
+      "RSIDaily": 57.177,
+      "SMA1004H": 102.7179,
+      "SMA2004H": 94.2714,
+      "SMA100Daily": 80.4594,
+      "SMA200Daily": 83.03285,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.5335,
+      "prior8BarHigh": 102.37,
+      "prior8BarLow": 99.34,
+      "daily4HBearContext": false,
+      "daily4HBullContext": false,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": true,
+        "last1HClose": 100.93,
+        "closedAtUTC": "2026-09-13T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 2.27881,
+      "outcomeNext4hPct": -1.68434,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-14T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-14T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-14T00:00:00Z",
+      "label": "NO_CLOSED_1H_CONFIRMATION",
+      "side": null,
+      "reason": "Uptrend exists, but closed 1H rejection/BOS absent",
+      "close": 103.23,
+      "dailyClose": 99.23,
+      "RSI4H": 59.217,
+      "RSIDaily": 52.858,
+      "SMA1004H": 102.5147,
+      "SMA2004H": 95.03155,
+      "SMA100Daily": 80.8157,
+      "SMA200Daily": 83.08895,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 1.5405,
+      "prior8BarHigh": 102.31,
+      "prior8BarLow": 98.92,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": true,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 103.23,
+        "closedAtUTC": "2026-09-14T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -5.24072,
+      "outcomeNext4hPct": -0.69747,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-15T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-15T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-15T00:00:00Z",
+      "label": "MIXED_REGIME_NO_SIGNAL",
+      "side": null,
+      "reason": "No causal agreement at Daily+4H with candle confirmation",
+      "close": 97.82,
+      "dailyClose": 102.51,
+      "RSI4H": 35.865,
+      "RSIDaily": 57.454,
+      "SMA1004H": 102.2589,
+      "SMA2004H": 95.76685,
+      "SMA100Daily": 81.2192,
+      "SMA200Daily": 83.1722,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 3.5395,
+      "prior8BarHigh": 104.81,
+      "prior8BarLow": 97.95,
+      "daily4HBearContext": false,
+      "daily4HBullContext": false,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": true,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 97.82,
+        "closedAtUTC": "2026-09-15T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 0.21468,
+      "outcomeNext4hPct": -1.02229,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-16T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-16T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-16T00:00:00Z",
+      "label": "MIXED_REGIME_NO_SIGNAL",
+      "side": null,
+      "reason": "No causal agreement at Daily+4H with candle confirmation",
+      "close": 98.03,
+      "dailyClose": 96.82,
+      "RSI4H": 42.343,
+      "RSIDaily": 48.602,
+      "SMA1004H": 101.8451,
+      "SMA2004H": 96.41295,
+      "SMA100Daily": 81.5229,
+      "SMA200Daily": 83.2473,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 2.1879,
+      "prior8BarHigh": 101.35,
+      "prior8BarLow": 95.72,
+      "daily4HBearContext": false,
+      "daily4HBullContext": false,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 98.03,
+        "closedAtUTC": "2026-09-16T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 2.95828,
+      "outcomeNext4hPct": 0.60186,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-17T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-17T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-17T00:00:00Z",
+      "label": "MIXED_REGIME_NO_SIGNAL",
+      "side": null,
+      "reason": "No causal agreement at Daily+4H with candle confirmation",
+      "close": 100.93,
+      "dailyClose": 98.62,
+      "RSI4H": 55.43,
+      "RSIDaily": 51.165,
+      "SMA1004H": 101.6608,
+      "SMA2004H": 97.1583,
+      "SMA100Daily": 81.8412,
+      "SMA200Daily": 83.31895,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.769,
+      "prior8BarHigh": 101.79,
+      "prior8BarLow": 96.02,
+      "daily4HBearContext": false,
+      "daily4HBullContext": false,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 100.93,
+        "closedAtUTC": "2026-09-17T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 13.13782,
+      "outcomeNext4hPct": 0.65392,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-18T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-18T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-18T00:00:00Z",
+      "label": "OVERBOUGHT_PULLBACK_RISK",
+      "side": null,
+      "reason": "Bull trend + RSI >=70; no bearish 1H reversal confirmation",
+      "close": 114.19,
+      "dailyClose": 101.59,
+      "RSI4H": 83.699,
+      "RSIDaily": 55.141,
+      "SMA1004H": 102.0156,
+      "SMA2004H": 98.11045,
+      "SMA100Daily": 82.2079,
+      "SMA200Daily": 83.40915,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 1.6749,
+      "prior8BarHigh": 111.61,
+      "prior8BarLow": 99.48,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": true,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": true,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 114.19,
+        "closedAtUTC": "2026-09-18T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -2.66223,
+      "outcomeNext4hPct": -1.27857,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-19T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-19T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-19T00:00:00Z",
+      "label": "BULL_TREND_REST_NO_TRADE",
+      "side": null,
+      "reason": "Bull context without qualifying RSI momentum range",
+      "close": 111.15,
+      "dailyClose": 112.73,
+      "RSI4H": 67.962,
+      "RSIDaily": 66.242,
+      "SMA1004H": 102.7643,
+      "SMA2004H": 99.21065,
+      "SMA100Daily": 82.7036,
+      "SMA200Daily": 83.53985,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.8731,
+      "prior8BarHigh": 114.32,
+      "prior8BarLow": 105.08,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 111.15,
+        "closedAtUTC": "2026-09-19T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -0.67476,
+      "outcomeNext4hPct": -0.09897,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-20T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-20T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-20T00:00:00Z",
+      "label": "NO_CLOSED_1H_CONFIRMATION",
+      "side": null,
+      "reason": "Uptrend exists, but closed 1H rejection/BOS absent",
+      "close": 110.4,
+      "dailyClose": 111.04,
+      "RSI4H": 62.447,
+      "RSIDaily": 63.668,
+      "SMA1004H": 103.1339,
+      "SMA2004H": 100.21235,
+      "SMA100Daily": 83.1452,
+      "SMA200Daily": 83.66045,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 1.2116,
+      "prior8BarHigh": 112.49,
+      "prior8BarLow": 107.34,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 110.4,
+        "closedAtUTC": "2026-09-20T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 7.17391,
+      "outcomeNext4hPct": 0.625,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-21T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-21T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-21T00:00:00Z",
+      "label": "OVERBOUGHT_PULLBACK_RISK",
+      "side": null,
+      "reason": "Bull trend + RSI >=70; no bearish 1H reversal confirmation",
+      "close": 118.32,
+      "dailyClose": 111.09,
+      "RSI4H": 78.667,
+      "RSIDaily": 63.713,
+      "SMA1004H": 103.8673,
+      "SMA2004H": 101.337,
+      "SMA100Daily": 83.5882,
+      "SMA200Daily": 83.7618,
+      "SMA100AboveSMA200Daily": false,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.9816,
+      "prior8BarHigh": 119.16,
+      "prior8BarLow": 107.69,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": true,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 118.32,
+        "closedAtUTC": "2026-09-21T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -0.10142,
+      "outcomeNext4hPct": 0.47329,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-22T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-22T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-22T00:00:00Z",
+      "label": "OVERBOUGHT_PULLBACK_RISK",
+      "side": null,
+      "reason": "Bull trend + RSI >=70; no bearish 1H reversal confirmation",
+      "close": 118.2,
+      "dailyClose": 118.88,
+      "RSI4H": 71.014,
+      "RSIDaily": 69.948,
+      "SMA1004H": 104.717,
+      "SMA2004H": 102.3239,
+      "SMA100Daily": 84.0882,
+      "SMA200Daily": 83.9125,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 1.0224,
+      "prior8BarHigh": 119.99,
+      "prior8BarLow": 112.03,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 118.2,
+        "closedAtUTC": "2026-09-22T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -3.16413,
+      "outcomeNext4hPct": 0.24535,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-23T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-23T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-23T00:00:00Z",
+      "label": "NO_CLOSED_1H_CONFIRMATION",
+      "side": null,
+      "reason": "Uptrend exists, but closed 1H rejection/BOS absent",
+      "close": 114.46,
+      "dailyClose": 118.49,
+      "RSI4H": 51.429,
+      "RSIDaily": 69.306,
+      "SMA1004H": 105.3821,
+      "SMA2004H": 103.16665,
+      "SMA100Daily": 84.5607,
+      "SMA200Daily": 84.08175,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.9189,
+      "prior8BarHigh": 119.68,
+      "prior8BarLow": 112.8,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 114.46,
+        "closedAtUTC": "2026-09-23T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 2.41132,
+      "outcomeNext4hPct": 0.4281,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-24T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-24T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-24T00:00:00Z",
+      "label": "NO_CLOSED_1H_CONFIRMATION",
+      "side": null,
+      "reason": "Uptrend exists, but closed 1H rejection/BOS absent",
+      "close": 117.22,
+      "dailyClose": 114.95,
+      "RSI4H": 58.785,
+      "RSIDaily": 63.599,
+      "SMA1004H": 106.0618,
+      "SMA2004H": 103.82255,
+      "SMA100Daily": 84.9709,
+      "SMA200Daily": 84.24065,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 1.086,
+      "prior8BarHigh": 118.28,
+      "prior8BarLow": 112.39,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 117.22,
+        "closedAtUTC": "2026-09-24T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 3.94984,
+      "outcomeNext4hPct": -0.19621,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-25T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-25T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-25T00:00:00Z",
+      "label": "BULL_TREND_REST_NO_TRADE",
+      "side": null,
+      "reason": "Bull context without qualifying RSI momentum range",
+      "close": 121.85,
+      "dailyClose": 116.99,
+      "RSI4H": 67.493,
+      "RSIDaily": 65.369,
+      "SMA1004H": 106.9928,
+      "SMA2004H": 104.5755,
+      "SMA100Daily": 85.4059,
+      "SMA200Daily": 84.4178,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 1.4141,
+      "prior8BarHigh": 122.21,
+      "prior8BarLow": 112.39,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": true,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 121.85,
+        "closedAtUTC": "2026-09-25T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -0.63192,
+      "outcomeNext4hPct": 0.20517,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-26T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-26T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-26T00:00:00Z",
+      "label": "TREND_CONTINUATION_LONG",
+      "side": "LONG",
+      "reason": "Bull Daily price/RSI + bull 4H SMA+price and closed 1H bull confirmation",
+      "close": 121.08,
+      "dailyClose": 122.1,
+      "RSI4H": 61.552,
+      "RSIDaily": 69.384,
+      "SMA1004H": 108.0946,
+      "SMA2004H": 105.3658,
+      "SMA100Daily": 85.9069,
+      "SMA200Daily": 84.60375,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.4241,
+      "prior8BarHigh": 122.93,
+      "prior8BarLow": 116.28,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": true,
+        "1HBearSweep": false,
+        "last1HClose": 121.08,
+        "closedAtUTC": "2026-09-26T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 1.55269,
+      "outcomeNext4hPct": 0.21473,
+      "correct24hDirection": true,
+      "correctNext4hDirection": true,
+      "candleAfterUTC": "2026-09-27T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-27T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-27T00:00:00Z",
+      "label": "NO_CLOSED_1H_CONFIRMATION",
+      "side": null,
+      "reason": "Uptrend exists, but closed 1H rejection/BOS absent",
+      "close": 122.96,
+      "dailyClose": 121.34,
+      "RSI4H": 61.054,
+      "RSIDaily": 68.119,
+      "SMA1004H": 109.4452,
+      "SMA2004H": 106.07655,
+      "SMA100Daily": 86.4234,
+      "SMA200Daily": 84.7813,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.5506,
+      "prior8BarHigh": 124.99,
+      "prior8BarLow": 119.78,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": true,
+        "last1HClose": 122.96,
+        "closedAtUTC": "2026-09-27T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -3.77358,
+      "outcomeNext4hPct": -0.82954,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-28T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-28T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-28T00:00:00Z",
+      "label": "BULL_TREND_REST_NO_TRADE",
+      "side": null,
+      "reason": "Bull context without qualifying RSI momentum range",
+      "close": 118.32,
+      "dailyClose": 121.94,
+      "RSI4H": 46.091,
+      "RSIDaily": 68.606,
+      "SMA1004H": 110.5326,
+      "SMA2004H": 106.73515,
+      "SMA100Daily": 86.9459,
+      "SMA200Daily": 84.9584,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 1.2658,
+      "prior8BarHigh": 124.99,
+      "prior8BarLow": 117.3,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": false,
+        "last1HClose": 118.32,
+        "closedAtUTC": "2026-09-28T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": 0.37187,
+      "outcomeNext4hPct": 0.42258,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-29T20:00:00Z"
+    },
+    {
+      "decisionKnownUTC": "2026-09-29T20:00:00Z",
+      "latestCompleteDailyUTC": "2026-09-29T00:00:00Z",
+      "label": "BULL_TREND_REST_NO_TRADE",
+      "side": null,
+      "reason": "Bull context without qualifying RSI momentum range",
+      "close": 118.76,
+      "dailyClose": 118.82,
+      "RSI4H": 48.359,
+      "RSIDaily": 63.203,
+      "SMA1004H": 111.5615,
+      "SMA2004H": 107.2935,
+      "SMA100Daily": 87.4022,
+      "SMA200Daily": 85.1185,
+      "SMA100AboveSMA200Daily": true,
+      "SMA100AboveSMA2004H": true,
+      "relativeVolume4H": 0.8446,
+      "prior8BarHigh": 121.62,
+      "prior8BarLow": 116.25,
+      "daily4HBearContext": false,
+      "daily4HBullContext": true,
+      "last4HStructureHighBreak": false,
+      "last4HStructureLowBreak": false,
+      "micro": {
+        "1HBullBOS": false,
+        "1HBearBOS": false,
+        "1HBullSweep": false,
+        "1HBearSweep": true,
+        "last1HClose": 118.76,
+        "closedAtUTC": "2026-09-29T20:00:00Z"
+      },
+      "MACDUsed": false,
+      "WyckoffUnproven": true,
+      "noInstitutionalOrderbookInferred": true,
+      "outcome24hPct": -1.33883,
+      "outcomeNext4hPct": 0.27787,
+      "correct24hDirection": null,
+      "correctNext4hDirection": null,
+      "candleAfterUTC": "2026-09-30T20:00:00Z"
+    }
+  ],
+  "currentProductionModified": false,
+  "liveTradingApproved": false,
+  "historicalDataPreviouslyInspected": true,
+  "targetAccuracyPct": 75
+}
