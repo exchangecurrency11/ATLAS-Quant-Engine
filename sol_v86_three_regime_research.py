@@ -90,12 +90,16 @@ def one_hour_evidence(one,four,i):
 
 def regime_at_close(one,four,daily,i,prepared):
     """Returns point-in-time label, no after-timeframe candle ever referenced."""
+    # An initial OHLCV history segment does not yet contain a completed
+    # Daily candle or a warmed SMA200. No exceptions, simply no signal.
+    if i<220:
+        return None
     b=four[i]
     cutoff=b["t"]+FOUR
     dk=causal_daily_index(daily,cutoff)
     fv=prepared["four"]
     dv=prepared["daily"]
-    if i<220 or dk<200:
+    if dk<200:
         return None
     f100,f200=fv["s100"][i],fv["s200"][i]
     d100,d200=dv["s100"][dk],dv["s200"][dk]
