@@ -193,7 +193,9 @@ def paper_short_next4h(four,event,at_i,atr_prev):
             exit_time=j
             break
     cost=(entry+exit_price)*FEE_SLIP_ONE_SIDE
-    qty=min(RISK_CAP_USDT/(d+2*FEE_SLIP_ONE_SIDE*entry),
+    # Position sizing reserves fee/slippage at the planned STOP price,
+    # not entry-price twice; ordinary stop loss stays <= risk cap.
+    qty=min(RISK_CAP_USDT/(d+FEE_SLIP_ONE_SIDE*(entry+stop)),
             START_EQUITY_USDT*LEVERAGE_CAP/entry)
     dollars=qty*(entry-exit_price-cost)
     return {"status":"ILLUSTRATIVE_PAPER_ONLY",
