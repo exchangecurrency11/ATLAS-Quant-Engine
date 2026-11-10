@@ -164,8 +164,24 @@ def scoreboard(predictions,outcomes):
             "atLeast60pctConfidence":tally([z for z in entries if max(z["p"],1-z["p"])>=.60]),
             "atLeast65pctConfidence":tally([z for z in entries if max(z["p"],1-z["p"])>=.65]),
         }
+    # A missing scheduled paper capture must NEVER disappear silently.
+    # Within the span of the FIRST to LAST captured forecasts count every
+    # four-hour slot, including those with no forecast, as missing.
+    # This is comparable with the per-prediction hit rate only alongside
+    # a coverage denominator, not as a guaranteed six-per-day count.
+    starts=sorted(mapping)
+    expected_slots=(starts[-1]-starts[0])//FOUR+1 if starts else 0
+    if expected_slots<len(mapping):
+        raise ValueError("NON_FOUR_HOUR_ALIGNED_PAPER_SERIES")
+    missing_slots=expected_slots-len(mapping)
     return {
        "status":"V9_FORWARD_PAPER_SCOREBOARD_RESEARCH_ONLY",
+       "firstForecastTargetUTC":iso(starts[0]) if starts else None,
+       "lastForecastTargetUTC":iso(starts[-1]) if starts else None,
+       "expectedFourHourSlotsBetweenFirstAndLast":expected_slots,
+       "missingScheduledForecastSlotsBetweenFirstAndLast":missing_slots,
+       "captureCoveragePct":round(100*len(mapping)/expected_slots,2)
+           if expected_slots else None,
        "totalPriorTargetForecasts":len(mapping),
        "completedTargetForecasts":len(completed),
        "pendingOrMissingTargetResults":len(mapping)-len(completed),
