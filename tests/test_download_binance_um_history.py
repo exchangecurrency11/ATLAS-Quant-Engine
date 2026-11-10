@@ -66,7 +66,7 @@ class ArchiveTests(unittest.TestCase):
         rows[0]=",".join(parts)
         out=BytesIO()
         with ZipFile(out,"w",compression=ZIP_DEFLATED) as z:
-            z.writestr("SOLUSDT-1h-"+month+".csv","\\n".join(rows)+"\\n")
+            z.writestr("SOLUSDT-1h-"+month+".csv","\n".join(rows)+"\n")
         with self.assertRaisesRegex(ValueError,"Malformed Binance taker"):
             parse_zip(out.getvalue(),symbol="SOLUSDT",month=month)
 
