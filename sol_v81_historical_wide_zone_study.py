@@ -228,6 +228,52 @@ def safe_summary(records):
     }
 
 
+
+def trend_control_baselines(four,daily):
+    """Transparent descriptive control; overlapping 24h windows not independent.
+
+    Only EMA20/50 and already closed 4H/Daily candles, never MACD, OB or
+    a hindsight-chosen hand-drawn box. No trade execution implication.
+    """
+    def track(bars,n):
+        alpha=2/(n+1)
+        value=bars[0]["c"]
+        output=[]
+        for b in bars:
+            value=alpha*b["c"]+(1-alpha)*value
+            output.append(value)
+        return output
+    f20,f50=track(four,20),track(four,50)
+    d20,d50=track(daily,20),track(daily,50)
+    day_ends=[d["t"]+DAY for d in daily]
+    observations=[]
+    for i in range(200,len(four)-6):
+        end=four[i]["t"]+SECS4
+        di=bisect_right(day_ends,end)-1
+        if di<50: continue
+        close=four[i]["c"]
+        follow=100*(four[i+6]["c"]/close-1)
+        four_down=close<f20[i] and close<f50[i]
+        daily_down=daily[di]["c"]<d20[di] and daily[di]["c"]<d50[di]
+        observations.append({"asOfTs":end,"after6Pct":follow,
+                             "bothHigherFramesBearish":four_down and daily_down})
+    def summarize_segment(items):
+        all_returns=[x["after6Pct"] for x in items]
+        trend=[x["after6Pct"] for x in items if x["bothHigherFramesBearish"]]
+        def summarize_returns(vals):
+            return {"observations":len(vals),
+                    "lowerAfter6Bars":sum(x<0 for x in vals),
+                    "lowerAfter6BarsPct":round(100*sum(x<0 for x in vals)/len(vals),2) if vals else None,
+                    "median6BarChangePct":round(median(vals),4) if vals else None}
+        return {"all4HCloses":summarize_returns(all_returns),
+                "MACDFreeDailyAnd4HBearish":summarize_returns(trend)}
+    return {
+        "all":summarize_segment(observations),
+        "before2026Jul":summarize_segment([x for x in observations if x["asOfTs"]<SPLIT]),
+        "since2026Jul":summarize_segment([x for x in observations if x["asOfTs"]>=SPLIT]),
+        "warning":"24h observation windows overlap and are not independent trades."}
+
+
 def render_md(report):
     a=report["summary"]
     formed=report["boxFormationCounts"]
@@ -246,6 +292,11 @@ def render_md(report):
        "- Next 5 days: a 4H bar touching the box but closing red below its lower edge is a qualified bearish retest rejection. Reclaim above upper edge is tracked separately.",
        "- Compare next 6 fully closed 4H returns after a break or retest; no simulated fills, no funding/slippage profit claims.",
        "- Only one representative episode per near-overlapping band / break time is included in summary to reduce repeated counting.",
+       "",
+       "## General background rate (control, not a trading strategy)",
+       f"- All eligible 4H closes: **{report['controlBaselines']['all']['all4HCloses']['lowerAfter6Bars']} / {report['controlBaselines']['all']['all4HCloses']['observations']}** closed lower 24 hours later.",
+       f"- When BOTH Daily+4H prices were below EMA20 and EMA50 (MACD excluded): **{report['controlBaselines']['all']['MACDFreeDailyAnd4HBearish']['lowerAfter6Bars']} / {report['controlBaselines']['all']['MACDFreeDailyAnd4HBearish']['observations']}** closed lower 24 hours later.",
+       "- Baseline windows overlap and do not represent independent trades. Historical event results should be interpreted relative to these background rates.",
        "",
        "## Outcomes (overlapping break episodes deduplicated)",
        "| Segment | Frozen boxes | Breaks | Retest rejections | 6x4H down after break | 6x4H down after retest |",
@@ -322,6 +373,7 @@ def main():
               "before2026Jul":sum(x["frozenTs"]<SPLIT for x in all_rows),
               "since2026Jul":sum(x["frozenTs"]>=SPLIT for x in all_rows)},
       "uniqueBrokenEpisodes":len(episodes),
+      "controlBaselines":trend_control_baselines(four,daily),
       "summary":{"all":safe_summary(episodes),
                  "before2026Jul":safe_summary(pre),
                  "since2026Jul":safe_summary(post)},
