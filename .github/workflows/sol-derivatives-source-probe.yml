@@ -1,0 +1,21 @@
+name: SOL V7 Derivatives Data Source Probe (read only)
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - sol_derivatives_source_probe.py
+      - .github/workflows/sol-derivatives-source-probe.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+      - name: Probe SOL Binance futures OI funding taker archives
+        run: python3 sol_derivatives_source_probe.py
