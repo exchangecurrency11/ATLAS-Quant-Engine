@@ -31,7 +31,7 @@ def source(doji=False,missing=False):
         v=[]
         for i in range(4):
             o=100+i
-            c=(100+i+1 if sym=="BTCUSDT" else 100+i-1 if sym=="ETHUSDT" else 100+(i+1)*.1)
+            c=(100+i+1 if sym=="BTCUSDT" else 100-(i+1)*.5 if sym=="ETHUSDT" else 100-(i+1)*.1)
             if doji and sym=="SOLUSDT":
                 o=c=100
             v.append({"t":T+i*HOUR,"o":o,
@@ -59,7 +59,7 @@ class V9PaperScorerTests(unittest.TestCase):
         self.assertTrue(x["symbols"]["BTCUSDT"]["correct"])
         self.assertTrue(x["symbols"]["ETHUSDT"]["correct"])
         self.assertFalse(x["symbols"]["SOLUSDT"]["correct"])
-        self.assertFalse(x["noTradingOrders"])
+        self.assertTrue(x["noTradingOrders"])
         self.assertTrue(x["allThreeIndependentSourceBars"])
         self.assertEqual(len(x["forecastCanonicalSHA256"]),64)
         self.assertEqual(x["symbols"]["BTCUSDT"]["target4HOpen"],100)
