@@ -165,16 +165,30 @@ def observe(now, key, fetch=request_json):
                             {**common, "convert_to_usd": "false"}, key)
         volumes, volume_hash = fetch("ohlcv-history", common, key)
         funding, funding_hash = fetch("funding-rate", {"symbols": SYMBOL}, key)
+        # Preserve independently valid OI and volume data even when funding
+        # is stale. Partial data is NEVER promoted to a signal or "healthy".
         result.update({
-            "status": "DATA_VALIDATED_RESEARCH_ONLY",
             "openInterest": validate_oi(oi, target),
             "providerBuyVolume": validate_volume(volumes, target),
-            "funding": validate_funding(funding, now),
             "sourceSHA256": {"openInterest": oi_hash, "ohlcv": volume_hash,
                             "funding": funding_hash},
             "researchCaution": "No taker source reconciliation, funding unit certification, "
                                "or historical prospective predictive efficacy; no trading signals.",
         })
+        try:
+            result["funding"] = validate_funding(funding, now)
+            result["status"] = "DATA_VALIDATED_RESEARCH_ONLY"
+        except ValueError:
+            raw = one_symbol(funding)
+            stamp = raw.get("update")
+            valid_stamp = type(stamp) is int and 0 < stamp < now + 86400
+            result["funding"] = {
+                "status": "STALE_OR_INVALID_TIMESTAMP_NO_SIGNAL",
+                "providerUpdateUTC": iso(stamp) if valid_stamp else None,
+                "ageSeconds": (now - stamp) if valid_stamp else None,
+            }
+            result["status"] = "DATA_PARTIAL_RESEARCH_ONLY_NO_SIGNAL"
+            result["rejectionReason"] = "FUNDING_TIMESTAMP_NOT_FRESH"
     except (ValueError, RuntimeError, KeyError, TypeError, OverflowError) as exc:
         result["status"] = "SOURCE_UNAVAILABLE_NO_SIGNAL"
         result["rejectionReason"] = str(exc)[:120] if str(exc) else type(exc).__name__
