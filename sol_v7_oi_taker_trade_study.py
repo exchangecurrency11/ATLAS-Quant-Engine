@@ -222,6 +222,43 @@ def read_forward(filepath,oi,hourly,funding):
             "acceptedV7ClosedPaper":sum(x["acceptedByV7"] and x["netRIllustrative"] is not None for x in rows)}
 
 
+
+def rank_separation_descriptive(trades,field):
+    """Exact label permutation on already inspected paper trades.
+
+    Score = P(feature(winner) > feature(loser)) with half credit for tie.
+    This does NOT estimate out-of-sample predictability; scores and p-values
+    are exploratory, with no multiple-comparison correction.
+    """
+    import itertools
+    eligible=[row for row in trades if row["features"].get(field) is not None]
+    x=[row["features"][field] for row in eligible]
+    wins=[row["label"]=="POSITIVE_PAPER" for row in eligible]
+    num=sum(wins)
+    if not num or num==len(eligible):
+        return {"n":len(eligible),"auc":None,"permutationPtwoSided":None}
+    def auc(labels):
+        positive=[x[i] for i in range(len(x)) if labels[i]]
+        negative=[x[i] for i in range(len(x)) if not labels[i]]
+        return sum(1 if a>b else 0.5 if a==b else 0
+                   for a in positive for b in negative)/(len(positive)*len(negative))
+    observed=auc(wins)
+    count=extreme=0
+    for selected in itertools.combinations(range(len(x)),num):
+        mask=set(selected)
+        labels=[i in mask for i in range(len(x))]
+        score=auc(labels)
+        count+=1
+        if abs(score-0.5)>=abs(observed-0.5)-1e-12:extreme+=1
+    return {
+        "n":len(x),"positive":num,"negative":len(x)-num,
+        "descriptiveRankAUC":round(observed,6),
+        "twoSidedExactLabelPermutationP":round(extreme/count,6),
+        "permutations":count,
+        "warning":"Exploratory historical sample; p not adjusted for multiple features; no live efficacy claim",
+    }
+
+
 def report_markdown(j):
     lines=[
         "# SOL — OI ve taker basıncı / V7 paper işlem sonuçları",
@@ -242,6 +279,18 @@ def report_markdown(j):
         t=f"{tak['median']:+.4f}" if tak["median"] is not None else "N/A"
         lines.append(f"| {name} | {grp['trades']} | {o} (n={oi['availableN']}) | {t} (n={tak['availableN']}) | {grp['lastKnownFundingRate']['availableN']} |")
     lines+=["",
+            "## Sonuç ayrımı (yalnız keşif amaçlı, 14 işlem)",
+            "",
+            "| Özellik | Sıra-AUC | Etiket permütasyon p |",
+            "|---|---:|---:|"]
+    for field,label in (("oi1hPct","OI 1H değişimi"),
+                        ("oi4hPct","OI 4H değişimi"),
+                        ("takerSignedPressure1h","Taker sinyal yönlü baskı"),
+                        ("lastKnownFundingRate","Funding")):
+        score=j["discriminationExploratory"][field]
+        lines.append(f"| {label} | {score['descriptiveRankAUC']} | {score['twoSidedExactLabelPermutationP']} |")
+    lines+=["","AUC 0,5 rastgele ayırt etmeye karşılık gelir; bu küçük, önceden incelenmiş veri setinde hesaplanan AUC **gelecek sinyali öngörme başarısı değildir**. Birden fazla özellik incelendi; p değerleri düzeltmesizdir.",
+            "",
             "**Veri tamlığı:** Tarihsel 14 V7 paper işleminin kaçında OI/taker/funding var?",
             "",
             "| Alan | Elde | Eksik |",
@@ -307,6 +356,10 @@ def main():
         "sourceDescription":"Binance USD-M SOLUSDT official ZIP and checksum (downloaded after signal)",
         "timestampMethod":"OI at T uses label T-5m (period ends T); 1H taker at [T-1h,T); 1H OI change against label T-65m",
         "historical":historical,
+        "discriminationExploratory":{
+            name:rank_separation_descriptive(historical["V7_signal_gate"]["trades"],name)
+            for name in ("oi1hPct","oi4hPct","takerSignedPressure1h","lastKnownFundingRate")
+        },
         "forward":forward,
         "archivesVerified":len(verified),
         "archiveErrors":errors,
