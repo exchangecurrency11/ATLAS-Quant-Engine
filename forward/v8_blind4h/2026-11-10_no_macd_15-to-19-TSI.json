@@ -1,0 +1,264 @@
+{
+  "status": "VERIFIED_RETROSPECTIVE_MACD_EXCLUDED_PAPER_REVIEW",
+  "frozenAtUTC": "2026-11-10T12:00:00Z",
+  "comparedAtUTC": "2026-11-10T16:00:00Z",
+  "strategy": "MACD_FREE_EMA20_EMA50_RSI14_DAILY_4H_DIRECTION",
+  "realtimePrediction": false,
+  "brokerOrders": false,
+  "liveTradingApproved": false,
+  "note": "Baseline 4H direction already MACD independent; this version also removes MACD momentum gate and treats EMA200 as context not hard veto.",
+  "coins": {
+    "BTCUSDT_PERP.A": {
+      "coin": "BTCUSDT_PERP.A",
+      "MACDUsed": false,
+      "frozenAtUTC": "2026-11-10T12:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "lastClosedUTC": "2026-11-10T12:00:00Z",
+          "close": 74389.7,
+          "RSI14": 42.8022,
+          "EMA20": 74714.1036,
+          "EMA50": 74997.5047,
+          "EMA200": 76390.8057,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": false,
+          "overboughtCaution": false
+        },
+        "4hour": {
+          "lastClosedUTC": "2026-11-10T12:00:00Z",
+          "close": 74389.7,
+          "RSI14": 39.6239,
+          "EMA20": 75309.8926,
+          "EMA50": 76405.1974,
+          "EMA200": 79391.001,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": false,
+          "overboughtCaution": false
+        },
+        "daily": {
+          "lastClosedUTC": "2026-11-10T00:00:00Z",
+          "close": 75327.0,
+          "RSI14": 37.722,
+          "EMA20": 78180.2055,
+          "EMA50": 79282.8111,
+          "EMA200": 74781.4744,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": false,
+          "oversoldCaution": false,
+          "overboughtCaution": false
+        }
+      },
+      "primaryTrendMACDFree": "BEARISH",
+      "oneHourAgrees": true,
+      "predictedNext4HDirection": "DOWN",
+      "actualNext4HDirection": "DOWN",
+      "directionMatchesOutcome": true,
+      "previous4HClose": 74389.7,
+      "next4HOpen": 74389.8,
+      "next4HHigh": 74824.1,
+      "next4HLow": 72808.3,
+      "next4HClose": 73180.0,
+      "next4HChangePercent": -1.6262,
+      "priorCandleLowBrokenOnNextClose": true,
+      "V7New1HBOSAt15": 0,
+      "V7PaperEntryAt15": false,
+      "asOf15ActualVerifiedSnapshot": true,
+      "warning": "Direction ≠ verified trade entry. A BOS/retest is not invented."
+    },
+    "ETHUSDT_PERP.A": {
+      "coin": "ETHUSDT_PERP.A",
+      "MACDUsed": false,
+      "frozenAtUTC": "2026-11-10T12:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "lastClosedUTC": "2026-11-10T12:00:00Z",
+          "close": 2093.69,
+          "RSI14": 32.8102,
+          "EMA20": 2117.938,
+          "EMA50": 2145.7403,
+          "EMA200": 2223.8986,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": true,
+          "overboughtCaution": false
+        },
+        "4hour": {
+          "lastClosedUTC": "2026-11-10T12:00:00Z",
+          "close": 2093.69,
+          "RSI14": 30.6606,
+          "EMA20": 2167.7088,
+          "EMA50": 2223.8837,
+          "EMA200": 2357.2976,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": true,
+          "overboughtCaution": false
+        },
+        "daily": {
+          "lastClosedUTC": "2026-11-10T00:00:00Z",
+          "close": 2134.0,
+          "RSI14": 33.7047,
+          "EMA20": 2290.6136,
+          "EMA50": 2370.2747,
+          "EMA200": 2238.8107,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": true,
+          "overboughtCaution": false
+        }
+      },
+      "primaryTrendMACDFree": "BEARISH",
+      "oneHourAgrees": true,
+      "predictedNext4HDirection": "DOWN",
+      "actualNext4HDirection": "DOWN",
+      "directionMatchesOutcome": true,
+      "previous4HClose": 2093.69,
+      "next4HOpen": 2093.7,
+      "next4HHigh": 2110.0,
+      "next4HLow": 2003.57,
+      "next4HClose": 2022.35,
+      "next4HChangePercent": -3.4074,
+      "priorCandleLowBrokenOnNextClose": true,
+      "V7New1HBOSAt15": 0,
+      "V7PaperEntryAt15": false,
+      "asOf15ActualVerifiedSnapshot": false,
+      "warning": "Direction ≠ verified trade entry. A BOS/retest is not invented."
+    },
+    "SOLUSDT_PERP.A": {
+      "coin": "SOLUSDT_PERP.A",
+      "MACDUsed": false,
+      "frozenAtUTC": "2026-11-10T12:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "lastClosedUTC": "2026-11-10T12:00:00Z",
+          "close": 84.67,
+          "RSI14": 32.4093,
+          "EMA20": 86.0037,
+          "EMA50": 86.9821,
+          "EMA200": 90.5191,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": true,
+          "overboughtCaution": false
+        },
+        "4hour": {
+          "lastClosedUTC": "2026-11-10T12:00:00Z",
+          "close": 84.67,
+          "RSI14": 32.8382,
+          "EMA20": 87.7291,
+          "EMA50": 90.5084,
+          "EMA200": 99.3845,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": true,
+          "overboughtCaution": false
+        },
+        "daily": {
+          "lastClosedUTC": "2026-11-10T00:00:00Z",
+          "close": 86.69,
+          "RSI14": 27.236,
+          "EMA20": 95.2813,
+          "EMA50": 100.2743,
+          "EMA200": 93.5668,
+          "votes": {
+            "belowEMA20": true,
+            "belowEMA50": true,
+            "RSIbelow50": true,
+            "aboveEMA20": false,
+            "aboveEMA50": false,
+            "RSIabove50": false
+          },
+          "trendMACDExcluded": "BEARISH",
+          "EMA200SupportsTrend": true,
+          "oversoldCaution": true,
+          "overboughtCaution": false
+        }
+      },
+      "primaryTrendMACDFree": "BEARISH",
+      "oneHourAgrees": true,
+      "predictedNext4HDirection": "DOWN",
+      "actualNext4HDirection": "DOWN",
+      "directionMatchesOutcome": true,
+      "previous4HClose": 84.67,
+      "next4HOpen": 84.68,
+      "next4HHigh": 85.3,
+      "next4HLow": 81.25,
+      "next4HClose": 82.24,
+      "next4HChangePercent": -2.87,
+      "priorCandleLowBrokenOnNextClose": true,
+      "V7New1HBOSAt15": 0,
+      "V7PaperEntryAt15": false,
+      "asOf15ActualVerifiedSnapshot": true,
+      "warning": "Direction ≠ verified trade entry. A BOS/retest is not invented."
+    }
+  },
+  "directionHits": 3,
+  "assessedAssets": 3,
+  "originalETH15RealTimeDataUnavailable": true
+}
