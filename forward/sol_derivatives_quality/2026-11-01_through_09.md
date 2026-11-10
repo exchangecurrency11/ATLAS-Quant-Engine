@@ -15,7 +15,8 @@
 - Boş 5m dilimleri: 0. Kayıp aralık grubu: 0.
 - En büyük kesinti: 0 adet 5m dilimi.
 - Son OI etiketi: 2026-11-09T23:55:00Z. En erken kullanılabilir kapanış: 2026-11-10T00:00:00Z.
-- Geçersiz kayıt türleri: {}.
+- Kaynak satırları zaman sırasından sapma: 224 (içeriğin kayıp olduğu anlamına gelmez; zaman damgasına göre sıralanmalı).
+- Geçersiz/uyarı kayıt türleri: {'UNSORTED_SOURCE_ROW_TRANSITIONS': 224}.
 - Önemli: 2026-06-25 sonrası Binance metrics create_time başlangıç etiketlidir. T+5m öncesi stratejiye verilirse ileriye bakma hatası olur.
 
 ## Taker hacmi tutarlılığı
@@ -24,6 +25,7 @@
 - 5m verisi eksik olduğu için test edilemeyen 1H: 0.
 - Metrikteki taker ratio ve resmî 5m mumlardan eşleşen örnek: 2592.
 - Aynı pencere için median ratio mutlak farkı: 0.000181.
+- 0,01 üzerinde ratio farkı: 158; 0,05 üzerinde: 32.
 
 ## Funding Rate
 - En son bu çalışmada doğrulanan aylık paket: 2026-10.
