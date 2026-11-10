@@ -1,8 +1,8 @@
 # V7 — Engellenen BOS sinyalleri karşıolgusal inceleme
 
-**Analiz kapanış sınırı:** 2026-11-09T21:00:00Z (UTC)
+**Analiz kapanış sınırı:** 2026-11-10T02:00:00Z (UTC)
 **Sistem:** PAPER ONLY; canlı emir ve gerçek getiri yok
-**Orijinal doğrulanmış V7 gözlemi:** 119
+**Orijinal doğrulanmış V7 gözlemi:** 123
 
 | Ölçüm | Sonuç |
 |---|---:|
