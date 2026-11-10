@@ -1,0 +1,99 @@
+name: 'V9 research-only BTC ETH SOL prestart GREEN RED paper journal'
+
+# Dedicated research dispatcher on default branch because GitHub schedule
+# does not trigger workflows placed only on a feature branch.
+# The existing main production code, current signal engine and alerts remain
+# unchanged. No trading APIs or broker credentials are used.
+on:
+  schedule:
+    # 17 minutes before every UTC 00/04/08/12/16/20 4H candle
+    # Corresponds to 02:43/06:43/10:43/14:43/18:43/22:43 TSİ.
+    # GitHub schedule can run late: Python fails CLOSED after T-3 minutes.
+    - cron: '43 3,7,11,15,19,23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-research-paper-prestart-only
+  cancel-in-progress: false
+
+jobs:
+  record-and-evaluate-paper-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout only frozen experimental implementation (NOT main signal engine)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          persist-credentials: true
+      - name: Verify attached research branch is the only writable destination
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "research/v9-prestart-live-data-compatibility-20261111"
+          python3 -m py_compile v9_next_4h_color_research.py v9_next4h_prestart_paper_capture.py v9_next4h_paper_outcome_score.py
+          test -f forward/v9_next_4h_color/frozen_models.json
+      - name: Capture all three UNCALIBRATED paper colors before next 4H opens
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          set -euo pipefail
+          python3 -u v9_next4h_prestart_paper_capture.py
+      - name: Publish original forecast BEFORE the next target 4H starts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,glob,time,datetime
+          paths=glob.glob("forward/v9_next_4h_color/paper_forecasts/*.json")
+          recent=[p for p in paths if datetime.datetime.fromisoformat(
+             json.load(open(p))["target4HStartUTC"].replace("Z","+00:00")).timestamp()>time.time()]
+          assert len(recent)==1, "EXPECTED_ONE_UNOPENED_TARGET_PREDICTION"
+          j=json.load(open(recent[0]))
+          T=datetime.datetime.fromisoformat(j["target4HStartUTC"].replace("Z","+00:00")).timestamp()
+          assert time.time()<T-180, "TOO_LATE_TO_ATTEST_PREDICTION_BEFORE_OPEN"
+          assert j["brokerOrders"] is False and j["noTargetOpenKnown"]
+          print("V9_PAPER_FORECAST_STRICTLY_BEFORE_4H_OPEN",j["target4HStartUTC"])
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_next_4h_color/paper_forecasts/
+          git diff --cached --quiet && exit 1
+          git commit -m "V9 paper original prestart BTC ETH SOL next4H color (no order)"
+          git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111
+      - name: Score any PRIOR fully closed 4H prediction, preserve original commits
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v9_next4h_paper_outcome_score.py
+          python3 - <<'PY'
+          import json
+          j=json.load(open("forward/v9_next_4h_color/paper_scoreboard.json"))
+          assert j["status"]=="V9_FORWARD_PAPER_SCOREBOARD_RESEARCH_ONLY"
+          assert j["mustKeepAllForecastsEvenIfWrong"] is True
+          assert j["realOrders"] is False and j["productionModified"] is False
+          assert j["completedTargetForecasts"]<=j["totalPriorTargetForecasts"]
+          print("V9_FORWARD_GREEN_RED_LEDGER_SCORED",j["completedTargetForecasts"])
+          PY
+      - name: Publish separate outcome files and true forward scoreboard
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add forward/v9_next_4h_color/paper_outcomes/ forward/v9_next_4h_color/paper_scoreboard.json
+          if ! git diff --cached --quiet; then
+            git commit -m "V9 paper: actual next4H own candle color after close, separate sealed outcome"
+            git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111
+          fi
+      - name: Preserve audit artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-paper-journal-${{ github.run_id }}
+          path: |
+            forward/v9_next_4h_color/paper_forecasts/
+            forward/v9_next_4h_color/paper_outcomes/
+            forward/v9_next_4h_color/paper_scoreboard.json
+          if-no-files-found: ignore
+          retention-days: 60
