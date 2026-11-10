@@ -1,0 +1,84 @@
+name: V8.1 SOL HTF support flip and role reversal deep research (paper)
+on:
+  push:
+    branches: [experiment/v81-sol-htf-roleflip-research-20261110]
+    paths:
+      - sol_v81_htf_role_flip_research.py
+      - tests/test_sol_v81_htf_role_flip_research.py
+      - .github/workflows/v81-sol-htf-roleflip-research.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v81-sol-daily-4h-roleflip-research
+  cancel-in-progress: false
+
+jobs:
+  investigate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout isolated branch only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Verify no-lookahead, no false ICT breaker, stop first, max 0.50 risk
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v81_htf_role_flip_research.py' -v
+
+      - name: Study SOL Daily and 4H band vs checksum verified structural role flips
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u sol_v81_htf_role_flip_research.py             --start 2025-01 --end 2026-10 --workers 6             --output forward/v81_roleflip/latest.json             --markdown forward/v81_roleflip/latest.md
+
+      - name: Audit report safety and completeness
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          obj=json.load(open("forward/v81_roleflip/latest.json"))
+          assert obj["status"]=="RESEARCH_ONLY_NO_TRADING_ORDERS"
+          assert obj["brokerOrders"] is False and obj["liveTradingApproved"] is False
+          assert obj["mainProductionModified"] is False
+          assert obj["historicalMonthlySHA256Verified"]==22
+          assert obj["currentCutoffUTC"]=="2026-11-10T16:00:00Z"
+          assert obj["currentUserDrawnZone"]["manualZone"]["low"]==87.5
+          assert obj["currentUserDrawnZone"]["manualZone"]["high"]==95.0
+          assert obj["mechanical4HSwingSupportFlip"]["methodNotICTBreakerStrict"]
+          assert obj["mechanical4HSwingSupportFlip"]["notOutOfSample"]
+          print("V81_MACRO_ZONE_RESEARCH_VERIFIED")
+          PY
+
+      - name: Preserve research artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v81-sol-roleflip-${{ github.run_id }}
+          path: forward/v81_roleflip/
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Commit only research report to V8.1 experiment branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v81_roleflip/latest.json forward/v81_roleflip/latest.md
+          git commit -m "V8.1: SOL role reversal historical audit and manual Daily 4H box validation"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v81-sol-htf-roleflip-research-20261110
+            if git push origin HEAD:experiment/v81-sol-htf-roleflip-research-20261110; then
+              echo "V81_SOL_ROLEFLIP_SAVED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
