@@ -1,0 +1,23 @@
+name: ETH V7 Live Kline Source Probe (paper only)
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - eth_live_probe.py
+      - .github/workflows/eth-v7-live-probe.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+      - name: Check Binance ETHUSDT perpetual 1H 4H Daily closed klines
+        run: python3 eth_live_probe.py
