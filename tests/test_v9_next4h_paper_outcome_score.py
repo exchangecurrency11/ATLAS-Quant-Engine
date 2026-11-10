@@ -115,6 +115,18 @@ class V9PaperScorerTests(unittest.TestCase):
         self.assertTrue(score["mustKeepAllForecastsEvenIfWrong"])
         self.assertFalse(score["realOrders"])
 
+    def test_missing_prestart_capture_is_counted_not_hidden(self):
+        p=forecast()
+        skip=copy.deepcopy(p)
+        skip["target4HStartUTC"]=iso(T+2*FOUR)
+        skip["target4HEndUTC"]=iso(T+3*FOUR)
+        skip["decisionCapturedUTC"]=iso(T+2*FOUR-600)
+        results=scoreboard([p,skip],[])
+        self.assertEqual(results["expectedFourHourSlotsBetweenFirstAndLast"],3)
+        self.assertEqual(results["missingScheduledForecastSlotsBetweenFirstAndLast"],1)
+        self.assertEqual(results["captureCoveragePct"],66.67)
+        self.assertEqual(results["completedTargetForecasts"],0)
+
     def test_no_forward_predictions_reports_none_not_100pct(self):
         x=scoreboard([],[])
         for s in SYMBOLS:
