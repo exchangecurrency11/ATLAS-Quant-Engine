@@ -1,0 +1,93 @@
+name: V8.3 SOL all-indicator Wyckoff RSI EMA Fibonacci Pivot OB paper research
+
+on:
+  push:
+    branches: [experiment/v83-sol-full-confluence-20261110]
+    paths:
+      - sol_v83_full_confluence_paper.py
+      - tests/test_sol_v83_full_confluence_paper.py
+      - .github/workflows/v83-sol-full-confluence.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v83-sol-full-indicator-confluence
+  cancel-in-progress: false
+
+jobs:
+  sol-study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Checkout isolated branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Verify point-in-time, paper stop-first and signal guards
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v83_full_confluence_paper.py' -v
+          python3 -m unittest discover -s tests -p 'test_sol_v82_fib_pivot_confluence.py' -q
+          python3 -m unittest discover -s tests -p 'test_sol_v81_historical_wide_zones.py' -q
+
+      - name: SHA256 validate 45 SOL Binance monthly archives and evaluate eight votes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u sol_v83_full_confluence_paper.py \
+            --out forward/v83_full_confluence/latest.json \
+            --markdown forward/v83_full_confluence/latest.md
+
+      - name: Verify full research evidence, no orders or BTC/ETH production edits
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          d=json.load(open("forward/v83_full_confluence/latest.json"))
+          assert d["status"]=="RESEARCH_ONLY_UNVALIDATED_NO_ORDERS"
+          assert d["verifiedArchivedMonthsTotal"]==45
+          assert set(d["comparison"])=={"older2023_2024","recent2025_2026","combined","recentSinceJuly2026"}
+          assert d["noThresholdFittingAfterOutcome"] is True
+          assert d["multipleComparisonsUnadjusted"] is True
+          assert d["brokerOrders"] is False and d["productionModified"] is False
+          assert d["liveSignalEnabled"] is False
+          assert d["actualWyckoffOrInstitutionalOrdersVerified"] is False
+          assert len(d["featureSet"])==8
+          for segment,variants in d["comparison"].items():
+            n=variants["00_BaseWideZoneRetest"]["answered24h"]
+            for label,z in variants.items():
+              assert z["answered24h"]<=n
+              assert z["meets75With30"] is False or (
+                  z["answered24h"]>=30 and z["directionHitPct"]>=75)
+          print("V83_ALL_INDICATORS_NO_LIVE_45_ARCHIVES_VERIFIED")
+          PY
+
+      - name: Preserve full audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v83-sol-wyckoff-all-${{ github.run_id }}
+          path: forward/v83_full_confluence/
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Publish only to experimental research branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v83_full_confluence/latest.json forward/v83_full_confluence/latest.md
+          git commit -m "V8.3 SOL 45-month full Wyckoff RSI EMA fib pivot OB 1H research"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v83-sol-full-confluence-20261110
+            if git push origin HEAD:experiment/v83-sol-full-confluence-20261110; then
+              echo "V83_SOL_RESEARCH_REPORT_PUBLISHED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
