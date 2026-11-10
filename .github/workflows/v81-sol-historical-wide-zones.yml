@@ -1,0 +1,84 @@
+name: V8.1 SOL historical Daily 4H wide-zone research (no orders)
+
+on:
+  push:
+    branches: [experiment/v81-sol-historical-wide-zones-20261110]
+    paths:
+      - sol_v81_historical_wide_zone_study.py
+      - tests/test_sol_v81_historical_wide_zones.py
+      - .github/workflows/v81-sol-historical-wide-zones.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v81-sol-causal-wide-box-research
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout research branch only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Unit tests for no-lookahead, zone freezing and outcomes
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v81_historical_wide_zones.py' -v
+          python3 -m unittest discover -s tests -p 'test_sol_v81_htf_role_flip_research.py' -v
+
+      - name: Download SHA256 authenticated Binance SOL USD-M history and replay
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u sol_v81_historical_wide_zone_study.py             --start 2025-01 --end 2026-09 --workers 6             --out forward/v81_wide_zones/latest.json             --markdown forward/v81_wide_zones/latest.md
+
+      - name: Validate results and research-only constraints
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          obj=json.loads(Path("forward/v81_wide_zones/latest.json").read_text())
+          assert obj["status"]=="DIAGNOSTIC_ONLY_NOT_A_VALIDATED_SIGNAL"
+          assert obj["sha256VerifiedArchives"]==21
+          assert obj["method"]["manualPriceBoundsUsedForDetection"] is False
+          assert obj["method"]["MACDUsed"] is False
+          assert obj["brokerOrders"] is False and obj["liveTradingApproved"] is False
+          assert obj["mainProductionModified"] is False
+          assert obj["boxFormationCounts"]["all"]==obj["allBoxesFrozenBeforeOutcome"]
+          assert obj["uniqueBrokenEpisodes"]<=obj["allBoxesFrozenBeforeOutcome"]
+          print("ROLEFLIP_WIDE_ZONE_RESEARCH_VALIDATED")
+          PY
+
+      - name: Keep raw research outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v81-sol-wide-zones-${{ github.run_id }}
+          path: forward/v81_wide_zones/
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Persist result to experimental branch only
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v81_wide_zones/latest.json forward/v81_wide_zones/latest.md
+          git commit -m "V8.1 SOL: causal daily+4H historical broad-box break retest audit"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v81-sol-historical-wide-zones-20261110
+            if git push origin HEAD:experiment/v81-sol-historical-wide-zones-20261110; then
+              echo "V81_WIDE_BOX_HISTORICAL_REPORT_SAVED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
