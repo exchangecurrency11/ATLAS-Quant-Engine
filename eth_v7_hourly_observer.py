@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -25,6 +26,7 @@ from v7_forward_observer import latest_events
 SYMBOL="ETHUSDT"
 RESEARCH_PAIR="ETHUSDT_PERP.A"
 URL="https://fapi.binance.com/fapi/v1/klines"
+COINALYZE_URL="https://api.coinalyze.net/v1/ohlcv-history"
 PERIODS={"1hour":("1h",3600,750),"4hour":("4h",14400,300),
          "daily":("1d",86400,300)}
 HOUR=3600
@@ -65,6 +67,47 @@ def public_klines(interval,limit):
         rows=json.loads(blob)
     except (TypeError,ValueError) as e:
         raise ValueError("Invalid ETH Binance Kline JSON") from e
+    return rows,hashlib.sha256(blob).hexdigest()
+
+
+
+def coinalyze_klines(timeframe,now,key):
+    """Dedicated ETHUSDT perpetual closed-history GET, never spot or another coin."""
+    tf,seconds,_=PERIODS[timeframe]
+    # Follow established ETH-perpetual provider's 250-candle coverage.
+    days={"1hour":14,"4hour":50,"daily":260}[timeframe]
+    query=urllib.parse.urlencode({
+        "symbols":RESEARCH_PAIR,"interval":timeframe,
+        "from":now-days*86400,"to":now
+    })
+    request=urllib.request.Request(
+        COINALYZE_URL+"?"+query,method="GET",
+        headers={"api_key":key,"Accept":"application/json",
+                 "User-Agent":"ETH-V7-independent-paper/1.0"})
+    try:
+        with urllib.request.urlopen(request,timeout=25) as response:
+            if response.status!=200:
+                raise ValueError("Unexpected Coinalyze HTTP response")
+            blob=response.read(900000)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError("COINALYZE_ETH_HTTP_"+str(e.code)) from e
+    except (urllib.error.URLError,TimeoutError) as e:
+        raise RuntimeError("COINALYZE_ETH_NETWORK_"+type(e).__name__) from e
+    try:
+        data=json.loads(blob)
+    except (ValueError,TypeError) as e:
+        raise ValueError("Invalid Coinalyze ETH JSON") from e
+    if (not isinstance(data,list) or len(data)!=1 or
+        data[0].get("symbol")!=RESEARCH_PAIR or
+        not isinstance(data[0].get("history"),list)):
+        raise ValueError("Unexpected Coinalyze ETH-only source shape")
+    rows=[]
+    for b in data[0]["history"]:
+        t=int(b["t"])
+        if t%seconds:
+            raise ValueError("Misaligned Coinalyze candle")
+        rows.append([t*1000,b["o"],b["h"],b["l"],b["c"],b["v"],
+                     (t+seconds)*1000-1, "0",0,"0","0","0"])
     return rows,hashlib.sha256(blob).hexdigest()
 
 
@@ -220,7 +263,7 @@ def context_for_eth(h,f,d,target):
     }
 
 
-def build_observation(raw_map,target,now):
+def build_observation(raw_map,target,now,source=None):
     rows,hashes,cross=validate_sources(raw_map,target,now)
     h,f,d=(rows[tf] for tf in ("1hour","4hour","daily"))
     variants={
@@ -238,7 +281,7 @@ def build_observation(raw_map,target,now):
         "status":"VERIFIED_PAPER_OBSERVATION",
         "marketContext":{RESEARCH_PAIR:context_for_eth(h,f,d,target)},
         "results":{RESEARCH_PAIR:outcomes},
-        "dataSource":"Binance official USD-M futures public GET /fapi/v1/klines",
+        "dataSource":source or "Binance official USD-M futures public GET /fapi/v1/klines",
         "sourceSHA256":hashes,
         "crossTimeframeOHLCVVerifiedLast5":cross,
     }
@@ -251,7 +294,7 @@ def format_report(s):
         "**Hedef 1H kapanış (UTC):** "+s["targetClosed1HUTC"],
         "**Gözlem zamanı (UTC):** "+s["observedAtUTC"],
         "**Durum:** "+s["status"],
-        "**Kaynak:** Binance official USD-M futures REST Klines (read-only)",
+        "**Kaynak:** "+s.get("dataSource","ETHUSDT perpetual provider unavailable"),
         "**Emir:** YOK. Gerçek fill veya getiri iddiası yok.",
         "",
     ]
@@ -303,9 +346,16 @@ def run(output,report,target,now):
     try:
         check_time(target,now)
         raw={}
-        for tf,(binance_interval,_,limit) in PERIODS.items():
-            raw[tf]=public_klines(binance_interval,limit)
-        result.update(build_observation(raw,target,now))
+        api_key=os.environ.get("ETH_V7_COINALYZE_API_KEY","").strip()
+        if api_key:
+            source="Coinalyze ETHUSDT_PERP.A / Binance perpetual read-only API"
+            for tf in PERIODS:
+                raw[tf]=coinalyze_klines(tf,now,api_key)
+        else:
+            source="Binance official USD-M futures public GET /fapi/v1/klines"
+            for tf,(binance_interval,_,limit) in PERIODS.items():
+                raw[tf]=public_klines(binance_interval,limit)
+        result.update(build_observation(raw,target,now,source=source))
         result["paperForwardObservation"]=True
     except (RuntimeError,ValueError,TypeError,KeyError,IndexError,ZeroDivisionError) as e:
         result["status"]="SOURCE_UNAVAILABLE_NO_SIGNAL"
