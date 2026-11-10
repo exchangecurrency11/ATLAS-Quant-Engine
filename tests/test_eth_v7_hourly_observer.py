@@ -102,5 +102,35 @@ class ETHV7ForwardTests(unittest.TestCase):
             self.assertIn("SİNYAL YOK",report.read_text())
 
 
+    def test_dedicated_coinalyze_eth_only_candles_and_rejects_wrong_symbol(self):
+        from unittest.mock import Mock
+        now=TARGET+20*60
+        records=[{"t":TARGET-300*eth.HOUR+i*eth.HOUR,
+                  "o":100,"h":101,"l":99,"c":100,"v":50} for i in range(300)]
+        class Response:
+            status=200
+            def __init__(self, data):
+                self.data=json.dumps(data).encode()
+            def __enter__(self): return self
+            def __exit__(self,*args): return False
+            def read(self,limit): return self.data
+        with patch.object(eth.urllib.request,"urlopen",
+                          return_value=Response([{"symbol":eth.RESEARCH_PAIR,
+                                                  "history":records}])) as call:
+            raw,source_hash=eth.coinalyze_klines("1hour",now,"TEST_KEY_NEVER_LOG")
+            self.assertEqual(len(raw),300)
+            self.assertEqual(raw[-1][0]//1000+eth.HOUR,TARGET)
+            self.assertEqual(len(source_hash),64)
+            req=call.call_args.args[0]
+            self.assertIn("ETHUSDT_PERP.A",req.full_url)
+            self.assertEqual(req.get_method(),"GET")
+        with patch.object(eth.urllib.request,"urlopen",
+                          return_value=Response([{"symbol":"BTCUSDT_PERP.A",
+                                                  "history":records}])):
+            with self.assertRaisesRegex(ValueError,"ETH-only"):
+                eth.coinalyze_klines("1hour",now,"TEST_KEY")
+
+
+
 if __name__=="__main__":
     unittest.main()
