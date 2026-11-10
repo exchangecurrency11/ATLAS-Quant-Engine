@@ -78,6 +78,29 @@ class DerivativeAblationTests(unittest.TestCase):
         # fixed filter C cannot trigger without B
         self.assertEqual(bool(z["C_BplusRisingOI"]),bool(z["B_momentumAndCVD"]))
 
+    def test_flat_funding_history_abstains_instead_of_confirming(self):
+        d=make()
+        t=8*24*HOUR
+        for row in d["funding-rate-history"]:
+            row["o"]=row["h"]=row["l"]=row["c"]=0.01
+        f=features(d["ohlcv-history"],d["open-interest-history"],
+                   d["funding-rate-history"],t)
+        self.assertFalse(f["fundingVariationSufficient"])
+        self.assertEqual(f["fundingPrior24UniqueValues"],1)
+        self.assertIsNone(f["fundingPercentileRelativePrior24"])
+        self.assertIsNone(variants(f)["D_CplusFundingContext"])
+
+    def test_matched_baseline_for_oi_subset_and_funding_counts(self):
+        d=make()
+        x=evaluate_one(d["ohlcv-history"],d["open-interest-history"],
+                       d["funding-rate-history"])
+        for name,comparison in x["matchedBaselineComparisons"].items():
+            self.assertEqual(comparison["baselineCorrectSameEvents"],
+                             comparison["filteredCorrectSameEvents"])
+            self.assertTrue(comparison["noDirectionalEdgeInferredFromSelection"])
+        self.assertLessEqual(x["fundingCheckpointsWithMeaningfulVariation"],
+                             x["intended4HCheckpoints"])
+
     def test_missing_one_hour_in_oi_rejects_checkpoint(self):
         d=make()
         t=8*24*HOUR
