@@ -35,7 +35,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 eth_archive_pipeline.py \
-            --start-month 2019-11 \
+            --start-month 2019-12 \
             --workers 8 \
             --output-dir forward/eth/archive
           test -s forward/eth/archive/manifest.json
