@@ -17,8 +17,8 @@ PREDECLARED MODEL (before 2021–2022 unseen historical robustness run):
   score>=8/10, and >=6 with latest liquidity sweep. A filter produces
   no signal if insufficient evidence; 75% user benchmark never tuned.
 
-2022-02 archive contains only 600/672 hours. Exclude the ENTIRE month and
-restart indicator warmup in two independently contiguous subspans.
+2022 archive has incomplete months. Exclude ENTIRE affected months,
+scan individually verified contiguous runs, and restart indicator warmup.
 Data 2023–2026 has already been inspected. 2021–22 is older-unseen
 market regime test, NOT a time-forward holdout; runs with exactly same
 predeclared rules. OHLCV cannot prove Wyckoff market-maker actions
@@ -82,6 +82,63 @@ def verified_history(start,end):
     four=aggregate(one,FOUR)
     daily=aggregate(one,DAY)
     return one,four,daily,len(months)
+
+
+def verified_partial_year_contiguous_spans(start,end):
+    """2022 had archive-level missing hours; accept ONLY checksum-verified,
+    individually complete months and split at every incomplete month.
+    No bar interpolation, gap stitching, fabricated data, or fallback source.
+    All invalidities OTHER than a verified incomplete-month format are fatal.
+    """
+    monthlist=months_inclusive(start,end)
+    results={}
+    exclusions=[]
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        futures={pool.submit(download_month,"SOLUSDT",month):month for month in monthlist}
+        for future in as_completed(futures):
+            month=futures[future]
+            try:
+                symbol,actual,candles,proof=future.result()
+            except ValueError as ex:
+                message=str(ex)
+                accepted=(message.startswith(f"Missing/extra candles in SOLUSDT {month}:")
+                          or message.startswith(f"Candle gap, duplicate or wrong month: SOLUSDT {month}"))
+                if not accepted:
+                    raise
+                exclusions.append({"month":month,"verifiedArchiveRejected":message})
+                print("SOL_ARCHIVE_INCOMPLETE_FAIL_CLOSED",month,message,flush=True)
+                continue
+            if symbol!="SOLUSDT" or actual!=month or not proof.get("sha256"):
+                raise ValueError("UNTRUSTED_HISTORICAL_ARCHIVE")
+            expected=(month_end(month)-month_start(month))//HOUR
+            if len(candles)!=expected:
+                raise ValueError("POST_VERIFY_ARCHIVE_ROW_COUNT_INVALID")
+            results[month]=candles
+            print("SOL_ARCHIVE_CHECKSUM_OK",month,len(candles),flush=True)
+    # Run each continuous sequence as a SEPARATE universe; no SMA state
+    # or candlestick construction ever crosses a missing month.
+    sequences=[]
+    current=[]
+    for month in monthlist:
+        if month not in results:
+            if current:sequences.append(current)
+            current=[]
+        else:
+            current.append(month)
+    if current:sequences.append(current)
+    bundles=[]
+    for segment in sequences:
+        first,last=segment[0],segment[-1]
+        one=[x for month in segment for x in results[month]]
+        start_ts=month_start(first)
+        if len(one)!=(month_end(last)-start_ts)//HOUR or any(
+            x["t"]!=start_ts+i*HOUR for i,x in enumerate(one)):
+            raise ValueError("INCOMPLETE_1H_WITHIN_VERIFIED_SEGMENT")
+        four=aggregate(one,FOUR)
+        daily=aggregate(one,DAY)
+        bundles.append({"from":first,"to":last,"months":len(segment),
+                        "one":one,"four":four,"daily":daily})
+    return bundles,sorted(exclusions,key=lambda x:x["month"])
 
 
 def rolling_sma(values,length):
@@ -446,7 +503,7 @@ def markdown(data):
       "**2023–Sep2026** previously inspected development periods.",
       "",
       "## Sources and validation",
-      f"- **{data['verifiedMonths']}** officially checksum-verified Binance USD-M SOLUSDT monthly 1H archives; **2022-02 excluded entirely** (600/672 hours), and segments never stitched across the gap.",
+      f"- **{data['verifiedMonths']}** checksum-verified complete Binance USD-M SOLUSDT monthly 1H archives. 2022 incomplete months listed in JSON and entirely excluded, never stitched or padded.",
       "- Daily + 4H SMA100 and SMA200 for regime; 4H RSI14, Daily RSI14; prior-day classic pivot.",
       "- Broad Daily 28-day 8.5% width support/supply zone, Fib 38.2–61.8, Wyckoff SOS/SOW OHLCV proxy, 1H liquidity sweep, 4H volume.",
       "- Either direction considered; mixed SMA regimes yield ABSTAIN. Next four closed 1H candles must provide BOS or sweep; next 1H open paper entry.",
@@ -482,8 +539,7 @@ def main():
     specimens={}
     manifests={}
     research_spans=(
-        ("olderUnseen2021_2022",
-         (("2021-01","2022-01"),("2022-03","2022-12"))),
+        ("olderUnseen2021_2022",(("2021-01","2022-01"),)),
         ("known2023_2024",(("2023-01","2024-12"),)),
         ("known2025_2026",(("2025-01","2026-09"),)),
     )
@@ -491,11 +547,21 @@ def main():
         print("V85_PERIOD_START",name,flush=True)
         entries=[]
         detail=[]
+        excludes=[]
+        source_bundles=[]
         for start,end in spans:
-            # NEVER concatenate OHLCV across 2022-02 missing data.
-            # Each fully verified independent block independently initializes
-            # Daily SMA200 and all 1H/BOS state. Reduced sample is explicit.
             one,four,daily,count=verified_history(start,end)
+            source_bundles.append({"from":start,"to":end,"months":count,
+                                   "one":one,"four":four,"daily":daily})
+        if name=="olderUnseen2021_2022":
+            # February and April 2022 official archives are incomplete.
+            # Others are checked individually before inclusion; every
+            # break in month continuity starts independent SMA warmup.
+            late,excludes=verified_partial_year_contiguous_spans("2022-02","2022-12")
+            source_bundles.extend(late)
+        for bundle in source_bundles:
+            start,end=bundle["from"],bundle["to"]
+            one,four,daily,count=(bundle["one"],bundle["four"],bundle["daily"],bundle["months"])
             cases,stats=scan(one,four,daily)
             entries.extend(cases)
             detail.append({"from":start,"to":end,"verifiedMonths":count,
@@ -510,8 +576,8 @@ def main():
             "4H":sum(x["4H"] for x in detail),
             "Daily":sum(x["Daily"] for x in detail),
             "signalsAfterCooldown":len(entries),
-            "excludedIncompleteMonth":"2022-02: official 1H SOLUSDT month has 600/672 bars; entire month excluded, no stitching."
-              if name=="olderUnseen2021_2022" else None}
+            "excludedIncompleteMonths":excludes,
+            "noStitchingAcrossMissingMonths":True}
         print("V85_PERIOD_DONE",name,manifests[name],flush=True)
     specimens["allCombined"]=sum((specimens[x] for x in
         ("olderUnseen2021_2022","known2023_2024","known2025_2026")),[])
