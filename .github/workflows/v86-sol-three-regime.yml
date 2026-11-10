@@ -1,0 +1,90 @@
+name: V8.6 SOL three market regimes: continuation relief reversal
+
+on:
+  push:
+    branches: [experiment/v86-sol-three-regime-classifier-20261110]
+    paths:
+      - sol_v86_three_regime_research.py
+      - tests/test_sol_v86_three_regime_research.py
+      - .github/workflows/v86-sol-three-regime.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v86-sol-three-regimes
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout isolated experiment branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Run causal no future candle and independent-outcome tests
+        run: |
+          python3 -m unittest discover -s tests -p 'test_sol_v86_three_regime_research.py' -v
+
+      - name: Verify 45 official monthly Binance Futures files then classify
+        run: |
+          python3 -u sol_v86_three_regime_research.py \
+            --json forward/v86_three_regimes/latest.json \
+            --markdown forward/v86_three_regimes/latest.md
+
+      - name: Enforce independent daily checkpoints, reporting and no real trades
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open("forward/v86_three_regimes/latest.json"))
+          assert x["status"]=="RESEARCH_CLASSIFIER_NO_AUTOMATED_ORDER"
+          assert x["checksummedMonths"]==45
+          assert x["nonoverlap24hCheckpoints"] is True
+          assert x["methodFrozenBeforePerformance"] is True
+          assert x["checkpointsAtUTC"]=="20:00"
+          assert x["noMACD"] is True
+          assert x["hasNoOrderCalls"] is True
+          assert x["currentProductionModified"] is False
+          assert x["liveTradingApproved"] is False
+          assert x["historicalDataPreviouslyInspected"] is True
+          for key,v in x["results"].items():
+            a=v["all"]
+            assert a["allNonoverlappingDailyCheckpoints"]==(
+                a["directionalSignals"]+a["abstentions"])
+            assert a["correct24H"]<=a["directionalSignals"]
+            assert a["correctNext4h"]<=a["directionalSignals"]
+            assert a["min30Signals"] is False or a["directionalSignals"]>=30
+          print("V86_THREE_REGIME_UNTOUCHED_PRODUCTION_AUDIT_PASSED")
+          PY
+
+      - name: Keep trial report in artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v86-sol-three-regimes-${{ github.run_id }}
+          path: forward/v86_three_regimes/
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Commit only V8.6 experimental research report
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v86_three_regimes/latest.json forward/v86_three_regimes/latest.md
+          git commit -m "V8.6: daily nonoverlap SOL relief bounce continuation reversal model research"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v86-sol-three-regime-classifier-20261110
+            if git push origin HEAD:experiment/v86-sol-three-regime-classifier-20261110; then
+              echo "SOL_V86_THREE_REGIME_RESEARCH_SAVED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
