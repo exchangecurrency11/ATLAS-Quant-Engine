@@ -1,0 +1,82 @@
+name: 'V9 BTC ETH SOL OI CVD funding historical source and 4H ablation'
+
+on:
+  push:
+    branches: [research/v9-btc-eth-sol-oi-funding-cvd-test-20261111]
+    paths:
+      - v9_three_asset_derivatives_ablation.py
+      - tests/test_v9_three_asset_derivatives_ablation.py
+      - .github/workflows/v9-three-asset-derivatives-ablation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-three-asset-deriv-research
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated research branch only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Test three synchronized sources and no future leakage
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_three_asset_derivatives_ablation.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_binance_taker_flow.py' -q
+      - name: Fetch Coinalyze BTC ETH SOL 1H perpetual OHLCV OI funding histories
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v9_three_asset_derivatives_ablation.py --out forward/v9_three_derivatives/latest.json
+      - name: Audit no false performance, source freshness, and exact contract set
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open("forward/v9_three_derivatives/latest.json"))
+          assert x["status"]=="HISTORICAL_DIRECTION_ONLY_NO_SIGNAL"
+          assert x["brokerOrders"] is False and x["productionEdited"] is False
+          assert x["liveTradingApproved"] is False
+          assert x["noFutureFeatures"] and x["fourHourOutcomesNonOverlappingWithinEachAsset"]
+          assert set(x["contracts"])=={"BTCUSDT_PERP.A","ETHUSDT_PERP.A","SOLUSDT_PERP.A"}
+          assert set(x["sourceSHA256"])=={"ohlcv-history","open-interest-history","funding-rate-history"}
+          for symbol,row in x["contracts"].items():
+            assert row["intended4HCheckpoints"]==row["fullyAlignedEvaluable"]+row["rejectedMissingOrIncomplete"]
+            assert len(row["results"])==5
+            for filt,z in row["results"].items():
+              assert z["predictions"]<=row["fullyAlignedEvaluable"]
+              assert z["correct"]<=z["predictions"]
+              assert z["directionalOnlyNoPnL"] is True
+          print("V9_BTC_ETH_SOL_CVD_OI_FUNDING_RESEARCH_VALIDATED")
+          PY
+      - name: Preserve output artifact even on errors
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-three-assets-oi-funding-cvd-${{ github.run_id }}
+          path: forward/v9_three_derivatives/
+          if-no-files-found: ignore
+          retention-days: 60
+      - name: Save only completed research audit to isolated branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_three_derivatives/latest.json
+          git commit -m "V9: BTC ETH SOL aligned 1H OI CVD funding and 4H causal historical ablation"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-btc-eth-sol-oi-funding-cvd-test-20261111
+            if git push origin HEAD:research/v9-btc-eth-sol-oi-funding-cvd-test-20261111; then
+              echo "V9_THREE_ASSET_DERIVATIVES_RESEARCH_SAVED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
