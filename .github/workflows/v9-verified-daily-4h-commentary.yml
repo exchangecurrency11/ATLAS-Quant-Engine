@@ -1,0 +1,99 @@
+name: 'V9 Daily + 4H verified close commentary BTC ETH SOL'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_daily_4h_close_commentary.py
+      - tests/test_v9_daily_4h_close_commentary.py
+      - .github/workflows/v9-verified-daily-4h-commentary.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  commentary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Run point-in-time and interpretation safety checks
+        run: python3 -m unittest discover -s tests -p 'test_v9_daily_4h_close_commentary.py' -v
+      - name: Retrieve confirmed BTC SOL latest main data and matching independent ETH 4H close
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/v9_close_commentary/input
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/v9_close_commentary/input/main.json
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_structure_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/v9_close_commentary/input/structure.json
+          TIME=$(python3 - <<'PY'
+          import json,datetime
+          d=json.load(open("forward/v9_close_commentary/input/main.json"))
+          r=next(x for x in d["results"] if x["symbol"]=="BTCUSDT_PERP.A" and x["interval"]=="4hour")
+          t=datetime.datetime.fromisoformat(r["closeTimeUTC"].replace("Z","+00:00"))
+          print(t.strftime("%Y-%m-%dT%H-00Z"))
+          PY
+          )
+          echo "ETH_SNAPSHOT_FOR_SAME_CLOSE=$TIME"
+          gh api "repos/$GITHUB_REPOSITORY/contents/forward/eth/snapshots/$TIME.json?ref=experiment/v7-signal-quality-20261103" \
+            --jq '.content' | base64 --decode > forward/v9_close_commentary/input/eth.json
+      - name: Write BTC ETH SOL closed-only Daily + 4H summary independent of V9 forecast
+        run: |
+          python3 -u v9_daily_4h_close_commentary.py \
+            --main forward/v9_close_commentary/input/main.json \
+            --eth forward/v9_close_commentary/input/eth.json \
+            --structure forward/v9_close_commentary/input/structure.json
+      - name: Enforce source match, privacy and never overwrite forecast
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open("forward/v9_close_commentary/latest.json"))
+          assert x["status"]=="V9_VERIFIED_DAILY_4H_INTERPRETATIONS_ONLY"
+          assert x["commentaryNotAnEntrySignal"] and x["preservePreviousFrozen4HPreStartPredictions"]
+          assert x["noRealOrders"] and x["productionModified"] is False
+          assert set(x["assets"])=={"BTC","ETH","SOL"}
+          for z in x["assets"].values():
+            assert z["source4HCloseUTC"]==x["asOf4HCloseUTC"]
+            assert z["lastDailyCloseUTC"]==x["asOfDailyCloseUTC"]
+          assert x["assets"]["ETH"]["structureCommentary"]["available"] is False
+          print("V9_CLOSE_COMMENTARY_VERIFIED_WITHOUT_GREEN_RED_FORECAST_MUTATION")
+          PY
+      - name: Upload finished separate research-only analysis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-daily-4h-commentary-${{ github.run_id }}
+          path: |
+            forward/v9_close_commentary/latest.json
+            forward/v9_close_commentary/latest.md
+          if-no-files-found: ignore
+      - name: Commit only interpretation artifacts to research branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_close_commentary/latest.json forward/v9_close_commentary/latest.md
+          if git diff --cached --quiet; then
+            echo "V9_NO_NEW_CLOSE_COMMENTARY"
+            exit 0
+          fi
+          git commit -m "V9: distinct verified BTC ETH SOL Daily 4H commentary, no future forecast changes"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_SEPARATE_CLOSE_COMMENTARY_SAVED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
