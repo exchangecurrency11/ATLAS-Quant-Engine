@@ -80,6 +80,17 @@ class DerivativesProbeTests(unittest.TestCase):
             validate_funding([{"symbol": SYMBOL, "value": 0.001,
                                "update": NOW - 13 * HOUR}], NOW)
 
+    def test_coinalyze_funding_epoch_milliseconds_are_supported(self):
+        record = [{"symbol": SYMBOL, "value": 0.00012,
+                   "update": (NOW - 25) * 1000 + 501}]
+        funding = validate_funding(record, NOW)
+        self.assertEqual(funding["ageSeconds"], 25)
+        self.assertEqual(funding["timestampUnit"], "milliseconds")
+        self.assertEqual(funding["providerUpdateUTC"], "2026-11-10T16:20:35Z")
+        with self.assertRaisesRegex(ValueError, "STALE"):
+            validate_funding([{"symbol": SYMBOL, "value": 0.001,
+                               "update": (NOW - 13 * HOUR) * 1000}], NOW)
+
     def test_missing_key_does_not_fetch(self):
         def fail(*args):
             raise AssertionError("Must not request without API key")
