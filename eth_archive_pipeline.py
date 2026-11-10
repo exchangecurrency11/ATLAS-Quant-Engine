@@ -23,7 +23,7 @@ from download_binance_um_history import get, months_inclusive
 ROOT="https://data.binance.vision/data/futures/um"
 SYMBOL="ETHUSDT"
 STEP={"1m":60,"5m":300,"15m":900,"1h":3600,"4h":14400,"1d":86400}
-START_YEAR_MONTH="2019-11"
+START_YEAR_MONTH="2019-12"
 
 
 def month_after(ym):
@@ -171,7 +171,7 @@ def produce(entries, results, dest):
         "status":"BINANCE_OFFICIAL_ARCHIVE_SHA256_VERIFIED",
         "market":"USD-M perpetual","symbol":"ETHUSDT",
         "inputPackages":len(results),
-        "firstPartialLaunchMonth":"2019-11; actual available first candle verified in archive",
+        "firstPartialLaunchMonth":"ETHUSDT launched Nov 2019, but monthly 2019-11 1h ZIP returned HTTP 404; historical archive starts from first available complete month",
         "intervals":counts,
         "sourceFiles":sorted([dict(package=e[0],interval=e[1],date=e[2],**proof)
                               for e,_,proof in results],
