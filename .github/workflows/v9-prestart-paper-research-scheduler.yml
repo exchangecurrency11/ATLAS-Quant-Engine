@@ -62,6 +62,14 @@ jobs:
           git add forward/v9_next_4h_color/paper_forecasts/
           git diff --cached --quiet && exit 1
           git commit -m "V9 paper original prestart BTC ETH SOL next4H color (no order)"
+          python3 - <<'PY'
+          import json,glob,time,datetime
+          for p in glob.glob("forward/v9_next_4h_color/paper_forecasts/*.json"):
+            j=json.load(open(p))
+            T=datetime.datetime.fromisoformat(j["target4HStartUTC"].replace("Z","+00:00")).timestamp()
+            if T>time.time():
+              assert time.time()<T-180,"PUSH_TOO_LATE_TO_ATTEST_BEFORE_CANDLE_START"
+          PY
           git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111
       - name: Score any PRIOR fully closed 4H prediction, preserve original commits
         env:
@@ -81,7 +89,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add forward/v9_next_4h_color/paper_outcomes/ forward/v9_next_4h_color/paper_scoreboard.json
+          git add forward/v9_next_4h_color/paper_scoreboard.json
+          if [ -d forward/v9_next_4h_color/paper_outcomes ]; then
+            git add --all -- forward/v9_next_4h_color/paper_outcomes/
+          fi
           if ! git diff --cached --quiet; then
             git commit -m "V9 paper: actual next4H own candle color after close, separate sealed outcome"
             git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111
