@@ -1,0 +1,68 @@
+name: SOL V8 causal shadow association smoke test
+
+on:
+  push:
+    branches:
+      - experiment/v8-sol-derivatives-probe-20261110
+    paths:
+      - sol_v8_shadow_join.py
+      - tests/test_sol_v8_shadow_join.py
+      - .github/workflows/sol-v8-shadow-join.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Test no-look-ahead joins
+        run: python3 -m unittest discover -s tests -p 'test_sol_v8_shadow_join.py' -v
+
+      - name: Fetch original immutable V7 paper observation from separate branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/sol_v8_shadow/tmp
+          gh api "repos/$GITHUB_REPOSITORY/contents/forward/snapshots/2026-11-10T16-00Z.json?ref=experiment/v7-signal-quality-20261103" \
+            --jq '.content' | base64 --decode > forward/sol_v8_shadow/tmp/v7.json
+
+      - name: Join matching-hour SOL snapshots - absolutely no signals
+        run: |
+          python3 sol_v8_shadow_join.py \
+            --v7 forward/sol_v8_shadow/tmp/v7.json \
+            --v8 forward/sol_v8_derivatives_probe/snapshots/2026-11-10T16-00Z.json \
+            --output forward/sol_v8_shadow/2026-11-10T16-00Z.json
+
+      - name: Upload shadow audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-v8-shadow-${{ github.run_id }}
+          path: forward/sol_v8_shadow/
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Commit ONLY isolated V8 paired evidence
+        if: success()
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/sol_v8_shadow/2026-11-10T16-00Z.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "SOL V8: single-hour V7 and derivatives retrospective shadow pairing"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v8-sol-derivatives-probe-20261110
+            if git push origin HEAD:experiment/v8-sol-derivatives-probe-20261110; then exit 0; fi
+            sleep 3
+          done
+          exit 1
