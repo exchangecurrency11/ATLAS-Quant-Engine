@@ -1,0 +1,72 @@
+name: V8.5 SOL now close-only shadow check (never trade)
+
+on:
+  push:
+    branches: [experiment/v85-sol-regime-two-sided-20261110]
+    paths:
+      - sol_v85_current_closed_shadow.py
+      - tests/test_sol_v85_current_closed_shadow.py
+      - .github/workflows/v85-sol-current-shadow.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v85-sol-one-shot-current-shadow
+  cancel-in-progress: false
+
+jobs:
+  audit-current:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout isolated research only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Unit test 1H-4H candle integrity guards
+        run: python3 -m unittest discover -s tests -p 'test_sol_v85_current_closed_shadow.py' -v
+      - name: Fetch read-only SOL perpetual OHLCV and audit current CLOSED 4H
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: python3 -u sol_v85_current_closed_shadow.py
+      - name: Validate no live trade or production alteration
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open("forward/v85_shadow/latest.json"))
+          assert x["symbol"]=="SOLUSDT_PERP.A"
+          assert x["status"]=="RESEARCH_SNAPSHOT_NO_ORDERS"
+          assert x["productionModified"] is False
+          assert x["liveTradeAllowed"] is False
+          assert x["decision"]["action"] in (
+              "ABSTAIN_STALE_SOURCE","ABSTAIN_INSUFFICIENT_WARMUP",
+              "ABSTAIN_MIXED_SMA_REGIME","ABSTAIN_SCORE_BELOW_SIX",
+              "WAIT_FOR_CLOSED_1H_CONFIRMATION","ABSTAIN_MISSING_NEXT_1H",
+              "PAPER_WATCH_NOT_AN_ORDER")
+          print("V85_CLOSED_ONLY_SHADOW_AUDIT_SAVED")
+          PY
+      - name: Upload snapshot audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v85-sol-current-shadow-${{ github.run_id }}
+          path: forward/v85_shadow/
+          retention-days: 40
+          if-no-files-found: ignore
+      - name: Commit only one-shot shadow state on experiment branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v85_shadow/latest.json
+          git commit -m "V8.5: closed-only SOL perpetual market shadow snapshot, no orders"
+          for i in 1 2 3; do
+            git pull --rebase origin experiment/v85-sol-regime-two-sided-20261110
+            if git push origin HEAD:experiment/v85-sol-regime-two-sided-20261110; then exit 0; fi
+            sleep 4
+          done
+          exit 1
