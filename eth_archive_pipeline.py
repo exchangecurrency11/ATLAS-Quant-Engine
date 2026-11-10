@@ -116,13 +116,11 @@ def list_entries(now_utc,*,start="2019-11",include_recent=True):
     daily_start=datetime.strptime(month_after(last_month)+"-01","%Y-%m-%d").date()
     daily_dates=[(daily_start+timedelta(days=i)).strftime("%Y-%m-%d")
                  for i in range(max(0,(day-daily_start).days))]
-    # Full 1h history, with 5m and 15m covering the last complete month
-    # plus current month so that recent lower-timeframe entries can be studied.
-    entries=[("monthly","1h",ym) for ym in first_months]
-    entries += [("daily","1h",ymd) for ymd in daily_dates]
-    if include_recent:
-        entries += [("monthly",tf,last_month) for tf in ("5m","15m")]
-        entries += [("daily",tf,d) for d in daily_dates for tf in ("5m","15m")]
+    # Full available history at EVERY strategy timeframe: 1H, 5m, 15m.
+    # 4H and Daily are reconstructed only from complete underlying 1H groups.
+    intervals=("1h","5m","15m") if include_recent else ("1h",)
+    entries=[("monthly",tf,ym) for ym in first_months for tf in intervals]
+    entries += [("daily",tf,ymd) for ymd in daily_dates for tf in intervals]
     return entries
 
 
@@ -207,7 +205,7 @@ def produce(entries, results, dest):
         "sourceFiles":sorted([dict(package=e[0],interval=e[1],date=e[2],**proof)
                               for e,_,proof in results],
                              key=lambda x:(x["interval"],x["date"])),
-        "restrictions":"Historical only. Latest complete UTC day; no intraday today. No live trading or forward V7 signal.",
+        "restrictions":"Historical only. All available 1h/5m/15m archives from Jan 2020; 4h/1d derived. Latest fully published UTC day only. Missing exchange candles are never interpolated. No live trading or forward V7 signal.",
     }
     (dest/"manifest.json").write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
     (dest/"STATUS.md").write_text(
@@ -218,8 +216,9 @@ def produce(entries, results, dest):
                   for tf,row in counts.items())+
         "\n\nNo same-day live candle, funding or real order information is claimed. "
         "The 4H and Daily candles are resampled from exact continuous Binance 1H data. "
-        "Shorter timeframes (5m,15m) cover the last complete month plus "
-        "the current month's fully published days only.\n",
+        "1H, 5m and 15m cover the full available monthly archive since January 2020 "
+        "plus current-month daily archives through the latest completed UTC day. "
+        "Data source gaps are recorded, not filled.\n",
         encoding="utf-8")
     return manifest
 
