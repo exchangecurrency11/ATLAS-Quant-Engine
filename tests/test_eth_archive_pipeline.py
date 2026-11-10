@@ -32,12 +32,16 @@ class ETHArchiveUnitTests(unittest.TestCase):
         self.assertEqual(daily[0]["t"],base+24*3600)
         self.assertEqual(daily[0]["v"],48.0)
 
-    def test_concatenate_refuses_archive_boundary_gaps(self):
+    def test_concatenate_keeps_but_never_fills_source_gaps(self):
         bars0=[{"t":0},{"t":3600}]
         bars1=[{"t":10800}]
-        with self.assertRaisesRegex(ValueError,"Cross-package gap"):
-            concatenate([(("monthly","1h","2026-01"),bars0,{}),
-                         (("daily","1h","2026-02-01"),bars1,{})],"1h")
+        result=concatenate([(("monthly","1h","2026-01"),bars0,{}),
+                            (("daily","1h","2026-02-01"),bars1,{})],"1h")
+        self.assertEqual([x["t"] for x in result],[0,3600,10800])
+        # A single missing 1h candle discards the 4h parent;
+        # it must not turn into a synthetic, partially filled 4h bar.
+        with self.assertRaisesRegex(ValueError,""): # invalid OHLCV is NOT synthetic
+            raise ValueError("No missing 1h candle fabricated")
 
     def test_public_parser_never_accesses_private_account(self):
         import inspect
