@@ -1,0 +1,24 @@
+name: ETH Independent V7 Observer Regression (paper-only)
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - eth_v7_hourly_observer.py
+      - tests/test_eth_v7_hourly_observer.py
+      - .github/workflows/eth-v7-observer-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  eth-v7-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+      - name: Test ETH V7 data and no-signal safety
+        run: python3 -m unittest discover -s tests -p 'test_eth_v7_hourly_observer.py' -v
+      - name: Test all V7 strategy regressions
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -q
