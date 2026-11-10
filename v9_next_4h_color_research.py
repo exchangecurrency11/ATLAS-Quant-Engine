@@ -426,6 +426,61 @@ def overall(records):
     return aggregated
 
 
+def freeze_future_shadow_models(obs):
+    """Permanently freeze SEPT-2026-trained model for FUTURE PAPER scoring.
+
+    No hyperparameters/selection changed after reading six-fold results.
+    This is NOT a validated high-confidence signal; probabilistic output
+    needs prospective calibration before it could qualify for use.
+    """
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.pipeline import make_pipeline
+    from sklearn import __version__ as sklearn_version
+    from hashlib import sha256
+    cutoff=ts("2026-10-01T00:00:00Z")
+    models={}
+    for symbol,rows in obs.items():
+        training=[r for r in rows if r["t"]+FOUR<=cutoff]
+        if len(training)<MIN_TRAIN_SAMPLES:
+            raise ValueError("MODEL_FREEZE_TOO_FEW_SAMPLES")
+        model=make_pipeline(
+            StandardScaler(),
+            LogisticRegression(C=0.2,max_iter=600,solver="lbfgs"))
+        model.fit([r["x"] for r in training],[r["y"] for r in training])
+        scaler=model.named_steps["standardscaler"]
+        clf=model.named_steps["logisticregression"]
+        expected=len(training[0]["x"])
+        if clf.coef_.shape!=(1,expected):
+            raise ValueError("MODEL_WEIGHT_SHAPE_INCONSISTENT")
+        train_id=sha256(json.dumps([(r["targetStartUTC"],r["y"])
+                   for r in training],separators=(",",":")).encode()).hexdigest()
+        models[symbol]={
+           "version":"V9_T_MINUS_5M_LOGISTIC_C0_2_FIXED",
+           "trainedTargetsThroughUTC":iso(cutoff),
+           "trainSamples":len(training),
+           "trainingLabelsSHA256":train_id,
+           "featureCount":expected,
+           "scalerMean":scaler.mean_.tolist(),
+           "scalerScale":scaler.scale_.tolist(),
+           "logisticCoefficients":clf.coef_[0].tolist(),
+           "logisticIntercept":float(clf.intercept_[0]),
+           "sklearnVersion":sklearn_version,
+           "pointInTimeAndCrossAssetFeatureDefinition":
+             "v9_next_4h_color_research.py::features_at, BTC ETH SOL order",
+           "colorDefinition":"own future 4H open-close green/red",
+           "source":"verified Binance USD-M FUTURES monthly archives 2023-01 through 2026-09",
+           "takerVolumeAndTradeCountFutureProviderParityNotYetProven":True,
+           "predictBefore4HStartsMinutes":5,
+           "historicalBrierMoreThanCoinflipDoNotTrustProbabilities":True,
+           "paperOnly":True,"liveTradingApproved":False}
+    return {"status":"FROZEN_SHADOW_PAPER_MODELS_NOT_PRODUCTION",
+            "cutoffUTC":iso(cutoff),"modelTrainingRulesChangedAfterTest":False,
+            "noProspectiveTrackRecordYet":True,
+            "currentTradingSignalsAuthorized":False,
+            "symbols":models}
+
+
 def markdown(report):
     lines=["# V9: BEFORE next 4H starts — GREEN / RED of that candle",
            "",
@@ -468,11 +523,13 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--json",default="forward/v9_next_4h_color/latest.json")
     p.add_argument("--markdown",default="forward/v9_next_4h_color/latest.md")
+    p.add_argument("--models",default="forward/v9_next_4h_color/frozen_models.json")
     a=p.parse_args()
     data,sources=download_three()
     prepared=prepare(data)
     obs,doji=observations(prepared)
     folded,records=fit_and_predict(obs)
+    frozen=freeze_future_shadow_models(obs)
     report={
        "mode":"V9_NEXT_4H_OWN_OPEN_CLOSE_COLOR_PREDICT_T_MINUS_5M",
        "status":"HISTORICAL_CAUSAL_WALK_FORWARD_RESEARCH_ONLY",
@@ -501,6 +558,8 @@ def main():
     out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
     md=Path(a.markdown);md.parent.mkdir(parents=True,exist_ok=True)
     md.write_text(markdown(report),encoding="utf-8")
+    model_out=Path(a.models);model_out.parent.mkdir(parents=True,exist_ok=True)
+    model_out.write_text(json.dumps(frozen,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     print("V9_NEXT4H_COLOR_BACKTEST_DONE",
           json.dumps({s:{k:v[k] for k in ("samples","logisticAll","logistic60","logistic65")}
                       for s,v in report["overall"].items()}),flush=True)
