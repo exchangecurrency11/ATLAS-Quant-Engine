@@ -54,7 +54,7 @@ def fetch(pair,tf,now,key):
 
 def snapshot(pair,target):
     base=Path("forward/snapshots")
-    path=base/(target.replace(":00Z","-00Z").replace(":","-")+".json")
+    path=base/(target[:13].replace(":","-")+"-00Z.json")
     raw=json.loads(path.read_text())
     if raw["status"]!="VERIFIED_PAPER_OBSERVATION":
         raise ValueError("BAD_PERSISTED_V7_SNAPSHOT")
