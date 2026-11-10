@@ -1,0 +1,234 @@
+{
+  "status": "SOL_USDM_DERIVATIVES_DATA_QUALITY_RESEARCH_ONLY",
+  "exchange": "Binance",
+  "symbol": "SOLUSDT",
+  "contract": "USD-M perpetual",
+  "dataWindowUTC": {
+    "firstIncluded": "2026-11-01",
+    "lastIncluded": "2026-11-09",
+    "completeUTCDays": 9
+  },
+  "source": "official data.binance.vision daily/monthly ZIP and SHA-256 CHECKSUM",
+  "sourcePublication": "Daily archives published after UTC day ends; downloaded retrospectively. NOT live market observations.",
+  "historyRisks": [
+    "Binance REST for live OI/funding returns HTTP 451 from GitHub runner.",
+    "Public daily OI metrics after 2026-06-25 use START labels; value cannot be known at create_time until period ends. Explicit +5min delay.",
+    "Funding historical monthly October archive cannot be treated as latest November funding.",
+    "Trading-significance or predictive efficacy not measured; only data integrity and coverage.",
+    "Missing 5min OI samples must NEVER be forward-filled or interpreted as zero OI.",
+    "Missing 2026-10-28 SOL klines ZIP is outside study period; prior trade-derived recovery is separate evidence."
+  ],
+  "openInterest5m": {
+    "expected": 2592,
+    "validRecords": 2592,
+    "coveragePct": 100.0,
+    "latestRecordedLabelUTC": "2026-11-09T23:55:00Z",
+    "latestSafeAvailabilityUTC": "2026-11-10T00:00:00Z",
+    "invalid": {},
+    "holes": {
+      "missingCount": 0,
+      "missingGroups": 0,
+      "largestGapCandles": 0,
+      "gaps": []
+    },
+    "usableAsCurrentV7SignalFilter": false
+  },
+  "taker": {
+    "hourly": {
+      "expected": 216,
+      "validRecords": 216,
+      "coveragePct": 100.0,
+      "invalid": {},
+      "holes": {
+        "missingCount": 0,
+        "missingGroups": 0,
+        "largestGapCandles": 0,
+        "gaps": []
+      }
+    },
+    "fiveMinute": {
+      "expected": 2592,
+      "validRecords": 2592,
+      "coveragePct": 100.0,
+      "invalid": {},
+      "holes": {
+        "missingCount": 0,
+        "missingGroups": 0,
+        "largestGapCandles": 0,
+        "gaps": []
+      }
+    },
+    "hourlyVsTwelve5mConsistency": {
+      "testedHours": 216,
+      "hourlyBarsMissing5mInput": 0,
+      "mismatchHours": 0,
+      "largestRelativeDifference": 2.206633304991933e-16,
+      "examples": []
+    },
+    "directTakerBuySell": true,
+    "usableAsCurrentV7SignalFilter": false,
+    "reason": "Values historical: same-day REST currently blocked; daily archive arrives next day."
+  },
+  "metricVs5mTakerRatioValidation": {
+    "pairedSamples": 2592,
+    "medianAbsoluteRatioDifference": 0.000181,
+    "maxAbsoluteRatioDifference": 0.2751634,
+    "note": "Post-June2026 metric start label T compared to same-period [T,T+5m) Binance taker_buy/(total-taker_buy); evaluation only retrospective."
+  },
+  "fundingRate": {
+    "lastAvailableMonthlyArchive": "2026-10",
+    "records": 93,
+    "firstRecordUTC": "2026-10-01T00:00:00Z",
+    "lastRecordUTC": "2026-10-31T16:00:00Z",
+    "fundingIntervalsHours": {
+      "8": 93
+    },
+    "invalidRows": {},
+    "usableForCurrentForwardV7": false,
+    "reason": "Completed monthly archive only; no contemporaneous November funding history. Binance REST 451 from GitHub runner."
+  },
+  "archiveErrors": [],
+  "checksumVerifiedPackages": 28,
+  "archives": [
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-01.zip",
+      "sha256": "797b390af1f43be870b62e573da4ec72858fa107befd111472188bbcd09fcbd1",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-01.zip",
+      "sha256": "b4ddf0611c1f40e3eb7b8dcaab4116d42a36cbd6ede0d0610e6b40d397cdd24d",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-01.zip",
+      "sha256": "c2d464537149604e393c1bee0e0ce9bf2716bb6c1e2ab008e980717f9054a4ad",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-02.zip",
+      "sha256": "62c2a5b70321e6b246208d93a5422dc1eb8aa88100bd62f5ad1e850c23623265",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-02.zip",
+      "sha256": "aef3e7081976a8340e040293f5c68a2aafcbc8992399542cdf14a224e8be1bda",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-02.zip",
+      "sha256": "e9d1c798cb352ca3cfed534fd3176a9b292483e77b18e41437f1c67c9bc5aaa3",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-03.zip",
+      "sha256": "248c4edb116145c61813abbcab83a86de7d6bd9d1d4f58ce5aadaca9138b3e38",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-03.zip",
+      "sha256": "b01bbd2b8bae1115ba9b86f8ce60b86cdb49922032773b78e0c9c9c6abc45f94",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-03.zip",
+      "sha256": "6684c7e3f48a03b1ad445343aa3aede7cca7d855878a32516a6dde9dd6eb8a57",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-04.zip",
+      "sha256": "ebe6512ecfcdbecc3f40d65c1c4708aa60222b5870f2d8f4d4840df4b5f315a7",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-04.zip",
+      "sha256": "b33f77cb2f50d4327a36870ab2a5301dd8f5a7e04267aab7fe871bf38235daa6",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-04.zip",
+      "sha256": "df628ffcab85ede076f0d9e37744a299916dc2e74e650d919872035d38146f6c",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-05.zip",
+      "sha256": "98e2f12f5dd6eb17d6e2ffe8e0c226f4e4744732dc10c5e6464d6bf3b6420eee",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-05.zip",
+      "sha256": "ee307e8629794505b981f0ec673c14a3cfc242df477c8e7444b3652e2721852f",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-05.zip",
+      "sha256": "05c5014aa433b231d531e7af531dafca7ab341ebeab49ce90bb849f7460d5443",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-06.zip",
+      "sha256": "2bab04d66d14c938cf3214a3b690bfe576bfd25852d30238d4510fbc1b929871",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-06.zip",
+      "sha256": "492284b2929eea44570f49f70a4d2b5de1b4c1735bf39dd87eaad9f09d46d8a5",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-06.zip",
+      "sha256": "e9da0b71e62e01cf7dbc7fadb86270f89a8f73b22e09bab9c982271a4f3e1fd4",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-07.zip",
+      "sha256": "ea7d544907384ed02cccfa148654b8045f612e49cb06dbe9b3d7ffdded3101d7",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-07.zip",
+      "sha256": "197f52e596988e8fdb1e2d7f36dc6a65a8e5d90163bd09dd66c03fde12204047",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-07.zip",
+      "sha256": "4b6b08a68648a1a69cd45cdcab23bdaf7052e0dc6f14c8323d5af3ea75e8cf86",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-08.zip",
+      "sha256": "04e6c0f189c08a4a37cfc89bfa6d13862878a523325091d15bbb97ed341e6818",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-08.zip",
+      "sha256": "69207e39fa7f5f314e9569ebaebfdb7d95cbd444890f5f213ba81b3069fc33d8",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-08.zip",
+      "sha256": "b55971debf547a822ee89cffa3c1fba34533617737b088c08b5286efebc17153",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/metrics/SOLUSDT/SOLUSDT-metrics-2026-11-09.zip",
+      "sha256": "54233d4af0158c305778250bb079ac10df2513fedd9555d7e8b6c5d5407e7437",
+      "csvRows": 289
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-09.zip",
+      "sha256": "8a3f0386abfa0c1a2ef18480d4b01092338125da6c72274dd2b59b09bd699e74",
+      "csvRows": 25
+    },
+    {
+      "archive": "daily/klines/SOLUSDT/5m/SOLUSDT-5m-2026-11-09.zip",
+      "sha256": "cfe749858a1aabc1c6962b3b69cea19466d70052b6c58b4e3d4c9f324062b38c",
+      "csvRows": 289
+    },
+    {
+      "archive": "monthly/fundingRate/SOLUSDT/SOLUSDT-fundingRate-2026-10.zip",
+      "sha256": "9365b502587edc4b4683babf2aaf9c002c8473be61d38a202153f47d0cdee0da",
+      "csvRows": 94
+    }
+  ]
+}
