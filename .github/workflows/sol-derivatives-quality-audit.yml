@@ -1,0 +1,73 @@
+name: SOL V7 OI Funding Taker Historical Quality Audit (paper-only)
+
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - sol_derivatives_quality_audit.py
+      - tests/test_sol_derivatives_quality_audit.py
+      - .github/workflows/sol-derivatives-quality-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sol-v7-oi-funding-taker-audit
+  cancel-in-progress: false
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          persist-credentials: true
+
+      - name: Verify no fake OI fill and accurate taker timestamp alignment
+        run: python3 -m unittest discover -s tests -p 'test_sol_derivatives_quality_audit.py' -v
+
+      - name: Download and SHA256 verify SOL 1-9 November 2026 public archives
+        run: |
+          set -euo pipefail
+          python3 sol_derivatives_quality_audit.py \
+            --start 2026-11-01 --end 2026-11-09 \
+            --json-output forward/sol_derivatives_quality/2026-11-01_through_09.json \
+            --report-output forward/sol_derivatives_quality/2026-11-01_through_09.md
+          cp forward/sol_derivatives_quality/2026-11-01_through_09.json forward/sol_derivatives_quality/latest.json
+          cp forward/sol_derivatives_quality/2026-11-01_through_09.md forward/sol_derivatives_quality/latest.md
+
+      - name: Save entire evidence report as downloadable artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-v7-derivatives-quality-${{ github.run_id }}
+          path: forward/sol_derivatives_quality/
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Commit ONLY experiment quality evidence
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/sol_derivatives_quality/
+          if git diff --cached --quiet; then
+            echo "No changed SOL quality report"
+            exit 0
+          fi
+          git commit -m "SOL V7 research: verified OI funding and taker data-quality study"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v7-signal-quality-20261103
+            if git push origin HEAD:experiment/v7-signal-quality-20261103; then
+              echo 'SOL quality evidence persisted on experiment only'
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
