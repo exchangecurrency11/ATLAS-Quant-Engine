@@ -3,6 +3,7 @@ name: ETH V7 Independent Hourly Paper Forward (no orders)
 # Main hosts GitHub scheduler. All analysis runs from the experiment branch.
 # ETH-only Coinalyze API secret is optional; otherwise official Binance REST
 # is attempted. HTTP 451 or invalid OHLCV => SOURCE_UNAVAILABLE_NO_SIGNAL.
+# Manual post-secret connectivity smoke test; no trading permissions and no key logging.
 on:
   schedule:
     - cron: '18,37,52 * * * *'
