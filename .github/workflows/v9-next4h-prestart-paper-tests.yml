@@ -1,0 +1,37 @@
+name: 'V9 prospective 4H GREEN RED pre-start paper capture safety tests'
+
+on:
+  push:
+    branches: [research/v9-next-4h-green-red-20261111]
+    paths:
+      - v9_next_4h_color_research.py
+      - v9_next4h_prestart_paper_capture.py
+      - tests/test_v9_next4h_prestart_paper_capture.py
+      - .github/workflows/v9-next4h-prestart-paper-tests.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout experiment research only
+        uses: actions/checkout@v5
+      - name: Enforce future own color was unseen and all decisions strictly before candle starts
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_prestart_paper_capture.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_next_4h_color_research.py' -q
+      - name: Source independent paper-only policy checks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('v9_next4h_prestart_paper_capture.py').read_text()
+          assert 'BEFORE_START_PAPER_FORECAST_UNCALIBRATED_NOT_TRADE' in s
+          assert 'liveTradeOrAlertsActivated' in s
+          assert 'check_clock(now)' in s
+          assert 'PROSPECTIVE_LAST_COMPLETE_4H_ALIGNMENT' in Path('v9_next_4h_color_research.py').read_text()
+          print('V9_NEXT4H_BEFORE_OPEN_NO_BROKER_SAFE')
+          PY
