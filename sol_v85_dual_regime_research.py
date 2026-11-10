@@ -17,6 +17,8 @@ PREDECLARED MODEL (before 2021–2022 unseen historical robustness run):
   score>=8/10, and >=6 with latest liquidity sweep. A filter produces
   no signal if insufficient evidence; 75% user benchmark never tuned.
 
+2022-02 archive contains only 600/672 hours. Exclude the ENTIRE month and
+restart indicator warmup in two independently contiguous subspans.
 Data 2023–2026 has already been inspected. 2021–22 is older-unseen
 market regime test, NOT a time-forward holdout; runs with exactly same
 predeclared rules. OHLCV cannot prove Wyckoff market-maker actions
@@ -444,7 +446,7 @@ def markdown(data):
       "**2023–Sep2026** previously inspected development periods.",
       "",
       "## Sources and validation",
-      f"- **{data['verifiedMonths']}** officially checksum-verified Binance USD-M SOLUSDT monthly 1H archives.",
+      f"- **{data['verifiedMonths']}** officially checksum-verified Binance USD-M SOLUSDT monthly 1H archives; **2022-02 excluded entirely** (600/672 hours), and segments never stitched across the gap.",
       "- Daily + 4H SMA100 and SMA200 for regime; 4H RSI14, Daily RSI14; prior-day classic pivot.",
       "- Broad Daily 28-day 8.5% width support/supply zone, Fib 38.2–61.8, Wyckoff SOS/SOW OHLCV proxy, 1H liquidity sweep, 4H volume.",
       "- Either direction considered; mixed SMA regimes yield ABSTAIN. Next four closed 1H candles must provide BOS or sweep; next 1H open paper entry.",
@@ -479,18 +481,38 @@ def main():
     opts=p.parse_args()
     specimens={}
     manifests={}
-    for name,start,end in (("olderUnseen2021_2022","2021-01","2022-12"),
-                           ("known2023_2024","2023-01","2024-12"),
-                           ("known2025_2026","2025-01","2026-09")):
+    research_spans=(
+        ("olderUnseen2021_2022",
+         (("2021-01","2022-01"),("2022-03","2022-12"))),
+        ("known2023_2024",(("2023-01","2024-12"),)),
+        ("known2025_2026",(("2025-01","2026-09"),)),
+    )
+    for name,spans in research_spans:
         print("V85_PERIOD_START",name,flush=True)
-        one,four,daily,count=verified_history(start,end)
-        out,stats=scan(one,four,daily)
-        specimens[name]=out
-        manifests[name]={"from":start,"to":end,
-                         "verifiedMonths":count,
-                         "1H":len(one),"4H":len(four),"Daily":len(daily),
-                         **stats}
-        print("V85_PERIOD_DONE",name,stats,flush=True)
+        entries=[]
+        detail=[]
+        for start,end in spans:
+            # NEVER concatenate OHLCV across 2022-02 missing data.
+            # Each fully verified independent block independently initializes
+            # Daily SMA200 and all 1H/BOS state. Reduced sample is explicit.
+            one,four,daily,count=verified_history(start,end)
+            cases,stats=scan(one,four,daily)
+            entries.extend(cases)
+            detail.append({"from":start,"to":end,"verifiedMonths":count,
+                           "1H":len(one),"4H":len(four),"Daily":len(daily),
+                           **stats})
+            print("V85_SUBSPAN_DONE",name,start,end,stats,flush=True)
+        specimens[name]=entries
+        manifests[name]={
+            "completeContiguousSubspans":detail,
+            "verifiedMonths":sum(x["verifiedMonths"] for x in detail),
+            "1H":sum(x["1H"] for x in detail),
+            "4H":sum(x["4H"] for x in detail),
+            "Daily":sum(x["Daily"] for x in detail),
+            "signalsAfterCooldown":len(entries),
+            "excludedIncompleteMonth":"2022-02: official 1H SOLUSDT month has 600/672 bars; entire month excluded, no stitching."
+              if name=="olderUnseen2021_2022" else None}
+        print("V85_PERIOD_DONE",name,manifests[name],flush=True)
     specimens["allCombined"]=sum((specimens[x] for x in
         ("olderUnseen2021_2022","known2023_2024","known2025_2026")),[])
     comps=result_report(specimens,manifests)
