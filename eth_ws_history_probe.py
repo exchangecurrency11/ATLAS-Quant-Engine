@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
-"""Probe official Binance Futures WS API for read-only historical kline query."""
+"""Read-only official Binance USD-M Futures WebSocket API request/response probe."""
 import base64,os,json,socket,ssl,struct
 
 host="ws-fapi.binance.com"
 path="/ws-fapi/v1"
 
-def frame(payload):
+def client_frame(payload):
     data=payload.encode()
     mask=os.urandom(4)
-    if len(data)<126:
-        start=bytes([0x81,0x80|len(data)])
-    else:
-        start=bytes([0x81,0x80|126])+struct.pack("!H",len(data))
-    return start+mask+bytes(b^mask[i%4] for i,b in enumerate(data))
+    if len(data)<126: hdr=bytes([0x81,0x80|len(data)])
+    elif len(data)<65536: hdr=b"\x81\xfe"+struct.pack("!H",len(data))
+    else: hdr=b"\x81\xff"+struct.pack("!Q",len(data))
+    return hdr+mask+bytes(b^mask[i%4] for i,b in enumerate(data))
 
-def unframe(raw):
-    if len(raw)<2:
-        return "EMPTY"
-    n=raw[1]&127
-    start=2
-    if n==126:
-        n=struct.unpack("!H",raw[2:4])[0];start=4
-    elif n==127:
-        n=struct.unpack("!Q",raw[2:10])[0];start=10
-    if raw[1]&128:
-        return "MASKED_SERVER_MESSAGE"
-    return raw[start:start+n].decode("utf-8","replace")[:1100]
+def frame_from(reader):
+    header=reader.read(2)
+    if len(header)<2:raise EOFError("WS header missing")
+    op=header[0]&15
+    n=header[1]&127
+    if n==126:n=struct.unpack("!H",reader.read(2))[0]
+    elif n==127:n=struct.unpack("!Q",reader.read(8))[0]
+    if n>1000000:raise ValueError("Oversized WS frame")
+    mask=reader.read(4) if header[1]&128 else b""
+    data=reader.read(n)
+    if len(data)<n:raise EOFError("Partial WS message")
+    if mask:data=bytes(b^mask[i%4] for i,b in enumerate(data))
+    return op,data
 
 try:
     with socket.create_connection((host,443),timeout=10) as sock:
@@ -36,15 +36,29 @@ try:
                      f"Connection: Upgrade\r\nSec-WebSocket-Key: {key}\r\n"
                      f"Sec-WebSocket-Version: 13\r\n\r\n")
             tls.sendall(upgrade.encode())
-            reply=tls.recv(2000)
-            print("ETH_WS_API_UPGRADE",reply.split(b"\r\n")[0].decode("latin1"))
-            if b" 101 " not in reply.split(b"\r\n")[0]:raise SystemExit()
-            for request in (
+            reader=tls.makefile("rb")
+            status=reader.readline().decode("latin1").strip()
+            print("ETH_WS_API_UPGRADE",status,flush=True)
+            while True:
+                line=reader.readline()
+                if not line or line==b"\r\n":break
+            if "101" not in status:raise SystemExit()
+            for req in (
                 {"id":"eth-price-test","method":"ticker.price","params":{"symbol":"ETHUSDT"}},
                 {"id":"eth-klines-test","method":"klines","params":{"symbol":"ETHUSDT","interval":"1h","limit":3}},
             ):
-                tls.sendall(frame(json.dumps(request,separators=(",",":"))))
-                response=tls.recv(6000)
-                print("ETH_WS_API_RESPONSE",request["method"],unframe(response))
+                tls.sendall(client_frame(json.dumps(req,separators=(",",":"))))
+                for _ in range(20):
+                    op,payload=frame_from(reader)
+                    if op==9:
+                        tls.sendall(client_frame(payload.decode("utf-8","replace")))
+                        continue
+                    if op!=1:continue
+                    message=json.loads(payload)
+                    if message.get("id")==req["id"]:
+                        print("ETH_WS_API_RESPONSE",req["method"],str(message)[:1800],flush=True)
+                        break
+                else:
+                    print("ETH_WS_API_RESPONSE",req["method"],"NOT_RECEIVED",flush=True)
 except Exception as e:
-    print("ETH_WS_API_FAILED",type(e).__name__,str(e)[:180])
+    print("ETH_WS_API_FAILED",type(e).__name__,str(e)[:180],flush=True)
