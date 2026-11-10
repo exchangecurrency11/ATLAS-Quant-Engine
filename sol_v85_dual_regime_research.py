@@ -109,13 +109,6 @@ def rolling_rsi14(values):
     return result
 
 
-def first_1h_confirm(one,ts,side):
-    """Only completed 1H signal candles after selected 4H close."""
-    index=ts//HOUR
-    # valid archive index mapping is handled at caller with exact timestamp
-    raise NotImplementedError("Use first_1h_confirm_index")
-
-
 def trigger(one,i,side):
     if i<14:return None
     b=one[i]
@@ -142,16 +135,6 @@ def first_1h_confirm_index(one,start_i,side):
         sig=trigger(one,j,side)
         if sig is not None:return sig
     return None
-
-
-def prev_day_pivots(daily,day_i):
-    if day_i<1:return None
-    d=daily[day_i-1]
-    h,l,c=d["h"],d["l"],d["c"]
-    P=(h+l+c)/3
-    return {"P":P,"S1":2*P-h,"S2":P-(h-l),
-            "R1":2*P-l,"R2":P+(h-l),
-            "sourceClosedUTC":iso(d["t"]+DAY)}
 
 
 def broad_box(daily,day_i):
@@ -213,7 +196,6 @@ def features_at_4h_close(one,four,daily,idx,sma_f100,sma_f200,rsi_f,
     if not vola or vola<=0:return None
     prevvol=sum(b["v"] for b in four[idx-20:idx])/20
     rv=fourbar["v"]/prevvol if prevvol else None
-    p=prev_day_pivots(daily,day_i+1) # this currently uses daily[day_i]
     # Important: for at 4H retest open, same-day Daily close is only
     # available at UTC midnight; the pivot level should depend on the
     # previous completed UTC calendar day, not today's in-progress OHLCV.
