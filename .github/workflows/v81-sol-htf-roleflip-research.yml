@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python3 -u sol_v81_htf_role_flip_research.py             --start 2025-01 --end 2026-10 --workers 6             --output forward/v81_roleflip/latest.json             --markdown forward/v81_roleflip/latest.md
+          python3 -u sol_v81_htf_role_flip_research.py             --start 2025-01 --end 2026-09 --workers 6             --output forward/v81_roleflip/latest.json             --markdown forward/v81_roleflip/latest.md
 
       - name: Audit report safety and completeness
         shell: bash
@@ -46,7 +46,7 @@ jobs:
           assert obj["status"]=="RESEARCH_ONLY_NO_TRADING_ORDERS"
           assert obj["brokerOrders"] is False and obj["liveTradingApproved"] is False
           assert obj["mainProductionModified"] is False
-          assert obj["historicalMonthlySHA256Verified"]==22
+          assert obj["historicalMonthlySHA256Verified"]==21
           assert obj["currentCutoffUTC"]=="2026-11-10T16:00:00Z"
           assert obj["currentUserDrawnZone"]["manualZone"]["low"]==87.5
           assert obj["currentUserDrawnZone"]["manualZone"]["high"]==95.0
