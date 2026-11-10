@@ -42,7 +42,7 @@ jobs:
           import json
           x=json.load(open("forward/v85_two_sided/latest.json"))
           assert x["status"]=="RESEARCH_ONLY_NEVER_AUTO_TRADE"
-          assert x["verifiedMonths"]==69
+          assert x["verifiedMonths"]==68
           assert x["brokerOrders"] is False and x["liveSignalEnabled"] is False
           assert x["productionModified"] is False
           assert x["configBeforeUnseenPeriod"]["NoMACD"] is True
@@ -51,6 +51,8 @@ jobs:
           assert x["configBeforeUnseenPeriod"]["eventCooldownHours"]==24
           assert x["unseenDataIsChronologicallyEarlierNotProspective"] is True
           assert x["historicalBacktestIsNotValidatedEdge"] is True
+          assert x["periods"]["olderUnseen2021_2022"]["excludedIncompleteMonth"].startswith("2022-02")
+          assert len(x["periods"]["olderUnseen2021_2022"]["completeContiguousSubspans"])==2
           assert set(x["periods"])=={"olderUnseen2021_2022","known2023_2024","known2025_2026"}
           for period,filters in x["comparisons"].items():
             for name,detail in filters.items():
@@ -59,7 +61,7 @@ jobs:
                 assert summary["noForwardValidation"]
                 assert summary["maxPlannedRiskUSD"]==0.5
                 assert summary["atLeast30Events"] is False or summary["directionEvents"]>=30
-          print("V85_SOL_TWO_SIDED_RESEARCH_69_ARCHIVES_VERIFIED")
+          print("V85_SOL_TWO_SIDED_RESEARCH_68_ARCHIVES_VERIFIED")
           PY
       - name: Upload audit artifacts
         if: always()
