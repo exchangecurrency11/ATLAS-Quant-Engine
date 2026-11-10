@@ -146,15 +146,22 @@ def safe_log(ratio):
     return math.log(max(1e-12,ratio))
 
 
-def features_at(symbol,prepared,target_index):
+def features_at(symbol,prepared,target_index,target_start_t=None):
     """Features for T-300 seconds, absolutely no future or last 1H input.
 
     All symbols are aligned; i is index of the candle that does not yet
     exist at prediction time. Using only four[i-2] and one[4*i-2].
     """
     data=prepared[symbol]
-    future_bar=data["four"][target_index]
-    t=future_bar["t"]
+    if target_start_t is None:
+        # Historical: source contains target bar, but ONLY its timestamp used.
+        t=data["four"][target_index]["t"]
+    else:
+        # Prospective: next candle does NOT exist. No fabricated future OHLCV.
+        t=target_start_t
+        if (type(t) is not int or target_index!=len(data["four"])+1 or
+            data["four"][-1]["t"]+FOUR!=t-FOUR):
+            raise ValueError("PROSPECTIVE_LAST_COMPLETE_4H_ALIGNMENT")
     if t%FOUR or t<month_start(START_MONTH)+215*DAY:
         return None
     last_complete_4h=target_index-2  # i-1 four-hour candle still open at T-5m
