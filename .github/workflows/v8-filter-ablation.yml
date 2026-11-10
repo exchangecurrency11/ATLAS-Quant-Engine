@@ -1,0 +1,80 @@
+name: V8 BTC ETH SOL fixed-filter ablation (paper only)
+
+on:
+  push:
+    branches: [experiment/v8-three-asset-confluence-paper-20261110]
+    paths:
+      - v8_filter_ablation.py
+      - tests/test_v8_filter_ablation.py
+      - .github/workflows/v8-filter-ablation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v8-three-asset-filter-ablation
+  cancel-in-progress: false
+
+jobs:
+  ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Verify long/short EMA cache and research constraints
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v8_filter_ablation.py' -v
+          python3 -m unittest discover -s tests -p 'test_v8_three_asset_confluence_backtest.py' -v
+
+      - name: Retrieve 63 Binance USD-M SHA256 1H archives and replay ablation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u v8_filter_ablation.py \
+            --start 2025-01 --end 2026-09 \
+            --split 2026-07-01T00:00:00Z --workers 6 \
+            --output forward/v8_ablation/latest.json \
+            --markdown forward/v8_ablation/latest.md
+
+      - name: Preserve all diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v8-three-asset-ablation-${{ github.run_id }}
+          path: forward/v8_ablation/
+          if-no-files-found: ignore
+          retention-days: 45
+
+      - name: Commit independent research evidence only
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          obj=json.load(open("forward/v8_ablation/latest.json"))
+          assert obj["status"]=="RESEARCH_ONLY_NO_PERFORMANCE_APPROVAL"
+          assert obj["officialBinanceChecksumVerifiedZIPs"]==63
+          assert obj["holdoutContaminatedByEarlierAnalysis"] is True
+          assert obj["brokerOrders"] is False
+          assert set(obj["symbolResults"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          print("ABLATION_QA_OK")
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v8_ablation/latest.json forward/v8_ablation/latest.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V8 research: historic V7 BOS-only versus V8 EMA shadow ablation"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v8-three-asset-confluence-paper-20261110
+            if git push origin HEAD:experiment/v8-three-asset-confluence-paper-20261110; then
+              echo 'ABLATION_RESULTS_PERSISTED'
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
