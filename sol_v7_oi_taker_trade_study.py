@@ -38,9 +38,10 @@ def load_trades(source):
     return variants,data["asOfUTC"]
 
 
-def source_paths(trades):
+def source_paths(trades,extra_times=()):
     # A prior date is needed for the first 4H OI change of early-day signals.
     timestamps={int(t["watchKnownUTC"]) for records in trades.values() for t in records}
+    timestamps.update(int(t) for t in extra_times)
     days={day_for(t) for t in timestamps}
     days.update(past_day(day_for(t)) for t in timestamps)
     monthset={month_for(t) for t in timestamps}
@@ -55,8 +56,8 @@ def source_paths(trades):
     return paths
 
 
-def gather(trades,workers=8):
-    requests=source_paths(trades)
+def gather(trades,workers=8,extra_times=()):
+    requests=source_paths(trades,extra_times=extra_times)
     oi={};hourly={};funding={};verified=[];failures=[]
     def one(req):
         typ,date,path=req
@@ -291,13 +292,15 @@ def main():
     args=a.parse_args()
     if not 1<=args.workers<=10:raise ValueError("Workers must be <=10")
     variants,asof=load_trades(args.v7_report)
-    oi,hourly,funding,verified,errors=gather(variants,workers=args.workers)
+    extra=[]
+    if args.forward_forensic:
+        frozen=json.loads(Path(args.forward_forensic).read_text(encoding="utf-8"))
+        extra=[int(c["bosCloseEpoch"]) for c in frozen["candidates"] if c["pair"]==PAIR]
+    oi,hourly,funding,verified,errors=gather(variants,workers=args.workers,extra_times=extra)
     historical=matched_rows(variants,oi,hourly,funding)
     forward=None
     if args.forward_forensic:
         forward=read_forward(args.forward_forensic,oi,hourly,funding)
-    # Forward Nov7 is not in earlier historical paper artifact. Fetch its
-    # corresponding OI/taker archive as separate addition when needed.
     result={
         "mode":"SOL_V7_OI_TAKER_HISTORICAL_PAPER_ASSOCIATION_NOT_TRADING_SYSTEM",
         "historicalArtifactAsOf":asof,
