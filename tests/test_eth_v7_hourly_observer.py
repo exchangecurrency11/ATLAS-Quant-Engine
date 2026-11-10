@@ -73,7 +73,7 @@ class ETHV7ForwardTests(unittest.TestCase):
 
     def test_source_timeframe_disagreement_is_rejected(self):
         feed=raw_feed()
-        feed["4hour"][0][-2][4]="200"
+        feed["4hour"][0][-2][5]="401"  # valid OHLC, inconsistent 4H volume
         with self.assertRaisesRegex(ValueError,"divergence"):
             eth.validate_sources(feed,TARGET,NOW)
 
