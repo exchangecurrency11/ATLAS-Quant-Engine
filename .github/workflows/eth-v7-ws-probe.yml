@@ -1,0 +1,21 @@
+name: ETH Binance Futures websocket source diagnostic
+on:
+  push:
+    branches:
+      - experiment/v7-signal-quality-20261103
+    paths:
+      - eth_ws_probe.py
+      - .github/workflows/eth-v7-ws-probe.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ws-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+      - name: Check official Futures ETH kline socket upgrade
+        run: python3 eth_ws_probe.py
