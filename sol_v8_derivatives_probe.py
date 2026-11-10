@@ -186,6 +186,8 @@ def observe(now, key, fetch=request_json):
                 "status": "STALE_OR_INVALID_TIMESTAMP_NO_SIGNAL",
                 "providerUpdateUTC": iso(stamp) if valid_stamp else None,
                 "ageSeconds": (now - stamp) if valid_stamp else None,
+                "providerUpdateRaw": (str(stamp)[:32] if isinstance(stamp, (int, float, str))
+                                      else type(stamp).__name__),
             }
             result["status"] = "DATA_PARTIAL_RESEARCH_ONLY_NO_SIGNAL"
             result["rejectionReason"] = "FUNDING_TIMESTAMP_NOT_FRESH"
