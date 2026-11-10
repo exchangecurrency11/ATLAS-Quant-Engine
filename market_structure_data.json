@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-10T11:00:00Z",
+      "lastCloseTimeUTC": "2026-11-10T12:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -405,7 +405,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-10T11:00:00Z",
+      "lastCloseTimeUTC": "2026-11-10T12:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -494,28 +494,6 @@
         }
       ],
       "candidateOrderBlocks": [
-        {
-          "side": "bearish",
-          "event": "CHoCH",
-          "originAt": 1793286000,
-          "confirmedAt": 1793307600,
-          "breakAt": 1793304000,
-          "brokenLevel": 99.16,
-          "body": {
-            "low": 101.75,
-            "high": 102.66
-          },
-          "wick": {
-            "low": 101.69,
-            "high": 102.7
-          },
-          "volumeRatio": 8.514,
-          "fvgConfluence": true,
-          "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "fresh",
-          "retests": 0,
-          "invalidatedAt": null
-        },
         {
           "side": "bearish",
           "event": "BOS",
@@ -824,16 +802,16 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 6,
+        "activeCandidateOB": 5,
         "openFVG": 5,
-        "structureEventsInLookback": 17
+        "structureEventsInLookback": 16
       }
     },
     {
       "symbol": "BTCUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-10T08:00:00Z",
+      "lastCloseTimeUTC": "2026-11-10T12:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -1108,6 +1086,13 @@
         },
         {
           "kind": "equal_highs",
+          "level": 80909.65,
+          "firstPivotAt": 1792886400,
+          "secondPivotAt": 1793016000,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_highs",
           "level": 81876.85,
           "firstPivotAt": 1793174400,
           "secondPivotAt": 1793289600,
@@ -1166,7 +1151,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-10T08:00:00Z",
+      "lastCloseTimeUTC": "2026-11-10T12:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
