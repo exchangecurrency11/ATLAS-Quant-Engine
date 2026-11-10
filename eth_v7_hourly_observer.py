@@ -87,12 +87,15 @@ def parse_closed_klines(raw,timeframe,target):
         if previous is not None and t<=previous:
             raise ValueError("Unordered or duplicate ETH candles")
         previous=t
+        # Ignore *all* properties of unclosed / future bars. This prevents
+        # preliminary current-candle values leaking into V7 decisions.
+        if t+seconds>target_close:
+            continue
         o,h,l,c,v=(float(x) for x in item[1:6])
         if (not all(math.isfinite(x) for x in (o,h,l,c,v)) or
                 l<=0 or v<0 or l>min(o,c) or h<max(o,c)):
             raise ValueError("ETH invalid OHLCV")
-        if t+seconds<=target_close:
-            rows.append({"t":t,"o":o,"h":h,"l":l,"c":c,"v":v})
+        rows.append({"t":t,"o":o,"h":h,"l":l,"c":c,"v":v})
     if len(rows)<250:
         raise ValueError("Insufficient ETH 250 closed "+timeframe+" bars")
     if rows[-1]["t"]+seconds!=target_close:
