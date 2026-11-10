@@ -12,6 +12,11 @@
 - Compare next 6 fully closed 4H returns after a break or retest; no simulated fills, no funding/slippage profit claims.
 - Only one representative episode per near-overlapping band / break time is included in summary to reduce repeated counting.
 
+## General background rate (control, not a trading strategy)
+- All eligible 4H closes: **1745 / 3517** closed lower 24 hours later.
+- When BOTH Daily+4H prices were below EMA20 and EMA50 (MACD excluded): **534 / 1170** closed lower 24 hours later.
+- Baseline windows overlap and do not represent independent trades. Historical event results should be interpreted relative to these background rates.
+
 ## Outcomes (overlapping break episodes deduplicated)
 | Segment | Frozen boxes | Breaks | Retest rejections | 6x4H down after break | 6x4H down after retest |
 |---|---:|---:|---:|---:|---:|

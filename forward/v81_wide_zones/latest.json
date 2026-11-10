@@ -1,7 +1,7 @@
 {
   "mode": "SOL_V81_DAILY_4H_HISTORICAL_WIDE_ZONE_CAUSAL_STUDY_NO_ORDERS",
   "status": "DIAGNOSTIC_ONLY_NOT_A_VALIDATED_SIGNAL",
-  "createdUTC": "2026-11-10T19:13:39.711552+00:00",
+  "createdUTC": "2026-11-10T19:16:15.542349+00:00",
   "period": {
     "start": "2025-01",
     "end": "2026-09",
@@ -32,6 +32,51 @@
     "since2026Jul": 8
   },
   "uniqueBrokenEpisodes": 31,
+  "controlBaselines": {
+    "all": {
+      "all4HCloses": {
+        "observations": 3517,
+        "lowerAfter6Bars": 1745,
+        "lowerAfter6BarsPct": 49.62,
+        "median6BarChangePct": 0.0295
+      },
+      "MACDFreeDailyAnd4HBearish": {
+        "observations": 1170,
+        "lowerAfter6Bars": 534,
+        "lowerAfter6BarsPct": 45.64,
+        "median6BarChangePct": 0.282
+      }
+    },
+    "before2026Jul": {
+      "all4HCloses": {
+        "observations": 2970,
+        "lowerAfter6Bars": 1499,
+        "lowerAfter6BarsPct": 50.47,
+        "median6BarChangePct": -0.0428
+      },
+      "MACDFreeDailyAnd4HBearish": {
+        "observations": 1097,
+        "lowerAfter6Bars": 515,
+        "lowerAfter6BarsPct": 46.95,
+        "median6BarChangePct": 0.2484
+      }
+    },
+    "since2026Jul": {
+      "all4HCloses": {
+        "observations": 547,
+        "lowerAfter6Bars": 246,
+        "lowerAfter6BarsPct": 44.97,
+        "median6BarChangePct": 0.2408
+      },
+      "MACDFreeDailyAnd4HBearish": {
+        "observations": 73,
+        "lowerAfter6Bars": 19,
+        "lowerAfter6BarsPct": 26.03,
+        "median6BarChangePct": 0.7698
+      }
+    },
+    "warning": "24h observation windows overlap and are not independent trades."
+  },
   "summary": {
     "all": {
       "cases": 31,
