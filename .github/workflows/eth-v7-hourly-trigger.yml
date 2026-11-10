@@ -116,3 +116,86 @@ jobs:
           done
           echo "ETH paper audit persistence failed after 3 attempts" >&2
           exit 1
+
+
+      # Audit files are uploaded and committed above even if the feed fails.
+      # Only verified ETH 1H/4H/Daily evidence may make this job green.
+      - name: Verify ETH snapshot health (fail closed)
+        if: always() && steps.timing.outputs.run == 'true'
+        shell: bash
+        env:
+          TARGET: ${{ steps.timing.outputs.target }}
+          TARGET_ISO: ${{ steps.timing.outputs.target_iso }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import math
+          import os
+          import pathlib
+          import string
+          import sys
+          from datetime import datetime, timezone
+
+          target = os.environ["TARGET_ISO"]
+          snapshot = pathlib.Path("forward/eth/snapshots") / (os.environ["TARGET"] + ".json")
+          summary = os.environ.get("GITHUB_STEP_SUMMARY")
+          expected_symbol = "ETHUSDT_PERP.A"
+          periods = {"1hour": 3600, "4hour": 14400, "daily": 86400}
+          try:
+              obj = json.loads(snapshot.read_text(encoding="utf-8"))
+              if obj["status"] != "VERIFIED_PAPER_OBSERVATION":
+                  raise ValueError("ETH_SOURCE_UNAVAILABLE")
+              if obj["mode"] != "ETH_V7_INDEPENDENT_PAPER_FORWARD_NO_ORDERS":
+                  raise ValueError("Unexpected ETH observer mode")
+              if obj["symbol"] != expected_symbol or obj["targetClosed1HUTC"] != target:
+                  raise ValueError("Wrong ETH symbol or stale hourly observation")
+              if (obj["paperForwardObservation"] is not True
+                  or obj["brokerOrders"] is not False
+                  or obj["productionSystemModified"] is not False):
+                  raise ValueError("ETH paper-only safety invariant violated")
+              source = obj["dataSource"]
+              if not isinstance(source, str) or not (
+                  source.startswith("Coinalyze ETHUSDT_PERP.A / Binance perpetual")
+                  or source.startswith("Binance official USD-M futures public GET")
+              ):
+                  raise ValueError("Unexpected ETH futures data source")
+              target_s = int(datetime.fromisoformat(target.replace("Z", "+00:00")).timestamp())
+              ctx = obj["marketContext"][expected_symbol]["timeframes"]
+              hashes = obj["sourceSHA256"]
+              if set(ctx) != set(periods) or set(hashes) != set(periods):
+                  raise ValueError("Missing ETH 1H / 4H / Daily evidence")
+              for tf, seconds in periods.items():
+                  expected_close = datetime.fromtimestamp(
+                      (target_s // seconds) * seconds, timezone.utc
+                  ).strftime("%Y-%m-%dT%H:%M:%SZ")
+                  if ctx[tf]["closeTimeUTC"] != expected_close:
+                      raise ValueError("ETH " + tf + " has a stale or unclosed candle")
+                  candle = ctx[tf]["candle"]
+                  if not all(isinstance(candle[k], (int, float)) and math.isfinite(candle[k])
+                             for k in ("open", "high", "low", "close", "volume")):
+                      raise ValueError("ETH " + tf + " OHLCV missing or invalid")
+                  sha = hashes[tf]
+                  if not isinstance(sha, str) or len(sha) != 64 or any(
+                      c not in string.hexdigits for c in sha
+                  ):
+                      raise ValueError("ETH " + tf + " missing source hash")
+              cross = obj["crossTimeframeOHLCVVerifiedLast5"]
+              if cross.get("1H_matches_4H") != 5 or cross.get("1H_matches_daily") != 5:
+                  raise ValueError("ETH timeframe OHLCV reconciliation failed")
+          except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+              print("::error title=ETH V7 data health::Unverified ETH data; see saved snapshot and artifact")
+              print("ETH_DATA_HEALTH_FAILED", type(error).__name__)
+              if summary:
+                  with open(summary, "a", encoding="utf-8") as f:
+                      f.write("### ETH V7 data health: FAILED\n\n"
+                              "No signal is authorized. Check ETH audit artifact and "
+                              "the SOURCE_UNAVAILABLE reason in the snapshot.\n")
+              sys.exit(1)
+          print("ETH_DATA_HEALTH_VERIFIED 1H 4H Daily; paper-only; 5/5 cross-timeframe checks")
+          if summary:
+              with open(summary, "a", encoding="utf-8") as f:
+                  f.write("### ETH V7 data health: VERIFIED\n\n"
+                          "1H, 4H and Daily futures candles checked. "
+                          "5/5 cross-timeframe OHLCV comparisons passed. "
+                          "Paper-only; no orders.\n")
+          PY
