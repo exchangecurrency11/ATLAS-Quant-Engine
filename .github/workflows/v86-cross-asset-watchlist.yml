@@ -1,0 +1,102 @@
+name: 'V8.6 BTC ETH SOL same-close perpetual contextual watchlist'
+
+on:
+  push:
+    branches: [experiment/v86-sol-three-regime-classifier-20261110]
+    paths:
+      - sol_v86_cross_asset_watchlist.py
+      - tests/test_sol_v86_cross_asset_watchlist.py
+      - .github/workflows/v86-cross-asset-watchlist.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v86-three-assets-cross-check
+  cancel-in-progress: false
+
+jobs:
+  cross-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated experiment
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Run no-lookahead, ETH independent and stale-close guards
+        run: python3 -m unittest discover -s tests -p 'test_sol_v86_cross_asset_watchlist.py' -v
+      - name: Read immutable public sources from independent repository branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p forward/v86_three_assets
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/v86_three_assets/input_main.json
+          TARGET=$(python3 - <<'PY'
+          import json
+          from datetime import datetime
+          x=json.load(open("forward/v86_three_assets/input_main.json"))
+          row=next(r for r in x["results"] if r["symbol"]=="BTCUSDT_PERP.A" and r["interval"]=="4hour")
+          target=datetime.fromisoformat(row["closeTimeUTC"].replace("Z","+00:00"))
+          print(target.strftime("%Y-%m-%dT%H-00Z"))
+          PY
+          )
+          echo "ETH snapshot lookup for last BTC SOL verified 4H close: $TARGET"
+          gh api "repos/$GITHUB_REPOSITORY/contents/forward/eth/snapshots/$TARGET.json?ref=experiment/v7-signal-quality-20261103" \
+            --jq '.content' | base64 --decode > forward/v86_three_assets/input_eth.json
+          gh api "repos/$GITHUB_REPOSITORY/contents/forward/v85_shadow/latest.json?ref=experiment/v85-sol-regime-two-sided-20261110" \
+            --jq '.content' | base64 --decode > forward/v86_three_assets/input_sol_v85_sma.json
+      - name: Reconcile same UTC 4H close, daily and ETH 5 of 5 OHLCV checks
+        run: |
+          python3 -u sol_v86_cross_asset_watchlist.py \
+            --json forward/v86_three_assets/latest.json \
+            --markdown forward/v86_three_assets/latest.md
+      - name: Verify paper-only and do not invent TradingView indicators
+        run: |
+          python3 - <<'PY'
+          import json
+          p=json.load(open("forward/v86_three_assets/latest.json"))
+          assert p["status"]=="VERIFIED_CROSS_ASSET_CONTEXT_NO_ORDER"
+          assert p["realOrders"] is False and p["productionEdited"] is False
+          assert p["approvedSignalCount"]==0
+          assert p["tradingviewNumericalValuesUnavailable"] is True
+          assert p["automationsAdded"] is False
+          assert list(p["assets"])==["BTC","ETH","SOL"]
+          assert p["assets"]["SOL"]["SMA100_200"]["same4HCloseVerified"] is True
+          assert p["assets"]["BTC"]["SMA100_200"] is None
+          assert p["assets"]["ETH"]["SMA100_200"] is None
+          for sym,v in p["assets"].items():
+            assert v["independentClosed1HEntrySignalVerified"] is False
+            assert v["sourceCloseUTC"]==p["4HCloseUTC"]
+          print("V86_THREE_ASSET_CONTEXT_VERIFIED_NO_ORDERS")
+          PY
+      - name: Upload audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v86-cross-asset-watchlist-${{ github.run_id }}
+          path: forward/v86_three_assets/latest.*
+          if-no-files-found: ignore
+          retention-days: 45
+      - name: Commit only output to isolated research branch
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v86_three_assets/latest.json forward/v86_three_assets/latest.md
+          git commit -m "V8.6: verified BTC ETH SOL context watchlist, same close, no entry or orders"
+          for attempt in 1 2 3; do
+            git pull --rebase origin experiment/v86-sol-three-regime-classifier-20261110
+            if git push origin HEAD:experiment/v86-sol-three-regime-classifier-20261110; then
+              echo "V86_THREE_ASSET_CONTEXT_COMMITTED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
