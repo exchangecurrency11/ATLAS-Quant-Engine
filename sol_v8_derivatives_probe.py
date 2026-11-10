@@ -109,14 +109,24 @@ def validate_funding(data, now):
     record = one_symbol(data)
     rate = number(record.get("value"), "FUNDING")
     stamp = record.get("update")
-    if type(stamp) is not int:
+    if type(stamp) is not int or stamp <= 0:
         raise ValueError("BAD_FUNDING_UPDATE")
-    age = now - stamp
+    # Coinalyze documents a numeric update timestamp but its live endpoint
+    # currently responds in epoch MILLISECONDS (13 digits). Support both
+    # seconds and milliseconds explicitly, without accepting other units.
+    if stamp >= 10**12:
+        updated_at = stamp // 1000
+        timestamp_unit = "milliseconds"
+    else:
+        updated_at = stamp
+        timestamp_unit = "seconds"
+    age = now - updated_at
     if age < -60 or age > MAX_FUNDING_AGE:
         raise ValueError("STALE_OR_FUTURE_FUNDING")
     return {"providerReportedValue": rate,
             "providerReportedUnitsUnverified": True,
-            "providerUpdateUTC": iso(stamp), "ageSeconds": age,
+            "providerUpdateUTC": iso(updated_at), "ageSeconds": age,
+            "timestampUnit": timestamp_unit,
             "note": "Current funding observation, not a backfilled signal-time value"}
 
 
