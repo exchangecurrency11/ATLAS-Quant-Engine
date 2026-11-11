@@ -76,8 +76,11 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git branch --show-current)" = "research/v9-prestart-live-data-compatibility-20261111"
-          python3 -m py_compile v9_next_4h_color_research.py v9_next4h_prestart_paper_capture.py v9_next4h_paper_outcome_score.py
+          python3 -m py_compile v9_next_4h_color_research.py v9_next4h_prestart_paper_capture.py v9_next4h_paper_outcome_score.py v9_no_provider_tx_ablation.py
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_prestart_paper_capture.py' -q
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_paper_outcome_score.py' -q
           test -f forward/v9_next_4h_color/frozen_models.json
+          test -f forward/v9_no_tx_ablation/frozen_models_research_only.json
       - name: Capture all three UNCALIBRATED paper colors before next 4H opens
         if: steps.window.outputs.capture == 'true'
         env:
@@ -100,7 +103,16 @@ jobs:
           T=datetime.datetime.fromisoformat(j["target4HStartUTC"].replace("Z","+00:00")).timestamp()
           assert time.time()<T-180, "TOO_LATE_TO_ATTEST_PREDICTION_BEFORE_OPEN"
           assert j["brokerOrders"] is False and j["noTargetOpenKnown"]
-          print("V9_PAPER_FORECAST_STRICTLY_BEFORE_4H_OPEN",j["target4HStartUTC"])
+          assert j["noUserNotifications"] is True and j["productionModified"] is False
+          x=j["researchOnlyShadow88NoProviderTradeCount"]
+          assert x["status"]=="FROZEN_88_NO_PROVIDER_TX_PARALLEL_PAPER_NOT_PROMOTED"
+          assert x["neverEnableNotificationsFromThisExperiment"]
+          assert set(x["shadowAssetForecasts"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert all(z["noCoinalyzeTXUsedInFeatureVector"] for z in x["shadowAssetForecasts"].values())
+          from v9_next4h_paper_outcome_score import verify_prior_forecast
+          verify_prior_forecast(j)
+          print("V9_94_AND_NO_TX_88_SHADOW_PAPER_FORECAST_STRICTLY_BEFORE_4H_OPEN",
+                j["target4HStartUTC"])
           PY
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
