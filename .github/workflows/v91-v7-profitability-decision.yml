@@ -1,0 +1,77 @@
+name: V9.1 V7 profitability and executable-entry evidence review (no alerts)
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v91-v7-profitability-decision.yml
+  workflow_run:
+    workflows:
+      - V9.1 hourly V7 vs max4h retest prospective paper shadow NO ALERTS
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: v91-v7-profitability-audit-only
+  cancel-in-progress: false
+jobs:
+  audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout isolated V9 research, original V7 logic not modified
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          persist-credentials: true
+      - name: Verify reproducible ledger and execution-feasibility tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_v91_v7_profitability_decision.py' -v
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+      - name: Generate decision audit from historical and sealed forward evidence
+        run: |
+          set -euo pipefail
+          python3 v91_v7_profitability_decision.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("forward/v91_prospective_retest/profitability_decision.json").read_text())
+          assert r["decision"]=="KEEP_V91_SILENT_SHADOW_RESEARCH_NO_PROMOTION"
+          assert not r["comparativeEdgeProven"]
+          assert not r["newOrders"] and not r["notifications"]
+          assert not r["v7StrategyOrProductionModified"] and not r["v91StrategyModified"]
+          assert not r["prospective"]["realTimeExecutableEntryCountProven"]
+          assert r["historical"]["BTCUSDT"]["V7Historical"]["trades"]==9
+          assert r["historical"]["SOLUSDT"]["V91Historical"]["trades"]==9
+          print("V91_V7_NO_UNPROVEN_PROFIT_ASSERTIONS_NO_LIVE_TRADES")
+          PY
+      - name: Commit deterministic report only to isolated research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v91_prospective_retest/profitability_decision.json forward/v91_prospective_retest/profitability_decision.md
+          if git diff --cached --quiet; then
+            echo "V91_V7_PROFITABILITY_DECISION_REPORT_UNCHANGED"
+            exit 0
+          fi
+          git commit -m "V9.1 paper-only historical vs genuine forward and entry-timing decision audit"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V91_V7_PROFITABILITY_DECISION_REPORT_SAVED_NO_ALERTS"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+      - name: Publish paper-only evidence link in action summary
+        if: always()
+        run: |
+          echo "### V9.1 vs V7 paper opportunity score and execution validity" >> "$GITHUB_STEP_SUMMARY"
+          echo "Research-only report: forward/v91_prospective_retest/profitability_decision.md" >> "$GITHUB_STEP_SUMMARY"
+          echo "Does not enable trading orders, user notifications or V9.1 promotion." >> "$GITHUB_STEP_SUMMARY"
