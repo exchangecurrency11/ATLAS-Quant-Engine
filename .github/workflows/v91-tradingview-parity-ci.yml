@@ -1,0 +1,39 @@
+name: "V9.1 TradingView Pine JSON independent V7 parity safety (no alerts)"
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v91_tradingview_compare.py
+      - tradingview/v91_independent_1h_audit.pine
+      - tests/test_v91_tradingview_compare.py
+      - .github/workflows/v91-tradingview-parity-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+      - name: Test exact symbol/time, authenticated versus manual status and no trading paths
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v91_tradingview_compare.py
+          python3 -m unittest discover -s tests -p 'test_v91_tradingview_compare.py' -v
+          python3 -m unittest discover -s tests -p 'test_v91_prospective_retest.py' -q
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("tradingview/v91_independent_1h_audit.pine").read_text()
+          assert p.startswith("//@version=6")
+          for part in ("indicator(", "barstate.isrealtime", "barstate.isconfirmed",
+                       "chart.is_standard", 'syminfo.ticker == "BTCUSDT.P"',
+                       'syminfo.ticker == "SOLUSDT.P"',
+                       "alert.freq_once_per_bar_close", '"noTradeAction":true'):
+              assert part in p, part
+          assert "strategy.entry" not in p and "strategy.order" not in p
+          assert "request.security(" not in p
+          print("V91_TV_PINE_STATIC_GUARDS_ONLY_PINE_COMPILATION_MUST_BE_CHECKED_IN_TRADINGVIEW")
+          PY
