@@ -29,15 +29,20 @@ def sample_original():
         "targetClosed1HUTC":"2026-11-11T16:00:00Z",
         "observedAtUTC":"2026-11-11T16:19:00Z",
         "results":{s+"_PERP.A":{"V7_signal_filter":row()} for s in ("BTCUSDT","SOLUSDT")},
-        "marketContext":{s+"_PERP.A":{"timeframes":{"1hour":{"candle":{"close":100.}}}}
-                         for s in ("BTCUSDT","SOLUSDT")}
+        "marketContext":{s+"_PERP.A":{"timeframes":{
+            tf:{"closeTimeUTC":("2026-11-11T00:00:00Z" if tf=="daily"
+                                 else "2026-11-11T16:00:00Z"),
+                "candle":{"open":100.,"high":101.,"low":99.,"close":100.,"volume":700.}}
+            for tf in ("1hour","4hour","daily")}}
+            for s in ("BTCUSDT","SOLUSDT")}
     }
 
 
 def sample_parsed():
-    return {tf:{s+"_PERP.A":([{"t":END-HOUR,"c":100.}] if tf=="1hour"
-                                   else [{"t":END-HOUR,"c":100.}])
-                for s in ("BTCUSDT","SOLUSDT")} for tf in ("1hour","4hour","daily")}
+    starts={"1hour":END-HOUR,"4hour":END-4*HOUR,"daily":END-40*HOUR}
+    return {tf:{s+"_PERP.A":[{"t":starts[tf],"o":100.,"h":101.,
+                              "l":99.,"c":100.,"v":700.}]
+                for s in ("BTCUSDT","SOLUSDT")} for tf in starts}
 
 
 def example_trade(ret=END,exit_time=END+HOUR):
@@ -77,9 +82,54 @@ class V91ProspectiveTests(unittest.TestCase):
             self.assertEqual(replay.call_count,4)
             self.assertTrue(snap["V7SnapshotAndIndependentRecomputeExactMatch"])
             self.assertTrue(snap["noBrokerOrders"])
+            self.assertTrue(snap["priceAndVolumeValidatedAgainstOriginalV7For1H4HDaily"])
+            self.assertEqual(set(snap["originalV7PriceVolumeParities"]),{"BTCUSDT","SOLUSDT"})
+            self.assertEqual(set(snap["originalV7PriceVolumeParities"]["SOLUSDT"]),
+                             {"1hour","4hour","daily"})
+            self.assertTrue(snap["mainWorkerDataSameCoinalyzeProviderNotIndependentBinanceProof"])
             self.assertTrue(snap["hypotheticalNextOpenAtRetestClosePrecedesObservation"])
             self.assertTrue(snap["unverifiedCoinalyzeTXOIFundingNotUsedAsV91EntryFilter"])
             self.assertEqual(snap["retentionRuleHours"],{"V7_ORIGINAL":6,"V91_RETEST_MAX4H":4})
+
+    def test_reject_changed_ohlc_on_any_timeframe_or_symbol(self):
+        from v91_prospective_retest import verify_candle_quality_against_v7
+        baseline=sample_original()
+        for tf in ("1hour","4hour","daily"):
+            for symbol in ("BTCUSDT_PERP.A","SOLUSDT_PERP.A"):
+                for key in ("o","h","l","c"):
+                    with self.subTest(tf=tf,symbol=symbol,field=key):
+                        parsed=sample_parsed()
+                        parsed[tf][symbol][-1][key]=102. if key!="l" else 98.
+                        with self.assertRaisesRegex(ValueError,"SOURCE_OHLCV_PARITY_REJECTED"):
+                            verify_candle_quality_against_v7(baseline,parsed,END)
+
+    def test_reject_volume_mismatch_and_stale_daily(self):
+        from v91_prospective_retest import verify_candle_quality_against_v7
+        original=sample_original()
+        p=sample_parsed()
+        p["4hour"]["SOLUSDT_PERP.A"][-1]["v"]=720.
+        with self.assertRaisesRegex(ValueError,"SOURCE_OHLCV_PARITY_REJECTED"):
+            verify_candle_quality_against_v7(original,p,END)
+        p=sample_parsed()
+        p["daily"]["BTCUSDT_PERP.A"][-1]["t"]-=HOUR
+        with self.assertRaisesRegex(ValueError,"CLOSE_TIME_MISMATCH"):
+            verify_candle_quality_against_v7(original,p,END)
+
+    def test_reject_original_4h_reference_with_mismatched_timestamp(self):
+        from v91_prospective_retest import verify_candle_quality_against_v7
+        original=sample_original()
+        original["marketContext"]["SOLUSDT_PERP.A"]["timeframes"]["4hour"]["closeTimeUTC"]="2026-11-11T12:00:00Z"
+        with self.assertRaisesRegex(ValueError,"CLOSE_TIME_MISMATCH"):
+            verify_candle_quality_against_v7(original,sample_parsed(),END)
+
+    def test_volume_tolerance_is_only_integrity_not_exchange_proof(self):
+        from v91_prospective_retest import verify_candle_quality_against_v7
+        original=sample_original()
+        p=sample_parsed()
+        p["4hour"]["BTCUSDT_PERP.A"][-1]["v"]=703.
+        report=verify_candle_quality_against_v7(original,p,END)
+        self.assertLess(report["BTCUSDT"]["4hour"]["relativeDifferences"]["volume"]["relativeDifference"],0.005)
+        self.assertFalse(report["BTCUSDT"]["4hour"]["twoIndependentBinanceExchangeSourcesProven"])
 
     def test_no_stale_or_posthoc_v7_snapshot(self):
         orig=sample_original()
