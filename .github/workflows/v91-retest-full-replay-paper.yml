@@ -1,0 +1,118 @@
+name: "V9.1 V7 full candle replay 4h expiry vs strong retest PAPER ONLY"
+
+on:
+  push:
+    branches:
+      - research/v9-prestart-live-data-compatibility-20261111
+    paths:
+      - v91_retest_full_replay.py
+      - tests/test_v91_retest_full_replay.py
+      - .github/workflows/v91-retest-full-replay-paper.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: v91-retest-full-replay-research-paper-only
+  cancel-in-progress: false
+
+jobs:
+  exact-v7-retest-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout isolated V9 research branch, never production or original V7
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          persist-credentials: true
+
+      - name: Causal 1H close / no-future and costs tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v91_retest_full_replay.py
+          python3 -m unittest discover -s tests -p 'test_v91_retest_full_replay.py' -v
+          python3 -m unittest discover -s tests -p 'test_signal_quality_v7.py' -q
+
+      - name: Retrieve original successful verified V7 Binance BTC SOL historical 1H 4H Daily archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p v7_archived
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+            -n btc-sol-official-binance-verified-through-2026-11-02 \
+            -D v7_archived
+          for frame in 1hour 4hour daily; do
+            test -s "v7_archived/history_$frame.json"
+          done
+
+      - name: Replay V7 baseline, max 4h retest, strong retest, and combined from first candle
+        run: |
+          set -euo pipefail
+          python3 -u v91_retest_full_replay.py \
+            --archive v7_archived \
+            --reference forward/v9_v7_quality_upgraded_backtest/compare.json \
+            --out forward/v91_retest_full_replay
+
+      - name: Verify historical comparisons and strict separation from live V7
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path("forward/v91_retest_full_replay/compare.json").read_text())
+          assert a["status"]=="V91_FULL_CHRONOLOGICAL_RETEST_ABLATION_PAPER_ONLY"
+          assert a["originalV7BaselineVerifiedAgainstPublishedQualityBacktest"]
+          assert a["allVariantsReplayedIndependentlyChronologically"]
+          assert a["NOTIndependentOutOfSampleOrProspective"]
+          assert a["max4hRuleSuggestedAfterSeeingPastOutcomes"]
+          assert a["noBrokerOrders"] and a["noUserNotifications"]
+          assert a["originalV7AndV9Unmodified"] and a["promotionToLiveSignalsBlocked"]
+          assert a["baseCostBpsPerSide"]==9 and a["stressCostBpsPerSide"]==25
+          assert set(a["results"])=={"BTCUSDT","SOLUSDT"}
+          names={"V7_ORIGINAL","V91_RETEST_MAX4H","V91_STRONG_RETEST","V91_MAX4H_AND_STRONG"}
+          assert all(set(v)==names for v in a["results"].values())
+          assert len(a["tradesAudit"])==sum(x["trades"] for v in a["results"].values() for x in v.values())
+          for symbol,metric in a["results"].items():
+            for variant,x in metric.items():
+              assert x["trades"]>=0 and x["trades"]==sum(
+                t["symbol"]==symbol and t["variant"]==variant for t in a["tradesAudit"])
+              assert x["totalNetR25bpsSide"]<=x["totalNetR9bpsSide"]+0.0001
+          for t in a["tradesAudit"]:
+            assert t["watchUTC"]<t["retestUTC"]<=t["entryUTC"]<t["exitUTC"]
+            assert t["retestDelayHours"]<=(4 if "MAX4H" in t["variant"] else 6)
+          print("V91_V7_BASELINE_MATCHED_FULL_CHRONOLOGICAL_PAPER_REPLAY_AUDITED_NO_ORDERS")
+          PY
+
+      - name: Preserve completed evidence without publishing if a later step fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v91-retest-chronological-paper-${{ github.run_id }}
+          path: |
+            forward/v91_retest_full_replay/compare.json
+            forward/v91_retest_full_replay/compare.md
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Publish isolated V9.1 historical research report only, never V7 files
+        if: success()
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v91_retest_full_replay/compare.json forward/v91_retest_full_replay/compare.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9.1 research: full historical V7 replay 4h retest and strong rejection vs original"
+          for retry in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V91_RETEST_ABLATION_HISTORICAL_PAPER_PUBLISHED_NO_LIVE_CHANGES"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
