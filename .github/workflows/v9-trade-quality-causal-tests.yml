@@ -1,0 +1,27 @@
+name: 'V9+ trade quality causal score tests (paper only)'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_trade_opportunity_quality.py
+      - tests/test_v9_trade_opportunity_quality.py
+      - .github/workflows/v9-trade-quality-causal-tests.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - name: No future candle in V7+ score and registered 60/75 gates
+        run: |
+          python3 -m py_compile v9_trade_opportunity_quality.py v9_v7_full_profit_backtest.py
+          python3 -m unittest discover -s tests -p 'test_v9_trade_opportunity_quality.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_v7_full_profit_backtest.py' -q
+          python3 -m unittest discover -s tests -p 'test_v9_v7_historical_paper_trade_ledger.py' -q
+          echo "V9_PLUS_RESEARCH_SCORE_WITH_NO_FUTURE_BARS_TESTED_NO_ORDERS"
