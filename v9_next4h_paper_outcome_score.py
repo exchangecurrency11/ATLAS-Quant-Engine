@@ -56,6 +56,13 @@ def verify_prior_forecast(forecast,models=None):
             raise ValueError("FORECAST_PROBABILITY_UNUSABLE")
         if row["direction"]!=("GREEN" if p>=.5 else "RED"):
             raise ValueError("FORECAST_DIRECTION_MISMATCH_PROBABILITY")
+        lagged=row.get("lastCompleted4HColorBaseline")
+        if lagged is not None:
+            if lagged not in ("GREEN","RED","DOJI"):
+                raise ValueError("UNVERIFIED_COMPLETED_4H_COLOR_BASELINE")
+            if (row.get("baselineClosedAtUTC")!=iso(start-FOUR) or
+                row.get("baselineUsesOnlyCandleClosedBeforeTarget") is not True):
+                raise ValueError("BASELINE_IS_NOT_CAUSALLY_AVAILABLE_BEFORE_TARGET")
         if models is not None:
             if row.get("modelTrainingLabelsSHA256")!=models["symbols"][s]["trainingLabelsSHA256"]:
                 raise ValueError("FROZEN_MODEL_TRAIN_HASH_CHANGED")
@@ -78,8 +85,14 @@ def score_one(now,forecast,key,models=None,fetch=None):
         op=bars[0]["o"]
         cl=bars[-1]["c"]
         actual=("GREEN" if cl>op else "RED" if cl<op else "DOJI")
-        predicted=forecast["assetForecasts"][symbol]["direction"]
+        prior=forecast["assetForecasts"][symbol]
+        predicted=prior["direction"]
+        prior_baseline=prior.get("lastCompleted4HColorBaseline")
         observed[symbol]={
+            "lastCompleted4HColorBaseline":prior_baseline,
+            "lastCompleted4HColorBaselineCorrect":(
+                prior_baseline==actual if actual!="DOJI" and
+                  prior_baseline in ("GREEN","RED") else None),
             "target4HOpen":op,
             "target4HClose":cl,
             "actual4HOwnOpenCloseColor":actual,
@@ -155,10 +168,42 @@ def scoreboard(predictions,outcomes):
             if (row["predicted4HColor"]!=pred["direction"] or
                 row["predictedPgreenUncalibrated"]!=pred["pGreenUNCALIBRATED"]):
                 raise ValueError("SCORED_PREDICTION_CHANGED_"+symbol)
-            entries.append({"correct":row["correct"],
-                            "actual":row["actual4HOwnOpenCloseColor"],
-                            "p":row["predictedPgreenUncalibrated"]})
+            prior_baseline=pred.get("lastCompleted4HColorBaseline")
+            if (prior_baseline is not None and
+                row.get("lastCompleted4HColorBaseline")!=prior_baseline):
+                raise ValueError("BASELINE_WAS_MODIFIED_AFTER_FORECAST")
+            entries.append({
+                "correct":row["correct"],
+                "actual":row["actual4HOwnOpenCloseColor"],
+                "p":row["predictedPgreenUncalibrated"],
+                "baselineCorrect":row.get("lastCompleted4HColorBaselineCorrect")
+                    if prior_baseline is not None else None})
+        matched=[z for z in entries if
+                 z["correct"] is not None and z["baselineCorrect"] is not None]
+        n_matched=len(matched)
+        model_wins=sum(z["correct"] for z in matched)
+        lagged_wins=sum(z["baselineCorrect"] for z in matched)
+        model_only=sum(z["correct"] and not z["baselineCorrect"] for z in matched)
+        baseline_only=sum(z["baselineCorrect"] and not z["correct"] for z in matched)
+        paired_comparison={
+           "matchedSameTarget4HColorEvents":n_matched,
+           "modelCorrect":model_wins,
+           "laggedClosed4HColorCorrect":lagged_wins,
+           "modelHitRatePct":round(100*model_wins/n_matched,2)
+                             if n_matched else None,
+           "laggedBaselineHitRatePct":round(100*lagged_wins/n_matched,2)
+                                      if n_matched else None,
+           "modelMinusBaselinePercentagePoints":round(
+              100*(model_wins-lagged_wins)/n_matched,2)
+              if n_matched else None,
+           "modelOnlyCorrect":model_only,
+           "baselineOnlyCorrect":baseline_only,
+           "atLeast200PairedProspectiveCandles":n_matched>=200,
+           "doesNotDemonstrateV7SuperiorityBecauseV7UsesDifferentTarget":True,
+           "notEnoughAloneToEnableNotifications":True,
+        }
         per[symbol]={
+            "matchedNext4HOwnColorBaselineComparison":paired_comparison,
             "all":tally(entries),
             "atLeast55pctConfidence":tally([z for z in entries if max(z["p"],1-z["p"])>=.55]),
             "atLeast60pctConfidence":tally([z for z in entries if max(z["p"],1-z["p"])>=.60]),
@@ -189,6 +234,9 @@ def scoreboard(predictions,outcomes):
        "mustKeepAllForecastsEvenIfWrong":True,
        "confidenceUncalibrated":True,
        "no75PercentClaimUntilProspectiveEfficacy":True,
+       "notificationPromotionEligibility":"BLOCKED_PENDING_MATCHED_V7_OR_OTHER_EQUIVALENT_4H_TARGET_AND_PROSPECTIVE_RESULTS",
+       "notificationActivationRequested":False,
+       "noUserNotifications":True,
        "realOrders":False,
        "productionModified":False}
 
