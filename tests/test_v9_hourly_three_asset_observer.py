@@ -14,7 +14,18 @@ class HourlyV9Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.sources=synthetic_sources()
-        cls.fetch=fake_fetch(cls.sources)
+        # At T+17min, T-DAY is now a CLOSED day. Synthetic source from
+        # pre-start tests only reconciled T-2DAY; reconcile latest too.
+        for sym in ("BTCUSDT","ETHUSDT","SOLUSDT"):
+            d=cls.sources["daily"][sym][-1]
+            h=[x for x in cls.sources["1hour"][sym]
+               if d["t"]<=x["t"]<d["t"]+DAY]
+            assert len(h)==24
+            d["c"]=h[-1]["c"]
+            d["v"]=sum(x["v"] for x in h)
+            d["h"]=max(d["h"],d["c"],max(x["h"] for x in h))
+            d["l"]=min(d["l"],d["c"],min(x["l"] for x in h))
+        cls.fetch=staticmethod(fake_fetch(cls.sources))
 
     def test_hourly_observation_all_three_strict_status_only(self):
         with tempfile.TemporaryDirectory() as directory:
