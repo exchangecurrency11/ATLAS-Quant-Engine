@@ -105,6 +105,9 @@ jobs:
           assert x["missingHourObservationsMustNotBeFilled"]
           assert x["noBrokerOrders"] and x["noNotifications"]
           assert x["thresholdsNotReoptimizedFromNewObservations"]
+          assert x["unverifiedDerivativeFieldsNeverBecomeEntryVeto"]
+          assert x["delayedSignalPublicationNotModeledInNetR"]
+          assert x["realTimeExecutableEntryCountProven"]==0
           lines=["# V9.1 Prospective V7 vs 4-hour retest shadow",
             "","**Research paper-only. No trading orders or user notifications.**",
             "","First captured hour: "+str(x["sinceFirstActualSavedVerifiedCaptureUTC"]),
@@ -115,7 +118,10 @@ jobs:
             for name,m in variants.items():
               lines.append(f'| {sym} | {name} | {m["eligibleClosedPaperTrades"]} | {m["winRatePct"]} | {m["totalNetR9BpsPerSide"]} | {m["totalNetR25BpsPerSide"]} |')
           lines+=["","Missing prior sealed retests are EXCLUDED, never backfilled.",
+                  "IMPORTANT: A verified signal recorded 15-55 minutes after the close CANNOT prove a fill at the immediately following hour open.",
                   "Next-open prices are retrospective hypothetical paper assumptions, NOT actual fills.",
+                  "Real-time executable entries proven: ZERO. Signal publication delay is not priced into paper net R.",
+                  "Coinalyze TX/OI/funding are NOT used as an entry veto in this research system.",
                   "Funding, dynamic spread, liquidation and real broker execution unmodeled.",
                   "Past 4h filter was selected after inspecting historical results; NEW outcomes required.",""]
           Path('forward/v91_prospective_retest/scoreboard.md').write_text('\n'.join(lines))
@@ -142,6 +148,24 @@ jobs:
             sleep 4
           done
           exit 1
+      - name: Distinguish workflow success from actual sealed 1H observation
+        if: always()
+        shell: bash
+        env:
+          DID_CAPTURE: ${{ steps.gate.outputs.capture }}
+          TARGET: ${{ steps.gate.outputs.target }}
+        run: |
+          echo "### V9.1 hourly source health (research only)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Target UTC: ${TARGET:-not-verified}" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${DID_CAPTURE:-false}" != "true" ]; then
+            echo "**NO NEW PAPER OBSERVATION** — V7 not ready, prior hour already sealed or outside genuine current-hour window." >> "$GITHUB_STEP_SUMMARY"
+            echo "A green scheduled workflow does NOT mean a verified market hour was captured." >> "$GITHUB_STEP_SUMMARY"
+          elif test -s forward/v91_prospective_retest/scoreboard.json; then
+            echo "Paper observation attempted and scorecard written. Verify the preceding Git commit step completed successfully." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "**SOURCE REJECTED** — V9.1 did not produce a valid paper scoreboard." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Retain audit bundle without notification
         if: always()
         uses: actions/upload-artifact@v4
