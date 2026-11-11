@@ -5,11 +5,22 @@ name: 'V9 research-only BTC ETH SOL prestart GREEN RED paper journal'
 # The existing main production code, current signal engine and alerts remain
 # unchanged. No trading APIs or broker credentials are used.
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v9-prestart-paper-research-scheduler.yml
+  workflow_run:
+    workflows:
+      - Publish BTC SOL Market Data
+    types: [completed]
+    branches: [main]
   schedule:
     # 17 minutes before every UTC 00/04/08/12/16/20 4H candle
     # Correct UTC triggers: 23:43,03:43,07:43,11:43,15:43,19:43.
     # TSİ triggers: 02:43,06:43,10:43,14:43,18:43,22:43.
-    # GitHub schedule can run late: Python fails CLOSED after T-3 minutes.
+    # GitHub schedule can run late. A successful market-data publication
+    # also triggers this isolated workflow as a fallback. Both modes skip
+    # outside T-25m..T-3m (never backfill a missed candle).
     - cron: '43 23,3,7,11,15,19 * * *'
   workflow_dispatch:
 
@@ -22,6 +33,7 @@ concurrency:
 
 jobs:
   record-and-evaluate-paper-only:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -30,19 +42,43 @@ jobs:
         with:
           ref: research/v9-prestart-live-data-compatibility-20261111
           persist-credentials: true
+      - name: Gate exact 3 to 25 minute BEFORE start window and prevent duplicate predictions
+        id: window
+        shell: bash
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import datetime,pathlib,time
+          t=int(time.time())
+          target=(t//14400+1)*14400
+          gap=target-t
+          stamp=datetime.datetime.fromtimestamp(target,datetime.timezone.utc).strftime('%Y-%m-%dT%H-%M-%SZ')
+          existing=pathlib.Path("forward/v9_next_4h_color/paper_forecasts")/(stamp+".json")
+          allowed=180<=gap<=1500 and not existing.exists()
+          print("capture="+("true" if allowed else "false"))
+          print("targetUTC="+stamp)
+          print("minutesToStart="+str(round(gap/60,2)))
+          PY
+      - name: Report scheduled window gate
+        run: |
+          echo "Prestart capture allowed: ${{ steps.window.outputs.capture }}"
+          echo "Target: ${{ steps.window.outputs.targetUTC }}"
+          echo "Minutes to open: ${{ steps.window.outputs.minutesToStart }}"
       - name: Verify attached research branch is the only writable destination
+        if: steps.window.outputs.capture == 'true'
         run: |
           set -euo pipefail
           test "$(git branch --show-current)" = "research/v9-prestart-live-data-compatibility-20261111"
           python3 -m py_compile v9_next_4h_color_research.py v9_next4h_prestart_paper_capture.py v9_next4h_paper_outcome_score.py
           test -f forward/v9_next_4h_color/frozen_models.json
       - name: Capture all three UNCALIBRATED paper colors before next 4H opens
+        if: steps.window.outputs.capture == 'true'
         env:
           ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
         run: |
           set -euo pipefail
           python3 -u v9_next4h_prestart_paper_capture.py
       - name: Publish original forecast BEFORE the next target 4H starts
+        if: steps.window.outputs.capture == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -73,6 +109,7 @@ jobs:
           PY
           git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111
       - name: Score any PRIOR fully closed 4H prediction, preserve original commits
+        if: steps.window.outputs.capture == 'true'
         env:
           ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
         run: |
@@ -87,6 +124,7 @@ jobs:
           print("V9_FORWARD_GREEN_RED_LEDGER_SCORED",j["completedTargetForecasts"])
           PY
       - name: Publish separate outcome files and true forward scoreboard
+        if: steps.window.outputs.capture == 'true'
         shell: bash
         run: |
           set -euo pipefail
