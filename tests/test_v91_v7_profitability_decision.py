@@ -36,7 +36,7 @@ class Decisions(unittest.TestCase):
         self.assertEqual(r["SOLUSDT"]["removedV7Setups"]["trades"],3)
         self.assertEqual(r["SOLUSDT"]["newV91Setups"]["trades"],1)
         self.assertEqual(r["SOLUSDT"]["newV91Losers"],1)
-        self.assertAlmostEqual(r["SOLUSDT"]["historicalDeltaR"],0.2549,places=4)
+        self.assertAlmostEqual(r["SOLUSDT"]["historicalDeltaR"],0.254963,places=6)
         self.assertTrue(r["SOLUSDT"]["historicalSelectionBiasNoOutOfSampleProof"])
 
     def test_forged_replayed_profit_cannot_pass(self):
