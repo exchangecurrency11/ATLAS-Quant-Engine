@@ -77,6 +77,8 @@ class V91ProspectiveTests(unittest.TestCase):
             self.assertEqual(replay.call_count,4)
             self.assertTrue(snap["V7SnapshotAndIndependentRecomputeExactMatch"])
             self.assertTrue(snap["noBrokerOrders"])
+            self.assertTrue(snap["hypotheticalNextOpenAtRetestClosePrecedesObservation"])
+            self.assertTrue(snap["unverifiedCoinalyzeTXOIFundingNotUsedAsV91EntryFilter"])
             self.assertEqual(snap["retentionRuleHours"],{"V7_ORIGINAL":6,"V91_RETEST_MAX4H":4})
 
     def test_no_stale_or_posthoc_v7_snapshot(self):
@@ -111,6 +113,9 @@ class V91ProspectiveTests(unittest.TestCase):
             self.assertEqual(j["results"]["SOLUSDT"]["V91_RETEST_MAX4H"]["eligibleClosedPaperTrades"],1)
             self.assertEqual(j["results"]["SOLUSDT"]["V91_RETEST_MAX4H"]["totalNetR9BpsPerSide"],0.7)
             self.assertEqual(j["results"]["SOLUSDT"]["V7_ORIGINAL"]["eligibleClosedPaperTrades"],0)
+            self.assertEqual(j["realTimeExecutableEntryCountProven"],0)
+            self.assertTrue(j["delayedSignalPublicationNotModeledInNetR"])
+            self.assertTrue(j["unverifiedDerivativeFieldsNeverBecomeEntryVeto"])
             with patch("v91_prospective_retest._first_commit_epoch",return_value=None):
                 j=scoreboard(root,current=current)
             self.assertEqual(j["results"]["SOLUSDT"]["V91_RETEST_MAX4H"]["eligibleClosedPaperTrades"],0)
