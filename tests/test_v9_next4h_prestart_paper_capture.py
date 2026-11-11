@@ -127,6 +127,42 @@ class ProspectiveV9Tests(unittest.TestCase):
             self.assertEqual(a["assetForecasts"][sym]["pGreenUNCALIBRATED"],
                              b["assetForecasts"][sym]["pGreenUNCALIBRATED"])
 
+    def test_no_provider_tx_shadow_is_frozen_before_same_target_and_ignores_tx_changes(self):
+        shadow=fake_models()
+        shadow["featureSpace"]="88_OF_ORIGINAL_94_NO_PROVIDER_TX"
+        shadow["noTradingSignalsOrNotificationsAuthorized"]=True
+        for s in SYMS:
+            shadow["symbols"][s]["featureCount"]=88
+            shadow["symbols"][s]["scalerMean"]=[0.0]*88
+            shadow["symbols"][s]["scalerScale"]=[1.0]*88
+            shadow["symbols"][s]["logisticCoefficients"]=[0.01]*88
+        one=snapshot(NOW,self.models,"mock",fetch=fake_fetch(self.source),
+                     shadow_models_no_tx=shadow)
+        self.assertEqual(
+            one["researchOnlyShadow88NoProviderTradeCount"]["status"],
+            "FROZEN_88_NO_PROVIDER_TX_PARALLEL_PAPER_NOT_PROMOTED")
+        self.assertEqual(set(one["researchOnlyShadow88NoProviderTradeCount"]["shadowAssetForecasts"]),set(SYMS))
+        self.assertTrue(one["noTargetOpenKnown"])
+        self.assertTrue(one["noUserNotifications"])
+        changed=copy.deepcopy(self.source)
+        for sym in SYMS:
+            for b in changed["1hour"][sym]:b["tx"]=int(b["tx"]*2+7)
+        two=snapshot(NOW,self.models,"mock",fetch=fake_fetch(changed),
+                     shadow_models_no_tx=shadow)
+        for sym in SYMS:
+            left=one["researchOnlyShadow88NoProviderTradeCount"]["shadowAssetForecasts"][sym]
+            right=two["researchOnlyShadow88NoProviderTradeCount"]["shadowAssetForecasts"][sym]
+            self.assertEqual(left,right)
+            self.assertTrue(left["noCoinalyzeTXUsedInFeatureVector"])
+
+    def test_invalid_88_research_shadow_refused(self):
+        bad=fake_models()
+        bad["featureSpace"]="UNKNOWN"
+        bad["noTradingSignalsOrNotificationsAuthorized"]=True
+        with self.assertRaisesRegex(ValueError,"NOT_VALID_FROZEN_88_NO_TX"):
+            snapshot(NOW,self.models,"mock",fetch=fake_fetch(self.source),
+                     shadow_models_no_tx=bad)
+
     def test_missing_1h_cannot_be_filled_or_ignored(self):
         bad=copy.deepcopy(self.source)
         del bad["1hour"]["SOLUSDT"][-20]
