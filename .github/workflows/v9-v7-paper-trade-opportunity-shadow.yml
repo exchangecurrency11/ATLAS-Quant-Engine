@@ -75,7 +75,11 @@ jobs:
               x=json.loads(p.read_text())
               t=datetime.datetime.fromisoformat(
                   x['sameClosed1HUTC'].replace('Z','+00:00')).timestamp()
-              timely=0<=time.time()-t<=58*60
+              # An earlier immutable original hour MUST NOT be recast
+              # as though the new V9+ quality score existed then.
+              # Prior schema: skip publication, never backfill a scored BOS.
+              upgraded=('v9QualitySourceAudit' in x)
+              timely=0<=time.time()-t<=58*60 and upgraded
               report=pathlib.Path('forward/v9_v7_trade_overlay/paper_trade_scoreboard.json')
               y=json.loads(report.read_text())
               assert x['status']=='V9_V7_ORIGINAL_TRADE_OPPORTUNITY_READONLY_SHADOW'
@@ -83,11 +87,14 @@ jobs:
               assert x['V7BOSRetestStrategyIsPrimary']
               assert x['4HOwnColorIsSecondaryNotProfitTarget']
               assert x['v7PositionsAndSignalsLeftUnchanged']
-              assert x['v9QualitySourceAudit']['qualityScoreNotAnOrderOrTradeSignal']
-              for contract in x['contracts'].values():
-                assert contract['v9QualityScoreIsOnlyResearchContextNotAProfitableTradeProbability']
-                assert contract['v9QualityScoredOriginalV7NewWatches']<=contract['originalV7NewWatchesAtThisClose']
-                assert contract['noOriginalV7WatchOrRetestRewritten']
+              if upgraded:
+                assert x['v9QualitySourceAudit']['qualityScoreNotAnOrderOrTradeSignal']
+                for contract in x['contracts'].values():
+                  assert contract['v9QualityScoreIsOnlyResearchContextNotAProfitableTradeProbability']
+                  assert contract['v9QualityScoredOriginalV7NewWatches']<=contract['originalV7NewWatchesAtThisClose']
+                  assert contract['noOriginalV7WatchOrRetestRewritten']
+              else:
+                assert not timely
               assert set(x['contracts'])=={'BTCUSDT','SOLUSDT'}
               assert y['originalV7PaperTradeCount']==y['originalV7TradeCount'] if 'originalV7PaperTradeCount' in y else True
               assert y['gatingWithoutFullStrategyReplayCannotProveHigherProfit']
