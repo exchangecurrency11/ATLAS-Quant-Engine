@@ -242,7 +242,8 @@ def journal_report(journal):
         summary[symbol]={}
         for variant in ("V7_ORIGINAL","V9_94_DIRECTION_GATE",
                         "V9_88_NO_TX_DIRECTION_GATE",
-                        "V9_94_AND_88_AGREEMENT_GATE"):
+                        "V9_94_AND_88_AGREEMENT_GATE",
+                        "V9_QUALITY_SCORE_60","V9_QUALITY_SCORE_75"):
             subset=[row for row in journal
                     if row["symbol"]==symbol and row["variant"]==variant]
             acct=paper_account(subset)
@@ -257,7 +258,8 @@ def journal_report(journal):
     portfolio={}
     for variant in ("V7_ORIGINAL","V9_94_DIRECTION_GATE",
                     "V9_88_NO_TX_DIRECTION_GATE",
-                    "V9_94_AND_88_AGREEMENT_GATE"):
+                    "V9_94_AND_88_AGREEMENT_GATE",
+                    "V9_QUALITY_SCORE_60","V9_QUALITY_SCORE_75"):
         subset=[row for row in journal if row["variant"]==variant]
         portfolio[variant]=paper_account(subset)
     return {
@@ -282,6 +284,8 @@ def journal_report(journal):
       "noUserNotifications":True,
       "productionModified":False,
       "noPromotionToLiveSignals":True,
+      "V9QualityScoreIsNotCalibratedWinningProbability":True,
+      "V9Quality60And75AreFixedResearchOnlyShadowGates":True,
     }
 
 
