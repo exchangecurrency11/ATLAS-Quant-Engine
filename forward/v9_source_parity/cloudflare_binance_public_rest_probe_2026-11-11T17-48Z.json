@@ -1,0 +1,31 @@
+{
+  "mode": "V91_BINANCE_READ_ONLY_CLOUDFLARE_REACHABILITY_PROBE",
+  "sourceEvidence": "USER_SUPPLIED_RAW_WORKER_JSON_NOT_INDEPENDENTLY_FETCHED_BY_ASSISTANT",
+  "checkedAtUTC": "2026-11-11T17:48:09.828Z",
+  "expectedLastClosed1HUTC": "2026-11-11T17:00:00.000Z",
+  "successAllThree": false,
+  "statusBySymbol": {
+    "BTCUSDT": {
+      "status": "PUBLIC_BINANCE_HTTP_UNAVAILABLE",
+      "httpStatus": 403
+    },
+    "ETHUSDT": {
+      "status": "PUBLIC_BINANCE_HTTP_UNAVAILABLE",
+      "httpStatus": 403
+    },
+    "SOLUSDT": {
+      "status": "PUBLIC_BINANCE_HTTP_UNAVAILABLE",
+      "httpStatus": 403
+    }
+  },
+  "linkedExistingGitHubRunnerProbe": "forward/v9_source_parity/binance_live_rest_access.json",
+  "interpretation": "Official Binance USD-M public REST inaccessible from tested Cloudflare Worker on all three symbols; exact reason for 403 not proven.",
+  "officialBinance1HOHLCVIndependentlyAvailable": false,
+  "coinalyzeSameHourPriceParityProven": false,
+  "futureLiveBinanceAccessAssumed": false,
+  "noTradingOrders": true,
+  "noUserNotifications": true,
+  "v7Unmodified": true,
+  "v91Unmodified": true,
+  "guidance": "Keep Coinalyze closed OHLCV with parity guards; retain unverified derivative fields for research only. Do not backfill missed prospective hours."
+}
