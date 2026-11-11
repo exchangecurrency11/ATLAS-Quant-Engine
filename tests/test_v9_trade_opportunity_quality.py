@@ -29,7 +29,9 @@ class QualityScoringTests(unittest.TestCase):
         self.assertEqual(r["status"],"V9_TRADE_QUALITY_SNAPSHOT_FROM_CLOSED_V7_BOS_ONLY")
         self.assertEqual(r["observedClosed1HUTC"],bars[-1]["t"]+HOUR)
         self.assertTrue(0<=r["qualityScoreNotProfitProbability"]<=100)
-        self.assertEqual(sum(r["components"].values()),sum(r["featureWeightsRegisteredWithoutOutcomeTuning"].get(k,0) for k in ()) if False else sum(r["components"].values()))
+        self.assertLessEqual(r["qualityScoreNotProfitProbability"],100)
+        self.assertIn("relativeVolume",r["components"])
+        self.assertIn("volatilityRegime",r["components"])
         self.assertTrue(r["noFutureRetestOrTPUsed"])
         self.assertTrue(r["liquidityFVGAndOrderBlocksNotActualOrders"])
         self.assertTrue(r["noProviderOIOrFundingOrUnverifiedTradeCount"])
@@ -46,7 +48,7 @@ class QualityScoringTests(unittest.TestCase):
             quality_profile(bars,x,{})
 
     def test_missing_historical_bar_causes_fail_closed(self):
-        b=candles();del b[-8]
+        b=candles();b[-8]["t"]+=HOUR
         with self.assertRaisesRegex(ValueError,"HAS_GAP"):
             quality_profile(b,bos(b),{})
 
