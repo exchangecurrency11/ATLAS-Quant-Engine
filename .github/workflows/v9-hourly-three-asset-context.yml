@@ -76,6 +76,31 @@ jobs:
         run: |
           python3 -u v9_hourly_three_asset_observer.py
 
+      - name: Enrich hourly V9 research with independent 1H OI funding and taker CVD
+        if: steps.gate.outputs.run == 'true'
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_hourly_derivatives_context.py' -q
+          python3 -u v9_hourly_derivatives_context.py
+          python3 - <<'PY'
+          import json
+          h=json.load(open('forward/v9_next_4h_color/hourly/latest.json'))
+          d=json.load(open('forward/v9_next_4h_color/hourly/derivatives/latest.json'))
+          assert d['asOfClosed1HUTC']==h['closed1HUTC']
+          assert d['status'] in ('V9_HOURLY_OI_FUNDING_TAKER_CONTEXT_NOT_SIGNAL',
+                                 'V9_HOURLY_DERIVATIVES_UNAVAILABLE_NO_SIGNAL')
+          assert d['noTradingOrders'] and d['noUserNotifications']
+          assert d['doesNotChangeFrozenPrestart4HModel']
+          if d['status']=='V9_HOURLY_OI_FUNDING_TAKER_CONTEXT_NOT_SIGNAL':
+            assert set(d['contracts'])=={
+              'BTCUSDT_PERP.A','ETHUSDT_PERP.A','SOLUSDT_PERP.A'}
+            assert all(v['notAnOwnCandleColorForecast'] for v in d['contracts'].values())
+          else:
+            assert not d['contracts'], 'Unavailable derivatives cannot fabricate positive evidence'
+          print('V9_ALL_3_ASSETS_OI_FUNDING_TAKER_CVD',d['status'])
+          PY
+
       - name: Audit status and preserved V9 prestart-only label
         if: steps.gate.outputs.run == 'true'
         run: |
@@ -125,5 +150,6 @@ jobs:
           path: |
             forward/v9_next_4h_color/hourly/latest.json
             forward/v9_next_4h_color/hourly/latest.md
+            forward/v9_next_4h_color/hourly/derivatives/latest.json
           if-no-files-found: ignore
           retention-days: 30
