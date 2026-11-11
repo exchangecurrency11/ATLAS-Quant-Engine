@@ -103,6 +103,52 @@ class V9V7BridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"NOT_IDENTICAL"):
             asof_overlay(v7,h)
 
+    def test_new_original_v7_watch_gets_causal_v9_quality_profile_only(self):
+        v7,h=fixtures()
+        ref="SOLUSDT_PERP.A"
+        v7["results"][ref]["V7_signal_filter"]["newWatchAtThisClose"]=[
+            {"knownUTC":H,"side":"bullish","BOSLevel":99.75}]
+        bars=[]
+        for i in range(250):
+            t=H-250*HOUR+i*HOUR
+            c=95.+(i/249.)*5.
+            bars.append({"t":t,"o":c-.04,"h":c+.4,
+                         "l":c-.4,"c":c,"v":900.+50.*(i%4)})
+        self.assertEqual(bars[-1]["c"],100.)
+        r=asof_overlay(v7,h,quality_hour_by_symbol={"SOLUSDT":bars})
+        sol=r["contracts"]["SOLUSDT"]
+        self.assertEqual(sol["v9QualityScoredOriginalV7NewWatches"],1)
+        self.assertEqual(sol["originalV7NewWatchesAtThisClose"],1)
+        q=sol["eventOverlayOnly"][0][
+            "v9BOSQualityScoreFromExact250ClosedHours"]
+        self.assertEqual(q["observedClosed1HUTC"],H)
+        self.assertTrue(q["noFutureRetestOrTPUsed"])
+        self.assertTrue(q["notAStandaloneEntrySignal"])
+        self.assertEqual(sol["originalV7NewWatchesAtThisClose"],1)
+        self.assertIsNone(sol["eventOverlayOnly"][0][
+            "v9Primary94DirectionalAgreement"])
+        self.assertTrue(r["noOrders"] and r["noNotifications"])
+
+    def test_source_price_or_future_bar_rejected_from_live_quality(self):
+        v7,h=fixtures()
+        ref="SOLUSDT_PERP.A"
+        v7["results"][ref]["V7_signal_filter"]["newWatchAtThisClose"]=[
+            {"knownUTC":H,"side":"bullish","BOSLevel":99.75}]
+        bars=[]
+        for i in range(250):
+            c=95+(i/249)*5
+            bars.append({"t":H-250*HOUR+i*HOUR,
+                        "o":c-.04,"h":c+.4,"l":c-.4,"c":c,"v":1000.})
+        bad=copy.deepcopy(bars)
+        bad[-1]["c"]=110.
+        bad[-1]["h"]=111.
+        with self.assertRaisesRegex(ValueError,"PRICE_PARITY"):
+            asof_overlay(v7,h,quality_hour_by_symbol={"SOLUSDT":bad})
+        bad2=copy.deepcopy(bars)
+        bad2[-1]["t"]+=HOUR
+        with self.assertRaisesRegex(ValueError,"NOT_EXACT_PRIOR_250"):
+            asof_overlay(v7,h,quality_hour_by_symbol={"SOLUSDT":bad2})
+
     def test_real_v7_paper_exits_only_not_fake_profit_without_trades(self):
         with tempfile.TemporaryDirectory() as temp:
             v=Path(temp)/"v7";v.mkdir()
