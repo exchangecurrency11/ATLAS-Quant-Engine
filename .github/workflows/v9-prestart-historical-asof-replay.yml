@@ -34,6 +34,9 @@ jobs:
           assert x['mustNeverEnterProspectiveAccuracyDenominator']
           assert x['noPaperForecastCreated'] and x['noBrokerOrders']
           assert x['target4HStartUTC']=='2026-11-11T08:00:00Z'
+          assert x['original94PlusNoCoinalyzeTx88BothReplayedFromIdenticalAsOf']
+          assert all(n==88 for n in x['experimental88FeatureCountPerAsset'].values())
+          assert x['noUserNotifications'] and x['notProspectiveAsBothWereExecutedAfterTargetOpen']
           assert not glob.glob('forward/v9_next_4h_color/paper_forecasts/*.json')
           print('V9_REAL_SOURCE_PARSER_FROZEN_FEATURES_COMPATIBILITY_TEST_PASSED')
           PY
