@@ -28,6 +28,14 @@ STRATEGIES=("V7_ORIGINAL","V91_RETEST_MAX4H")
 MODE="V91_PROSPECTIVE_4H_RETEST_IMMUTABLE_PAPER_SHADOW"
 BASE_BPS_SIDE=9
 STRESS_BPS_SIDE=25
+# V7 live source and V9.1 worker history both describe Coinalyze/Binance
+# perpetual candles. These checks detect disagreements, NOT independent
+# Binance exchange truth. The thresholds are data-integrity tolerances
+# only and are never tuned to a trade outcome.
+PRICE_REL_TOLERANCE=0.000002
+VOLUME_REL_TOLERANCE=0.005
+TIMEFRAME_SECONDS={"1hour":HOUR,"4hour":4*HOUR,"daily":24*HOUR}
+OHLC_MAPPING={"open":"o","high":"h","low":"l","close":"c","volume":"v"}
 
 
 def path_at(base, t):
@@ -94,6 +102,56 @@ def retest_diagnostics(row, bars, target):
             "closed1HRetraceFeatures":features}
 
 
+def verify_candle_quality_against_v7(original, parsed, target):
+    """Fail closed on independently re-fetched OHLCV versus sealed V7 report.
+
+    Both sources originate with Coinalyze; no independent Binance live
+    data parity or OI/funding/taker accuracy is asserted here.
+    All prices and volumes refer to Binance USDT perpetual instruments.
+    """
+    audit={}
+    for symbol,ref in SYM.items():
+        result={}
+        v7_market=original["marketContext"][ref]["timeframes"]
+        for tf,seconds in TIMEFRAME_SECONDS.items():
+            rows=parsed[tf][ref]
+            if not rows:
+                raise ValueError("V91_MISSING_VERIFIED_"+tf+"_"+symbol)
+            actual=rows[-1]
+            reference=v7_market[tf]
+            required_close=(target//seconds)*seconds
+            if (epoch(reference["closeTimeUTC"])!=required_close or
+                    int(actual["t"])+seconds!=required_close):
+                raise ValueError("V91_ORIGINAL_CANDLE_CLOSE_TIME_MISMATCH_"+tf+"_"+symbol)
+            diffs={}
+            for label,rawkey in OHLC_MAPPING.items():
+                a=float(reference["candle"][label])
+                b=float(actual[rawkey])
+                if not math.isfinite(a) or not math.isfinite(b):
+                    raise ValueError("V91_INVALID_ORIGINAL_OR_REPLAY_"+tf+"_"+label)
+                if (label=="volume" and (a<0 or b<0)) or (
+                        label!="volume" and (a<=0 or b<=0)):
+                    raise ValueError("V91_INVALID_ORIGINAL_OHLCV_"+tf+"_"+label)
+                delta=abs(a-b)
+                rel=delta/max(abs(a),1e-12)
+                tol=(VOLUME_REL_TOLERANCE if label=="volume"
+                     else PRICE_REL_TOLERANCE)
+                if rel>tol and delta>0.000001:
+                    raise ValueError("V91_SOURCE_OHLCV_PARITY_REJECTED_"+symbol+"_"+tf+"_"+label)
+                diffs[label]={"v7Reference":round(a,8),
+                              "reFetchedHistory":round(b,8),
+                              "relativeDifference":round(rel,10)}
+            result[tf]={
+                "closedCandleUTC":iso(required_close),
+                "allOHLCVFieldsWithinIntegrityTolerances":True,
+                "relativeDifferences":diffs,
+                "priceToleranceRel":PRICE_REL_TOLERANCE,
+                "volumeToleranceRel":VOLUME_REL_TOLERANCE,
+                "twoIndependentBinanceExchangeSourcesProven":False}
+        audit[symbol]=result
+    return audit
+
+
 def capture(original, main, raw, *, now, folder):
     """Compute only CURRENT completed UTC hour; original V7 data must exist."""
     target=(now//HOUR)*HOUR
@@ -109,6 +167,7 @@ def capture(original, main, raw, *, now, folder):
     parsed=validate_inputs(main,raw,target,now)
     if set(parsed)!={"1hour","4hour","daily"}:
         raise ValueError("V91_SOURCE_TIMELINES_MISSING")
+    candle_audit=verify_candle_quality_against_v7(original,parsed,target)
     observed={}
     for symbol,ref in SYM.items():
         original_result=original["results"][ref]["V7_signal_filter"]
@@ -149,6 +208,9 @@ def capture(original, main, raw, *, now, folder):
         "mainSourceCheckedAtUTC":main["checkedAtUTC"],
         "retentionRuleHours":{"V7_ORIGINAL":6,"V91_RETEST_MAX4H":4},
         "sourceVerifiedSameHour":True,
+        "priceAndVolumeValidatedAgainstOriginalV7For1H4HDaily":True,
+        "originalV7PriceVolumeParities":candle_audit,
+        "mainWorkerDataSameCoinalyzeProviderNotIndependentBinanceProof":True,
         "V7SnapshotAndIndependentRecomputeExactMatch":True,
         "entryIsHistoricalNextOpenPaperAssumptionNotRealFill":True,
         # A real bot sees the retest AFTER the close, not at that candle's
@@ -285,6 +347,8 @@ def scoreboard(folder, *, current=None, current_path=None):
         "delayedSignalPublicationNotModeledInNetR":True,
         "realTimeExecutableEntryCountProven":0,
         "unverifiedDerivativeFieldsNeverBecomeEntryVeto":True,
+        "v91SourceIntegrityRequiresV7Original1H4HDailyOHLCV":True,
+        "liveBinanceVsCoinalyzeParityNotProven":True,
         "feesSlippage9BpsPerSideStress25BpsPerSide":True,
         "fundingVariableSpreadTrueFillsLiquidationNotModeled":True,
         "thresholdsNotReoptimizedFromNewObservations":True,
