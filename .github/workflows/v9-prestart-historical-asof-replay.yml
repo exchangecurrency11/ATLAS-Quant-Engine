@@ -1,0 +1,61 @@
+name: 'V9 prestart Binance-Coinalyze historical asof source replay (NOT paper)'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_prestart_historical_compatibility_replay.py
+      - .github/workflows/v9-prestart-historical-asof-replay.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-provider:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout isolated research only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Replay already past T-minus-17min read-only provider source (never real forward prediction)
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v9_prestart_historical_compatibility_replay.py
+      - name: Assert output explicitly cannot count towards forward accuracy
+        run: |
+          python3 - <<'PY'
+          import json,glob
+          x=json.load(open('forward/v9_next_4h_color/historical_compatibility_replay.json'))
+          assert x['status']=='HISTORICAL_SOURCE_FEATURE_REPLAY_NOT_A_REAL_PAPER_PREDICTION'
+          assert x['mustNeverEnterProspectiveAccuracyDenominator']
+          assert x['noPaperForecastCreated'] and x['noBrokerOrders']
+          assert x['target4HStartUTC']=='2026-11-11T08:00:00Z'
+          assert not glob.glob('forward/v9_next_4h_color/paper_forecasts/*.json')
+          print('V9_REAL_SOURCE_PARSER_FROZEN_FEATURES_COMPATIBILITY_TEST_PASSED')
+          PY
+      - name: Preserve standalone historical replay proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-real-source-historical-compat-replay-${{ github.run_id }}
+          path: forward/v9_next_4h_color/historical_compatibility_replay.json
+          if-no-files-found: ignore
+      - name: Commit only technical compatibility proof to isolated research branch
+        if: success()
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_next_4h_color/historical_compatibility_replay.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9: as-of real-source 3 asset parser replay NOT forward accuracy evidence"
+          for k in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then exit 0; fi
+            sleep 3
+          done
+          exit 1
