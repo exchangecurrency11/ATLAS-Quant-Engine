@@ -21,18 +21,29 @@ def main():
     if actual<=asof:
         raise ValueError("REPLAY_TIME_MUST_ALREADY_BE_IN_PAST")
     models=json.loads(Path("forward/v9_next_4h_color/frozen_models.json").read_text())
+    shadow_models=json.loads(Path(
+        "forward/v9_no_tx_ablation/frozen_models_research_only.json").read_text())
     key=(os.getenv("ETH_V7_COINALYZE_API_KEY") or
          os.getenv("SOL_V8_COINALYZE_API_KEY") or
          os.getenv("COINALYZE_API_KEY") or "").strip()
     if not key:
         raise ValueError("READONLY_SOURCE_KEY_MISSING")
-    value=snapshot(asof,models,key)
+    value=snapshot(asof,models,key,shadow_models_no_tx=shadow_models)
     assert value["status"]=="BEFORE_START_PAPER_FORECAST_UNCALIBRATED_NOT_TRADE"
     assert value["target4HStartUTC"]=="2026-11-11T08:00:00Z"
     assert len(value["assetForecasts"])==3
     for row in value["assetForecasts"].values():
         assert row["featuresReplayed"]==94
         assert row["predictionOnlyNotAnOrder"] is True
+    shadow=value["researchOnlyShadow88NoProviderTradeCount"]
+    assert shadow["status"]=="FROZEN_88_NO_PROVIDER_TX_PARALLEL_PAPER_NOT_PROMOTED"
+    assert shadow["modelFeatureCount"]==88
+    assert set(shadow["shadowAssetForecasts"])==set(value["assetForecasts"])
+    assert all(v["noCoinalyzeTXUsedInFeatureVector"]
+               for v in shadow["shadowAssetForecasts"].values())
+    assert value["noUserNotifications"] and not value["brokerOrders"]
+    from v9_next4h_paper_outcome_score import verify_prior_forecast
+    verify_prior_forecast(value,models)
     report={
        "status":"HISTORICAL_SOURCE_FEATURE_REPLAY_NOT_A_REAL_PAPER_PREDICTION",
        "asOfInputUTC":REPLAY_ASOF_UTC,
@@ -43,6 +54,11 @@ def main():
        "frozenModelFeatureCountPerAsset":{s:r["featuresReplayed"]
                                           for s,r in value["assetForecasts"].items()},
        "allThreeCoinalyze1HAndDailyIntegrated":True,
+       "original94PlusNoCoinalyzeTx88BothReplayedFromIdenticalAsOf":True,
+       "experimental88FeatureCountPerAsset":{
+           s:shadow["modelFeatureCount"] for s in shadow["shadowAssetForecasts"]},
+       "notProspectiveAsBothWereExecutedAfterTargetOpen":True,
+       "noUserNotifications":True,
        "sourceSHA256":{"oneHour":value["ohlcv1hResponseSHA256"],
                        "daily":value["dailyResponseSHA256"]},
        "noPaperForecastCreated":True,
