@@ -5,7 +5,13 @@ on:
     paths: [.github/workflows/v91-prospective-hourly-shadow.yml]
   workflow_dispatch:
   schedule:
-    - cron: '34,49 * * * *'
+    - cron: '34,43,49,55 * * * *'
+  # Run again when the ORIGINAL V7 hourly capture actually finishes.
+  workflow_run:
+    workflows:
+      - V7 Hourly Paper Forward Runner
+    types: [completed]
+    branches: [main]
 permissions:
   contents: write
 concurrency:
@@ -13,6 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   hourly-paper:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 19
     steps:
