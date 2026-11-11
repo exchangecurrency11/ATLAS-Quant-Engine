@@ -1,0 +1,74 @@
+name: 'V9 hourly derivatives BTC ETH SOL OI CVD funding research smoke test'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_hourly_derivatives_context.py
+      - tests/test_v9_hourly_derivatives_context.py
+      - .github/workflows/v9-hourly-derivatives-context-ci.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  research-overlay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - name: Checkout only V9 experiment branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Verify derivatives feature contracts and no leak
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_hourly_derivatives_context.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_three_asset_derivatives_ablation.py' -q
+      - name: Run source-quality OI funding 1H context on latest already verified hourly paper
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v9_hourly_derivatives_context.py
+      - name: Audit research status and never treat this as a new official 4H signal
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open('forward/v9_next_4h_color/hourly/derivatives/latest.json'))
+          assert x['status'] in (
+              'V9_HOURLY_OI_FUNDING_TAKER_CONTEXT_NOT_SIGNAL',
+              'V9_HOURLY_DERIVATIVES_UNAVAILABLE_NO_SIGNAL')
+          assert x['noTradingOrders'] and x['noUserNotifications']
+          assert x['doesNotChangeFrozenPrestart4HModel']
+          if x['status']=='V9_HOURLY_OI_FUNDING_TAKER_CONTEXT_NOT_SIGNAL':
+            assert set(x['contracts'])=={
+              'BTCUSDT_PERP.A','ETHUSDT_PERP.A','SOLUSDT_PERP.A'}
+            for z in x['contracts'].values():
+              assert z['notAnOwnCandleColorForecast']
+              assert not z['directionalSignalsFromThisOverlayAuthorized']
+          else:
+            assert not x['contracts'], 'Provider refusal has no synthetic fake data'
+          print('V9_HOURLY_OI_FUNDING_CVD_RESEARCH_ONLY',x['status'])
+          PY
+      - name: Commit separate verified or refused derivatives context only
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_next_4h_color/hourly/derivatives/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'V9 hourly BTC ETH SOL OI funding taker quality overlay no notifications'
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then exit 0; fi
+            sleep 4
+          done
+          exit 1
+      - name: Preserve audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-hourly-deriv-ci-${{ github.run_id }}
+          path: forward/v9_next_4h_color/hourly/derivatives/
+          if-no-files-found: ignore
+          retention-days: 30
