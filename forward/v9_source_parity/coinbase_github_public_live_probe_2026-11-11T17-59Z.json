@@ -1,0 +1,88 @@
+{
+  "mode": "V91_COINBASE_PUBLIC_READONLY_GITHUB_NETWORK_PROBE",
+  "sourceEvidence": "GITHUB_ACTIONS_LIVE_NETWORK_JOB_LOGS",
+  "workflowRunUrl": "https://github.com/exchangecurrency11/BTC-SOL-ANALYS-S/actions/runs/43073386746",
+  "checkedUTC": "2026-11-11T17:59:21.107145Z",
+  "expectedLastClosed1HUTC": "2026-11-11T17:00:00Z",
+  "successAllThreeSpotFreshAndClosed": true,
+  "successAllThreeCoinbaseInternationalPerp": false,
+  "assets": {
+    "BTC": {
+      "spotTicker": {
+        "priceUSD": 74441.9,
+        "observedUTC": "2026-11-11T17:59:20.651879Z",
+        "status": "FRESH",
+        "httpCode": 200
+      },
+      "spotClosed1H": {
+        "openUTC": "2026-11-11T16:00:00Z",
+        "closeUTC": "2026-11-11T17:00:00Z",
+        "open": 73912.59,
+        "high": 74352.05,
+        "low": 73837.02,
+        "close": 74178.57,
+        "baseVolume": 702.98231254,
+        "status": "VALID",
+        "httpCode": 200
+      },
+      "intxPerpQuote": {
+        "httpCode": 502,
+        "status": "HTTP_UNAVAILABLE"
+      }
+    },
+    "ETH": {
+      "spotTicker": {
+        "priceUSD": 2089.38,
+        "observedUTC": "2026-11-11T17:59:20.813923Z",
+        "status": "FRESH",
+        "httpCode": 200
+      },
+      "spotClosed1H": {
+        "openUTC": "2026-11-11T16:00:00Z",
+        "closeUTC": "2026-11-11T17:00:00Z",
+        "open": 2072.79,
+        "high": 2081.17,
+        "low": 2065.97,
+        "close": 2075.23,
+        "baseVolume": 8146.34886345,
+        "status": "VALID",
+        "httpCode": 200
+      },
+      "intxPerpQuote": {
+        "httpCode": 502,
+        "status": "HTTP_UNAVAILABLE"
+      }
+    },
+    "SOL": {
+      "spotTicker": {
+        "priceUSD": 85.28,
+        "observedUTC": "2026-11-11T17:59:20.497507Z",
+        "status": "FRESH",
+        "httpCode": 200
+      },
+      "spotClosed1H": {
+        "openUTC": "2026-11-11T16:00:00Z",
+        "closeUTC": "2026-11-11T17:00:00Z",
+        "open": 84.73,
+        "high": 85.03,
+        "low": 84.41,
+        "close": 84.8,
+        "baseVolume": 49498.64703197,
+        "status": "VALID",
+        "httpCode": 200
+      },
+      "intxPerpQuote": {
+        "httpCode": 502,
+        "status": "HTTP_UNAVAILABLE"
+      }
+    }
+  },
+  "interpretation": "Coinbase Exchange SPOT ticker and exact closed hourly OHLCV 3/3 actually accessible on GitHub runner. Coinbase International PERP quote endpoint returned 502 for 3/3; exact cause unknown. No Binance USD-M independent same-venue parity established.",
+  "binanceFuturePriceParityEstablished": false,
+  "coinalyzeSpotBasisValidated": false,
+  "extraEntryGateAuthorized": false,
+  "orders": false,
+  "notifications": false,
+  "v7Unmodified": true,
+  "v91StrategyUnmodified": true
+}
