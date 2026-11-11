@@ -1,0 +1,104 @@
+name: 'V9 publish audited historical paper LONG SHORT trades (no rerun, no alerts)'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - .github/workflows/v9-v7-publish-completed-paper-trades.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: v9-publish-paper-trade-ledger-research
+  cancel-in-progress: false
+
+jobs:
+  publish-audited-ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout V9 isolated research only
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          persist-credentials: true
+      - name: Download previously successful full official Binance history paper replay artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p audited
+          gh run download 43042832320 --repo "$GITHUB_REPOSITORY" \
+            -n v9-v7-full-chronological-profit-first-43042832320 \
+            -D audited
+          for p in audited/compare.json audited/paper_trades/trade_ledger.json \
+                   audited/paper_trades/all_paper_trades.csv \
+                   audited/paper_trades/trade_ledger.md; do
+            test -s "$p"
+          done
+      - name: Prove every trade from source-matched 1H paper strategy and account balances
+        run: |
+          python3 - <<'PY'
+          import json,csv
+          from pathlib import Path
+          old=json.loads(Path('forward/v9_v7_profit_backtest/compare.json').read_text())
+          audited=json.loads(Path('audited/compare.json').read_text())
+          ledger=json.loads(Path('audited/paper_trades/trade_ledger.json').read_text())
+          keys=('status','sourceWindowStartUTC','asOfExclusiveUTC',
+                'candidateHistorical','candidateMinusV7',
+                'individualHistoricalPaperTradesWrittenAndValidated')
+          assert all(old[k]==audited[k] for k in keys)
+          assert audited['individualHistoricalPaperTradesWrittenAndValidated']==30
+          assert ledger['status']=='V9_V7_HISTORICAL_CANDLE_BY_CANDLE_PAPER_LEDGER_AND_ILLUSTRATIVE_100USDT_10X'
+          assert ledger['noBrokerOrders'] and ledger['noUserNotifications']
+          assert not ledger['productionModified'] and ledger['retrospectiveTradesNotActualTrades']
+          assert ledger['initialCapitalUSDT']==100 and ledger['leverageIsolated']==10
+          rows=ledger['allCompletedHistoricalPaperTradeLedger']
+          assert len(rows)==30
+          for sym,variants in audited['candidateHistorical'].items():
+            for variant,metric in variants.items():
+              group=[r for r in rows if r['symbol']==sym and r['variant']==variant]
+              assert len(group)==metric['V7paperClosedTrades']
+              assert round(sum(r['netR9BpsPerSide'] for r in group),4)==metric['totalNetR9BpsPerSide']
+              assert all(r['noRealFill'] and
+                  r['watchConfirmedUTC']<r['retestConfirmedUTC']<=r['entryOpenUTC']<r['exitKnownUTC']
+                  for r in group)
+          assert ledger['portfolioPaperAccounts']['V7_ORIGINAL']['originalEligibleHistoricalPaperTrades']==20
+          for var,acct in ledger['portfolioPaperAccounts'].items():
+            assert acct['notAVerifiedUSDProfit']
+            assert acct['originalEligibleHistoricalPaperTrades']==sum(
+                v[var]['V7paperClosedTrades'] for v in audited['candidateHistorical'].values())
+            assert acct['paperTradesNotBlockedByIllustrativeMargin']+acct[
+                'paperTradesSkippedByIllustrativeMarginOrExposure']==acct[
+                'originalEligibleHistoricalPaperTrades']
+            assert round(sum(x['paperNetPnlUSDT'] for x in acct['trades']),5)==round(acct['totalPaperNetPnlUSDT'],5)
+          with open('audited/paper_trades/all_paper_trades.csv',encoding='utf-8-sig') as f:
+            assert len(list(csv.DictReader(f)))==30
+          print('V9_AUDITED_PRIOR_GITHUB_SUCCESSFUL_FULL_30_PAPER_TRADES_AND_100USDT_PROVEN_NO_TRADES')
+          PY
+      - name: Commit only audited source-matched trade ledger to V9 research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          mkdir -p forward/v9_v7_profit_backtest/paper_trades
+          cp audited/paper_trades/trade_ledger.json \
+             audited/paper_trades/all_paper_trades.csv \
+             audited/paper_trades/trade_ledger.md \
+             forward/v9_v7_profit_backtest/paper_trades/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_v7_profit_backtest/paper_trades/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9: archive 30 audit-verified historic V7 vs V9 paper long short entries, exits, 100 USDT account"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_ORIGINAL_HISTORICAL_PAPER_TRADE_LEDGER_PUBLISHED_SILENTLY"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
