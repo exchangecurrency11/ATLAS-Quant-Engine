@@ -1,0 +1,50 @@
+name: 'V9 prestart missing 4H forecast coverage smoke audit (research)'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_prestart_attempt_coverage.py
+      - tests/test_v9_prestart_attempt_coverage.py
+      - .github/workflows/v9-prestart-capture-coverage-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Validate 4H forecast missing slots and never backfill
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_prestart_attempt_coverage.py' -v
+          python3 -u v9_prestart_attempt_coverage.py
+          python3 - <<'PY'
+          import json
+          x=json.load(open('forward/v9_next_4h_color/attempt_coverage.json'))
+          assert x['expectedAlreadyStarted4HTargets']==(
+             x['validForecastsCommittedBeforeOpenPerOriginalFile']+
+             x['missed4HBeforeStartPredictionSlots'])
+          assert x['noRetrospectiveImputation'] and x['missingAreFailuresNotAbstentions']
+          assert x['noUserNotifications'] and not x['brokerOrders']
+          print('V9_MISSING_PRESTART_FORECASTS_AUDITED',x['missed4HBeforeStartPredictionSlots'])
+          PY
+      - name: Save V9 actual missed opportunity coverage (not direction accuracy)
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_next_4h_color/attempt_coverage.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9: explicit missing prestart four-hour forecast slots, no fabricated backfill"
+          for n in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then exit 0; fi
+            sleep 4
+          done
+          exit 1
