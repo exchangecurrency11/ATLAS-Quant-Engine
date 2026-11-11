@@ -66,6 +66,7 @@ jobs:
         if: steps.gate.outputs.run == 'true'
         run: |
           python3 -m unittest discover -s tests -p 'test_v9_hourly_three_asset_observer.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_prestart_paper_capture.py' -q
           python3 -m unittest discover -s tests -p 'test_v9_next4h_paper_outcome_score.py' -q
 
       - name: Capture REAL completed 1H, 4H and Daily context BTC ETH SOL
