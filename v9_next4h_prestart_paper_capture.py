@@ -147,7 +147,7 @@ def verify_daily_vs_hours(one,daily,now):
     return True
 
 
-def snapshot(now,models,key,fetch=None):
+def snapshot(now,models,key,fetch=None,shadow_models_no_tx=None):
     target=check_clock(now)
     if models.get("status")!="FROZEN_SHADOW_PAPER_MODELS_NOT_PRODUCTION":
         raise ValueError("NOT_A_FROZEN_PAPER_MODEL")
@@ -194,6 +194,21 @@ def snapshot(now,models,key,fetch=None):
     week=2*math.pi*(dt.weekday()/7)
     x=tuple(v for series in feats for v in series)+(
           math.sin(theta),math.cos(theta),math.sin(week),math.cos(week))
+    # Optional second, independently frozen variant uses the SAME
+    # pre-target 94 feature vector, without its six provider tx features.
+    # This is a separate registered 88-feature research model, never
+    # a post-outcome rerun or a replacement for the original forecast.
+    shadow_input=None
+    if shadow_models_no_tx is not None:
+        from v9_no_provider_tx_ablation import strip_transaction_count
+        if (shadow_models_no_tx.get("status")!="FROZEN_SHADOW_PAPER_MODELS_NOT_PRODUCTION"
+            or shadow_models_no_tx.get("featureSpace")!="88_OF_ORIGINAL_94_NO_PROVIDER_TX"
+            or shadow_models_no_tx.get("noTradingSignalsOrNotificationsAuthorized") is not True
+            or set(shadow_models_no_tx.get("symbols",{}))!=set(SYMBOLS)
+            or shadow_models_no_tx.get("cutoffUTC")!=models.get("cutoffUTC")):
+            raise ValueError("NOT_VALID_FROZEN_88_NO_TX_RESEARCH_MODEL")
+        shadow_input=strip_transaction_count(x)
+    shadow_forecasts={}
     forecasts={}
     for symbol in SYMBOLS:
         model=models["symbols"][symbol]
@@ -215,6 +230,29 @@ def snapshot(now,models,key,fetch=None):
                   "RED" if lagged["c"]<lagged["o"] else "DOJI")
         if lagged["t"]+FOUR!=target-FOUR:
             raise ValueError("COMPARATOR_UNCLOSED_4H_CANDLE_LEAK")
+        if shadow_input is not None:
+            shadow=shadow_models_no_tx["symbols"][symbol]
+            n88=shadow["featureCount"]
+            if (n88!=88 or len(shadow_input)!=88 or
+                shadow["trainingLabelsSHA256"]!=model["trainingLabelsSHA256"] or
+                any(len(shadow[k])!=88 for k in
+                    ("scalerMean","scalerScale","logisticCoefficients"))):
+                raise ValueError("FROZEN_88_MODEL_MISMATCH_OR_TRAINING_HASH_CHANGED")
+            v88=shadow["logisticIntercept"]+sum(
+                c*((v-mean)/scale) for v,c,mean,scale in zip(
+                shadow_input,shadow["logisticCoefficients"],
+                shadow["scalerMean"],shadow["scalerScale"]))
+            if not math.isfinite(v88):
+                raise ValueError("NONFINITE_SHADOW_88_MODEL_SCORE")
+            p88=1/(1+math.exp(-max(-50,min(50,v88))))
+            shadow_forecasts[symbol]={
+               "direction":"GREEN" if p88>=.5 else "RED",
+               "pGreenUNCALIBRATED":round(p88,6),
+               "modelTrainingLabelsSHA256":shadow["trainingLabelsSHA256"],
+               "noCoinalyzeTXUsedInFeatureVector":True,
+               "onlyAlreadyClosedDataAtDecision":True,
+               "sameTargetAsOriginalFrozenModel":True,
+               "notATradingSignal":True}
         forecasts[symbol]={
            "lastCompleted4HColorBaseline":baseline,
            "baselineClosedAtUTC":iso(target-FOUR),
@@ -242,6 +280,16 @@ def snapshot(now,models,key,fetch=None):
        "ohlcv1hResponseSHA256":source_hash1,
        "dailyResponseSHA256":source_hashD,
        "assetForecasts":forecasts,
+       "researchOnlyShadow88NoProviderTradeCount":(
+           {
+             "status":"FROZEN_88_NO_PROVIDER_TX_PARALLEL_PAPER_NOT_PROMOTED",
+             "modelFeatureCount":88,
+             "sixTransactionCountFeaturePositionsDropped":[20,27,50,57,80,87],
+             "shadowAssetForecasts":shadow_forecasts,
+             "sameOriginalDecisionAnd4HTarget":True,
+             "neverEnableNotificationsFromThisExperiment":True,
+           } if shadow_input is not None else None),
+       "noUserNotifications":True,
        "noTargetOpenKnown":True,
        "forecastAlwaysRecordedEvenIfConfidenceLow":True,
        "notValidatedLiveDirection":True,
@@ -252,15 +300,18 @@ def snapshot(now,models,key,fetch=None):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--models",default="forward/v9_next_4h_color/frozen_models.json")
+    p.add_argument("--shadow-models-no-tx",default=(
+        "forward/v9_no_tx_ablation/frozen_models_research_only.json"))
     p.add_argument("--dir",default="forward/v9_next_4h_color/paper_forecasts")
     a=p.parse_args()
     model=json.loads(Path(a.models).read_text())
+    shadow_model=json.loads(Path(a.shadow_models_no_tx).read_text())
     key=(os.getenv("ETH_V7_COINALYZE_API_KEY") or
          os.getenv("SOL_V8_COINALYZE_API_KEY") or
          os.getenv("COINALYZE_API_KEY") or "").strip()
     if not key:raise ValueError("MISSING_READONLY_COINALYZE_KEY")
     now=int(datetime.now(timezone.utc).timestamp())
-    result=snapshot(now,model,key)
+    result=snapshot(now,model,key,shadow_models_no_tx=shadow_model)
     target=result["target4HStartUTC"]
     path=Path(a.dir)/(target.replace(":","-")+".json")
     path.parent.mkdir(parents=True,exist_ok=True)
