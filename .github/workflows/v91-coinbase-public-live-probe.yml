@@ -1,0 +1,36 @@
+name: V9.1 Coinbase spot and INTX public network reachability (read-only)
+on:
+  push:
+    branches:
+      - research/v9-prestart-live-data-compatibility-20261111
+    paths:
+      - research/v91_coinbase_public_live_probe.py
+      - tests/test_v91_coinbase_public_live_probe.py
+      - .github/workflows/v91-coinbase-public-live-probe.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  research-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout research branch only
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+      - name: Test read-only probe without network
+        run: python3 -m unittest discover -s tests -p test_v91_coinbase_public_live_probe.py -v
+      - name: Read-only official Coinbase SPOT + INTX PERP public API network probe
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/v91_coinbase_probe
+          python3 research/v91_coinbase_public_live_probe.py | tee /tmp/v91_coinbase_probe/report.json
+      - name: Archive read-only results for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v91-coinbase-market-data-public-probe
+          path: /tmp/v91_coinbase_probe/report.json
+          if-no-files-found: warn
+          retention-days: 7
