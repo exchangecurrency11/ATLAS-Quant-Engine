@@ -14,6 +14,8 @@ on:
       - Publish BTC SOL Market Data
       - Publish BTC SOL Market Structure
       - ETH V7 Independent Hourly Paper Forward (no orders)
+      - V9 Hourly BTC ETH SOL Market Context (paper only)
+      - V7 Hourly Paper Forward Runner
     types: [completed]
     branches: [main]
   schedule:
@@ -26,6 +28,8 @@ on:
     # Redundant 5-minute staggered attempts; one immutable forecast per 4H target.
     # Late or duplicate attempts skip safely before touching market data.
     - cron: '36,41,46,51,53 23,3,7,11,15,19 * * *'
+    # Additional independent prestart check times, still 3-25m gate.
+    - cron: '38,44,49,54 23,3,7,11,15,19 * * *'
   workflow_dispatch:
 
 permissions:
