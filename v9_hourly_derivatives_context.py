@@ -85,7 +85,21 @@ def main():
          os.getenv("SOL_V8_COINALYZE_API_KEY") or
          os.getenv("COINALYZE_API_KEY") or "").strip()
     if not key:raise ValueError("NO_READONLY_COINALYZE_KEY")
-    out=overlay_at(target,key)
+    try:
+        out=overlay_at(target,key)
+    except (ValueError,TimeoutError,OSError,json.JSONDecodeError) as e:
+        # Explicit refusal: incomplete OI/funding must NEVER be silently
+        # presented as successful directional confirmation.
+        out={
+            "status":"V9_HOURLY_DERIVATIVES_UNAVAILABLE_NO_SIGNAL",
+            "asOfClosed1HUTC":iso(target),
+            "failureCategory":type(e).__name__,
+            "failureReasonCode":"SOURCE_INCOMPLETE_OR_UNVERIFIED",
+            "contracts":{},
+            "noTradingOrders":True,
+            "doesNotChangeFrozenPrestart4HModel":True,
+            "noUserNotifications":True}
+        print("V9_DERIVATIVES_REFUSED_UNVERIFIED",type(e).__name__,flush=True)
     d=Path(args.dir)
     d.mkdir(parents=True,exist_ok=True)
     name=close.strftime("%Y-%m-%dT%H-00Z")+".json"
