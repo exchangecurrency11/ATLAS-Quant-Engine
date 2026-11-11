@@ -382,16 +382,23 @@ def main():
                         quality_hour_by_symbol=quality_history)
     report["v9QualitySourceAudit"]=quality_source
     paper=score_trade_subset(a.v7,a.sealed,first_commit_epoch)
-    for name,content in ((a.latest,report),(a.score,paper)):
-        out=Path(name);out.parent.mkdir(parents=True,exist_ok=True)
-        out.write_text(json.dumps(content,ensure_ascii=False,indent=2)+"\n")
     path=Path(a.snapshot_dir)/(matched[0])
     path.parent.mkdir(parents=True,exist_ok=True)
     if path.exists():
         previous=json.loads(path.read_text())
-        if previous!=report:raise ValueError("IMMUTABLE_HOURLY_TRADE_OVERLAY_REWRITE_REFUSED")
+        if previous!=report:
+            # An old original V7/V9 hour can NEVER be re-labeled as though
+            # this upgraded quality version had been run at that time.
+            # Leave both the immutable record and original latest as-is.
+            # Only genuinely NEW hours may receive a new versioned score.
+            print("V9_V7_PREVIOUS_HOUR_IMMUTABLE_DO_NOT_BACKFILL_NEW_QUALITY_MODEL",
+                  iso(end),flush=True)
+            return
     else:
         path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
+    for name,content in ((a.latest,report),(a.score,paper)):
+        out=Path(name);out.parent.mkdir(parents=True,exist_ok=True)
+        out.write_text(json.dumps(content,ensure_ascii=False,indent=2)+"\n")
     print("V9_V7_PRIMARY_TRADE_OPPORTUNITY_BRIDGE_RECORDED",
           iso(end),report["original4HForecastLockStatus"],
           "originalV7exits",paper["originalV7TradeCount"],
