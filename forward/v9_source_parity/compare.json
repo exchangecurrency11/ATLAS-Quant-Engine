@@ -1,0 +1,450 @@
+{
+  "status": "V9_CROSS_SOURCE_1H_CANDLE_FLOW_PARITY_AUDIT_NOT_SIGNAL",
+  "testedUTC": "2026-11-11T13:01:50Z",
+  "dates": {
+    "2026-10-29": {
+      "status": "COINALYZE_1H_AVAILABLE",
+      "coinalyzeSHA256": "36714fe4e03540f37f403d451df9612965470c54055ae8f1ae02de7dde37e31e",
+      "symbols": {
+        "BTCUSDT": {
+          "status": "CROSS_SOURCE_FIELD_MISMATCH",
+          "official": {
+            "source": "https://data.binance.vision/data/futures/um/daily/klines/BTCUSDT/1h/BTCUSDT-1h-2026-10-29.zip",
+            "sha256Verified": "04d796be286154bd2e2b15edabc777187527bddc61106f7e656d21a43f670791",
+            "24ClosedHours": true,
+            "endUTC": "2026-10-30T00:00:00Z"
+          },
+          "barsCompared": 24,
+          "mismatchesByField": {
+            "o": 1,
+            "h": 0,
+            "l": 0,
+            "c": 0,
+            "v": 2,
+            "tbv": 1,
+            "trades": 24
+          },
+          "firstMismatchByField": {
+            "o": [
+              {
+                "atUTC": "2026-10-29T21:00:00Z",
+                "official": 78819.6,
+                "coinalyze": 78819.5,
+                "relativeDifferencePct": 0.0001
+              }
+            ],
+            "v": [
+              {
+                "atUTC": "2026-10-29T03:00:00Z",
+                "official": 4001.035,
+                "coinalyze": 3992.9250000000397,
+                "relativeDifferencePct": 0.2027
+              },
+              {
+                "atUTC": "2026-10-29T10:00:00Z",
+                "official": 2868.126,
+                "coinalyze": 2810.0100000000016,
+                "relativeDifferencePct": 2.0263
+              }
+            ],
+            "tbv": [
+              {
+                "atUTC": "2026-10-29T10:00:00Z",
+                "official": 1307.933,
+                "coinalyze": 1287.8019999999847,
+                "relativeDifferencePct": 1.5391
+              }
+            ],
+            "trades": [
+              {
+                "atUTC": "2026-10-29T00:00:00Z",
+                "official": 66556,
+                "coinalyze": 25145,
+                "relativeDifferencePct": 62.2198
+              },
+              {
+                "atUTC": "2026-10-29T01:00:00Z",
+                "official": 219966,
+                "coinalyze": 80073,
+                "relativeDifferencePct": 63.5976
+              }
+            ]
+          },
+          "maximumAbsoluteRelativeDifferencePct": {
+            "o": 0.00013,
+            "h": 0.0,
+            "l": 0.0,
+            "c": 0.0,
+            "v": 2.02627,
+            "tbv": 1.53915,
+            "trades": 66.17225
+          },
+          "priceOHLCParity": false,
+          "totalVolumeParity": false,
+          "takerBuyBaseParity": false,
+          "coinalyzeTxEqualsOfficialNumberOfTrades": false,
+          "allSevenFieldsParity": false
+        },
+        "ETHUSDT": {
+          "status": "CROSS_SOURCE_FIELD_MISMATCH",
+          "official": {
+            "source": "https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/1h/ETHUSDT-1h-2026-10-29.zip",
+            "sha256Verified": "bc65d61a492c6d3f5a33f80194faaf8308348efcd2a9ad928dad1f40291c6c51",
+            "24ClosedHours": true,
+            "endUTC": "2026-10-30T00:00:00Z"
+          },
+          "barsCompared": 24,
+          "mismatchesByField": {
+            "o": 1,
+            "h": 0,
+            "l": 0,
+            "c": 0,
+            "v": 3,
+            "tbv": 3,
+            "trades": 24
+          },
+          "firstMismatchByField": {
+            "o": [
+              {
+                "atUTC": "2026-10-29T16:00:00Z",
+                "official": 2368.02,
+                "coinalyze": 2368.03,
+                "relativeDifferencePct": 0.0004
+              }
+            ],
+            "v": [
+              {
+                "atUTC": "2026-10-29T03:00:00Z",
+                "official": 88335.364,
+                "coinalyze": 87188.18499999944,
+                "relativeDifferencePct": 1.2987
+              },
+              {
+                "atUTC": "2026-10-29T07:00:00Z",
+                "official": 136955.709,
+                "coinalyze": 136411.53899999967,
+                "relativeDifferencePct": 0.3973
+              }
+            ],
+            "tbv": [
+              {
+                "atUTC": "2026-10-29T03:00:00Z",
+                "official": 45832.494,
+                "coinalyze": 45260.85099999971,
+                "relativeDifferencePct": 1.2472
+              },
+              {
+                "atUTC": "2026-10-29T07:00:00Z",
+                "official": 63709.932,
+                "coinalyze": 63204.38699999996,
+                "relativeDifferencePct": 0.7935
+              }
+            ],
+            "trades": [
+              {
+                "atUTC": "2026-10-29T00:00:00Z",
+                "official": 88915,
+                "coinalyze": 21081,
+                "relativeDifferencePct": 76.2908
+              },
+              {
+                "atUTC": "2026-10-29T01:00:00Z",
+                "official": 297338,
+                "coinalyze": 73315,
+                "relativeDifferencePct": 75.3429
+              }
+            ]
+          },
+          "maximumAbsoluteRelativeDifferencePct": {
+            "o": 0.00042,
+            "h": 0.0,
+            "l": 0.0,
+            "c": 0.0,
+            "v": 1.29866,
+            "tbv": 1.24724,
+            "trades": 77.69506
+          },
+          "priceOHLCParity": false,
+          "totalVolumeParity": false,
+          "takerBuyBaseParity": false,
+          "coinalyzeTxEqualsOfficialNumberOfTrades": false,
+          "allSevenFieldsParity": false
+        },
+        "SOLUSDT": {
+          "status": "CROSS_SOURCE_FIELD_MISMATCH",
+          "official": {
+            "source": "https://data.binance.vision/data/futures/um/daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-10-29.zip",
+            "sha256Verified": "c855f0b343c6a69f8364a47297672a5a4ccc477dbf78c9a6110575c8ee6a7548",
+            "24ClosedHours": true,
+            "endUTC": "2026-10-30T00:00:00Z"
+          },
+          "barsCompared": 24,
+          "mismatchesByField": {
+            "o": 1,
+            "h": 0,
+            "l": 0,
+            "c": 0,
+            "v": 1,
+            "tbv": 1,
+            "trades": 24
+          },
+          "firstMismatchByField": {
+            "o": [
+              {
+                "atUTC": "2026-10-29T16:00:00Z",
+                "official": 102.66,
+                "coinalyze": 102.67,
+                "relativeDifferencePct": 0.0097
+              }
+            ],
+            "v": [
+              {
+                "atUTC": "2026-10-29T10:00:00Z",
+                "official": 417096.82,
+                "coinalyze": 414698.25999999966,
+                "relativeDifferencePct": 0.5751
+              }
+            ],
+            "tbv": [
+              {
+                "atUTC": "2026-10-29T10:00:00Z",
+                "official": 189777.33,
+                "coinalyze": 189226.58999999953,
+                "relativeDifferencePct": 0.2902
+              }
+            ],
+            "trades": [
+              {
+                "atUTC": "2026-10-29T00:00:00Z",
+                "official": 47442,
+                "coinalyze": 5839,
+                "relativeDifferencePct": 87.6923
+              },
+              {
+                "atUTC": "2026-10-29T01:00:00Z",
+                "official": 123018,
+                "coinalyze": 13605,
+                "relativeDifferencePct": 88.9406
+              }
+            ]
+          },
+          "maximumAbsoluteRelativeDifferencePct": {
+            "o": 0.00974,
+            "h": 0.0,
+            "l": 0.0,
+            "c": 0.0,
+            "v": 0.57506,
+            "tbv": 0.2902,
+            "trades": 90.35691
+          },
+          "priceOHLCParity": false,
+          "totalVolumeParity": false,
+          "takerBuyBaseParity": false,
+          "coinalyzeTxEqualsOfficialNumberOfTrades": false,
+          "allSevenFieldsParity": false
+        }
+      }
+    },
+    "2026-11-08": {
+      "status": "COINALYZE_1H_AVAILABLE",
+      "coinalyzeSHA256": "0aa5faf6315126bfa1363b9ee4169a55511ed2dc3e4a606dd042f40596108315",
+      "symbols": {
+        "BTCUSDT": {
+          "status": "CROSS_SOURCE_FIELD_MISMATCH",
+          "official": {
+            "source": "https://data.binance.vision/data/futures/um/daily/klines/BTCUSDT/1h/BTCUSDT-1h-2026-11-08.zip",
+            "sha256Verified": "59b3d0a61cfdde2e5f039bd2680b10b6772729591afd4cd4986c748b52f3dde2",
+            "24ClosedHours": true,
+            "endUTC": "2026-11-09T00:00:00Z"
+          },
+          "barsCompared": 24,
+          "mismatchesByField": {
+            "o": 0,
+            "h": 0,
+            "l": 0,
+            "c": 0,
+            "v": 0,
+            "tbv": 0,
+            "trades": 24
+          },
+          "firstMismatchByField": {
+            "trades": [
+              {
+                "atUTC": "2026-11-08T00:00:00Z",
+                "official": 21006,
+                "coinalyze": 8082,
+                "relativeDifferencePct": 61.5253
+              },
+              {
+                "atUTC": "2026-11-08T01:00:00Z",
+                "official": 23008,
+                "coinalyze": 8396,
+                "relativeDifferencePct": 63.5083
+              }
+            ]
+          },
+          "maximumAbsoluteRelativeDifferencePct": {
+            "o": 0.0,
+            "h": 0.0,
+            "l": 0.0,
+            "c": 0.0,
+            "v": 0.00631,
+            "tbv": 0.00354,
+            "trades": 64.39553
+          },
+          "priceOHLCParity": true,
+          "totalVolumeParity": true,
+          "takerBuyBaseParity": true,
+          "coinalyzeTxEqualsOfficialNumberOfTrades": false,
+          "allSevenFieldsParity": false
+        },
+        "ETHUSDT": {
+          "status": "CROSS_SOURCE_FIELD_MISMATCH",
+          "official": {
+            "source": "https://data.binance.vision/data/futures/um/daily/klines/ETHUSDT/1h/ETHUSDT-1h-2026-11-08.zip",
+            "sha256Verified": "f20d4f255d5b16b3b309abf83e845fa236941c7692c7795e8189bdf3c706cc7e",
+            "24ClosedHours": true,
+            "endUTC": "2026-11-09T00:00:00Z"
+          },
+          "barsCompared": 24,
+          "mismatchesByField": {
+            "o": 1,
+            "h": 0,
+            "l": 0,
+            "c": 0,
+            "v": 0,
+            "tbv": 0,
+            "trades": 24
+          },
+          "firstMismatchByField": {
+            "o": [
+              {
+                "atUTC": "2026-11-08T17:00:00Z",
+                "official": 2229.59,
+                "coinalyze": 2229.58,
+                "relativeDifferencePct": 0.0004
+              }
+            ],
+            "trades": [
+              {
+                "atUTC": "2026-11-08T00:00:00Z",
+                "official": 29577,
+                "coinalyze": 7508,
+                "relativeDifferencePct": 74.6154
+              },
+              {
+                "atUTC": "2026-11-08T01:00:00Z",
+                "official": 35825,
+                "coinalyze": 9627,
+                "relativeDifferencePct": 73.1277
+              }
+            ]
+          },
+          "maximumAbsoluteRelativeDifferencePct": {
+            "o": 0.00045,
+            "h": 0.0,
+            "l": 0.0,
+            "c": 0.0,
+            "v": 0.03277,
+            "tbv": 0.0,
+            "trades": 77.04903
+          },
+          "priceOHLCParity": false,
+          "totalVolumeParity": true,
+          "takerBuyBaseParity": true,
+          "coinalyzeTxEqualsOfficialNumberOfTrades": false,
+          "allSevenFieldsParity": false
+        },
+        "SOLUSDT": {
+          "status": "CROSS_SOURCE_FIELD_MISMATCH",
+          "official": {
+            "source": "https://data.binance.vision/data/futures/um/daily/klines/SOLUSDT/1h/SOLUSDT-1h-2026-11-08.zip",
+            "sha256Verified": "69207e39fa7f5f314e9569ebaebfdb7d95cbd444890f5f213ba81b3069fc33d8",
+            "24ClosedHours": true,
+            "endUTC": "2026-11-09T00:00:00Z"
+          },
+          "barsCompared": 24,
+          "mismatchesByField": {
+            "o": 0,
+            "h": 0,
+            "l": 0,
+            "c": 0,
+            "v": 0,
+            "tbv": 0,
+            "trades": 24
+          },
+          "firstMismatchByField": {
+            "trades": [
+              {
+                "atUTC": "2026-11-08T00:00:00Z",
+                "official": 24338,
+                "coinalyze": 4747,
+                "relativeDifferencePct": 80.4955
+              },
+              {
+                "atUTC": "2026-11-08T01:00:00Z",
+                "official": 23823,
+                "coinalyze": 4159,
+                "relativeDifferencePct": 82.5421
+              }
+            ]
+          },
+          "maximumAbsoluteRelativeDifferencePct": {
+            "o": 0.0,
+            "h": 0.0,
+            "l": 0.0,
+            "c": 0.0,
+            "v": 0.0,
+            "tbv": 0.0,
+            "trades": 88.08714
+          },
+          "priceOHLCParity": true,
+          "totalVolumeParity": true,
+          "takerBuyBaseParity": true,
+          "coinalyzeTxEqualsOfficialNumberOfTrades": false,
+          "allSevenFieldsParity": false
+        }
+      }
+    }
+  },
+  "perAsset": {
+    "BTCUSDT": {
+      "daysCompared": 2,
+      "hourlyCandlesCompared": 48,
+      "OHLCVMatchedEveryComparedHour": false,
+      "takerBuyBaseMatchedEveryComparedHour": false,
+      "CoinalyzeTXequalsOfficialTradeCount": false,
+      "allSevenFieldsMatched": false,
+      "noSourceMatchConclusionsIfZeroSamples": true
+    },
+    "ETHUSDT": {
+      "daysCompared": 2,
+      "hourlyCandlesCompared": 48,
+      "OHLCVMatchedEveryComparedHour": false,
+      "takerBuyBaseMatchedEveryComparedHour": false,
+      "CoinalyzeTXequalsOfficialTradeCount": false,
+      "allSevenFieldsMatched": false,
+      "noSourceMatchConclusionsIfZeroSamples": true
+    },
+    "SOLUSDT": {
+      "daysCompared": 2,
+      "hourlyCandlesCompared": 48,
+      "OHLCVMatchedEveryComparedHour": false,
+      "takerBuyBaseMatchedEveryComparedHour": false,
+      "CoinalyzeTXequalsOfficialTradeCount": false,
+      "allSevenFieldsMatched": false,
+      "noSourceMatchConclusionsIfZeroSamples": true
+    }
+  },
+  "priceToleranceRel": 1e-06,
+  "volumeAndTakerBuyToleranceRel": 0.002,
+  "tradeCountStrictIntegerEquality": true,
+  "officialBinanceArchiveSHA256IndependentlyVerified": true,
+  "allAssetsPriceVolumeFlowParityProven": false,
+  "noModelTrainingOrWeightUpdates": true,
+  "mustNotPretendUnverifiedFieldsAreVerified": true,
+  "researchOnly": true,
+  "notificationsEnabled": false,
+  "brokerOrders": false,
+  "productionModified": false
+}
