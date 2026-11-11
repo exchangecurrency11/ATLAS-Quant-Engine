@@ -62,12 +62,28 @@ jobs:
           ref: experiment/v7-signal-quality-20261103
           persist-credentials: true
 
-      - name: Run observer and strategy unit tests
+      - name: Skip immutable hour before making duplicate market-data requests
+        id: immutable
         if: steps.timing.outputs.run == 'true'
+        shell: bash
+        env:
+          TARGET: ${{ steps.timing.outputs.target }}
+        run: |
+          set -euo pipefail
+          if test -f "forward/snapshots/$TARGET.json"; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V7_IMMUTABLE_EXISTING_HOUR_SKIP_ALL_REDOWNLOADS"
+          else
+            echo "capture=true" >> "$GITHUB_OUTPUT"
+            echo "V7_NEW_HOUR_REQUIRES_INDEPENDENT_SOURCE_VERIFICATION"
+          fi
+
+      - name: Run observer and strategy unit tests
+        if: steps.timing.outputs.run == 'true' && steps.immutable.outputs.capture == 'true'
         run: python3 -m unittest discover -s tests -p 'test_*.py' -q
 
       - name: Audit PAST missing hours without inventing historical signals
-        if: steps.timing.outputs.run == 'true'
+        if: steps.timing.outputs.run == 'true' && steps.immutable.outputs.capture == 'true'
         env:
           TARGET: ${{ steps.timing.outputs.target }}
         shell: bash
@@ -81,7 +97,7 @@ jobs:
             --target "${TARGET/-00Z/:00:00Z}"
 
       - name: Fetch fresh closed perpetual candles and main source
-        if: steps.timing.outputs.run == 'true'
+        if: steps.timing.outputs.run == 'true' && steps.immutable.outputs.capture == 'true'
         id: fetch
         continue-on-error: true
         env:
@@ -101,7 +117,7 @@ jobs:
           done
 
       - name: Write audit and human-readable report for target hour
-        if: steps.timing.outputs.run == 'true'
+        if: steps.timing.outputs.run == 'true' && steps.immutable.outputs.capture == 'true'
         shell: bash
         env:
           FETCH_RESULT: ${{ steps.fetch.outcome }}
@@ -155,7 +171,7 @@ jobs:
           python3 -c 'import json; s=json.load(open("forward/tmp/latest-observation.json")); print("V7",s["status"],s["targetClosed1HUTC"])'
 
       - name: Commit ONLY experimental observations/reports
-        if: steps.timing.outputs.run == 'true'
+        if: steps.timing.outputs.run == 'true' && steps.immutable.outputs.capture == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -183,7 +199,7 @@ jobs:
           fi
 
       - name: Save compact verification artifacts
-        if: always() && steps.timing.outputs.run == 'true'
+        if: always() && steps.timing.outputs.run == 'true' && steps.immutable.outputs.capture == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: v7-hourly-report-${{ github.run_id }}
