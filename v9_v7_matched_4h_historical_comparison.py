@@ -21,7 +21,7 @@ from v9_next4h_prestart_paper_capture import (
 
 START=ts("2026-11-03T20:00:00Z")
 START_SOURCE_V7=ts("2026-11-03T16:00:00Z")
-FEATURE_1H=1000
+FEATURE_1H=1200
 FEATURE_DAILY=330
 V7_KEY={"BTCUSDT":"BTCUSDT_PERP.A","SOLUSDT":"SOLUSDT_PERP.A",
         "ETHUSDT":"ETHUSDT_PERP.A"}
@@ -164,14 +164,21 @@ def replay(asof,key,model_file,v7BTC_SOL,v7ETH,fetch=None):
     end=(asof//FOUR)*FOUR
     lo1=end-FEATURE_1H*HOUR
     lowD=(end//DAY-FEATURE_DAILY)*DAY
-    one,h1=get_group("1hour",lo1,end,key,fetch)
+    # Coinalyze limits OHLCV-history page length. Fetch a contiguous
+    # 200h + 1000h window; 1200h ensures the earliest Nov-03 target
+    # has >=200 complete 4H bars of historical warmup. Never impute.
+    mid=end-1000*HOUR
+    before,hash_earlier=get_group("1hour",lo1,mid,key,fetch)
+    recent,hash_recent=get_group("1hour",mid,end,key,fetch)
+    one={s:before[s]+recent[s] for s in SYMBOLS}
+    h1=hashlib.sha256((hash_earlier+":"+hash_recent).encode()).hexdigest()
     daily,hD=get_group("daily",lowD,end,key,fetch)
     raw={}
     for s in SYMBOLS:
         h=one[s];d=daily[s]
         if len(h)!=FEATURE_1H or any(
             x["t"]!=lo1+i*HOUR for i,x in enumerate(h)):
-            raise ValueError("V9_1000H_CONTIGUOUS_REQUIRED_"+s)
+            raise ValueError("V9_1200H_CONTIGUOUS_REQUIRED_"+s)
         if (len(d)!=FEATURE_DAILY or any(
                 x["t"]!=lowD+i*DAY for i,x in enumerate(d))):
             raise ValueError("V9_330D_CONTIGUOUS_REQUIRED_"+s)
