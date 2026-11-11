@@ -1,0 +1,122 @@
+name: 'V9 V7+ full PROFIT trade-first backtest on same historical candles NO alerts'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_v7_full_profit_backtest.py
+      - tests/test_v9_v7_full_profit_backtest.py
+      - .github/workflows/v9-v7-full-profit-backtest.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: v9-v7-full-profit-vs-direction-research
+  cancel-in-progress: false
+
+jobs:
+  paper-profit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout isolated frozen V9 research only
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+
+      - name: Install fixed-form logistic historical replay dependencies only
+        run: |
+          python3 -m pip install --disable-pip-version-check 'numpy<3' 'scipy<2' 'scikit-learn>=1.4,<2'
+
+      - name: Validate V9 4H before target BOS decision and V7 paper exit costing
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_v9_v7_full_profit_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_next_4h_color_research.py' -q
+          python3 -m unittest discover -s tests -p 'test_v9_no_provider_tx_ablation.py' -q
+          python3 -m unittest discover -s tests -p 'test_signal_quality_v7.py' -q
+
+      - name: Download ORIGINAL V7 SHA-verified archive (do not modify original V7)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p v7_archived
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+            -n btc-sol-official-binance-verified-through-2026-11-02 \
+            -D v7_archived
+          for tf in 1hour 4hour daily; do
+            test -s "v7_archived/history_$tf.json"
+          done
+
+      - name: Re-download checked Binance BTC ETH SOL 2023-Sep2026, retrain only within historical walk-forward folds, sequentially replay V7 paper trades
+        run: |
+          set -euo pipefail
+          python3 -u v9_v7_full_profit_backtest.py
+
+      - name: Assert full sequential apples-to-apples strategy not selected fake winning trades
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('forward/v9_v7_profit_backtest/compare.json')
+          x=json.loads(p.read_text())
+          assert x['status']=='V9_V7_PLUS_BOS_RETEST_FULL_CHRONOLOGICAL_PROFIT_BACKTEST_HISTORICAL'
+          assert x['V7StrategyIsPrimary'] and x['V9PredictedOwn4HCandleColorIsOnlyOptionalPreknownBOSGate']
+          assert x['sameChronologicalSimulationAndRiskStopTPForEachVariant']
+          assert x['allSourcePricesStrictlyReconciledWithOriginalV7']
+          assert x['V9ForecastTMinus5MinutesForEach4HBeforeBOSSignal']
+          assert not x['prospectiveOrPreviouslyUnseenOutOfSample']
+          assert x['noBrokerOrders'] and x['noUserNotifications']
+          assert x['productionV7AndOriginalV9ModelsNotModified']
+          assert x['modelOrAlertPromotionBlocked']
+          assert set(x['candidateHistorical'])=={'BTCUSDT','SOLUSDT'}
+          expected={'V7_ORIGINAL','V9_94_DIRECTION_GATE',
+                    'V9_88_NO_TX_DIRECTION_GATE','V9_94_AND_88_AGREEMENT_GATE'}
+          for sym,v in x['candidateHistorical'].items():
+            assert set(v)==expected
+            for name,s in v.items():
+              assert s['fullySequentialSameOriginalV7Candles']
+              assert s['next1HOpenPaperEntryAndSameStopTPTimingAsV7']
+              assert s['filtersOnlyV7AlreadyQualifyingBOS']
+              assert s['tradeRetestWasObservedBeforeEntry']
+              assert s['V7paperClosedTrades']>=0
+              if s['V7paperClosedTrades']==0:
+                  assert s['averageNetR9BpsPerSide'] is None
+                  assert s['totalNetR9BpsPerSide'] is None
+          print('V9_V7_PLUS_PROFIT_PRIMARY_REPLAY_CHECKED')
+          PY
+
+      - name: Keep original full backtest research results even if commit fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-v7-full-chronological-profit-first-${{ github.run_id }}
+          path: forward/v9_v7_profit_backtest/
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Publish comparison to V9 research branch only
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_v7_profit_backtest/compare.json \
+                  forward/v9_v7_profit_backtest/compare.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'V9 vs original V7: full BOS retest sequential 1H trade PnL backtest (9bp and 25bp cost) research only'
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_V7_FULL_CHRONOLOGICAL_PAPER_PROFIT_BACKTEST_RECORDED_NO_ALERT"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
