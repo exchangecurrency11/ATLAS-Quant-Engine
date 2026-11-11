@@ -1,0 +1,27 @@
+name: "V9.1 prospective 4h retest shadow code safety (paper only)"
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v91_prospective_retest.py
+      - tests/test_v91_prospective_retest.py
+      - .github/workflows/v91-prospective-retest-tests.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+      - name: Verify prospective causal capture is sealed to current hour and V7 parity
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v91_prospective_retest.py
+          python3 -m unittest discover -s tests -p 'test_v91_prospective_retest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v91_retest_full_replay.py' -q
+          python3 -m unittest discover -s tests -p 'test_signal_quality_v7.py' -q
+          echo "V91_PROSPECTIVE_PAPER_SAFETY_AND_V7_PARITY_UNIT_TESTS_COMPLETE_NO_ORDERS"
