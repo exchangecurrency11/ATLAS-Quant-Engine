@@ -1,0 +1,79 @@
+name: 'V9 BTC ETH SOL OI funding CVD next4H OWN candle historical ablation'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_derivatives_own4h_color_study.py
+      - tests/test_v9_derivatives_own4h_color_study.py
+      - .github/workflows/v9-derivatives-own4h-color-ablation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-derivatives-ownbody-historical-research
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Verify all three assets strict no-future 4H own body and control source labels
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_derivatives_own4h_color_study.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_three_asset_derivatives_ablation.py' -q
+      - name: Research only last 21 days aligned Coinalyze OHLCV OI funding all Binance perpetuals
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v9_derivatives_own4h_color_study.py
+      - name: Assert exact 4H color question and no experimental signal promotion
+        run: |
+          python3 - <<'PY'
+          import json
+          x=json.load(open('forward/v9_derivatives_own4h_color/report.json'))
+          assert x['status']=='V9_COINALYZE_DERIVATIVES_OWN_NEXT_4H_COLOR_CAUSAL_HISTORICAL_ONLY'
+          assert x['noRealOrders'] is True and x['noNotifications'] and not x['productionModified']
+          assert x['variantThresholdsSameAsPriorPredeclaredA_E_and_B_C_D']
+          assert not x['trainingOrFeatureFitPerformed']
+          assert x['noActualNext4HModelTrainingOrPromotion']
+          assert set(x['sourceSHA256'])=={
+             'ohlcv-history','open-interest-history','funding-rate-history'}
+          assert set(x['assetResults'])=={'BTCUSDT','ETHUSDT','SOLUSDT'}
+          for s,v in x['assetResults'].items():
+            assert v['intendedDistinct4HTargets']==126
+            assert v['eligibleBothSourcesPlusFutureCandle']+v['sourceMissingOrSkipped']==126
+            assert v['postSelectionOfB_C_DNeverProvesDirectionalEdge']
+            assert 'A_priceMomentum' in v['results'] and 'E_takerCVDOnly' in v['results']
+          print('V9_OI_FUNDING_TAKER_CVD_NEXT4H_OWN_BODY_RESEARCH_ONLY')
+          PY
+      - name: Upload research-only test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-next4h-ownbody-derivatives-only-${{ github.run_id }}
+          path: forward/v9_derivatives_own4h_color/
+          if-no-files-found: ignore
+          retention-days: 60
+      - name: Save research result only to isolated V9 branch
+        if: success()
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_derivatives_own4h_color/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9: causally aligned BTC ETH SOL OI funding taker 21d future OWN 4H body retrospective study"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then exit 0; fi
+            sleep 4
+          done
+          exit 1
