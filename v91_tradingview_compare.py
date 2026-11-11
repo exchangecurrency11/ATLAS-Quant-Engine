@@ -13,6 +13,7 @@ import math
 from datetime import datetime, timezone
 from pathlib import Path
 
+HOUR=3600
 HOUR_MS=3_600_000
 VERSION="v91.tv.1h.v1"
 TICKERS={"BTCUSDT.P":"BTCUSDT_PERP.A","SOLUSDT.P":"SOLUSDT_PERP.A"}
