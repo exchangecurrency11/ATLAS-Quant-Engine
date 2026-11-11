@@ -1,0 +1,84 @@
+name: V9.1 Coinbase spot hourly independent context (silent paper only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v91-coinbase-spot-hourly-shadow.yml
+  schedule:
+    - cron: '28 * * * *'
+    - cron: '48 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: v91-coinbase-spot-hourly-independent-research
+  cancel-in-progress: false
+jobs:
+  compare-spot-context:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - name: Checkout isolated research branch (never mutate V7 or main logic)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          persist-credentials: true
+      - name: Test no signals or futures parity claims
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_v91_coinbase_public_live_probe.py' -q
+          python3 -m unittest discover -s tests -p 'test_v91_coinbase_spot_hourly_shadow.py' -q
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+      - name: Capture EXACT present-hour closed Coinbase spot candles if not already sealed
+        run: |
+          set -euo pipefail
+          python3 -m research.v91_coinbase_spot_hourly_shadow
+      - name: Verify zero orders alerts and new signal gates
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/v91_coinbase_spot_shadow/hourly")
+          for f in p.glob("*.json") if p.exists() else []:
+              j=json.loads(f.read_text())
+              assert j["mode"]=="V91_COINBASE_HOURLY_SPOT_INDEPENDENT_SHADOW_READ_ONLY"
+              assert j["noEntrySignalOrVeto"] and j["originalV7Unmodified"]
+              assert j["v91RulesUnmodified"] and j["noBrokerOrders"] and j["noNotifications"]
+              assert j["noIndependentLiveBinancePerpetualOHLCParity"]
+              assert j["noCoinalyzeVolumeParityClaim"]
+          print("COINBASE_SPOT_SHADOW_READ_ONLY_SAFETY_GUARDS_OK")
+          PY
+      - name: Commit append-only hourly spot observations to research branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          if [ ! -d forward/v91_coinbase_spot_shadow/hourly ]; then
+            echo "COINBASE_SPOT_SHADOW_NO_NEW_OBSERVATION_OUTSIDE_GATE"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v91_coinbase_spot_shadow/hourly/
+          if git diff --cached --quiet; then
+            echo "COINBASE_SPOT_SHADOW_ALREADY_RECORDED_NO_PUSH"
+            exit 0
+          fi
+          git commit -m "V9.1 independent Coinbase spot hourly context, paper read-only"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "COINBASE_SPOT_SHADOW_HOURLY_RESEARCH_SAVED_NO_SIGNALS"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
+      - name: Preserve small diagnostic artifact, no user notifications
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v91-coinbase-spot-hourly-research
+          path: forward/v91_coinbase_spot_shadow/hourly/*.json
+          if-no-files-found: ignore
+          retention-days: 7
