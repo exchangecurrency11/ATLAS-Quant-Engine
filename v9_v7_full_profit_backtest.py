@@ -33,6 +33,8 @@ from v9_next_4h_color_research import (
     SYMBOLS,FOLDS,ts,iso,FOUR,HOUR,download_three,
     prepare,observations,fit_and_predict)
 from v9_no_provider_tx_ablation import transform_observations
+from v9_trade_opportunity_quality import (
+    SCORE_CANDIDATES,gate_v7_with_quality)
 from v9_v7_historical_paper_trade_ledger import (
     reconstruct,journal_report,save_artifacts)
 
@@ -42,7 +44,8 @@ AS_OF=ts("2026-10-01T00:00:00Z")
 PERIOD_START=ts("2024-10-01T00:00:00Z")
 MODE="V9_V7_PLUS_BOS_RETEST_FULL_CHRONOLOGICAL_PROFIT_BACKTEST_HISTORICAL"
 VARIANTS=("V7_ORIGINAL","V9_94_DIRECTION_GATE",
-          "V9_88_NO_TX_DIRECTION_GATE","V9_94_AND_88_AGREEMENT_GATE")
+          "V9_88_NO_TX_DIRECTION_GATE","V9_94_AND_88_AGREEMENT_GATE",
+          "V9_QUALITY_SCORE_60","V9_QUALITY_SCORE_75")
 BPS_BASE=9
 BPS_STRESS=25
 
@@ -198,8 +201,16 @@ def run(v7inputs,v9data=None,v9obs=None,source=None):
                     "rejectedNoV9PrestartForecast":0,
                     "rejectedDirectionalDisagreement":0,
                     "V9DirectionAlignedV7BOS":0}
-            out=replay_pair(h,four,day,as_of=AS_OF,bos_quality_filter=
-                gate_at_bos(s,p94,p88,variant,events))
+            if variant in SCORE_CANDIDATES:
+                threshold=SCORE_CANDIDATES[variant]
+                def quality_gate(bars,bos,indicators, threshold=threshold):
+                    original=evaluate_bos_quality(bars,bos,indicators)
+                    return gate_v7_with_quality(
+                        bars,bos,indicators,original,threshold,events)
+                gate=quality_gate
+            else:
+                gate=gate_at_bos(s,p94,p88,variant,events)
+            out=replay_pair(h,four,day,as_of=AS_OF,bos_quality_filter=gate)
             stat=metrics(out)
             stat["V9BOSDirectionFilterAudit"]=events
             stat["filtersOnlyV7AlreadyQualifyingBOS"]=True
@@ -234,6 +245,10 @@ def run(v7inputs,v9data=None,v9obs=None,source=None):
       "V994UsesHistoricalSixFoldExpandingModelsNotSepFrozenInPast":True,
       "V988ShadowUsesExactSameSixFoldsNoPostSelection":True,
       "V9ForecastTMinus5MinutesForEach4HBeforeBOSSignal":True,
+      "newV9QualityV7OnlyRegimeFVGOBLiquidityResearch":True,
+      "qualityThresholdsPredeclaredBeforeNewResultExecution":SCORE_CANDIDATES,
+      "qualityOnlyUsesClosed1HAtOriginalV7BOS":True,
+      "qualityScoresNotCalibratedProfitProbabilities":True,
       "dojiExcluded":excluded,
       "prospectiveOrPreviouslyUnseenOutOfSample":False,
       "historicalDataAlreadyInspectedAndNoFilterSelectionPermitted":True,
@@ -292,6 +307,8 @@ def report_md(z):
        "Small sample of original V7 retest paper trades; no orders or fills. "
        "Funding, real execution gaps, spread, liquidation and leverage not "
        "simulated. A green 4H candle does not imply a profitable LONG.",
+       "V9 QUALITY 60/75 are separate OHLCV-only causal shadow-gate hypotheses, "
+       "chart FVG/OB and wick sweeps are heuristics, NOT actual order-book liquidity.",
        "No 2026-10 or 2026-11 targets in the V9 evaluation because the "
        "6-fold historical 4H records end 2026-09. Original V7 Oct-Nov "
        "observations remain untouched and separate.",
