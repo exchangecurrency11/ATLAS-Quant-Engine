@@ -83,6 +83,8 @@ jobs:
           done
       - name: Independent full V7 and max4h paper replay, strict point-in-time parity
         if: steps.gate.outputs.capture == 'true'
+        env:
+          V91_TARGET: ${{ steps.gate.outputs.target }}
         run: |
           set -euo pipefail
           python3 -u v91_prospective_retest.py \
@@ -93,6 +95,25 @@ jobs:
             --scoreboard forward/v91_prospective_retest/scoreboard.json
           test -s "forward/v91_prospective_retest/hourly/${{ steps.gate.outputs.target }}.json"
           test -s forward/v91_prospective_retest/scoreboard.json
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          target=os.environ.get("V91_TARGET")
+          if not target:
+              raise ValueError("V91_TARGET_NOT_PASSED")
+          j=json.loads((Path("forward/v91_prospective_retest/hourly")/(target+".json")).read_text())
+          assert j["priceAndVolumeValidatedAgainstOriginalV7For1H4HDaily"]
+          assert j["mainWorkerDataSameCoinalyzeProviderNotIndependentBinanceProof"]
+          assert j["unverifiedCoinalyzeTXOIFundingNotUsedAsV91EntryFilter"]
+          assert j["sourceVerifiedSameHour"] and j["V7SnapshotAndIndependentRecomputeExactMatch"]
+          assert j["noBrokerOrders"] and j["noNotifications"]
+          assert set(j["originalV7PriceVolumeParities"])=={"BTCUSDT","SOLUSDT"}
+          for symbol in ("BTCUSDT","SOLUSDT"):
+              frames=j["originalV7PriceVolumeParities"][symbol]
+              assert set(frames)=={"1hour","4hour","daily"}
+              assert all(x["allOHLCVFieldsWithinIntegrityTolerances"] for x in frames.values())
+          print("V91_FRESH_1H_4H_DAILY_OHLCV_INTEGRITY_VERIFIED_BOTH_SYMBOLS")
+          PY
       - name: Verify all paper guards and produce readable scorecard
         if: steps.gate.outputs.capture == 'true'
         run: |
@@ -106,6 +127,8 @@ jobs:
           assert x["noBrokerOrders"] and x["noNotifications"]
           assert x["thresholdsNotReoptimizedFromNewObservations"]
           assert x["unverifiedDerivativeFieldsNeverBecomeEntryVeto"]
+          assert x["v91SourceIntegrityRequiresV7Original1H4HDailyOHLCV"]
+          assert x["liveBinanceVsCoinalyzeParityNotProven"]
           assert x["delayedSignalPublicationNotModeledInNetR"]
           assert x["realTimeExecutableEntryCountProven"]==0
           lines=["# V9.1 Prospective V7 vs 4-hour retest shadow",
@@ -121,6 +144,8 @@ jobs:
                   "IMPORTANT: A verified signal recorded 15-55 minutes after the close CANNOT prove a fill at the immediately following hour open.",
                   "Next-open prices are retrospective hypothetical paper assumptions, NOT actual fills.",
                   "Real-time executable entries proven: ZERO. Signal publication delay is not priced into paper net R.",
+                  "BTC/SOL 1H, 4H, and Daily OHLCV compared against sealed original V7 snapshots; source mismatch prevents paper entry from being counted.",
+                  "Both live feeds are Coinalyze-based; this is an integrity check, NOT independent verified Binance live exchange parity.",
                   "Coinalyze TX/OI/funding are NOT used as an entry veto in this research system.",
                   "Funding, dynamic spread, liquidation and real broker execution unmodeled.",
                   "Past 4h filter was selected after inspecting historical results; NEW outcomes required.",""]
