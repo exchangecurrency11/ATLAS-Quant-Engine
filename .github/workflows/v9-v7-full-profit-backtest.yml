@@ -143,7 +143,10 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add forward/v9_v7_profit_backtest/compare.json \
-                  forward/v9_v7_profit_backtest/compare.md
+                  forward/v9_v7_profit_backtest/compare.md \
+                  forward/v9_v7_profit_backtest/paper_trades/trade_ledger.json \
+                  forward/v9_v7_profit_backtest/paper_trades/trade_ledger.md \
+                  forward/v9_v7_profit_backtest/paper_trades/all_paper_trades.csv
           if git diff --cached --quiet; then exit 0; fi
           git commit -m 'V9 vs original V7: full BOS retest sequential 1H trade PnL backtest (9bp and 25bp cost) research only'
           for i in 1 2 3; do
