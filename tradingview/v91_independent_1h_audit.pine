@@ -32,10 +32,10 @@ if barstate.isconfirmed and not na(pl)
     lowSwingIndex := bar_index - rightBars
 
 bool breakUp = chartValid and barstate.isconfirmed and not na(confirmedSwingHigh) and
-     not na(highSwingIndex) and highSwingIndex != lastBrokenHighIndex and
+     not na(highSwingIndex) and (na(lastBrokenHighIndex) or highSwingIndex != lastBrokenHighIndex) and
      close > confirmedSwingHigh and close[1] <= confirmedSwingHigh
 bool breakDown = chartValid and barstate.isconfirmed and not na(confirmedSwingLow) and
-     not na(lowSwingIndex) and lowSwingIndex != lastBrokenLowIndex and
+     not na(lowSwingIndex) and (na(lastBrokenLowIndex) or lowSwingIndex != lastBrokenLowIndex) and
      close < confirmedSwingLow and close[1] >= confirmedSwingLow
 // Deliberate no-lookahead liquidity sweeps, not a future-confirmed "smart money" truth.
 bool sweepHigh = chartValid and barstate.isconfirmed and not na(confirmedSwingHigh) and
