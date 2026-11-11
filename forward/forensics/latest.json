@@ -1,8 +1,8 @@
 {
   "mode": "V7_RETROSPECTIVE_REJECTED_BOS_PAPER_STUDY_NO_ORDERS",
-  "asOfClosed1HUTC": "2026-11-10T02:00:00Z",
-  "forwardSnapshotsVerified": 123,
-  "historicalRawCandlesSourceSHA256": "5d7a0e43af50e82d619fdbbc1b3498bdc1db3406c96ba14afe3ba4e5b7c5d6b1",
+  "asOfClosed1HUTC": "2026-11-11T02:00:00Z",
+  "forwardSnapshotsVerified": 145,
+  "historicalRawCandlesSourceSHA256": "681ab70bb20d563157a7a9cedd9fcba70d9b41440b834bc95b972bbbf7e56cae",
   "historicalRawSourceNote": "Current Coinalyze historical 1H feed, checked against original BOS OHLC values",
   "method": "Frozen forward-observed BOS and filters at original close; later fully closed 1H candles for 1..6h retest, next-open simulated entry, 24h maximum hold, stop-first collision, TP1/TP2/TP3 thirds, 6bps fees + 3bps slippage per side. Diagnostic independent counterfactuals (not mutually exclusive positions).",
   "limitations": [
@@ -16,45 +16,47 @@
     "No V7 threshold tuning on this inspected sample; tiny samples are not efficacy proof."
   ],
   "summary": {
-    "forwardObservedBOS": 4,
-    "v4AcceptedBOS": 1,
+    "forwardObservedBOS": 6,
+    "v4AcceptedBOS": 2,
     "v7AcceptedBOS": 1,
-    "v7RejectedBOS": 3,
-    "incrementalV7VetoOfV4AcceptedBOS": 0,
+    "v7RejectedBOS": 5,
+    "incrementalV7VetoOfV4AcceptedBOS": 1,
     "incrementalV7AvoidedNegativePaper": 0,
     "incrementalV7MissedPositivePaper": 0,
     "rejectedWithClosedCounterfactualPaperTrade": 1,
     "avoidedNegativeOrFlatPaper": 1,
     "potentiallyMissedPositivePaper": 0,
-    "rejectedWithoutCompletedActionableCounterfactual": 2,
+    "rejectedWithoutCompletedActionableCounterfactual": 4,
     "rejectedCounterfactualStatuses": {
-      "EXPIRED_WITHOUT_V4_RETEST": 2,
-      "CLOSED_COUNTERFACTUAL_PAPER": 1
+      "EXPIRED_WITHOUT_V4_RETEST": 3,
+      "CLOSED_COUNTERFACTUAL_PAPER": 1,
+      "OPEN_COUNTERFACTUAL_NO_CLOSED_EXIT": 1
     },
     "overlappingRejectionFactors": {
-      "4H_DAILY_ALIGNMENT_VETO": 3,
-      "PREVIOUS_HOUR_VOLUME_VETO": 1,
-      "V7_QUALITY_EMA20_OVEREXTENDED": 1
+      "4H_DAILY_ALIGNMENT_VETO": 4,
+      "PREVIOUS_HOUR_VOLUME_VETO": 2,
+      "V7_QUALITY_EMA20_OVEREXTENDED": 2,
+      "V7_QUALITY_LOW_RELATIVE_VOLUME": 1
     },
     "snapshotIssues": {},
     "byPair": {
       "BTCUSDT_PERP.A": {
-        "observedBOS": 2,
+        "observedBOS": 3,
         "acceptedByV7": 0,
-        "rejectedBOS": 2,
+        "rejectedBOS": 3,
         "rejectedWithClosedCounterfactualPaperTrade": 1,
         "avoidedNegativeOrFlatPaper": 1,
         "potentiallyMissedPositivePaper": 0,
-        "notActionableOrUnresolved": 1
+        "notActionableOrUnresolved": 2
       },
       "SOLUSDT_PERP.A": {
-        "observedBOS": 2,
+        "observedBOS": 3,
         "acceptedByV7": 1,
-        "rejectedBOS": 1,
+        "rejectedBOS": 2,
         "rejectedWithClosedCounterfactualPaperTrade": 0,
         "avoidedNegativeOrFlatPaper": 0,
         "potentiallyMissedPositivePaper": 0,
-        "notActionableOrUnresolved": 1
+        "notActionableOrUnresolved": 2
       }
     },
     "sumNetROfRejectedIndependentSetupsNotPortfolio": -1.680227
@@ -246,6 +248,95 @@
         "close": 74097.4
       },
       "sourceSnapshot": "2026-11-08T22-00Z.json",
+      "counterfactual": {
+        "status": "EXPIRED_WITHOUT_V4_RETEST",
+        "note": "No eligible entry; subsequent directional price move does NOT count as missed trade"
+      },
+      "classification": "UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
+    },
+    {
+      "pair": "BTCUSDT_PERP.A",
+      "bosClosedUTC": "2026-11-10T11:00:00Z",
+      "bosCloseEpoch": 1794308400,
+      "side": "bearish",
+      "brokenLevel": 74343.0,
+      "acceptedByV4": false,
+      "acceptedByV7": false,
+      "rejectionFactors": [
+        "4H_DAILY_ALIGNMENT_VETO",
+        "PREVIOUS_HOUR_VOLUME_VETO",
+        "V7_QUALITY_LOW_RELATIVE_VOLUME"
+      ],
+      "v7Quality": {
+        "passed": false,
+        "reasons": [
+          "LOW_RELATIVE_VOLUME"
+        ],
+        "warnings": [],
+        "features": {
+          "breakATR": 0.377264,
+          "relativeVolume20": 0.82053,
+          "ema20ExtensionATR": 1.448649
+        }
+      },
+      "context": {
+        "higherTFaligned": false,
+        "momentumAligned": true,
+        "priorHourVolumeUp20Pct": false
+      },
+      "frozenBosCandle": {
+        "open": 74481.9,
+        "high": 74527.6,
+        "low": 74079.1,
+        "close": 74200.3
+      },
+      "sourceSnapshot": "2026-11-10T11-00Z.json",
+      "counterfactual": {
+        "status": "OPEN_COUNTERFACTUAL_NO_CLOSED_EXIT",
+        "entryOpenUTC": "2026-11-10T14:00:00Z",
+        "entry": 73714.9,
+        "stop": 74833.52071429,
+        "noOutcomeAssigned": true
+      },
+      "classification": "UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
+    },
+    {
+      "pair": "SOLUSDT_PERP.A",
+      "bosClosedUTC": "2026-11-10T11:00:00Z",
+      "bosCloseEpoch": 1794308400,
+      "side": "bearish",
+      "brokenLevel": 85.47,
+      "acceptedByV4": true,
+      "acceptedByV7": false,
+      "rejectionFactors": [
+        "V7_QUALITY_EMA20_OVEREXTENDED"
+      ],
+      "v7Quality": {
+        "passed": false,
+        "reasons": [
+          "EMA20_OVEREXTENDED"
+        ],
+        "warnings": [
+          "RSI_EXTREME_NOT_A_HARD_REJECTION"
+        ],
+        "features": {
+          "breakATR": 1.6,
+          "relativeVolume20": 2.758413,
+          "ema20ExtensionATR": 2.636996
+        }
+      },
+      "context": {
+        "higherTFaligned": true,
+        "momentumAligned": true,
+        "priorHourVolumeUp20Pct": true
+      },
+      "frozenBosCandle": {
+        "open": 85.55,
+        "high": 85.65,
+        "low": 84.28,
+        "close": 84.43
+      },
+      "sourceSnapshot": "2026-11-10T11-00Z.json",
       "counterfactual": {
         "status": "EXPIRED_WITHOUT_V4_RETEST",
         "note": "No eligible entry; subsequent directional price move does NOT count as missed trade"
