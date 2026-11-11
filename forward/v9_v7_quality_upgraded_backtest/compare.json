@@ -1,0 +1,1638 @@
+{
+  "status": "V9_V7_PLUS_BOS_RETEST_FULL_CHRONOLOGICAL_PROFIT_BACKTEST_HISTORICAL",
+  "sourceWindowStartUTC": "2024-10-01T00:00:00Z",
+  "asOfExclusiveUTC": "2026-10-01T00:00:00Z",
+  "V7StrategyIsPrimary": true,
+  "V9PredictedOwn4HCandleColorIsOnlyOptionalPreknownBOSGate": true,
+  "V994UsesHistoricalSixFoldExpandingModelsNotSepFrozenInPast": true,
+  "V988ShadowUsesExactSameSixFoldsNoPostSelection": true,
+  "V9ForecastTMinus5MinutesForEach4HBeforeBOSSignal": true,
+  "newV9QualityV7OnlyRegimeFVGOBLiquidityResearch": true,
+  "qualityThresholdsPredeclaredBeforeNewResultExecution": {
+    "V9_QUALITY_SCORE_60": 60,
+    "V9_QUALITY_SCORE_75": 75
+  },
+  "qualityOnlyUsesClosed1HAtOriginalV7BOS": true,
+  "qualityScoresNotCalibratedProfitProbabilities": true,
+  "dojiExcluded": {
+    "ETHUSDT": 2,
+    "SOLUSDT": 19
+  },
+  "prospectiveOrPreviouslyUnseenOutOfSample": false,
+  "historicalDataAlreadyInspectedAndNoFilterSelectionPermitted": true,
+  "V7ArchiveEndsAfterTestButSameTargetSubsetOnly": true,
+  "allSourcePricesStrictlyReconciledWithOriginalV7": true,
+  "sameChronologicalSimulationAndRiskStopTPForEachVariant": true,
+  "baselineCostBpsPerSide": 9,
+  "stressCostBpsPerSide": 25,
+  "candidateHistorical": {
+    "BTCUSDT": {
+      "V7_ORIGINAL": {
+        "V7paperClosedTrades": 9,
+        "originalV7BOSWatchCountCumulativeSimulator": 26,
+        "winningTrades9BpsPerSide": 5,
+        "winRatePct9BpsPerSide": 55.56,
+        "totalNetR9BpsPerSide": 3.6636,
+        "averageNetR9BpsPerSide": 0.4071,
+        "totalNetR25BpsPerSideStress": 1.329,
+        "averageNetR25BpsPerSideStress": 0.1477,
+        "profitFactorR": 1.969,
+        "maxPeakToTroughRDrawdown": 3.5506,
+        "originalV7BOSQualityRejected": 37,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 17,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 0,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 0,
+          "V9DirectionAlignedV7BOS": 0
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_94_DIRECTION_GATE": {
+        "V7paperClosedTrades": 2,
+        "originalV7BOSWatchCountCumulativeSimulator": 9,
+        "winningTrades9BpsPerSide": 1,
+        "winRatePct9BpsPerSide": 50.0,
+        "totalNetR9BpsPerSide": 0.6231,
+        "averageNetR9BpsPerSide": 0.3115,
+        "totalNetR25BpsPerSideStress": -0.047,
+        "averageNetR25BpsPerSideStress": -0.0235,
+        "profitFactorR": 1.507,
+        "maxPeakToTroughRDrawdown": 1.2299,
+        "originalV7BOSQualityRejected": 58,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 7,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 27,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 18,
+          "V9DirectionAlignedV7BOS": 9
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_88_NO_TX_DIRECTION_GATE": {
+        "V7paperClosedTrades": 2,
+        "originalV7BOSWatchCountCumulativeSimulator": 10,
+        "winningTrades9BpsPerSide": 1,
+        "winRatePct9BpsPerSide": 50.0,
+        "totalNetR9BpsPerSide": 0.6231,
+        "averageNetR9BpsPerSide": 0.3115,
+        "totalNetR25BpsPerSideStress": -0.047,
+        "averageNetR25BpsPerSideStress": -0.0235,
+        "profitFactorR": 1.507,
+        "maxPeakToTroughRDrawdown": 1.2299,
+        "originalV7BOSQualityRejected": 57,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 8,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 27,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 17,
+          "V9DirectionAlignedV7BOS": 10
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_94_AND_88_AGREEMENT_GATE": {
+        "V7paperClosedTrades": 2,
+        "originalV7BOSWatchCountCumulativeSimulator": 9,
+        "winningTrades9BpsPerSide": 1,
+        "winRatePct9BpsPerSide": 50.0,
+        "totalNetR9BpsPerSide": 0.6231,
+        "averageNetR9BpsPerSide": 0.3115,
+        "totalNetR25BpsPerSideStress": -0.047,
+        "averageNetR25BpsPerSideStress": -0.0235,
+        "profitFactorR": 1.507,
+        "maxPeakToTroughRDrawdown": 1.2299,
+        "originalV7BOSQualityRejected": 58,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 7,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 27,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 18,
+          "V9DirectionAlignedV7BOS": 9
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_QUALITY_SCORE_60": {
+        "V7paperClosedTrades": 9,
+        "originalV7BOSWatchCountCumulativeSimulator": 25,
+        "winningTrades9BpsPerSide": 5,
+        "winRatePct9BpsPerSide": 55.56,
+        "totalNetR9BpsPerSide": 3.6636,
+        "averageNetR9BpsPerSide": 0.4071,
+        "totalNetR25BpsPerSideStress": 1.329,
+        "averageNetR25BpsPerSideStress": 0.1477,
+        "profitFactorR": 1.969,
+        "maxPeakToTroughRDrawdown": 3.5506,
+        "originalV7BOSQualityRejected": 38,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 16,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 0,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 0,
+          "V9DirectionAlignedV7BOS": 0,
+          "v7QualifyingBOSScored": 26,
+          "scoreHistogram": {
+            "LOW": 1,
+            "MEDIUM": 4,
+            "HIGH": 21
+          },
+          "regimeHistogram": {
+            "CALM": 0,
+            "NORMAL": 20,
+            "EXPANSION": 6,
+            "CHAOTIC": 0
+          },
+          "scoresAtV7BOS": [
+            {
+              "closed1HUTC": 1734447600,
+              "direction": "bullish",
+              "score": 94.892,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1736175600,
+              "direction": "bullish",
+              "score": 91.03,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1737079200,
+              "direction": "bullish",
+              "score": 90.191,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1739898000,
+              "direction": "bearish",
+              "score": 89.707,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1741557600,
+              "direction": "bearish",
+              "score": 76.619,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1746198000,
+              "direction": "bullish",
+              "score": 92.171,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1750600800,
+              "direction": "bearish",
+              "score": 89.0,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1756501200,
+              "direction": "bearish",
+              "score": 65.937,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757631600,
+              "direction": "bullish",
+              "score": 86.587,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1758088800,
+              "direction": "bullish",
+              "score": 81.491,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1758168000,
+              "direction": "bullish",
+              "score": 84.463,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1760630400,
+              "direction": "bearish",
+              "score": 81.637,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1762236000,
+              "direction": "bearish",
+              "score": 94.496,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1763125200,
+              "direction": "bearish",
+              "score": 79.186,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1763434800,
+              "direction": "bearish",
+              "score": 70.897,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1763694000,
+              "direction": "bearish",
+              "score": 79.535,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1770260400,
+              "direction": "bearish",
+              "score": 73.594,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1773633600,
+              "direction": "bullish",
+              "score": 87.24,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1774602000,
+              "direction": "bearish",
+              "score": 89.17,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1775134800,
+              "direction": "bearish",
+              "score": 56.04,
+              "qualityBand": "LOW",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1776762000,
+              "direction": "bullish",
+              "score": 69.977,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1778454000,
+              "direction": "bullish",
+              "score": 78.61,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1779890400,
+              "direction": "bearish",
+              "score": 89.197,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780459200,
+              "direction": "bearish",
+              "score": 82.815,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780668000,
+              "direction": "bearish",
+              "score": 80.891,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1787144400,
+              "direction": "bullish",
+              "score": 77.848,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            }
+          ],
+          "v9QualityAccepted": 25,
+          "v9QualityRejected": 1
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_QUALITY_SCORE_75": {
+        "V7paperClosedTrades": 8,
+        "originalV7BOSWatchCountCumulativeSimulator": 22,
+        "winningTrades9BpsPerSide": 5,
+        "winRatePct9BpsPerSide": 62.5,
+        "totalNetR9BpsPerSide": 4.852,
+        "averageNetR9BpsPerSide": 0.6065,
+        "totalNetR25BpsPerSideStress": 2.8522,
+        "averageNetR25BpsPerSideStress": 0.3565,
+        "profitFactorR": 2.877,
+        "maxPeakToTroughRDrawdown": 2.3563,
+        "originalV7BOSQualityRejected": 43,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 14,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 0,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 0,
+          "V9DirectionAlignedV7BOS": 0,
+          "v7QualifyingBOSScored": 27,
+          "scoreHistogram": {
+            "LOW": 1,
+            "MEDIUM": 4,
+            "HIGH": 22
+          },
+          "regimeHistogram": {
+            "CALM": 0,
+            "NORMAL": 21,
+            "EXPANSION": 6,
+            "CHAOTIC": 0
+          },
+          "scoresAtV7BOS": [
+            {
+              "closed1HUTC": 1734447600,
+              "direction": "bullish",
+              "score": 94.892,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1736175600,
+              "direction": "bullish",
+              "score": 91.03,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1737079200,
+              "direction": "bullish",
+              "score": 90.191,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1739898000,
+              "direction": "bearish",
+              "score": 89.707,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1741557600,
+              "direction": "bearish",
+              "score": 76.619,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1746198000,
+              "direction": "bullish",
+              "score": 92.171,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1750600800,
+              "direction": "bearish",
+              "score": 89.0,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1756501200,
+              "direction": "bearish",
+              "score": 65.937,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757631600,
+              "direction": "bullish",
+              "score": 86.587,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1758088800,
+              "direction": "bullish",
+              "score": 81.491,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1758168000,
+              "direction": "bullish",
+              "score": 84.463,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1760630400,
+              "direction": "bearish",
+              "score": 81.637,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1762236000,
+              "direction": "bearish",
+              "score": 94.496,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1763125200,
+              "direction": "bearish",
+              "score": 79.186,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1763434800,
+              "direction": "bearish",
+              "score": 70.897,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1763694000,
+              "direction": "bearish",
+              "score": 79.535,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1770260400,
+              "direction": "bearish",
+              "score": 73.594,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1770296400,
+              "direction": "bearish",
+              "score": 79.908,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1773633600,
+              "direction": "bullish",
+              "score": 87.24,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1774602000,
+              "direction": "bearish",
+              "score": 89.17,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1775134800,
+              "direction": "bearish",
+              "score": 56.04,
+              "qualityBand": "LOW",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1776762000,
+              "direction": "bullish",
+              "score": 69.977,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1778454000,
+              "direction": "bullish",
+              "score": 78.61,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1779890400,
+              "direction": "bearish",
+              "score": 89.197,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780459200,
+              "direction": "bearish",
+              "score": 82.815,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780668000,
+              "direction": "bearish",
+              "score": 80.891,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1787144400,
+              "direction": "bullish",
+              "score": 77.848,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            }
+          ],
+          "v9QualityAccepted": 22,
+          "v9QualityRejected": 5
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      }
+    },
+    "SOLUSDT": {
+      "V7_ORIGINAL": {
+        "V7paperClosedTrades": 11,
+        "originalV7BOSWatchCountCumulativeSimulator": 29,
+        "winningTrades9BpsPerSide": 6,
+        "winRatePct9BpsPerSide": 54.55,
+        "totalNetR9BpsPerSide": 2.861,
+        "averageNetR9BpsPerSide": 0.2601,
+        "totalNetR25BpsPerSideStress": 0.6026,
+        "averageNetR25BpsPerSideStress": 0.0548,
+        "profitFactorR": 1.523,
+        "maxPeakToTroughRDrawdown": 2.5764,
+        "originalV7BOSQualityRejected": 49,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 17,
+        "v7RiskRejected": 1,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 0,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 0,
+          "V9DirectionAlignedV7BOS": 0
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_94_DIRECTION_GATE": {
+        "V7paperClosedTrades": 1,
+        "originalV7BOSWatchCountCumulativeSimulator": 12,
+        "winningTrades9BpsPerSide": 1,
+        "winRatePct9BpsPerSide": 100.0,
+        "totalNetR9BpsPerSide": 0.7704,
+        "averageNetR9BpsPerSide": 0.7704,
+        "totalNetR25BpsPerSideStress": 0.6652,
+        "averageNetR25BpsPerSideStress": 0.6652,
+        "profitFactorR": null,
+        "maxPeakToTroughRDrawdown": 0,
+        "originalV7BOSQualityRejected": 69,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 11,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 29,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 17,
+          "V9DirectionAlignedV7BOS": 12
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_88_NO_TX_DIRECTION_GATE": {
+        "V7paperClosedTrades": 2,
+        "originalV7BOSWatchCountCumulativeSimulator": 9,
+        "winningTrades9BpsPerSide": 2,
+        "winRatePct9BpsPerSide": 100.0,
+        "totalNetR9BpsPerSide": 2.5109,
+        "averageNetR9BpsPerSide": 1.2555,
+        "totalNetR25BpsPerSideStress": 1.9444,
+        "averageNetR25BpsPerSideStress": 0.9722,
+        "profitFactorR": null,
+        "maxPeakToTroughRDrawdown": 0,
+        "originalV7BOSQualityRejected": 72,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 7,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 29,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 20,
+          "V9DirectionAlignedV7BOS": 9
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_94_AND_88_AGREEMENT_GATE": {
+        "V7paperClosedTrades": 1,
+        "originalV7BOSWatchCountCumulativeSimulator": 8,
+        "winningTrades9BpsPerSide": 1,
+        "winRatePct9BpsPerSide": 100.0,
+        "totalNetR9BpsPerSide": 0.7704,
+        "averageNetR9BpsPerSide": 0.7704,
+        "totalNetR25BpsPerSideStress": 0.6652,
+        "averageNetR25BpsPerSideStress": 0.6652,
+        "profitFactorR": null,
+        "maxPeakToTroughRDrawdown": 0,
+        "originalV7BOSQualityRejected": 73,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 7,
+        "v7RiskRejected": 0,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 29,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 21,
+          "V9DirectionAlignedV7BOS": 8
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_QUALITY_SCORE_60": {
+        "V7paperClosedTrades": 11,
+        "originalV7BOSWatchCountCumulativeSimulator": 29,
+        "winningTrades9BpsPerSide": 6,
+        "winRatePct9BpsPerSide": 54.55,
+        "totalNetR9BpsPerSide": 2.861,
+        "averageNetR9BpsPerSide": 0.2601,
+        "totalNetR25BpsPerSideStress": 0.6026,
+        "averageNetR25BpsPerSideStress": 0.0548,
+        "profitFactorR": 1.523,
+        "maxPeakToTroughRDrawdown": 2.5764,
+        "originalV7BOSQualityRejected": 49,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 17,
+        "v7RiskRejected": 1,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 0,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 0,
+          "V9DirectionAlignedV7BOS": 0,
+          "v7QualifyingBOSScored": 29,
+          "scoreHistogram": {
+            "LOW": 0,
+            "MEDIUM": 1,
+            "HIGH": 28
+          },
+          "regimeHistogram": {
+            "CALM": 0,
+            "NORMAL": 26,
+            "EXPANSION": 3,
+            "CHAOTIC": 0
+          },
+          "scoresAtV7BOS": [
+            {
+              "closed1HUTC": 1737262800,
+              "direction": "bullish",
+              "score": 83.291,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1739332800,
+              "direction": "bearish",
+              "score": 75.948,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1739714400,
+              "direction": "bearish",
+              "score": 92.491,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1749103200,
+              "direction": "bearish",
+              "score": 78.955,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1750975200,
+              "direction": "bearish",
+              "score": 82.228,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1751522400,
+              "direction": "bullish",
+              "score": 79.085,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752040800,
+              "direction": "bullish",
+              "score": 82.967,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752681600,
+              "direction": "bullish",
+              "score": 72.328,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752746400,
+              "direction": "bullish",
+              "score": 78.92,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752800400,
+              "direction": "bullish",
+              "score": 77.216,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1753149600,
+              "direction": "bullish",
+              "score": 86.199,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1753671600,
+              "direction": "bullish",
+              "score": 86.808,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1756306800,
+              "direction": "bullish",
+              "score": 78.094,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757491200,
+              "direction": "bullish",
+              "score": 97.027,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757509200,
+              "direction": "bullish",
+              "score": 83.531,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757638800,
+              "direction": "bullish",
+              "score": 88.069,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1760684400,
+              "direction": "bearish",
+              "score": 82.284,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1768345200,
+              "direction": "bullish",
+              "score": 97.156,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1770793200,
+              "direction": "bearish",
+              "score": 86.142,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1770822000,
+              "direction": "bearish",
+              "score": 84.409,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1774825200,
+              "direction": "bearish",
+              "score": 76.234,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1776434400,
+              "direction": "bullish",
+              "score": 88.957,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1779062400,
+              "direction": "bearish",
+              "score": 84.73,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780322400,
+              "direction": "bearish",
+              "score": 85.779,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780394400,
+              "direction": "bearish",
+              "score": 79.001,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780516800,
+              "direction": "bearish",
+              "score": 75.021,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780686000,
+              "direction": "bearish",
+              "score": 76.647,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1783141200,
+              "direction": "bullish",
+              "score": 89.53,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1785247200,
+              "direction": "bearish",
+              "score": 84.423,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            }
+          ],
+          "v9QualityAccepted": 29
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      },
+      "V9_QUALITY_SCORE_75": {
+        "V7paperClosedTrades": 11,
+        "originalV7BOSWatchCountCumulativeSimulator": 28,
+        "winningTrades9BpsPerSide": 6,
+        "winRatePct9BpsPerSide": 54.55,
+        "totalNetR9BpsPerSide": 2.861,
+        "averageNetR9BpsPerSide": 0.2601,
+        "totalNetR25BpsPerSideStress": 0.6026,
+        "averageNetR25BpsPerSideStress": 0.0548,
+        "profitFactorR": 1.523,
+        "maxPeakToTroughRDrawdown": 2.5764,
+        "originalV7BOSQualityRejected": 50,
+        "v7RetestRejected": 0,
+        "v7NoRetestCount": 16,
+        "v7RiskRejected": 1,
+        "stillUnresolvedExcluded": false,
+        "tradeRetestWasObservedBeforeEntry": true,
+        "fundingVariableSpreadTrueFillAndLiquidationNOTIncluded": true,
+        "V9BOSDirectionFilterAudit": {
+          "checkedV7QualifyingBOS": 0,
+          "rejectedNoV9PrestartForecast": 0,
+          "rejectedDirectionalDisagreement": 0,
+          "V9DirectionAlignedV7BOS": 0,
+          "v7QualifyingBOSScored": 29,
+          "scoreHistogram": {
+            "LOW": 0,
+            "MEDIUM": 1,
+            "HIGH": 28
+          },
+          "regimeHistogram": {
+            "CALM": 0,
+            "NORMAL": 26,
+            "EXPANSION": 3,
+            "CHAOTIC": 0
+          },
+          "scoresAtV7BOS": [
+            {
+              "closed1HUTC": 1737262800,
+              "direction": "bullish",
+              "score": 83.291,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1739332800,
+              "direction": "bearish",
+              "score": 75.948,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1739714400,
+              "direction": "bearish",
+              "score": 92.491,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1749103200,
+              "direction": "bearish",
+              "score": 78.955,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1750975200,
+              "direction": "bearish",
+              "score": 82.228,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1751522400,
+              "direction": "bullish",
+              "score": 79.085,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752040800,
+              "direction": "bullish",
+              "score": 82.967,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752681600,
+              "direction": "bullish",
+              "score": 72.328,
+              "qualityBand": "MEDIUM",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752746400,
+              "direction": "bullish",
+              "score": 78.92,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1752800400,
+              "direction": "bullish",
+              "score": 77.216,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1753149600,
+              "direction": "bullish",
+              "score": 86.199,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1753671600,
+              "direction": "bullish",
+              "score": 86.808,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1756306800,
+              "direction": "bullish",
+              "score": 78.094,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757491200,
+              "direction": "bullish",
+              "score": 97.027,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757509200,
+              "direction": "bullish",
+              "score": 83.531,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1757638800,
+              "direction": "bullish",
+              "score": 88.069,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1760684400,
+              "direction": "bearish",
+              "score": 82.284,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1768345200,
+              "direction": "bullish",
+              "score": 97.156,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1770793200,
+              "direction": "bearish",
+              "score": 86.142,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1770822000,
+              "direction": "bearish",
+              "score": 84.409,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1774825200,
+              "direction": "bearish",
+              "score": 76.234,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1776434400,
+              "direction": "bullish",
+              "score": 88.957,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1779062400,
+              "direction": "bearish",
+              "score": 84.73,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": false,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780322400,
+              "direction": "bearish",
+              "score": 85.779,
+              "qualityBand": "HIGH",
+              "atrRegime": "EXPANSION",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780394400,
+              "direction": "bearish",
+              "score": 79.001,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780516800,
+              "direction": "bearish",
+              "score": 75.021,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1780686000,
+              "direction": "bearish",
+              "score": 76.647,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1783141200,
+              "direction": "bullish",
+              "score": 89.53,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": true,
+              "hasOB": true,
+              "hasSweep": false
+            },
+            {
+              "closed1HUTC": 1785247200,
+              "direction": "bearish",
+              "score": 84.423,
+              "qualityBand": "HIGH",
+              "atrRegime": "NORMAL",
+              "hasFVG": false,
+              "hasOB": true,
+              "hasSweep": false
+            }
+          ],
+          "v9QualityAccepted": 28,
+          "v9QualityRejected": 1
+        },
+        "filtersOnlyV7AlreadyQualifyingBOS": true,
+        "fullySequentialSameOriginalV7Candles": true,
+        "next1HOpenPaperEntryAndSameStopTPTimingAsV7": true
+      }
+    }
+  },
+  "candidateMinusV7": {
+    "BTCUSDT": {
+      "V9_94_DIRECTION_GATE": {
+        "baseTrades": 9,
+        "candidateTrades": 2,
+        "candidateMinusBaselineMeanNetR": -0.0956,
+        "candidateMinusBaselineTotalNetR": -3.0405,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_88_NO_TX_DIRECTION_GATE": {
+        "baseTrades": 9,
+        "candidateTrades": 2,
+        "candidateMinusBaselineMeanNetR": -0.0956,
+        "candidateMinusBaselineTotalNetR": -3.0405,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_94_AND_88_AGREEMENT_GATE": {
+        "baseTrades": 9,
+        "candidateTrades": 2,
+        "candidateMinusBaselineMeanNetR": -0.0956,
+        "candidateMinusBaselineTotalNetR": -3.0405,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_QUALITY_SCORE_60": {
+        "baseTrades": 9,
+        "candidateTrades": 9,
+        "candidateMinusBaselineMeanNetR": 0.0,
+        "candidateMinusBaselineTotalNetR": 0.0,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_QUALITY_SCORE_75": {
+        "baseTrades": 9,
+        "candidateTrades": 8,
+        "candidateMinusBaselineMeanNetR": 0.1994,
+        "candidateMinusBaselineTotalNetR": 1.1884,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      }
+    },
+    "SOLUSDT": {
+      "V9_94_DIRECTION_GATE": {
+        "baseTrades": 11,
+        "candidateTrades": 1,
+        "candidateMinusBaselineMeanNetR": 0.5103,
+        "candidateMinusBaselineTotalNetR": -2.0906,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_88_NO_TX_DIRECTION_GATE": {
+        "baseTrades": 11,
+        "candidateTrades": 2,
+        "candidateMinusBaselineMeanNetR": 0.9954,
+        "candidateMinusBaselineTotalNetR": -0.3501,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_94_AND_88_AGREEMENT_GATE": {
+        "baseTrades": 11,
+        "candidateTrades": 1,
+        "candidateMinusBaselineMeanNetR": 0.5103,
+        "candidateMinusBaselineTotalNetR": -2.0906,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_QUALITY_SCORE_60": {
+        "baseTrades": 11,
+        "candidateTrades": 11,
+        "candidateMinusBaselineMeanNetR": 0.0,
+        "candidateMinusBaselineTotalNetR": 0.0,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      },
+      "V9_QUALITY_SCORE_75": {
+        "baseTrades": 11,
+        "candidateTrades": 11,
+        "candidateMinusBaselineMeanNetR": 0.0,
+        "candidateMinusBaselineTotalNetR": 0.0,
+        "improvesNetRAndProfitFactorWithEnoughTrades": false,
+        "neverPromoteFromThesePreviouslyExploredHistoricalBars": true
+      }
+    }
+  },
+  "netRIsIllustrativeNotRealUSDReturn": true,
+  "notAProvenProfitableAutomatedSystem": true,
+  "noBrokerOrders": true,
+  "noUserNotifications": true,
+  "productionV7AndOriginalV9ModelsNotModified": true,
+  "modelOrAlertPromotionBlocked": true,
+  "generatedUTC": "2026-11-11T15:30:25Z",
+  "individualHistoricalPaperTradesWrittenAndValidated": 69,
+  "paperTradeLedgerFolder": "forward/v9_v7_profit_backtest/paper_trades"
+}
