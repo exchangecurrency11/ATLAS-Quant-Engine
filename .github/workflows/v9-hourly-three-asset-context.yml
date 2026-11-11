@@ -15,8 +15,12 @@ on:
     types: [completed]
     branches: [main]
   schedule:
+    # Independent retry slots for hours skipped by GitHub schedule delivery.
+    # All retries retain the original same-hour closed-candle and immutable gates.
     - cron: '17 * * * *'
+    - cron: '23 * * * *'
     - cron: '35 * * * *'
+    - cron: '41 * * * *'
     - cron: '50 * * * *'
   workflow_dispatch:
 
