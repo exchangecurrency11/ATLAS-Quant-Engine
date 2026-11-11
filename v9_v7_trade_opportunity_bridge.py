@@ -109,7 +109,7 @@ def asof_overlay(v7,hourly,forecast=None,git_first_commit_time=None,
                         "at":end-HOUR,"confirmedAt":end,
                         "brokenLevel":watch["BOSLevel"]}
                 quality_profiles.append(quality_profile(
-                    bars,signal,v7context["timeframes"]["1hour"]["indicators"]))
+                    bars,signal,v7context["timeframes"]["1hour"].get("indicators",{})))
         for w in new_watches:
             if w.get("knownUTC")!=end and (
                 type(w.get("knownUTC")) is not int or w["knownUTC"]!=end):
