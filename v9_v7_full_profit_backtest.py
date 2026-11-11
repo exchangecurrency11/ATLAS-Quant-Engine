@@ -33,6 +33,8 @@ from v9_next_4h_color_research import (
     SYMBOLS,FOLDS,ts,iso,FOUR,HOUR,download_three,
     prepare,observations,fit_and_predict)
 from v9_no_provider_tx_ablation import transform_observations
+from v9_v7_historical_paper_trade_ledger import (
+    reconstruct,journal_report,save_artifacts)
 
 PAIRS=("BTCUSDT","SOLUSDT")
 REF={"BTCUSDT":"BTCUSDT_PERP.A","SOLUSDT":"SOLUSDT_PERP.A"}
@@ -224,7 +226,7 @@ def run(v7inputs,v9data=None,v9obs=None,source=None):
                      a["totalNetR9BpsPerSide"] is not None else None,
               "improvesNetRAndProfitFactorWithEnoughTrades":False,
               "neverPromoteFromThesePreviouslyExploredHistoricalBars":True}
-    return {
+    result={
       "status":MODE,"sourceWindowStartUTC":iso(PERIOD_START),
       "asOfExclusiveUTC":iso(AS_OF),
       "V7StrategyIsPrimary":True,
@@ -247,6 +249,14 @@ def run(v7inputs,v9data=None,v9obs=None,source=None):
       "noBrokerOrders":True,"noUserNotifications":True,
       "productionV7AndOriginalV9ModelsNotModified":True,
       "modelOrAlertPromotionBlocked":True}
+    # This is what the user wants: reconstruct ACTUAL historical paper
+    # entries from the independently replayed V7 BOS/retest 1H bars,
+    # with stop/TP/fees and realistic illustrative 100 USDT capital/margin.
+    # All candidate variants were replayed chronologically. No omitted
+    # losing trades or future candle data is used at entry.
+    result["historicalPaperTradeLedger"]=journal_report(
+        reconstruct(full,v7inputs))
+    return result
 
 
 def report_md(z):
@@ -307,7 +317,12 @@ def main():
             raise ValueError("V7_SOURCE_NOT_EXACTLY_BTC_AND_SOL")
         data[tf]={x["symbol"]:x["history"] for x in payload}
     result=run(data)
+    paper=result.pop("historicalPaperTradeLedger")
     result["generatedUTC"]=iso(int(datetime.now(timezone.utc).timestamp()))
+    result["individualHistoricalPaperTradesWrittenAndValidated"]=len(
+        paper["allCompletedHistoricalPaperTradeLedger"])
+    result["paperTradeLedgerFolder"]="forward/v9_v7_profit_backtest/paper_trades"
+    save_artifacts(paper,"forward/v9_v7_profit_backtest/paper_trades")
     for filename,body in ((a.output,json.dumps(result,ensure_ascii=False,indent=2)+"\n"),
                           (a.markdown,report_md(result))):
         out=Path(filename)
