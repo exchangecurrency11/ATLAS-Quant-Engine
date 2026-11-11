@@ -9,7 +9,14 @@ indicator("V9.1 TV Independent 1H Structure Audit (PAPER ONLY)", overlay = true,
 
 int leftBars = input.int(3, "Confirmed swing left", minval = 2, maxval = 10)
 int rightBars = input.int(3, "Confirmed swing right", minval = 2, maxval = 10)
-bool showMarkers = input.bool(true, "Show closed-candle structure markers")
+// Quiet by default. Chart markers are only research BOS candidates, NEVER orders.
+bool showRawBos = input.bool(false, "Also show unfiltered raw BOS (noisy)")
+bool showSwingLevels = input.bool(false, "Show confirmed swing levels")
+bool showSweepDots = input.bool(false, "Show sweep dots (noisy)")
+bool signalOnlyAlerts = input.bool(true, "Alerts: quality BOS candidates ONLY")
+float minBreakATR = input.float(0.20, "Min BOS break in ATR", minval = 0.0, step = 0.05)
+float minRVOL20 = input.float(1.20, "Min BOS volume vs previous 20 bars", minval = 0.0, step = 0.05)
+float maxEMAExtensionATR = input.float(2.50, "Max EMA20 extension in ATR", minval = 0.2, step = 0.1)
 
 bool chartValid = chart.is_standard and timeframe.isminutes and timeframe.multiplier == 60 and
      syminfo.prefix == "BINANCE" and (syminfo.ticker == "BTCUSDT.P" or syminfo.ticker == "SOLUSDT.P")
@@ -64,23 +71,37 @@ float ema50 = ta.ema(close, 50)
 float ema200 = ta.ema(close, 200)
 [macdLine, macdSignal, macdHist] = ta.macd(close, 12, 26, 9)
 
-plot(showMarkers and chartValid ? confirmedSwingHigh : na, "Confirmed prior swing high", color = color.new(color.red, 65), style = plot.style_stepline)
-plot(showMarkers and chartValid ? confirmedSwingLow : na, "Confirmed prior swing low", color = color.new(color.teal, 65), style = plot.style_stepline)
-plotshape(showMarkers and breakUp, "TV independent bullish BOS", shape.triangleup, location.belowbar, color.new(color.green, 0), size = size.tiny, text = "B")
-plotshape(showMarkers and breakDown, "TV independent bearish BOS", shape.triangledown, location.abovebar, color.new(color.red, 0), size = size.tiny, text = "B")
-plotshape(showMarkers and sweepLow, "TV low sweep", shape.circle, location.belowbar, color.new(color.aqua, 0), size = size.tiny)
-plotshape(showMarkers and sweepHigh, "TV high sweep", shape.circle, location.abovebar, color.new(color.orange, 0), size = size.tiny)
+// An independent, closed-1H BOS quality screen. Not the complete V7 model:
+// higher-timeframe Daily/4H alignment, retest and paper PnL remain with V7.
+float prior20Volume = ta.sma(volume[1], 20)
+bool validQualityInputs = not na(atr14) and atr14 > 0 and not na(prior20Volume) and prior20Volume > 0 and
+     not na(volume[1]) and volume[1] > 0 and not na(rsi14) and not na(macdHist) and not na(ema20)
+bool qualityVolume = validQualityInputs and volume >= minRVOL20 * prior20Volume and volume >= volume[1] * 1.20
+bool qualityUp = breakUp and qualityVolume and (close - confirmedSwingHigh) / atr14 >= minBreakATR and
+     (close - ema20) / atr14 <= maxEMAExtensionATR and rsi14 > 50 and macdHist > 0
+bool qualityDown = breakDown and qualityVolume and (confirmedSwingLow - close) / atr14 >= minBreakATR and
+     (ema20 - close) / atr14 <= maxEMAExtensionATR and rsi14 < 50 and macdHist < 0
 
-// Export one JSON *snapshot* for every real-time CLOSED 1H bar, including NO_BOS.
-// One alert per chart per hour. Alerts cannot be fired retrospectively by Pine.
-// Do not include passwords, exchange keys or sensitive info in alert messages.
+plot(showSwingLevels and chartValid ? confirmedSwingHigh : na, "Confirmed prior swing high", color = color.new(color.red, 65), style = plot.style_stepline)
+plot(showSwingLevels and chartValid ? confirmedSwingLow : na, "Confirmed prior swing low", color = color.new(color.teal, 65), style = plot.style_stepline)
+// Only QUALITY BOS by default; no trade entry or forward-looking confirmation.
+plotshape(qualityUp, "Quality bullish BOS CANDIDATE", shape.triangleup, location.belowbar, color.new(color.green, 0), size = size.tiny, text = "Q")
+plotshape(qualityDown, "Quality bearish BOS CANDIDATE", shape.triangledown, location.abovebar, color.new(color.red, 0), size = size.tiny, text = "Q")
+plotshape(showRawBos and breakUp and not qualityUp, "Other raw bullish BOS", shape.triangleup, location.belowbar, color.new(color.green, 70), size = size.tiny)
+plotshape(showRawBos and breakDown and not qualityDown, "Other raw bearish BOS", shape.triangledown, location.abovebar, color.new(color.red, 70), size = size.tiny)
+plotshape(showSweepDots and sweepLow, "TV low sweep diagnostic", shape.circle, location.belowbar, color.new(color.aqua, 0), size = size.tiny)
+plotshape(showSweepDots and sweepHigh, "TV high sweep diagnostic", shape.circle, location.abovebar, color.new(color.orange, 0), size = size.tiny)
+
+// Default alert only when this CLOSED 1H bar has a quality BOS candidate.
+// Optional complete hourly diagnostic mode exists, but creates 1 alert/hour/chart.
+// TradingView alerts do not auto-update when this script is revised.
 f_num(float value) =>
     na(value) ? "null" : str.tostring(value, "#.########")
 
 bool ready = chartValid and barstate.isrealtime and barstate.isconfirmed and
      not na(ema200) and not na(atr14) and not na(macdHist)
 
-if ready
+if ready and (not signalOnlyAlerts or qualityUp or qualityDown)
     string body = '{"schema":"v91.tv.1h.v1"' +
          ',"source":"TradingViewPineV6"' +
          ',"exchange":"' + syminfo.prefix + '"' +
@@ -100,6 +121,8 @@ if ready
          ',"ema50":' + f_num(ema50) +
          ',"ema200":' + f_num(ema200) +
          ',"bullBOS":' + str.tostring(breakUp) +
+         ',"qualityBOSLong":' + str.tostring(qualityUp) +
+         ',"qualityBOSShort":' + str.tostring(qualityDown) +
          ',"bearBOS":' + str.tostring(breakDown) +
          ',"chochBull":' + str.tostring(chochUp) +
          ',"chochBear":' + str.tostring(chochDown) +
