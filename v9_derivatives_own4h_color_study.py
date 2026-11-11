@@ -161,10 +161,12 @@ def report_md(r):
                      f"{f(x['results']['A_priceMomentum'])} | "
                      f"{f(x['results']['E_takerCVDOnly'])} | "
                      "Filtered same momentum direction; NOT comparable without matched baseline |")
-    lines+=["","**Limits:** OI and funding field semantics have not been
-independently verified with Binance settlement/position books, and the
-market shares are not profits or fills. These rules do not replace the
-frozen V9 model or prove next-4H predictive edge.",""]
+    lines+=["",(
+          "**Limits:** OI and funding field semantics have not been "
+          "independently verified with Binance settlement/position books, "
+          "and market shares are not profits or fills. These rules do not "
+          "replace the frozen V9 model or prove next-4H predictive edge."
+          ),""]
     return "\n".join(lines)
 
 
