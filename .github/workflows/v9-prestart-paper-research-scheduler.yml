@@ -12,16 +12,20 @@ on:
   workflow_run:
     workflows:
       - Publish BTC SOL Market Data
+      - Publish BTC SOL Market Structure
+      - ETH V7 Independent Hourly Paper Forward (no orders)
     types: [completed]
     branches: [main]
   schedule:
     # 17 minutes before every UTC 00/04/08/12/16/20 4H candle
-    # Correct UTC triggers: 23:43,03:43,07:43,11:43,15:43,19:43.
-    # TSİ triggers: 02:43,06:43,10:43,14:43,18:43,22:43.
+    # Correct UTC pre-open HOURS: 23,03,07,11,15,19; attempts minute 36..53.
+    # TSİ pre-open HOURS: 02,06,10,14,18,22.
     # GitHub schedule can run late. A successful market-data publication
     # also triggers this isolated workflow as a fallback. Both modes skip
     # outside T-25m..T-3m (never backfill a missed candle).
-    - cron: '43 23,3,7,11,15,19 * * *'
+    # Redundant 5-minute staggered attempts; one immutable forecast per 4H target.
+    # Late or duplicate attempts skip safely before touching market data.
+    - cron: '36,41,46,51,53 23,3,7,11,15,19 * * *'
   workflow_dispatch:
 
 permissions:
