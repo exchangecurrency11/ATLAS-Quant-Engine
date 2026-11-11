@@ -1,0 +1,63 @@
+{
+  "status": "V9_V7_PAPER_TRADE_RETROSPECTIVE_SUBSET_REPORT_NOT_CAUSAL_COUNTERFACTUAL",
+  "baselineFromOriginalProspectivelyRecordedV7PaperExits": true,
+  "target": "Positive mean net R, reasonable trade count and drawdown after costs",
+  "originalV7PaperTradeMetrics": {
+    "BTCUSDT": {
+      "completedV7OriginalPaperTrades": 0,
+      "winnerCountAt9bpsPerSide": 0,
+      "winRatePct": null,
+      "totalNetRIllustrativeAt9bpsPerSide": null,
+      "meanNetRAt9bpsPerSide": null,
+      "meanNetRStressAt25bpsPerSide": null,
+      "profitFactorR": null,
+      "maximumPeakToTroughDrawdownInR": null,
+      "fundingOrderbookTrueFillAndLiquidationNotModeled": true
+    },
+    "SOLUSDT": {
+      "completedV7OriginalPaperTrades": 1,
+      "winnerCountAt9bpsPerSide": 0,
+      "winRatePct": 0.0,
+      "totalNetRIllustrativeAt9bpsPerSide": -1.2482,
+      "meanNetRAt9bpsPerSide": -1.2482,
+      "meanNetRStressAt25bpsPerSide": -1.6895,
+      "profitFactorR": 0.0,
+      "maximumPeakToTroughDrawdownInR": 1.2482,
+      "fundingOrderbookTrueFillAndLiquidationNotModeled": true
+    }
+  },
+  "hypotheticalOnlySealedV9AlignedTradeSubset": {
+    "BTCUSDT": {
+      "completedV7OriginalPaperTrades": 0,
+      "winnerCountAt9bpsPerSide": 0,
+      "winRatePct": null,
+      "totalNetRIllustrativeAt9bpsPerSide": null,
+      "meanNetRAt9bpsPerSide": null,
+      "meanNetRStressAt25bpsPerSide": null,
+      "profitFactorR": null,
+      "maximumPeakToTroughDrawdownInR": null,
+      "fundingOrderbookTrueFillAndLiquidationNotModeled": true
+    },
+    "SOLUSDT": {
+      "completedV7OriginalPaperTrades": 0,
+      "winnerCountAt9bpsPerSide": 0,
+      "winRatePct": null,
+      "totalNetRIllustrativeAt9bpsPerSide": null,
+      "meanNetRAt9bpsPerSide": null,
+      "meanNetRStressAt25bpsPerSide": null,
+      "profitFactorR": null,
+      "maximumPeakToTroughDrawdownInR": null,
+      "fundingOrderbookTrueFillAndLiquidationNotModeled": true
+    }
+  },
+  "originalV7TradeCount": 1,
+  "gatedSubsetCount": 0,
+  "gatingWithoutFullStrategyReplayCannotProveHigherProfit": true,
+  "unobservedCounterfactualTradesMustNotBeFilledIn": true,
+  "requiresFreshOutOfSampleProspectiveSignals": true,
+  "fundingAndActualExecutionNotModeled": true,
+  "cannotAutoEnableNotifications": true,
+  "noOrders": true,
+  "noNotifications": true,
+  "noProductionModified": true
+}
