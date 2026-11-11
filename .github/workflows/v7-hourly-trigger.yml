@@ -10,10 +10,22 @@ name: V7 Hourly Paper Forward Runner
 on:
   schedule:
     # Multiple independent opportunities per hour; each existing snapshot is immutable.
+    # Extra late-minute chances reduce missing hours during GitHub scheduler gaps.
     - cron: '17 * * * *'
+    - cron: '27 * * * *'
     - cron: '35 * * * *'
+    - cron: '45 * * * *'
     - cron: '50 * * * *'
   workflow_dispatch:
+  # Independent wake-up after verified V9 hourly market context is saved.
+  # V9 runs on main and uses the same Coinalyze close. This is a BACKUP
+  # trigger only: original V7 own candles, snapshot integrity, and signals
+  # are always rechecked below. Earlier / failed upstream jobs are ignored.
+  workflow_run:
+    workflows:
+      - V9 Hourly BTC ETH SOL Market Context (paper only)
+    types: [completed]
+    branches: [main]
 
 permissions:
   contents: write
@@ -24,6 +36,7 @@ concurrency:
 
 jobs:
   v7-hourly-paper:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     name: Analyze latest closed hour (paper only)
     runs-on: ubuntu-latest
     timeout-minutes: 25
