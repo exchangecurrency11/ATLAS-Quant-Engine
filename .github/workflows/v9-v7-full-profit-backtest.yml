@@ -8,6 +8,8 @@ on:
       - tests/test_v9_v7_full_profit_backtest.py
       - v9_v7_historical_paper_trade_ledger.py
       - tests/test_v9_v7_historical_paper_trade_ledger.py
+      - v9_trade_opportunity_quality.py
+      - tests/test_v9_trade_opportunity_quality.py
   workflow_dispatch:
 
 permissions:
@@ -35,6 +37,7 @@ jobs:
       - name: Validate V9 4H before target BOS decision and V7 paper exit costing
         run: |
           set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_v9_trade_opportunity_quality.py' -v
           python3 -m unittest discover -s tests -p 'test_v9_v7_full_profit_backtest.py' -v
           python3 -m unittest discover -s tests -p 'test_v9_v7_historical_paper_trade_ledger.py' -v
           python3 -m unittest discover -s tests -p 'test_v9_next_4h_color_research.py' -q
@@ -78,7 +81,13 @@ jobs:
           assert set(x['candidateHistorical'])=={'BTCUSDT','SOLUSDT'}
           assert x['individualHistoricalPaperTradesWrittenAndValidated']>0
           expected={'V7_ORIGINAL','V9_94_DIRECTION_GATE',
-                    'V9_88_NO_TX_DIRECTION_GATE','V9_94_AND_88_AGREEMENT_GATE'}
+                    'V9_88_NO_TX_DIRECTION_GATE','V9_94_AND_88_AGREEMENT_GATE',
+                    'V9_QUALITY_SCORE_60','V9_QUALITY_SCORE_75'}
+          assert x['newV9QualityV7OnlyRegimeFVGOBLiquidityResearch']
+          assert x['qualityThresholdsPredeclaredBeforeNewResultExecution']=={
+              'V9_QUALITY_SCORE_60':60,'V9_QUALITY_SCORE_75':75}
+          assert x['qualityOnlyUsesClosed1HAtOriginalV7BOS']
+          assert x['qualityScoresNotCalibratedProfitProbabilities']
           import csv
           ledger=Path('forward/v9_v7_profit_backtest/paper_trades/trade_ledger.json')
           if not ledger.is_file():raise AssertionError('MISSING_REAL_CANDLE_PAPER_LEDGER')
@@ -121,7 +130,7 @@ jobs:
               if s['V7paperClosedTrades']==0:
                   assert s['averageNetR9BpsPerSide'] is None
                   assert s['totalNetR9BpsPerSide'] is None
-          print('V9_V7_PLUS_ALL_ORIGINAL_PAPER_TRADE_CANDLES_AND_100USDT_RISK_ACCOUNT_AUDITED',len(rows))
+          print('V9_PLUS_QUALITY_RESEARCH_SAME_CHRONOLOGICAL_V7_RETEST_PROFIT_AUDITED',len(rows))
           PY
 
       - name: Keep original full backtest research results even if commit fails
