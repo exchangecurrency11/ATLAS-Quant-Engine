@@ -1,0 +1,81 @@
+name: 'V9 no-Coinalyze-tx 88-feature historical ablation (no alerts)'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_no_provider_tx_ablation.py
+      - tests/test_v9_no_provider_tx_ablation.py
+      - .github/workflows/v9-no-provider-tx-ablation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-no-provider-tx-historical-research
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout isolated V9 research branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Install declared sklearn version-compatible research-only training libraries
+        run: |
+          python3 -m pip install --disable-pip-version-check 'numpy<3' 'scipy<2' 'scikit-learn>=1.4,<2'
+      - name: Verify no-tx input projection and no time leakage
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v9_no_provider_tx_ablation.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_next_4h_color_research.py' -q
+          python3 -m unittest discover -s tests -p 'test_download_binance_um_history.py' -q
+      - name: Download checksum-verified 2023-Sep2026 official Binance history and run same six folds
+        run: |
+          python3 -u v9_no_provider_tx_ablation.py
+      - name: Ensure no re-tune or original model replacement and no trading
+        run: |
+          python3 - <<'PY'
+          import json
+          j=json.load(open('forward/v9_no_tx_ablation/report.json'))
+          m=json.load(open('forward/v9_no_tx_ablation/frozen_models_research_only.json'))
+          o=json.load(open('forward/v9_next_4h_color/frozen_models.json'))
+          assert j['status']=='V9_NO_TX_88_FEATURE_SOURCE_MISMATCH_MOTIVATED_ABLATION_HISTORICAL'
+          assert j['noUserNotifications'] and j['brokerOrders'] is False and j['productionModified'] is False
+          assert j['sameTargetCandlesAsOriginal'] and j['identicalSixChronologicalFoldsAndC0_2Fixed']
+          assert j['notActualForwardPaperPerformance'] and j['noPastPerformanceSelectionAllowed']
+          assert m['projectionRemovedFeatureIndices']==[20,27,50,57,80,87]
+          assert m['originalFrozenV9ModelsUntouched'] and m['noTradingSignalsOrNotificationsAuthorized']
+          for s,v in m['symbols'].items():
+            assert v['featureCount']==88 and v['noActualCoinalyzeTXFeatureUsed']
+            assert o['symbols'][s]['featureCount']==94
+            assert o['symbols'][s]['trainingLabelsSHA256']==v['trainingLabelsSHA256']
+          print('V9_NO_TX_RESEARCH_ABLATION_VERIFIED_NO_MODEL_PROMOTION')
+          PY
+      - name: Preserve completed historical experimental results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-no-provider-tx-source-88features-${{ github.run_id }}
+          path: forward/v9_no_tx_ablation/
+          if-no-files-found: ignore
+          retention-days: 90
+      - name: Save alternative research models to isolated path only
+        if: success()
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_no_tx_ablation/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9 88-feature historical no-provider-tx research only (original 94 unchanged)"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then exit 0; fi
+            sleep 5
+          done
+          exit 1
