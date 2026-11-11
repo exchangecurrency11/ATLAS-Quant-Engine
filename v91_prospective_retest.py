@@ -151,6 +151,11 @@ def capture(original, main, raw, *, now, folder):
         "sourceVerifiedSameHour":True,
         "V7SnapshotAndIndependentRecomputeExactMatch":True,
         "entryIsHistoricalNextOpenPaperAssumptionNotRealFill":True,
+        # A real bot sees the retest AFTER the close, not at that candle's
+        # boundary open. This runner cannot claim a timely next-open fill.
+        "hypotheticalNextOpenAtRetestClosePrecedesObservation":True,
+        "observedPaperPriceNotAProvenExecutableFill":True,
+        "unverifiedCoinalyzeTXOIFundingNotUsedAsV91EntryFilter":True,
         "retrospectiveSnapshotBackfillForbidden":True,
         "noBrokerOrders":True,"noNotifications":True,
         "noV7ProductionOrNotificationChanges":True,
@@ -277,6 +282,9 @@ def scoreboard(folder, *, current=None, current_path=None):
         "noBackfilledOrPostSelectedTrades":True,
         "missingHourObservationsMustNotBeFilled":True,
         "prospectiveCaptureNotProspectiveActualOrderFill":True,
+        "delayedSignalPublicationNotModeledInNetR":True,
+        "realTimeExecutableEntryCountProven":0,
+        "unverifiedDerivativeFieldsNeverBecomeEntryVeto":True,
         "feesSlippage9BpsPerSideStress25BpsPerSide":True,
         "fundingVariableSpreadTrueFillsLiquidationNotModeled":True,
         "thresholdsNotReoptimizedFromNewObservations":True,
