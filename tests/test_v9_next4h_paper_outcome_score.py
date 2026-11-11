@@ -152,6 +152,37 @@ class V9PaperScorerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"BASELINE_IS_NOT_CAUSALLY"):
             verify_prior_forecast(stale)
 
+    def test_dual_source_motivated_shadow_scored_only_on_same_locked_future_candle(self):
+        f=forecast()
+        f["researchOnlyShadow88NoProviderTradeCount"]={
+          "status":"FROZEN_88_NO_PROVIDER_TX_PARALLEL_PAPER_NOT_PROMOTED",
+          "modelFeatureCount":88,
+          "sixTransactionCountFeaturePositionsDropped":[20,27,50,57,80,87],
+          "sameOriginalDecisionAnd4HTarget":True,
+          "neverEnableNotificationsFromThisExperiment":True,
+          "shadowAssetForecasts":{
+            s:{"direction":"RED" if s=="BTCUSDT" else "GREEN",
+               "pGreenUNCALIBRATED":.2 if s=="BTCUSDT" else .65,
+               "modelTrainingLabelsSHA256":"x"*64,
+               "noCoinalyzeTXUsedInFeatureVector":True,
+               "notATradingSignal":True}
+            for s in SYMBOLS}}
+        verify_prior_forecast(f)
+        o=score_one(T+FOUR+180,f,"key",fetch=fetch(source()))
+        self.assertFalse(o["symbols"]["BTCUSDT"]["noProviderTx88ShadowCorrect"])
+        self.assertTrue(o["symbols"]["SOLUSDT"]["noProviderTx88ShadowCorrect"] is False)
+        scored=scoreboard([f],[o])
+        matched=scored["allSymbols"]["BTCUSDT"]["matchedNoProviderTX88ShadowVsOriginal94"]
+        self.assertEqual(matched["matchedSameFuture4HOwnCandle"],1)
+        self.assertEqual(matched["frozenOriginal94Correct"],1)
+        self.assertEqual(matched["sourceMotivatedNoTx88Correct"],0)
+        self.assertFalse(matched["minimum200ProspectivePairsForInterpretation"])
+        self.assertTrue(matched["cannotChangeNotificationsBasedOnThisResearch"])
+        forged=copy.deepcopy(f)
+        forged["researchOnlyShadow88NoProviderTradeCount"]["shadowAssetForecasts"]["BTCUSDT"]["direction"]="GREEN"
+        with self.assertRaisesRegex(ValueError,"SHADOW_88_PAPER_DIRECTION"):
+            verify_prior_forecast(forged)
+
     def test_no_forward_predictions_reports_none_not_100pct(self):
         x=scoreboard([],[])
         for s in SYMBOLS:
