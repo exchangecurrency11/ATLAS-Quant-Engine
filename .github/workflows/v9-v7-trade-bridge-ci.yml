@@ -6,6 +6,8 @@ on:
     paths:
       - v9_v7_trade_opportunity_bridge.py
       - tests/test_v9_v7_trade_opportunity_bridge.py
+      - v9_trade_opportunity_quality.py
+      - tests/test_v9_trade_opportunity_quality.py
       - .github/workflows/v9-v7-trade-bridge-ci.yml
   workflow_dispatch:
 
@@ -21,6 +23,7 @@ jobs:
       - name: Validate original V7 BOS/retest priority and V9 immutable preopen context only
         run: |
           python3 -m py_compile v9_v7_trade_opportunity_bridge.py
+          python3 -m unittest discover -s tests -p 'test_v9_trade_opportunity_quality.py' -v
           python3 -m unittest discover -s tests -p 'test_v9_v7_trade_opportunity_bridge.py' -v
           python3 -m unittest discover -s tests -p 'test_v9_next4h_paper_outcome_score.py' -q
           python3 -m unittest discover -s tests -p 'test_v9_next4h_prestart_paper_capture.py' -q
