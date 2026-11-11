@@ -6,10 +6,19 @@
 
 1. TradingView'de BINANCE:BTCUSDT.P grafiğinde **1H** ve normal mum grafiğini seç (Heikin Ashi ve Renko değil).
 2. Pine Editor'a tradingview/v91_independent_1h_audit.pine dosyasının içeriğini tamamen yapıştır, kaydet ve grafiğe ekle. Pine uyarısı çıkarsa bize ilet: GitHub CI Pine'ı TradingView ortamında derlemez.
-3. Bir alarm oluştur: **V9.1 TV Independent 1H Structure Audit → Any alert() function call**. Pine her **kapanmış 1H** için 1 JSON gönderir; sinyal olmasa da gönderir. Bir alım-satım emri oluşturma.
+3. Bir alarm oluştur: **V9.1 TV Independent 1H Structure Audit → Any alert() function call**. Yeni sessiz sürümde **yalnızca hacim + momentum filtresini geçen BOS adaylarında** 1H kapanış JSON'u gönderilir. Bu V7 işlem teyidi değildir. Bir alım-satım emri oluşturma.
 4. Aynısını **BINANCE:SOLUSDT.P** için başka bir grafikte yap.
 5. Gerçek alarm JSON'unu GitHub Actions altında **V9.1 TradingView manual alert intake vs V7 → Run workflow → tradingview_alert_json** alanına yapıştır. Bu manuel kayıt yapar; TV'nin kendiliğinden GitHub'a veri gönderdiği anlamına gelmez.
 6. Gerçek TV verileri geldikçe aynı kapanmış mumun orijinal V7 kaydıyla OHLC, BOS, CHoCH, FVG ve swing sweep işaretlerini karşılaştır.
+
+## Yeni sessiz sürüm (çok fazla grafik işareti için)
+
+- Varsayılan olarak grafikte **yalnızca kalite filtresini geçen BOS** işaretlenir ("Q" etiketi). Sweep noktaları, diğer ham BOS'lar ve swing çizgileri gizlidir.
+- Filtre: 1H kapanışla onaylı pivot BOS; en az 0,20 ATR kırılım, önceki 20 1H mumuna göre en az 1,20x hacim, bir önceki 1H'a göre en az %20 hacim artışı; RSI/MACD aynı yön, EMA20 aşırı uzaması en fazla 2,5 ATR.
+- **Hiçbir işaret işlem giriş teyidi değildir.** V7'nin 4H/Daily koşulları, retest, stop/TP ayrıca çalışır; TV kodu bunları içermez.
+- Alarm varsayılanı "Alerts: quality BOS candidates ONLY" açıktır; **boş saatlerde alarm yoktur**. Bu yüzden sadece alarm çıkan saatleri kıyaslayarak tüm saatlerde genel uyum oranı hesaplamak taraflı olur. Tam saatlik araştırma istenirse kullanıcı "Alerts: quality BOS candidates ONLY" seçeneğini kapatabilir, ancak 1H başına 1 mesaj/grafik oluşturur.
+- **Eski TradingView göstergesini sil, yeni kodu yapıştırıp yeniden grafiğe ekle. Daha önce alarm kurduysan silip yeniden oluştur.** TradingView oluşturulmuş alarmların eski kodunu otomatik olarak değiştirmez.
+- Açılış geçmiş mumlarında çok sayıda işaret görünmesi, bunların bir saat içinde üretilmiş bildirimler olduğu anlamına gelmez.
 
 ## Denetim kuralları
 
