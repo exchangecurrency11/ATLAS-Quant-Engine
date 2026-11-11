@@ -68,11 +68,27 @@ def retest_diagnostics(row, bars, target):
         raise ValueError("V91_DIAGNOSTIC_RETEST_TIMELINE_INVALID")
     active={"side":pending["side"],"level":pending["level"],
             "knownUTC":pending["watchKnownUTC"]}
-    diagnostic=strong_retest(bars[-250:],active,bars[-1])
+    # This feature is OBSERVATIONAL. Unavailable strong-retest features must
+    # not erase an otherwise verified V7 or 4h-retention paper observation.
+    try:
+        diagnostic=strong_retest(bars[-250:],active,bars[-1])
+    except (ValueError,TypeError,KeyError,ArithmeticError) as exc:
+        return {"observationOnlyNoVeto":True,
+                "status":"DIAGNOSTIC_UNAVAILABLE_NO_ENTRY_VETO",
+                "reasonCode":type(exc).__name__,
+                "strongGateWouldPassButIsNotActive":None,
+                "hypotheticalGateRejectionReasons":[],
+                "closed1HRetraceFeatures":None}
     features=diagnostic.get("features",{})
     if features.get("retestClosedAtUTC")!=target:
-        raise ValueError("V91_DIAGNOSTIC_MISSING_CURRENT_RETEST_FEATURES")
+        return {"observationOnlyNoVeto":True,
+                "status":"DIAGNOSTIC_UNAVAILABLE_NO_ENTRY_VETO",
+                "reasonCode":"FEATURES_INSUFFICIENT_OR_NOT_CURRENT",
+                "strongGateWouldPassButIsNotActive":None,
+                "hypotheticalGateRejectionReasons":diagnostic.get("reasons",[]),
+                "closed1HRetraceFeatures":None}
     return {"observationOnlyNoVeto":True,
+            "status":"DIAGNOSTIC_VERIFIED_CLOSED_1H",
             "strongGateWouldPassButIsNotActive":bool(diagnostic["passed"]),
             "hypotheticalGateRejectionReasons":diagnostic["reasons"],
             "closed1HRetraceFeatures":features}
