@@ -150,6 +150,29 @@ class V91ProspectiveTests(unittest.TestCase):
             retest_diagnostics(row(pending=p),
                 [{"t":END-HOUR,"c":100.}],END)
 
+
+    def test_unavailable_strong_retest_diagnostic_does_not_delete_paper_entry(self):
+        from v91_prospective_retest import retest_diagnostics
+        pending={"side":"bullish","level":99.8,"watchKnownUTC":END-HOUR,
+                 "retestKnownUTC":END,"stop":98.0}
+        ret={"passed":False,"reasons":["V91_RETEST_NO_REFERENCE_VOLUME"],
+             "features":{}}
+        with patch("v91_prospective_retest.strong_retest",return_value=ret):
+            d=retest_diagnostics(row(pending),[{"t":END-HOUR}],END)
+        self.assertEqual(d["status"],"DIAGNOSTIC_UNAVAILABLE_NO_ENTRY_VETO")
+        self.assertTrue(d["observationOnlyNoVeto"])
+        self.assertIsNone(d["strongGateWouldPassButIsNotActive"])
+        self.assertIsNone(d["closed1HRetraceFeatures"])
+
+    def test_strong_retest_raises_but_v7_paper_state_kept(self):
+        from v91_prospective_retest import retest_diagnostics
+        pending={"side":"bearish","level":99.8,"watchKnownUTC":END-HOUR,
+                 "retestKnownUTC":END,"stop":102.}
+        with patch("v91_prospective_retest.strong_retest",side_effect=ValueError("bad optional volume")):
+            d=retest_diagnostics(row(pending),[{"t":END-HOUR}],END)
+        self.assertEqual(d["reasonCode"],"ValueError")
+        self.assertTrue(d["observationOnlyNoVeto"])
+
     def test_existing_hour_not_overwritten(self):
         with tempfile.TemporaryDirectory() as d:
             p=path_at(d,END)
