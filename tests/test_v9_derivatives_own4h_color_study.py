@@ -32,8 +32,12 @@ class V9OwnCandleDerivativeTests(unittest.TestCase):
             self.assertEqual(len(x["rows"]),126)
             self.assertGreaterEqual(x["eligibleBothSourcesPlusFutureCandle"],100)
             self.assertTrue(x["postSelectionOfB_C_DNeverProvesDirectionalEdge"])
-            self.assertEqual(x["results"]["A_priceMomentum"]["n"],
-                             x["results"]["E_takerCVDOnly"]["n"])
+            paired=x["pairedPriceMomentumVsTakerCVDSameOwn4HColor"]
+            self.assertLessEqual(paired["identicalTargetCandles"],
+                                 x["results"]["A_priceMomentum"]["n"])
+            self.assertEqual(paired["priceMomentumA"]["n"],
+                             paired["takerCVDOnlyE"]["n"])
+            self.assertTrue(paired["noSelectedSubsetComparedAgainstUnmatchedBaseline"])
             self.assertLessEqual(x["results"]["A_priceMomentum"]["correct"],126)
 
     def test_missing_oi_cannot_fabricate_causally_available_features(self):
