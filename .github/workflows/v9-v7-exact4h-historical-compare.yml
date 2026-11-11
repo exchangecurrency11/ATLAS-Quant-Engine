@@ -1,0 +1,101 @@
+name: 'V9 vs original V7 prior-4H vote exact-target historical comparison (no alerts)'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_v7_matched_4h_historical_comparison.py
+      - tests/test_v9_v7_matched_4h_historical_comparison.py
+      - .github/workflows/v9-v7-exact4h-historical-compare.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-v7-history-compare-research
+  cancel-in-progress: false
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout isolated frozen V9 model branch
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Checkout original V7 actually timestamped paper snapshots
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+      - name: Run causality and apples-to-apples target unit tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_v9_v7_matched_4h_historical_comparison.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_next4h_prestart_paper_capture.py' -q
+          test "$(git branch --show-current)" = "research/v9-prestart-live-data-compatibility-20261111"
+          test -f forward/v9_next_4h_color/frozen_models.json
+          test -d v7_evidence/forward/snapshots
+      - name: Reconstruct past frozen V9 4H colors from Coinalyze and pair to V7 prior snapshots
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          python3 -u v9_v7_matched_4h_historical_comparison.py
+      - name: Verify research labels never misrepresent historical replay as notifications
+        run: |
+          python3 - <<'PY'
+          import json
+          f='forward/v9_v7_matched_historical_4h/compare.json'
+          j=json.load(open(f))
+          assert j['status']=='RETROSPECTIVE_V7_4H_CONTEXT_VOTE_PROXY_VS_FROZEN_V9_NOT_PROSPECTIVE'
+          assert j['V7ActualTradingSignalDifferentTarget']
+          assert j['V7GitHubSnapshotNotProofOfChatGPTNotificationDelivery']
+          assert j['V9PredictionsReplayedOnlyAfterOutcomesAlreadyKnown']
+          assert j['notGenuineProspectiveV9']
+          assert j['frozenModelWeightsNotRetuned']
+          assert j['exactlySame4HTargetsForPairedComparisons']
+          assert j['noUserNotifications'] and j['noTradingOrders'] and j['noPromotionToLiveSignals']
+          assert set(j['perAsset'])=={'BTCUSDT','ETHUSDT','SOLUSDT'}
+          assert j['rows'] and all(x['notTrueProspectiveForecast'] for x in j['rows'])
+          for s,stat in j['perAsset'].items():
+            cmp=stat['pairedSameTarget']
+            n=cmp['n']
+            assert n<=stat['frozenV9AllCompleted']['n']
+            assert cmp['frozenV9']['n']==cmp['v7Prior4HTrendVotePROXY']['n']==n
+            assert cmp['frozenV9']['correct']<=n
+            assert cmp['v7Prior4HTrendVotePROXY']['correct']<=n
+          print('V7_V9_MATCHED_4H_RETROSPECTIVE_COMPARISON_AUDITED',
+                {s:x['pairedSameTarget']['n'] for s,x in j['perAsset'].items()})
+          PY
+      - name: Keep complete audit artifacts even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-v7-matched-4h-retrospective-${{ github.run_id }}
+          path: forward/v9_v7_matched_historical_4h/
+          if-no-files-found: ignore
+          retention-days: 90
+      - name: Commit only historical comparison to research branch; never modify V7
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_v7_matched_historical_4h/compare.json \
+                  forward/v9_v7_matched_historical_4h/compare.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9 vs original V7 4H context votes same future own-body target; retrospective only"
+          for n in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_V7_HISTORICAL_PAIR_REPORT_SAVED_NO_ALERTS"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
