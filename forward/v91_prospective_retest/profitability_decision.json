@@ -1,0 +1,209 @@
+{
+  "mode": "V91_V7_PROFITABILITY_DECISION_AUDIT_READ_ONLY",
+  "sourceHistoricalReplayAlreadyInspectedNotIndependent": true,
+  "sourceForwardProspectiveSealedOnly": true,
+  "historical": {
+    "BTCUSDT": {
+      "V7Historical": {
+        "trades": 9,
+        "wins": 5,
+        "totalR": 3.663603,
+        "avgR": 0.407067
+      },
+      "V91Historical": {
+        "trades": 5,
+        "wins": 3,
+        "totalR": 4.101041,
+        "avgR": 0.820208
+      },
+      "retainedSameSetups": {
+        "trades": 5,
+        "wins": 3,
+        "totalR": 4.101041,
+        "avgR": 0.820208
+      },
+      "removedV7Setups": {
+        "trades": 4,
+        "wins": 2,
+        "totalR": -0.437438,
+        "avgR": -0.109359
+      },
+      "newV91Setups": {
+        "trades": 0,
+        "wins": 0,
+        "totalR": 0,
+        "avgR": null
+      },
+      "removedV7Winners": 2,
+      "removedV7Losers": 2,
+      "newV91Winners": 0,
+      "newV91Losers": 0,
+      "historicalDeltaR": 0.437438,
+      "historicalStressDeltaR": 1.485651,
+      "auditRemoved": [
+        {
+          "retestUTC": "2025-03-10T04:00:00Z",
+          "retestDelayHours": 6,
+          "netR9bps": -1.126355
+        },
+        {
+          "retestUTC": "2025-08-30T02:00:00Z",
+          "retestDelayHours": 5,
+          "netR9bps": -1.194308
+        },
+        {
+          "retestUTC": "2025-11-14T18:00:00Z",
+          "retestDelayHours": 5,
+          "netR9bps": 0.030238
+        },
+        {
+          "retestUTC": "2026-03-16T10:00:00Z",
+          "retestDelayHours": 6,
+          "netR9bps": 1.852987
+        }
+      ],
+      "auditNew": [],
+      "historicalSelectionBiasNoOutOfSampleProof": true
+    },
+    "SOLUSDT": {
+      "V7Historical": {
+        "trades": 11,
+        "wins": 6,
+        "totalR": 2.860985,
+        "avgR": 0.26009
+      },
+      "V91Historical": {
+        "trades": 9,
+        "wins": 5,
+        "totalR": 3.115948,
+        "avgR": 0.346216
+      },
+      "retainedSameSetups": {
+        "trades": 8,
+        "wins": 5,
+        "totalR": 4.202167,
+        "avgR": 0.525271
+      },
+      "removedV7Setups": {
+        "trades": 3,
+        "wins": 1,
+        "totalR": -1.341182,
+        "avgR": -0.447061
+      },
+      "newV91Setups": {
+        "trades": 1,
+        "wins": 0,
+        "totalR": -1.086219,
+        "avgR": -1.086219
+      },
+      "removedV7Winners": 1,
+      "removedV7Losers": 2,
+      "newV91Winners": 0,
+      "newV91Losers": 1,
+      "historicalDeltaR": 0.254963,
+      "historicalStressDeltaR": 0.405338,
+      "auditRemoved": [
+        {
+          "retestUTC": "2025-08-27T21:00:00Z",
+          "retestDelayHours": 6,
+          "netR9bps": -1.063586
+        },
+        {
+          "retestUTC": "2025-10-17T13:00:00Z",
+          "retestDelayHours": 6,
+          "netR9bps": -1.048036
+        },
+        {
+          "retestUTC": "2026-06-06T00:00:00Z",
+          "retestDelayHours": 5,
+          "netR9bps": 0.77044
+        }
+      ],
+      "auditNew": [
+        {
+          "retestUTC": "2026-06-06T07:00:00Z",
+          "retestDelayHours": 2,
+          "netR9bps": -1.086219
+        }
+      ],
+      "historicalSelectionBiasNoOutOfSampleProof": true
+    }
+  },
+  "prospective": {
+    "savedDistinctVerifiedHours": 3,
+    "performance": {
+      "BTCUSDT": {
+        "V7_ORIGINAL": {
+          "sealedHistoricalNextOpenPaperExits": 0,
+          "netR9BpsPerSide": 0,
+          "netR25BpsPerSide": 0,
+          "notRealExecutableFills": true
+        },
+        "V91_RETEST_MAX4H": {
+          "sealedHistoricalNextOpenPaperExits": 0,
+          "netR9BpsPerSide": 0,
+          "netR25BpsPerSide": 0,
+          "notRealExecutableFills": true
+        }
+      },
+      "SOLUSDT": {
+        "V7_ORIGINAL": {
+          "sealedHistoricalNextOpenPaperExits": 0,
+          "netR9BpsPerSide": 0,
+          "netR25BpsPerSide": 0,
+          "notRealExecutableFills": true
+        },
+        "V91_RETEST_MAX4H": {
+          "sealedHistoricalNextOpenPaperExits": 0,
+          "netR9BpsPerSide": 0,
+          "netR25BpsPerSide": 0,
+          "notRealExecutableFills": true
+        }
+      }
+    },
+    "publicationTiming": {
+      "BTCUSDT": {
+        "V7_ORIGINAL": {
+          "recordedEntryCandidates": 0,
+          "assumedNextOpenBeforeResearchPublication": 0,
+          "unprovenRealExecution": 0,
+          "publicationLagMinutes": []
+        },
+        "V91_RETEST_MAX4H": {
+          "recordedEntryCandidates": 0,
+          "assumedNextOpenBeforeResearchPublication": 0,
+          "unprovenRealExecution": 0,
+          "publicationLagMinutes": []
+        }
+      },
+      "SOLUSDT": {
+        "V7_ORIGINAL": {
+          "recordedEntryCandidates": 0,
+          "assumedNextOpenBeforeResearchPublication": 0,
+          "unprovenRealExecution": 0,
+          "publicationLagMinutes": []
+        },
+        "V91_RETEST_MAX4H": {
+          "recordedEntryCandidates": 0,
+          "assumedNextOpenBeforeResearchPublication": 0,
+          "unprovenRealExecution": 0,
+          "publicationLagMinutes": []
+        }
+      }
+    },
+    "allAtLeast168ObservedHours": false,
+    "allAtLeast20ClosedPaperTradesPerAssetPerVersion": false,
+    "minimumSampleScreenPassedNotStatisticalProof": false,
+    "realTimeExecutableEntryCountProven": 0
+  },
+  "decision": "KEEP_V91_SILENT_SHADOW_RESEARCH_NO_PROMOTION",
+  "comparativeEdgeProven": false,
+  "historicalStrategySelectedAfterLookingAtResults": true,
+  "tradesAssumeUnexecutableInstantNextOpenFill": true,
+  "newOrders": false,
+  "notifications": false,
+  "v7StrategyOrProductionModified": false,
+  "v91StrategyModified": false,
+  "neverAutoEnableSignalNotifications": true,
+  "priority": "FAIR_EXECUTION_TIMING_AND_NEW_PROSPECTIVE_NET_R_NOT_MORE_INDICATORS"
+}
