@@ -7,9 +7,10 @@ name: 'V9 research-only BTC ETH SOL prestart GREEN RED paper journal'
 on:
   schedule:
     # 17 minutes before every UTC 00/04/08/12/16/20 4H candle
-    # Corresponds to 02:43/06:43/10:43/14:43/18:43/22:43 TSİ.
+    # Correct UTC triggers: 23:43,03:43,07:43,11:43,15:43,19:43.
+    # TSİ triggers: 02:43,06:43,10:43,14:43,18:43,22:43.
     # GitHub schedule can run late: Python fails CLOSED after T-3 minutes.
-    - cron: '43 3,7,11,15,19,23 * * *'
+    - cron: '43 23,3,7,11,15,19 * * *'
   workflow_dispatch:
 
 permissions:
