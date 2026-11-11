@@ -50,12 +50,15 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -s tests -p 'test_v9_v7_trade_opportunity_bridge.py' -q
+          python3 -m unittest discover -s tests -p 'test_v9_trade_opportunity_quality.py' -q
           test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
           test -d v7_evidence/forward/snapshots
           test -d forward/v9_next_4h_color/hourly/snapshots
           test -f forward/v9_next_4h_color/paper_scoreboard.json
 
       - name: Join identical fresh original 1H V7/V9 data and locked 4H research context
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
         run: |
           python3 -u v9_v7_trade_opportunity_bridge.py
 
@@ -80,6 +83,11 @@ jobs:
               assert x['V7BOSRetestStrategyIsPrimary']
               assert x['4HOwnColorIsSecondaryNotProfitTarget']
               assert x['v7PositionsAndSignalsLeftUnchanged']
+              assert x['v9QualitySourceAudit']['qualityScoreNotAnOrderOrTradeSignal']
+              for contract in x['contracts'].values():
+                assert contract['v9QualityScoreIsOnlyResearchContextNotAProfitableTradeProbability']
+                assert contract['v9QualityScoredOriginalV7NewWatches']<=contract['originalV7NewWatchesAtThisClose']
+                assert contract['noOriginalV7WatchOrRetestRewritten']
               assert set(x['contracts'])=={'BTCUSDT','SOLUSDT'}
               assert y['originalV7PaperTradeCount']==y['originalV7TradeCount'] if 'originalV7PaperTradeCount' in y else True
               assert y['gatingWithoutFullStrategyReplayCannotProveHigherProfit']
