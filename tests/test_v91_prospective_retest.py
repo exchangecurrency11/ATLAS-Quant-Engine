@@ -123,6 +123,33 @@ class V91ProspectiveTests(unittest.TestCase):
         self.assertEqual(j["results"]["SOLUSDT"]["V91_RETEST_MAX4H"]["eligibleClosedPaperTrades"],0)
         self.assertEqual(j["savedDistinctVerifiedHours"],1)
 
+
+    def test_retest_features_are_descriptive_not_a_strong_gate(self):
+        from v91_prospective_retest import retest_diagnostics
+        p={"side":"bullish","level":99.8,"watchKnownUTC":END-HOUR,
+           "retestKnownUTC":END,"stop":98.0}
+        r=row(pending=p)
+        bars=[{"t":END-HOUR,"o":100.,"h":101.,"l":99.,"c":100.,"v":100.}]
+        ret={"passed":False,"reasons":["V91_DIRECTIONAL_BODY_WEAK"],
+             "features":{"retestClosedAtUTC":END,
+                         "directionalBody_ATR":0.03,
+                         "retestRelativeVolume20":0.7}}
+        with patch("v91_prospective_retest.strong_retest",return_value=ret) as f:
+            d=retest_diagnostics(r,bars,END)
+            self.assertEqual(f.call_count,1)
+            self.assertTrue(d["observationOnlyNoVeto"])
+            self.assertFalse(d["strongGateWouldPassButIsNotActive"])
+            self.assertEqual(d["closed1HRetraceFeatures"]["directionalBody_ATR"],.03)
+            self.assertEqual(r["currentPaperState"]["pendingNextOpenPaperEntry"],p)
+
+    def test_retest_features_fail_closed_when_record_is_not_this_hour(self):
+        from v91_prospective_retest import retest_diagnostics
+        p={"side":"bullish","level":99.8,"watchKnownUTC":END-2*HOUR,
+           "retestKnownUTC":END-HOUR}
+        with self.assertRaisesRegex(ValueError,"DIAGNOSTIC_RETEST_TIMELINE_INVALID"):
+            retest_diagnostics(row(pending=p),
+                [{"t":END-HOUR,"c":100.}],END)
+
     def test_existing_hour_not_overwritten(self):
         with tempfile.TemporaryDirectory() as d:
             p=path_at(d,END)
