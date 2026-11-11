@@ -11,7 +11,7 @@ int leftBars = input.int(3, "Confirmed swing left", minval = 2, maxval = 10)
 int rightBars = input.int(3, "Confirmed swing right", minval = 2, maxval = 10)
 bool showMarkers = input.bool(true, "Show closed-candle structure markers")
 
-bool chartValid = timeframe.isminutes and timeframe.multiplier == 60 and
+bool chartValid = chart.is_standard and timeframe.isminutes and timeframe.multiplier == 60 and
      syminfo.prefix == "BINANCE" and (syminfo.ticker == "BTCUSDT.P" or syminfo.ticker == "SOLUSDT.P")
 
 float ph = ta.pivothigh(high, leftBars, rightBars)
