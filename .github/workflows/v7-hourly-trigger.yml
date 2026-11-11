@@ -99,6 +99,10 @@ jobs:
           snapshot="forward/snapshots/$TARGET.json"
           report="forward/reports/$TARGET.md"
           if test -e "$snapshot"; then
+            # Another scheduled run already captured this immutable hour.
+            # Downstream step still expects the compact latest-observation file.
+            # Reuse the ORIGINAL snapshot without recalculating or rewriting it.
+            cp "$snapshot" forward/tmp/latest-observation.json
             echo "Snapshot already exists for $TARGET, preserving original observation."
             exit 0
           fi
