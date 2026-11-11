@@ -1,0 +1,28 @@
+name: "V9.1 Binance public REST Cloudflare probe safety (RESEARCH, NOT DEPLOYED)"
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - cloudflare/v91-binance-official-probe.js
+      - tests/test-v91-binance-official-probe.mjs
+      - .github/workflows/v91-binance-cloudflare-probe-tests.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  no-network-fixture-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate worker source and deterministic Binance fixtures only
+        run: |
+          set -euo pipefail
+          node --check cloudflare/v91-binance-official-probe.js
+          node --test tests/test-v91-binance-official-probe.mjs
+          echo "V91_BINANCE_CLOUDFLARE_RESEARCH_PROBE_SAFE_NOT_DEPLOYED_NO_ORDERS"
