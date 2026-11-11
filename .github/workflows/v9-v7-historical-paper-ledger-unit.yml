@@ -1,0 +1,28 @@
+name: 'V9 historical paper LONG SHORT 100USDT ledger integrity unit tests'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - v9_v7_historical_paper_trade_ledger.py
+      - tests/test_v9_v7_historical_paper_trade_ledger.py
+      - .github/workflows/v9-v7-historical-paper-ledger-unit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  trade-account-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Checkout only V9 isolated research
+        uses: actions/checkout@v5
+      - name: Verify source-candle entries, one-hour stop-first and total paper USDT PnL
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v9_v7_historical_paper_trade_ledger.py v9_v7_full_profit_backtest.py
+          python3 -m unittest discover -s tests -p 'test_v9_v7_historical_paper_trade_ledger.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_v7_full_profit_backtest.py' -q
+          echo "V9_PAPER_TRADE_HISTORICAL_RISK_100USDT_10X_OFFICIAL_HOURLY_UNIT_TESTS_PASSED"
