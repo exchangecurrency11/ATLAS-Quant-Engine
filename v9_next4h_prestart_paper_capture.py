@@ -207,7 +207,18 @@ def snapshot(now,models,key,fetch=None):
              model["scalerMean"],model["scalerScale"]))
         if not math.isfinite(logits):raise ValueError("NONFINITE_MODEL_OUTPUT")
         p=1/(1+math.exp(-max(-50,min(50,logits))))
+        # A fair comparison on EXACTLY the same future own O/C candle.
+        # Baseline is previous fully CLOSED 4H body ending T-4H, known
+        # BEFORE target T begins. Cannot use currently unfinished [T-4,T).
+        lagged=source_data[symbol]["four"][-1]
+        baseline=("GREEN" if lagged["c"]>lagged["o"] else
+                  "RED" if lagged["c"]<lagged["o"] else "DOJI")
+        if lagged["t"]+FOUR!=target-FOUR:
+            raise ValueError("COMPARATOR_UNCLOSED_4H_CANDLE_LEAK")
         forecasts[symbol]={
+           "lastCompleted4HColorBaseline":baseline,
+           "baselineClosedAtUTC":iso(target-FOUR),
+           "baselineUsesOnlyCandleClosedBeforeTarget":True,
            "direction":"GREEN" if p>=.5 else "RED",
            "pGreenUNCALIBRATED":round(p,6),
            "confidenceUNCALIBRATED":round(max(p,1-p),6),
