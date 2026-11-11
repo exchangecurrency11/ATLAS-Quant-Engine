@@ -1,13 +1,13 @@
 # BTC → ETH → SOL — Verified Daily + 4H close interpretation
 
-4H closed: **2026-11-10 23:00 TSİ**. Daily closed: **2026-11-10 03:00 TSİ**.
+4H closed: **2026-11-11 07:00 TSİ**. Daily closed: **2026-11-11 03:00 TSİ**.
 
 **This is context and technical commentary, NOT a prediction of the next 4H candle.** V9 pre-start forecast remains immutable and must be evaluated separately.
 
 
 ## BTC
-**Daily:** GREEN | O 74,823.40 H 75,575.00 L 73,715.10 C 75,327.00 | RSI14 37.72 | MACD hist -335.4690 | EMA20/50 78,180.21/79,282.65 | BEARISH_CONTEXT | RSI_NOT_EXTREME
-**4H:** GREEN | O 73,180.10 H 73,648.00 L 72,691.00 C 73,437.70 | RSI14 35.35 | MACD hist -95.5518 | EMA20/50 74,948.06/76,167.33 | BEARISH_CONTEXT | RSI_NOT_EXTREME
+**Daily:** RED | O 75,327.10 H 75,411.00 L 72,691.00 C 73,762.90 | RSI14 33.98 | MACD hist -382.5127 | EMA20/50 77,759.51/79,066.32 | BEARISH_CONTEXT | RSI_NOT_EXTREME
+**4H:** RED | O 73,762.90 H 74,000.00 L 73,184.30 C 73,740.10 | RSI14 38.39 | MACD hist -61.6958 | EMA20/50 74,730.89/75,981.55 | BEARISH_CONTEXT | RSI_NOT_EXTREME
 **Daily+4H interpretation:** trend agreement=True; Daily=BEARISH_CONTEXT; 4H=BEARISH_CONTEXT; risk=No RSI extreme.
 **Latest chart structure:** BOS bearish at level 73,333.00 (heuristic, not guaranteed)
 - Candidate bearish OB body 74,537.40–74,805.40; not proven institutional orders.
@@ -19,14 +19,14 @@
 - Chart equal_lows near 79,250.20; actual resting orders unverified.
 
 ## ETH
-**Daily:** GREEN | O 2,126.26 H 2,159.25 L 2,081.41 C 2,134.00 | RSI14 33.70 | MACD hist -9.2809 | EMA20/50 2,290.61/2,370.27 | BEARISH_CONTEXT | RSI_NOT_EXTREME
-**4H:** GREEN | O 2,022.36 H 2,048.69 L 2,008.36 C 2,043.67 | RSI14 28.87 | MACD hist -9.5492 | EMA20/50 2,143.37/2,209.22 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
+**Daily:** RED | O 2,134.00 H 2,135.90 L 2,003.57 C 2,052.20 | RSI14 29.53 | MACD hist -15.3924 | EMA20/50 2,267.91/2,357.80 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
+**4H:** GREEN | O 2,052.21 H 2,068.85 L 2,042.46 C 2,061.99 | RSI14 33.31 | MACD hist -6.0283 | EMA20/50 2,127.76/2,197.53 | BEARISH_CONTEXT | RSI_NOT_EXTREME
 **Daily+4H interpretation:** trend agreement=True; Daily=BEARISH_CONTEXT; 4H=BEARISH_CONTEXT; risk=Oversold bounce.
 **BOS/OB/FVG/liquidity:** Not verified for ETH at this timestamp.
 
 ## SOL
-**Daily:** GREEN | O 86.51 H 88.44 L 85.07 C 86.69 | RSI14 27.24 | MACD hist -0.6939 | EMA20/50 95.28/100.27 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
-**4H:** GREEN | O 82.23 H 83.26 L 81.46 C 82.90 | RSI14 30.57 | MACD hist -0.3433 | EMA20/50 86.80/89.90 | BEARISH_CONTEXT | RSI_NOT_EXTREME
+**Daily:** RED | O 86.69 H 86.80 L 81.25 C 83.30 | RSI14 23.80 | MACD hist -0.8189 | EMA20/50 94.14/99.61 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
+**4H:** GREEN | O 83.30 H 84.04 L 82.81 C 83.31 | RSI14 32.83 | MACD hist -0.2525 | EMA20/50 86.16/89.39 | BEARISH_CONTEXT | RSI_NOT_EXTREME
 **Daily+4H interpretation:** trend agreement=True; Daily=BEARISH_CONTEXT; 4H=BEARISH_CONTEXT; risk=Oversold bounce.
 **Latest chart structure:** BOS bearish at level 84.66 (heuristic, not guaranteed)
 - Candidate bearish OB body 85.76–86.06; not proven institutional orders.
