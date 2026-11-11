@@ -6,6 +6,8 @@ on:
     paths:
       - v9_v7_full_profit_backtest.py
       - tests/test_v9_v7_full_profit_backtest.py
+      - v9_v7_historical_paper_trade_ledger.py
+      - tests/test_v9_v7_historical_paper_trade_ledger.py
       - .github/workflows/v9-v7-full-profit-backtest.yml
   workflow_dispatch:
 
@@ -35,6 +37,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m unittest discover -s tests -p 'test_v9_v7_full_profit_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v9_v7_historical_paper_trade_ledger.py' -v
           python3 -m unittest discover -s tests -p 'test_v9_next_4h_color_research.py' -q
           python3 -m unittest discover -s tests -p 'test_v9_no_provider_tx_ablation.py' -q
           python3 -m unittest discover -s tests -p 'test_signal_quality_v7.py' -q
@@ -74,6 +77,38 @@ jobs:
           assert x['productionV7AndOriginalV9ModelsNotModified']
           assert x['modelOrAlertPromotionBlocked']
           assert set(x['candidateHistorical'])=={'BTCUSDT','SOLUSDT'}
+          assert x['individualHistoricalPaperTradesWrittenAndValidated']>0
+          import csv
+          ledger=Path('forward/v9_v7_profit_backtest/paper_trades/trade_ledger.json')
+          if not ledger.is_file():raise AssertionError('MISSING_REAL_CANDLE_PAPER_LEDGER')
+          l=json.loads(ledger.read_text())
+          assert l['status']=='V9_V7_HISTORICAL_CANDLE_BY_CANDLE_PAPER_LEDGER_AND_ILLUSTRATIVE_100USDT_10X'
+          assert l['initialCapitalUSDT']==100 and l['leverageIsolated']==10
+          assert l['originalV7BOSRetestStopTPAndPaperFillsUnchanged']
+          assert not l['noBrokerOrders']==False and l['noUserNotifications'] and not l['productionModified']
+          assert l['retrospectiveTradesNotActualTrades']
+          assert x['individualHistoricalPaperTradesWrittenAndValidated']==len(
+              l['allCompletedHistoricalPaperTradeLedger'])
+          for symbol,m in x['candidateHistorical'].items():
+            for variant,s in m.items():
+              trades=[r for r in l['allCompletedHistoricalPaperTradeLedger']
+                      if r['symbol']==symbol and r['variant']==variant]
+              assert len(trades)==s['V7paperClosedTrades']
+              assert round(sum(r['netR9BpsPerSide'] for r in trades),4)==s['totalNetR9BpsPerSide']
+              for t in trades:
+                assert t['noRealFill'] and t['watchConfirmedUTC']<t['retestConfirmedUTC']
+                assert t['retestConfirmedUTC']<=t['entryOpenUTC']<t['exitKnownUTC']
+          portfolio=l['portfolioPaperAccounts']
+          assert set(portfolio)==expected
+          for variant,acct in portfolio.items():
+            assert acct['notAVerifiedUSDProfit']
+            assert acct['originalEligibleHistoricalPaperTrades']==sum(
+                m[variant]['V7paperClosedTrades'] for m in x['candidateHistorical'].values())
+            assert acct['paperTradesNotBlockedByIllustrativeMargin']+acct[
+                'paperTradesSkippedByIllustrativeMarginOrExposure']==acct[
+                'originalEligibleHistoricalPaperTrades']
+          rows=list(csv.DictReader(open('forward/v9_v7_profit_backtest/paper_trades/all_paper_trades.csv',encoding='utf-8-sig')))
+          assert len(rows)==x['individualHistoricalPaperTradesWrittenAndValidated']
           expected={'V7_ORIGINAL','V9_94_DIRECTION_GATE',
                     'V9_88_NO_TX_DIRECTION_GATE','V9_94_AND_88_AGREEMENT_GATE'}
           for sym,v in x['candidateHistorical'].items():
@@ -87,7 +122,7 @@ jobs:
               if s['V7paperClosedTrades']==0:
                   assert s['averageNetR9BpsPerSide'] is None
                   assert s['totalNetR9BpsPerSide'] is None
-          print('V9_V7_PLUS_PROFIT_PRIMARY_REPLAY_CHECKED')
+          print('V9_V7_PLUS_ALL_ORIGINAL_PAPER_TRADE_CANDLES_AND_100USDT_RISK_ACCOUNT_AUDITED',len(rows))
           PY
 
       - name: Keep original full backtest research results even if commit fails
