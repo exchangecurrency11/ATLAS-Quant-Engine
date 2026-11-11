@@ -1,0 +1,143 @@
+name: 'V9+ publish independently audited quality 60 75 paper results (no rerun)'
+
+on:
+  push:
+    branches: [research/v9-prestart-live-data-compatibility-20261111]
+    paths:
+      - .github/workflows/v9-quality-publish-verified-replay.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: v9-quality-publish-verified-replay
+  cancel-in-progress: false
+
+jobs:
+  audit-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout isolated V9 only (no V7 writes)
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Retrieve completed official-source 2024-2026 strategy replay artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p audit_quality
+          # Original paper replay completed: earlier CI assertion failed only
+          # because it assumed the OLD four variant names.
+          gh run download 43047832291 --repo "$GITHUB_REPOSITORY" \
+            -n v9-v7-full-chronological-profit-first-43047832291 \
+            -D audit_quality
+          for file in compare.json compare.md \
+            paper_trades/trade_ledger.json \
+            paper_trades/all_paper_trades.csv \
+            paper_trades/trade_ledger.md; do
+            test -s "audit_quality/$file"
+          done
+      - name: Audit strict causal complete V7 vs new six variants (including prior source hashes)
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_v9_trade_opportunity_quality.py' -q
+          python3 -m unittest discover -s tests -p 'test_v9_v7_full_profit_backtest.py' -q
+          python3 - <<'PY'
+          import json,csv
+          from pathlib import Path
+          prev=json.loads(Path('forward/v9_v7_profit_backtest/compare.json').read_text())
+          j=json.loads(Path('audit_quality/compare.json').read_text())
+          paper=json.loads(Path('audit_quality/paper_trades/trade_ledger.json').read_text())
+          assert prev['status']==j['status']=='V9_V7_PLUS_BOS_RETEST_FULL_CHRONOLOGICAL_PROFIT_BACKTEST_HISTORICAL'
+          assert prev['sourceWindowStartUTC']==j['sourceWindowStartUTC']=='2024-10-01T00:00:00Z'
+          assert prev['asOfExclusiveUTC']==j['asOfExclusiveUTC']=='2026-10-01T00:00:00Z'
+          assert prev['allSourcePricesStrictlyReconciledWithOriginalV7']
+          assert j['allSourcePricesStrictlyReconciledWithOriginalV7']
+          assert j['newV9QualityV7OnlyRegimeFVGOBLiquidityResearch']
+          assert j['qualityThresholdsPredeclaredBeforeNewResultExecution']=={
+              'V9_QUALITY_SCORE_60':60,'V9_QUALITY_SCORE_75':75}
+          assert j['qualityOnlyUsesClosed1HAtOriginalV7BOS']
+          assert j['qualityScoresNotCalibratedProfitProbabilities']
+          assert j['noBrokerOrders'] and j['noUserNotifications']
+          assert j['productionV7AndOriginalV9ModelsNotModified']
+          assert j['modelOrAlertPromotionBlocked']
+          assert not j['prospectiveOrPreviouslyUnseenOutOfSample']
+          assert paper['retrospectiveTradesNotActualTrades']
+          assert paper['originalV7BOSRetestStopTPAndPaperFillsUnchanged']
+          assert paper['initialCapitalUSDT']==100 and paper['leverageIsolated']==10
+          assert paper['noBrokerOrders'] and paper['noUserNotifications'] and not paper['productionModified']
+          assert paper['V9QualityScoreIsNotCalibratedWinningProbability']
+          assert paper['V9Quality60And75AreFixedResearchOnlyShadowGates']
+          legacy={'V7_ORIGINAL','V9_94_DIRECTION_GATE',
+                  'V9_88_NO_TX_DIRECTION_GATE','V9_94_AND_88_AGREEMENT_GATE'}
+          allnames=legacy|{'V9_QUALITY_SCORE_60','V9_QUALITY_SCORE_75'}
+          assert j['individualHistoricalPaperTradesWrittenAndValidated']==69
+          ledger=paper['allCompletedHistoricalPaperTradeLedger']
+          assert len(ledger)==69
+          assert set(paper['portfolioPaperAccounts'])==allnames
+          for symbol,variants in j['candidateHistorical'].items():
+            assert symbol in ('BTCUSDT','SOLUSDT')
+            assert set(variants)==allnames
+            for old in legacy:
+              # Preserved original same-source V7 and V9 performance
+              assert variants[old]==prev['candidateHistorical'][symbol][old]
+            for variant,m in variants.items():
+              assert m['fullySequentialSameOriginalV7Candles']
+              assert m['next1HOpenPaperEntryAndSameStopTPTimingAsV7']
+              assert m['filtersOnlyV7AlreadyQualifyingBOS']
+              assert m['tradeRetestWasObservedBeforeEntry']
+              subset=[x for x in ledger if x['symbol']==symbol and x['variant']==variant]
+              assert len(subset)==m['V7paperClosedTrades']
+              assert round(sum(x['netR9BpsPerSide'] for x in subset),4)==m['totalNetR9BpsPerSide']
+              assert all(x['noRealFill'] and
+                x['watchConfirmedUTC']<x['retestConfirmedUTC']<=x['entryOpenUTC']<x['exitKnownUTC'] for x in subset)
+              if variant in ('V9_QUALITY_SCORE_60','V9_QUALITY_SCORE_75'):
+                e=m['V9BOSDirectionFilterAudit']
+                assert e['v7QualifyingBOSScored']>=e.get('v9QualityAccepted',0)
+                assert e['v7QualifyingBOSScored']>=e.get('v9QualityRejected',0)
+                assert len(e['scoresAtV7BOS'])==e['v7QualifyingBOSScored']
+                assert all(0<=x['score']<=100 for x in e['scoresAtV7BOS'])
+          assert paper['portfolioPaperAccounts']['V7_ORIGINAL']['originalEligibleHistoricalPaperTrades']==20
+          assert paper['portfolioPaperAccounts']['V9_QUALITY_SCORE_75']['originalEligibleHistoricalPaperTrades']==19
+          for variant,acct in paper['portfolioPaperAccounts'].items():
+            assert acct['originalEligibleHistoricalPaperTrades']==sum(
+                j['candidateHistorical'][s][variant]['V7paperClosedTrades'] for s in j['candidateHistorical'])
+            assert acct['paperTradesNotBlockedByIllustrativeMargin']+acct[
+                'paperTradesSkippedByIllustrativeMarginOrExposure']==acct[
+                'originalEligibleHistoricalPaperTrades']
+            assert acct['notAVerifiedUSDProfit']
+            assert round(sum(x['paperNetPnlUSDT'] for x in acct['trades']),5)==round(acct['totalPaperNetPnlUSDT'],5)
+          with open('audit_quality/paper_trades/all_paper_trades.csv',encoding='utf-8-sig') as f:
+            assert len(list(csv.DictReader(f)))==69
+          print('V9_QUALITY_60_75_FULL_SEQUENTIAL_69_PAPER_TRADES_CAUSAL_AND_COST_AUDITED')
+          PY
+      - name: Commit separate NEW results, not original V7 or frozen V9 model
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          mkdir -p forward/v9_v7_quality_upgraded_backtest/paper_trades
+          cp audit_quality/compare.json audit_quality/compare.md \
+             forward/v9_v7_quality_upgraded_backtest/
+          cp audit_quality/paper_trades/trade_ledger.json \
+             audit_quality/paper_trades/trade_ledger.md \
+             audit_quality/paper_trades/all_paper_trades.csv \
+             forward/v9_v7_quality_upgraded_backtest/paper_trades/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_v7_quality_upgraded_backtest/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9+ research only: original V7 BOS retest plus predeclared quality 60/75, exact 1H paper net R and 100 USDT ledger"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_PLUS_QUALITY_HISTORICAL_PAPER_BACKTEST_PUBLISHED_NOT_SIGNAL"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
