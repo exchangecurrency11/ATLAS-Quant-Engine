@@ -97,6 +97,24 @@ def evaluate(klines,open_interest,funding,end):
                   if v["prediction"] is not None and v["color"]!="DOJI"]
         if any(u["prediction"]!=v["prediction"] for u,v in retained):
             raise ValueError("FILTERED_MOMENTUM_WAS_NOT_SAME_DIRECTION")
+    # Compare A and E only on the IDENTICAL 4H target/symbol timestamps,
+    # accounting for E abstentions when CVD delta is zero.
+    a=observations["A_priceMomentum"]
+    e=observations["E_takerCVDOnly"]
+    pairs=[(u,v) for u,v in zip(a,e)
+           if u["prediction"] is not None and v["prediction"] is not None
+           and u["color"]!="DOJI" and v["color"]!="DOJI"]
+    a_matched=tally([u for u,v in pairs])
+    e_matched=tally([v for u,v in pairs])
+    matched={
+       "identicalTargetCandles":len(pairs),
+       "priceMomentumA":a_matched,
+       "takerCVDOnlyE":e_matched,
+       "EminusAHitRatePercentagePoints":round(
+           e_matched["hitRatePct"]-a_matched["hitRatePct"],2)
+           if pairs else None,
+       "noSelectedSubsetComparedAgainstUnmatchedBaseline":True,
+       "notProspectiveOrTradingPerformance":True}
     if len(rows)!=EVAL_DAYS*6:
         raise ValueError("EXPECTED_NONOVERLAPPING_126_FOUR_HOUR_TARGETS")
     eligible=[r for r in rows if r["status"].startswith("HISTORICAL_CAUSAL")]
@@ -108,6 +126,7 @@ def evaluate(klines,open_interest,funding,end):
       "fundingHistoryWithUsableVariationCount":sum(
           r["fundingHistoryVariationSufficient"] for r in eligible),
       "results":score,
+      "pairedPriceMomentumVsTakerCVDSameOwn4HColor":matched,
       "postSelectionOfB_C_DNeverProvesDirectionalEdge":True,
       "rows":rows,
     }
@@ -157,10 +176,11 @@ def report_md(r):
     for s,x in r["assetResults"].items():
         def f(v):
             return f"{v['correct']}/{v['n']} ({v['hitRatePct']}%)" if v["n"] else "N/A"
+        matched=x["pairedPriceMomentumVsTakerCVDSameOwn4HColor"]
         lines.append(f"| {s} | {x['eligibleBothSourcesPlusFutureCandle']}/126 | "
-                     f"{f(x['results']['A_priceMomentum'])} | "
-                     f"{f(x['results']['E_takerCVDOnly'])} | "
-                     "Filtered same momentum direction; NOT comparable without matched baseline |")
+                     f"{f(matched['priceMomentumA'])} | "
+                     f"{f(matched['takerCVDOnlyE'])} | "
+                     "B/C/D only filter same A direction (no extra directional edge) |")
     lines+=["",(
           "**Limits:** OI and funding field semantics have not been "
           "independently verified with Binance settlement/position books, "
