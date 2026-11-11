@@ -1,0 +1,122 @@
+name: 'V9 V7 original paper trade opportunities plus 4H shadow (no user alerts)'
+
+# Research only. ORIGINAL V7 BOS/retest + original 1H price snapshots come
+# from the untouched V7 experimental branch, V9 1H and optional PRESTART
+# green/red model context come from isolated V9 branch. No orders, no
+# production strategy changes, no ChatGPT notifications.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v9-v7-paper-trade-opportunity-shadow.yml
+  workflow_run:
+    workflows:
+      - V7 Hourly Paper Forward Runner
+      - V9 Hourly BTC ETH SOL Market Context (paper only)
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: '43,55 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v9-v7-trade-opportunity-shadow-readonly
+  cancel-in-progress: false
+
+jobs:
+  shadow:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - name: Checkout ONLY isolated V9 research with full Git commit history
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Checkout ORIGINAL V7 paper evidence read-only in separate directory
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+
+      - name: Assert all event joins do NOT create BOS/retest or trading orders
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_v9_v7_trade_opportunity_bridge.py' -q
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          test -d v7_evidence/forward/snapshots
+          test -d forward/v9_next_4h_color/hourly/snapshots
+          test -f forward/v9_next_4h_color/paper_scoreboard.json
+
+      - name: Join identical fresh original 1H V7/V9 data and locked 4H research context
+        run: |
+          python3 -u v9_v7_trade_opportunity_bridge.py
+
+      - name: Audit original V7 BOS paper trade net R before publish
+        id: gate
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json,datetime,pathlib,time
+          p=pathlib.Path('forward/v9_v7_trade_overlay/latest.json')
+          if not p.is_file():
+              print('publish=false')
+              print('reason=NO_PROSPECTIVE_HOURLY_JOIN_YET')
+          else:
+              x=json.loads(p.read_text())
+              t=datetime.datetime.fromisoformat(
+                  x['sameClosed1HUTC'].replace('Z','+00:00')).timestamp()
+              timely=0<=time.time()-t<=58*60
+              report=pathlib.Path('forward/v9_v7_trade_overlay/paper_trade_scoreboard.json')
+              y=json.loads(report.read_text())
+              assert x['status']=='V9_V7_ORIGINAL_TRADE_OPPORTUNITY_READONLY_SHADOW'
+              assert x['noOrders'] and x['noNotifications'] and x['noProductionModified']
+              assert x['V7BOSRetestStrategyIsPrimary']
+              assert x['4HOwnColorIsSecondaryNotProfitTarget']
+              assert x['v7PositionsAndSignalsLeftUnchanged']
+              assert set(x['contracts'])=={'BTCUSDT','SOLUSDT'}
+              assert y['originalV7PaperTradeCount']==y['originalV7TradeCount'] if 'originalV7PaperTradeCount' in y else True
+              assert y['gatingWithoutFullStrategyReplayCannotProveHigherProfit']
+              assert y['requiresFreshOutOfSampleProspectiveSignals']
+              assert y['noOrders'] and y['noNotifications']
+              print('publish='+('true' if timely else 'false'))
+              print('reason='+('VERIFIED_ORIGINAL_V7_V9_MATCH' if timely else 'STALE_HOURLY_MATCH'))
+          PY
+
+      - name: Save primary V7 opportunity shadow and original exit performance to research branch only
+        if: steps.gate.outputs.publish == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v9_v7_trade_overlay/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9 shadow: original V7 BOS/retest first, paper netR and costs, optional immutable 4H context"
+          for n in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V9_V7_PRIMARY_PAPER_TRADE_OPPORTUNITY_CONTEXT_PUBLISHED_NO_ALERT"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Preserve auditable paper-only snapshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v9-v7-trade-opportunity-shadow-${{ github.run_id }}
+          path: |
+            forward/v9_v7_trade_overlay/latest.json
+            forward/v9_v7_trade_overlay/paper_trade_scoreboard.json
+          if-no-files-found: ignore
+          retention-days: 45
