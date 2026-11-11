@@ -8,6 +8,11 @@ on:
     - cron: '28 * * * *'
     - cron: '48 * * * *'
   workflow_dispatch:
+  workflow_run:
+    workflows:
+      - V9 Hourly BTC ETH SOL Market Context (paper only)
+    types: [completed]
+    branches: [main]
 permissions:
   contents: write
 concurrency:
@@ -15,6 +20,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   compare-spot-context:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 9
     steps:
