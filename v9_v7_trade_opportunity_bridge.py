@@ -20,11 +20,12 @@ Never infer that rejecting old trades would yield the same V7 opportunities
 without a full chronological replay; gated trade subsets are only
 descriptive, not a simulated counterfactual strategy.
 """
-import argparse,json,math,subprocess
+import argparse,json,math,subprocess,os
 from datetime import datetime,timezone
 from pathlib import Path
 from v9_next4h_paper_outcome_score import verify_prior_forecast
 from v9_next_4h_color_research import HOUR,FOUR,SYMBOLS,iso,ts
+from v9_trade_opportunity_quality import quality_profile
 
 CANDIDATES=("BTCUSDT","SOLUSDT")
 CONTRACTS={s:s+"_PERP.A" for s in CANDIDATES}
@@ -57,7 +58,8 @@ def _side_to_color(side):
     raise ValueError("INVALID_V7_SIDE")
 
 
-def asof_overlay(v7,hourly,forecast=None,git_first_commit_time=None):
+def asof_overlay(v7,hourly,forecast=None,git_first_commit_time=None,
+                 quality_hour_by_symbol=None):
     if v7.get("status")!="VERIFIED_PAPER_OBSERVATION":
         raise ValueError("V7_NOT_VERIFIED_ORIGINAL_SNAPSHOT")
     if hourly.get("status")!="V9_HOURLY_OBSERVATION_VERIFIED_PAPER_CONTEXT_ONLY":
@@ -92,6 +94,22 @@ def asof_overlay(v7,hourly,forecast=None,git_first_commit_time=None):
         v7context=v7["marketContext"][ref]
         observations=[]
         new_watches=v7row["newWatchAtThisClose"]
+        quality_profiles=[]
+        if quality_hour_by_symbol is not None and new_watches:
+            bars=quality_hour_by_symbol.get(s)
+            if not bars or len(bars)!=250 or (
+                bars[0]["t"]!=end-250*HOUR or
+                bars[-1]["t"]+HOUR!=end):
+                raise ValueError("V9_QUALITY_NOT_EXACT_PRIOR_250_CLOSED_HOURS_"+s)
+            for watch in new_watches:
+                if watch.get("side") not in ("bullish","bearish") or (
+                    type(watch.get("BOSLevel")) not in (int,float)):
+                    raise ValueError("V7_WATCH_LEVEL_INVALID_FOR_V9_SCORE")
+                signal={"event":"BOS","direction":watch["side"],
+                        "at":end-HOUR,"confirmedAt":end,
+                        "brokenLevel":watch["BOSLevel"]}
+                quality_profiles.append(quality_profile(
+                    bars,signal,v7context["timeframes"]["1hour"]["indicators"]))
         for w in new_watches:
             if w.get("knownUTC")!=end and (
                 type(w.get("knownUTC")) is not int or w["knownUTC"]!=end):
@@ -112,6 +130,10 @@ def asof_overlay(v7,hourly,forecast=None,git_first_commit_time=None):
         v7close=float(v7context["timeframes"]["1hour"]["candle"]["close"])
         if abs(v7close-provider_close)>max(1e-6,abs(v7close)*2e-5):
             raise ValueError("V7_V9_CLOSED_1H_PRICE_SOURCE_MISMATCH_"+s)
+        if quality_profiles and (
+            abs(float(quality_hour_by_symbol[s][-1]["c"])-v7close)>
+            max(1e-6,abs(v7close)*2e-5)):
+            raise ValueError("V9_QUALITY_COINALYZE_V7_LAST_HOUR_PRICE_PARITY_FAILED_"+s)
         suggestion=None
         if eligible_forecast is not None:
             row=eligible_forecast["assetForecasts"][s]
@@ -133,16 +155,21 @@ def asof_overlay(v7,hourly,forecast=None,git_first_commit_time=None):
                 "notTradingSignal":True,
               } if shadow88 is not None else None)}
         statuses=[]
-        for event in observations:
+        for i,event in enumerate(observations):
+            score=(quality_profiles[i] if i<len(quality_profiles)
+                   and event["kind"]=="V7_NEW_BOS_WATCH" else None)
             aligned=(suggestion["primary94"]["direction"]==
                 _side_to_color(event["side"])) if suggestion else None
             statuses.append({
                "v7Event":event,
+               "v9BOSQualityScoreFromExact250ClosedHours":score,
                "v9Primary94DirectionalAgreement":aligned,
                "v9SignalFilterWouldBeHypotheticalNotExecuted":True,
                "doNotTurnDirectionIntoProfitProbability":True})
         derived[s]={
           "originalV7NewWatchesAtThisClose":len(new_watches),
+          "v9QualityScoredOriginalV7NewWatches":len(quality_profiles),
+          "v9QualityScoreIsOnlyResearchContextNotAProfitableTradeProbability":True,
           "originalV7RetestConfirmedAtThisClose":bool(pending_now),
           "originalV7PaperPositionAlreadyOpen":live is not None,
           "originalV7NewPaperTradeExitsAtThisClose":len(
@@ -318,7 +345,42 @@ def main():
             if chosen is not None:raise ValueError("DUPLICATE_V9_TARGET")
             chosen=f
             commit_time=first_commit_epoch(path)
-    report=asof_overlay(s7,s9,chosen,commit_time)
+    # Price and chart-signal quality are computed only when ORIGINAL V7
+    # has actually saved a fresh BOS watch. Coinalyze tx/bv are never
+    # used in quality scoring: independently audited cross-source gaps.
+    needs_quality=any(
+      s7["results"].get(CONTRACTS[s],{}).get(
+          "V7_signal_filter",{}).get("newWatchAtThisClose",[])
+      for s in CANDIDATES)
+    quality_history=None
+    quality_source={
+       "status":"NO_ORIGINAL_V7_NEW_WATCH_TO_SCORE"
+                if not needs_quality else "SOURCE_NOT_VERIFIED",
+       "qualityScoreNotAnOrderOrTradeSignal":True}
+    if needs_quality:
+        key=(os.getenv("ETH_V7_COINALYZE_API_KEY") or
+             os.getenv("SOL_V8_COINALYZE_API_KEY") or
+             os.getenv("COINALYZE_API_KEY") or "").strip()
+        if not key:
+            quality_source["status"]="COINALYZE_READ_ONLY_KEY_UNAVAILABLE_NO_QUALITY_SCORE"
+        else:
+            from v9_next4h_prestart_paper_capture import get_group
+            from urllib.error import HTTPError,URLError
+            try:
+                quality_history,digest=get_group(
+                    "1hour",end-250*HOUR,end,key)
+                quality_source.update(
+                    status="COINALYZE_THREE_ASSET_250_CLOSED_HOURS_RETRIEVED",
+                    sourceSHA256=digest,
+                    noProviderTradeCountUsed=True)
+            except (ValueError,OSError,HTTPError,URLError,TimeoutError,
+                    KeyError,IndexError) as error:
+                quality_history=None
+                quality_source["status"]="QUALITY_HISTORY_SOURCE_UNAVAILABLE_NO_SCORE"
+                quality_source["errorType"]=type(error).__name__
+    report=asof_overlay(s7,s9,chosen,commit_time,
+                        quality_hour_by_symbol=quality_history)
+    report["v9QualitySourceAudit"]=quality_source
     paper=score_trade_subset(a.v7,a.sealed,first_commit_epoch)
     for name,content in ((a.latest,report),(a.score,paper)):
         out=Path(name);out.parent.mkdir(parents=True,exist_ok=True)
