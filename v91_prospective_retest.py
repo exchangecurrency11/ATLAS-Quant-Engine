@@ -20,6 +20,7 @@ from pathlib import Path
 from backtest_retest_long_v4 import replay_pair
 from signal_quality_v7 import evaluate_bos_quality
 from v7_forward_observer import epoch, iso, validate_inputs, latest_events
+from v91_retest_full_replay import strong_retest
 
 HOUR=3600
 SYM={"BTCUSDT":"BTCUSDT_PERP.A","SOLUSDT":"SOLUSDT_PERP.A"}
@@ -55,6 +56,26 @@ def require_exact_replay(reference, derived, *, symbol):
                   "diagnosticTotalRollingWindowClosedTrades"):
         if reference[field]!=derived[field]:
             raise ValueError("V91_ORIGINAL_V7_REPLAY_STATE_PARITY_FAILED_"+symbol+"_"+field)
+
+
+
+def retest_diagnostics(row, bars, target):
+    """Record V9.1 retest features as CONTEXT, never as an entry veto."""
+    pending=row["currentPaperState"].get("pendingNextOpenPaperEntry")
+    if pending is None:
+        return None
+    if pending.get("retestKnownUTC")!=target or bars[-1]["t"]+HOUR!=target:
+        raise ValueError("V91_DIAGNOSTIC_RETEST_TIMELINE_INVALID")
+    active={"side":pending["side"],"level":pending["level"],
+            "knownUTC":pending["watchKnownUTC"]}
+    diagnostic=strong_retest(bars[-250:],active,bars[-1])
+    features=diagnostic.get("features",{})
+    if features.get("retestClosedAtUTC")!=target:
+        raise ValueError("V91_DIAGNOSTIC_MISSING_CURRENT_RETEST_FEATURES")
+    return {"observationOnlyNoVeto":True,
+            "strongGateWouldPassButIsNotActive":bool(diagnostic["passed"]),
+            "hypotheticalGateRejectionReasons":diagnostic["reasons"],
+            "closed1HRetraceFeatures":features}
 
 
 def capture(original, main, raw, *, now, folder):
@@ -100,6 +121,10 @@ def capture(original, main, raw, *, now, folder):
                 raise ValueError("V91_PENDING_RETEST_NOT_THIS_CLOSE")
         observed[symbol]={"sourceClose":float(h[-1]["c"]),
                           "originalV7":baseline,"max4hRetest":candidate,
+                          "retestFeatureDiagnostics":{
+                              "originalV7":retest_diagnostics(baseline,h,target),
+                              "max4hRetest":retest_diagnostics(candidate,h,target)},
+                          "featuresOnlyNoExtraRetestFilterApplied":True,
                           "separateFullSequentialReplay":True}
     snapshot={
         "mode":MODE,"targetClosed1HUTC":iso(target),
@@ -221,7 +246,9 @@ def scoreboard(folder, *, current=None, current_path=None):
                         "entryUTC":iso(trade["entryOpenUTC"]),"exitUTC":iso(end),
                         "side":trade["side"],"netR9Bps":round(val,8),
                         "netR25Bps":round(stress,8),
-                        "paperOnlyNoRealExecution":True})
+                        "paperOnlyNoRealExecution":True,
+                        "diagnosticAtPreviouslySealedRetest":fetch_json(path_at(root,int(trade["retestKnownUTC"])))
+                        ["assets"][sym].get("retestFeatureDiagnostics",{}).get(field)})
     result={
         "mode":"V91_PROSPECTIVE_CAUSAL_PAPER_SCOREBOARD",
         "sinceFirstActualSavedVerifiedCaptureUTC":iso(min(saved)) if saved else None,
