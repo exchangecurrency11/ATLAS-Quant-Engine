@@ -66,6 +66,26 @@ def verify_prior_forecast(forecast,models=None):
         if models is not None:
             if row.get("modelTrainingLabelsSHA256")!=models["symbols"][s]["trainingLabelsSHA256"]:
                 raise ValueError("FROZEN_MODEL_TRAIN_HASH_CHANGED")
+    shadow=forecast.get("researchOnlyShadow88NoProviderTradeCount")
+    if shadow is not None:
+        if (shadow.get("status")!="FROZEN_88_NO_PROVIDER_TX_PARALLEL_PAPER_NOT_PROMOTED"
+            or shadow.get("modelFeatureCount")!=88
+            or shadow.get("sixTransactionCountFeaturePositionsDropped")!=[20,27,50,57,80,87]
+            or shadow.get("sameOriginalDecisionAnd4HTarget") is not True
+            or shadow.get("neverEnableNotificationsFromThisExperiment") is not True
+            or set(shadow.get("shadowAssetForecasts",{}))!=set(SYMBOLS)):
+            raise ValueError("FROZEN_88_PARALLEL_SHADOW_INVALID")
+        for sym,row in shadow["shadowAssetForecasts"].items():
+            p=row.get("pGreenUNCALIBRATED")
+            if (type(p) not in (int,float) or not math.isfinite(p)
+                or not 0<=p<=1 or row.get("direction") not in ("GREEN","RED")
+                or row["direction"]!=("GREEN" if p>=.5 else "RED")
+                or row.get("noCoinalyzeTXUsedInFeatureVector") is not True
+                or row.get("notATradingSignal") is not True):
+                raise ValueError("SHADOW_88_PAPER_DIRECTION_OR_SOURCE_INVALID")
+            if models is not None and (
+                row.get("modelTrainingLabelsSHA256")!=models["symbols"][sym]["trainingLabelsSHA256"]):
+                raise ValueError("SHADOW_TRAIN_LABEL_HASH_CHANGED")
     return start,end
 
 
@@ -88,7 +108,16 @@ def score_one(now,forecast,key,models=None,fetch=None):
         prior=forecast["assetForecasts"][symbol]
         predicted=prior["direction"]
         prior_baseline=prior.get("lastCompleted4HColorBaseline")
+        shadow=forecast.get("researchOnlyShadow88NoProviderTradeCount")
+        shadow_pred=shadow["shadowAssetForecasts"][symbol] if shadow is not None else None
         observed[symbol]={
+            "noProviderTx88ShadowPrediction":(
+                shadow_pred["direction"] if shadow_pred is not None else None),
+            "noProviderTx88ShadowPgreenUncalibrated":(
+                shadow_pred["pGreenUNCALIBRATED"] if shadow_pred is not None else None),
+            "noProviderTx88ShadowCorrect":(
+                shadow_pred["direction"]==actual
+                if shadow_pred is not None and actual!="DOJI" else None),
             "lastCompleted4HColorBaseline":prior_baseline,
             "lastCompleted4HColorBaselineCorrect":(
                 prior_baseline==actual if actual!="DOJI" and
@@ -169,6 +198,14 @@ def scoreboard(predictions,outcomes):
                 row["predictedPgreenUncalibrated"]!=pred["pGreenUNCALIBRATED"]):
                 raise ValueError("SCORED_PREDICTION_CHANGED_"+symbol)
             prior_baseline=pred.get("lastCompleted4HColorBaseline")
+            prior_shadow=mapping[start].get("researchOnlyShadow88NoProviderTradeCount")
+            if prior_shadow is not None:
+                immutable_shadow=prior_shadow["shadowAssetForecasts"][symbol]
+                if (row.get("noProviderTx88ShadowPrediction")!=immutable_shadow["direction"]
+                    or row.get("noProviderTx88ShadowPgreenUncalibrated")!=immutable_shadow["pGreenUNCALIBRATED"]):
+                    raise ValueError("FROZEN_88_SHADOW_CHANGED_AFTER_FORECAST")
+            elif row.get("noProviderTx88ShadowPrediction") is not None:
+                raise ValueError("SHADOW_SCORE_WITHOUT_PRESTART_FORECAST")
             if (prior_baseline is not None and
                 row.get("lastCompleted4HColorBaseline")!=prior_baseline):
                 raise ValueError("BASELINE_WAS_MODIFIED_AFTER_FORECAST")
@@ -177,7 +214,9 @@ def scoreboard(predictions,outcomes):
                 "actual":row["actual4HOwnOpenCloseColor"],
                 "p":row["predictedPgreenUncalibrated"],
                 "baselineCorrect":row.get("lastCompleted4HColorBaselineCorrect")
-                    if prior_baseline is not None else None})
+                    if prior_baseline is not None else None,
+                "shadowNoTx88Correct":row.get("noProviderTx88ShadowCorrect")
+                    if prior_shadow is not None else None})
         matched=[z for z in entries if
                  z["correct"] is not None and z["baselineCorrect"] is not None]
         n_matched=len(matched)
@@ -202,7 +241,31 @@ def scoreboard(predictions,outcomes):
            "doesNotDemonstrateV7SuperiorityBecauseV7UsesDifferentTarget":True,
            "notEnoughAloneToEnableNotifications":True,
         }
+        paired_shadows=[z for z in entries if
+            z["correct"] is not None and z["shadowNoTx88Correct"] is not None]
+        n_shadow=len(paired_shadows)
+        base_correct=sum(z["correct"] for z in paired_shadows)
+        shadow_correct=sum(z["shadowNoTx88Correct"] for z in paired_shadows)
+        paired_shadow={
+            "matchedSameFuture4HOwnCandle":n_shadow,
+            "frozenOriginal94Correct":base_correct,
+            "sourceMotivatedNoTx88Correct":shadow_correct,
+            "frozenOriginal94HitRatePct":round(100*base_correct/n_shadow,2)
+               if n_shadow else None,
+            "noTx88HitRatePct":round(100*shadow_correct/n_shadow,2)
+               if n_shadow else None,
+            "noTx88MinusOriginal94PercentagePoints":round(
+                 100*(shadow_correct-base_correct)/n_shadow,2)
+                if n_shadow else None,
+            "noTx88OnlyCorrect":sum(z["shadowNoTx88Correct"] and not z["correct"]
+                                   for z in paired_shadows),
+            "original94OnlyCorrect":sum(z["correct"] and not z["shadowNoTx88Correct"]
+                                        for z in paired_shadows),
+            "minimum200ProspectivePairsForInterpretation":n_shadow>=200,
+            "cannotChangeNotificationsBasedOnThisResearch":True,
+        }
         per[symbol]={
+            "matchedNoProviderTX88ShadowVsOriginal94":paired_shadow,
             "matchedNext4HOwnColorBaselineComparison":paired_comparison,
             "all":tally(entries),
             "atLeast55pctConfidence":tally([z for z in entries if max(z["p"],1-z["p"])>=.55]),
