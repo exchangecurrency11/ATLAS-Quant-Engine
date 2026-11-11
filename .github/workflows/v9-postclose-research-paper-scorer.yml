@@ -36,12 +36,14 @@ jobs:
           set -euo pipefail
           test "$(git branch --show-current)" = "research/v9-prestart-live-data-compatibility-20261111"
           python3 -m unittest discover -s tests -p 'test_v9_next4h_paper_outcome_score.py' -q
+          python3 -m unittest discover -s tests -p 'test_v9_prestart_attempt_coverage.py' -q
 
       - name: Score only previously saved fully CLOSED 4H candle bodies
         env:
           ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.SOL_V8_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
         run: |
           python3 -u v9_next4h_paper_outcome_score.py
+          python3 -u v9_prestart_attempt_coverage.py
 
       - name: Verify outcomes never overwrite predictions or invent paper success
         shell: bash
@@ -61,7 +63,14 @@ jobs:
             assert stats['evaluable']+stats['dojiExcluded']==j['completedTargetForecasts']
             assert stats['correct']<=stats['evaluable']
             assert stats['hitRatePct'] is None or 0<=stats['hitRatePct']<=100
-          print('V9_AFTER_CLOSE_OWN_OPEN_CLOSE_SCOREBOARD_VALID',j['completedTargetForecasts'])
+          c=json.loads(Path('forward/v9_next_4h_color/attempt_coverage.json').read_text())
+          assert c['expectedAlreadyStarted4HTargets']==(
+              c['validForecastsCommittedBeforeOpenPerOriginalFile']+
+              c['missed4HBeforeStartPredictionSlots'])
+          assert c['noRetrospectiveImputation'] and c['missingAreFailuresNotAbstentions']
+          assert c['noUserNotifications'] and not c['brokerOrders']
+          print('V9_AFTER_CLOSE_OWN_OPEN_CLOSE_SCOREBOARD_VALID',j['completedTargetForecasts'],
+                'missed_slots=',c['missed4HBeforeStartPredictionSlots'])
           PY
 
       - name: Publish separate paper result files to experiment branch only
@@ -71,6 +80,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add forward/v9_next_4h_color/paper_scoreboard.json
+          git add forward/v9_next_4h_color/attempt_coverage.json
           if [ -d forward/v9_next_4h_color/paper_outcomes ]; then
             git add --all -- forward/v9_next_4h_color/paper_outcomes/
           fi
@@ -97,5 +107,6 @@ jobs:
           path: |
             forward/v9_next_4h_color/paper_outcomes/
             forward/v9_next_4h_color/paper_scoreboard.json
+            forward/v9_next_4h_color/attempt_coverage.json
           if-no-files-found: ignore
           retention-days: 60
