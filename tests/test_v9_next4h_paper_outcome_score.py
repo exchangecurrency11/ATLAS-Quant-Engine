@@ -127,6 +127,31 @@ class V9PaperScorerTests(unittest.TestCase):
         self.assertEqual(results["captureCoveragePct"],66.67)
         self.assertEqual(results["completedTargetForecasts"],0)
 
+    def test_paired_previously_closed_4h_color_baseline_not_an_automatic_promotion(self):
+        p=forecast()
+        # At T-10min, last *fully CLOSED* 4H ends T-4h. As-of source
+        # comparator is locked with the model on EXACT same next candle.
+        for asset,color in (("BTCUSDT","RED"),("ETHUSDT","GREEN"),("SOLUSDT","RED")):
+            p["assetForecasts"][asset]["lastCompleted4HColorBaseline"]=color
+            p["assetForecasts"][asset]["baselineClosedAtUTC"]=iso(T-FOUR)
+            p["assetForecasts"][asset]["baselineUsesOnlyCandleClosedBeforeTarget"]=True
+        outcome=score_one(T+FOUR+180,p,"key",fetch=fetch(source()))
+        scored=scoreboard([p],[outcome])
+        btc=scored["allSymbols"]["BTCUSDT"]["matchedNext4HOwnColorBaselineComparison"]
+        self.assertEqual(btc["matchedSameTarget4HColorEvents"],1)
+        self.assertEqual(btc["modelCorrect"],1)
+        self.assertEqual(btc["laggedClosed4HColorCorrect"],0)
+        self.assertEqual(btc["modelOnlyCorrect"],1)
+        self.assertFalse(btc["atLeast200PairedProspectiveCandles"])
+        self.assertTrue(btc["notEnoughAloneToEnableNotifications"])
+        self.assertFalse(scored["notificationActivationRequested"])
+        self.assertTrue(scored["noUserNotifications"])
+        self.assertIn("BLOCKED",scored["notificationPromotionEligibility"])
+        stale=copy.deepcopy(p)
+        stale["assetForecasts"]["BTCUSDT"]["baselineClosedAtUTC"]=iso(T)
+        with self.assertRaisesRegex(ValueError,"BASELINE_IS_NOT_CAUSALLY"):
+            verify_prior_forecast(stale)
+
     def test_no_forward_predictions_reports_none_not_100pct(self):
         x=scoreboard([],[])
         for s in SYMBOLS:
