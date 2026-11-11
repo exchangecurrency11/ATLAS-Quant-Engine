@@ -29,7 +29,7 @@ class TestV91Retest(unittest.TestCase):
 
     def test_weak_body_and_low_volume_are_rejected(self):
         bars,active=candle_history()
-        bars[-1]["c"]=100.45
+        bars[-1]["c"]=100.10
         d=strong_retest(bars,active,bars[-1])
         self.assertFalse(d["passed"])
         self.assertIn("V91_DIRECTIONAL_BODY_WEAK",d["reasons"])
