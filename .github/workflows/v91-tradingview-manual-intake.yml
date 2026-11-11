@@ -1,0 +1,98 @@
+name: "V9.1 TradingView manual alert intake vs V7 (research only, NO ORDERS)"
+on:
+  workflow_dispatch:
+    inputs:
+      tradingview_alert_json:
+        description: 'Paste exactly one TradingView Pine v6 alert JSON. Never paste keys or passwords.'
+        required: true
+        type: string
+permissions:
+  contents: write
+concurrency:
+  group: v91-tv-manual-context-only
+  cancel-in-progress: false
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout only V9.1 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          persist-credentials: true
+      - name: Checkout original V7 observations without modifying them
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+      - name: V9.1 parity tests, no replays to paper trades
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p test_v91_tradingview_compare.py -q
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+      - name: Convert manually submitted TV alert into JSON, without logging sensitive input
+        env:
+          TV_ALERT: ${{ inputs.tradingview_alert_json }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          x=json.loads(os.environ["TV_ALERT"])
+          from v91_tradingview_compare import validate_alert
+          validate_alert(x)
+          Path("/tmp/v91_tv_manual_alert.json").write_text(json.dumps(x))
+          print("V91_TV_ONE_REAL_USER_SUPPLIED_SCHEMA_VALIDATED_NO_KEY_LOGGED")
+          PY
+      - name: Validate same-hour unmodified original V7 snapshot and compare OHLC BOS
+        run: |
+          set -euo pipefail
+          python3 v91_tradingview_compare.py \
+            --tv /tmp/v91_tv_manual_alert.json \
+            --v7 v7_evidence/forward/snapshots \
+            --output /tmp/v91_tv_manual_compare.json
+      - name: Save separate manual TV research artifact, never score as prospective
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path("/tmp/v91_tv_manual_compare.json").read_text())
+          assert a["count"]==1 and a["retrospectiveUserProvidedAlertsNotProspective"]
+          assert a["noBrokerOrders"] and a["noNotifications"] and a["promotionBlocked"]
+          c=a["comparisons"][0]
+          assert c["manualAlertInputNotAuthenticatedOrTimeSealed"]
+          assert not c["automaticLiveEntryFilteringAllowed"]
+          key=c["closed1HUTC"].replace(":","-")+"_"+c["symbol"]+"_"+c["tvAlertSHA256"][:12]
+          dest=Path("forward/v91_tradingview_compare/manual")/(key+".json")
+          if dest.exists():
+              raise ValueError("V91_ALREADY_ARCHIVED_TV_MANUAL_CONTEXT_EVENT")
+          dest.parent.mkdir(parents=True,exist_ok=True)
+          dest.write_text(json.dumps(a,indent=2,ensure_ascii=False)+"\n")
+          print("V91_INDEPENDENT_TRADINGVIEW_RESEARCH_MANUAL_UNVERIFIED_ONLY",dest)
+          PY
+      - name: Commit ONLY isolated V9 research TV compare JSON
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v91_tradingview_compare/manual/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9.1 independent TV closed-hour research comparison MANUAL not authenticated"
+          for n in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V91_TV_MANUAL_INDEPENDENT_CONTEXT_PUBLISHED_NO_TRADES"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+      - name: Preserve comparison JSON as workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v91-tv-manual-research-${{ github.run_id }}
+          path: /tmp/v91_tv_manual_compare.json
+          if-no-files-found: ignore
+          retention-days: 30
