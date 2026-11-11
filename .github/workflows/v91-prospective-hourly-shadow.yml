@@ -1,0 +1,149 @@
+name: "V9.1 hourly V7 vs max4h retest prospective paper shadow NO ALERTS"
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/v91-prospective-hourly-shadow.yml]
+  workflow_dispatch:
+  schedule:
+    - cron: '34,49 * * * *'
+permissions:
+  contents: write
+concurrency:
+  group: v91-prospective-paper-hourly-readonly-v7
+  cancel-in-progress: false
+jobs:
+  hourly-paper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - name: Checkout isolated V9 research, full Git commit evidence
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Checkout original V7 as read-only evidence
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+      - name: Safety tests and branch isolation
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v91_prospective_retest.py
+          python3 -m unittest discover -s tests -p test_v91_prospective_retest.py -q
+          python3 -m unittest discover -s tests -p test_v91_retest_full_replay.py -q
+          python3 -m unittest discover -s tests -p test_signal_quality_v7.py -q
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+      - name: Check only the current verified V7 hour, never backfill
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(date -u +'%Y-%m-%dT%H-00Z')"
+          minute="$(date -u +%M)"
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          if [ "$((10#$minute))" -lt 12 ] || [ "$((10#$minute))" -gt 57 ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V91_SKIP_OUTSIDE_CURRENT_HOUR_GATE"
+          elif [ ! -f "v7_evidence/forward/snapshots/$target.json" ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V91_SKIP_MISSING_ORIGINAL_V7_HOURLY_CAPTURE"
+          elif [ -f "forward/v91_prospective_retest/hourly/$target.json" ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V91_SKIP_ALREADY_IMMUTABLY_CAPTURED"
+          else
+            echo "capture=true" >> "$GITHUB_OUTPUT"
+            echo "V91_CURRENT_ORIGINAL_V7_AVAILABLE_SOURCE_PARITY_PENDING"
+          fi
+      - name: Retrieve same 1H 4H Daily worker history and main data as original V7
+        if: steps.gate.outputs.capture == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p forward/tmp/v91_history
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/tmp/v91_main_market.json
+          test -s forward/tmp/v91_main_market.json
+          for tf in 1hour 4hour daily; do
+            curl --fail --location --silent --show-error --retry 2 --retry-delay 2 --max-time 80 \
+              -H 'Cache-Control: no-cache' \
+              "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=$tf" \
+              -o "forward/tmp/v91_history/history_$tf.json"
+            test -s "forward/tmp/v91_history/history_$tf.json"
+          done
+      - name: Independent full V7 and max4h paper replay, strict point-in-time parity
+        if: steps.gate.outputs.capture == 'true'
+        run: |
+          set -euo pipefail
+          python3 -u v91_prospective_retest.py \
+            --v7-dir v7_evidence/forward/snapshots \
+            --market forward/tmp/v91_main_market.json \
+            --history-dir forward/tmp/v91_history \
+            --out forward/v91_prospective_retest/hourly \
+            --scoreboard forward/v91_prospective_retest/scoreboard.json
+          test -s "forward/v91_prospective_retest/hourly/${{ steps.gate.outputs.target }}.json"
+          test -s forward/v91_prospective_retest/scoreboard.json
+      - name: Verify all paper guards and produce readable scorecard
+        if: steps.gate.outputs.capture == 'true'
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('forward/v91_prospective_retest/scoreboard.json').read_text())
+          assert x["mode"]=="V91_PROSPECTIVE_CAUSAL_PAPER_SCOREBOARD"
+          assert x["originalV7Untouched"] and x["noBackfilledOrPostSelectedTrades"]
+          assert x["missingHourObservationsMustNotBeFilled"]
+          assert x["noBrokerOrders"] and x["noNotifications"]
+          assert x["thresholdsNotReoptimizedFromNewObservations"]
+          lines=["# V9.1 Prospective V7 vs 4-hour retest shadow",
+            "","**Research paper-only. No trading orders or user notifications.**",
+            "","First captured hour: "+str(x["sinceFirstActualSavedVerifiedCaptureUTC"]),
+            "Verified hours: "+str(x["savedDistinctVerifiedHours"]),
+            "","| Symbol | System | Closed trades | Win % | Net R 9bp/side | Stress Net R 25bp/side |",
+            "|---|---|---:|---:|---:|---:|"]
+          for sym,variants in x["results"].items():
+            for name,m in variants.items():
+              lines.append(f'| {sym} | {name} | {m["eligibleClosedPaperTrades"]} | {m["winRatePct"]} | {m["totalNetR9BpsPerSide"]} | {m["totalNetR25BpsPerSide"]} |')
+          lines+=["","Missing prior sealed retests are EXCLUDED, never backfilled.",
+                  "Next-open prices are retrospective hypothetical paper assumptions, NOT actual fills.",
+                  "Funding, dynamic spread, liquidation and real broker execution unmodeled.",
+                  "Past 4h filter was selected after inspecting historical results; NEW outcomes required.",""]
+          Path('forward/v91_prospective_retest/scoreboard.md').write_text('\n'.join(lines))
+          print('V91_PROSPECTIVE_VERIFIED_PAPER_SCOREBOARD_SILENT',x["savedDistinctVerifiedHours"])
+          PY
+      - name: Commit only append-only V9 research observation and scorecard
+        if: steps.gate.outputs.capture == 'true'
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "forward/v91_prospective_retest/hourly/${{ steps.gate.outputs.target }}.json" \
+                  forward/v91_prospective_retest/scoreboard.json \
+                  forward/v91_prospective_retest/scoreboard.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9.1 sealed prospective hourly original V7 vs 4h retest PAPER ONLY"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V91_SEALED_CURRENT_HOUR_RESEARCH_ONLY_NO_USER_ALERTS"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+      - name: Retain audit bundle without notification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v91-prospective-v7-vs-4h-${{ github.run_id }}
+          path: |
+            forward/tmp/v91_main_market.json
+            forward/tmp/v91_history/history_*.json
+            forward/v91_prospective_retest/scoreboard.json
+            forward/v91_prospective_retest/hourly/${{ steps.gate.outputs.target }}.json
+          if-no-files-found: ignore
+          retention-days: 14
