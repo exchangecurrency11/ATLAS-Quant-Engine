@@ -41,6 +41,7 @@ jobs:
           set -euo pipefail
           python3 -m py_compile v91_dual_paper_accounts.py
           python3 -m unittest discover -s tests -p 'test_v91_dual_paper_accounts.py' -v
+          python3 -m unittest discover -s tests -p 'test_v91_dual_paper_historical_reference.py' -v
           python3 -m unittest discover -s tests -p 'test_v91_prospective_retest.py' -q
           python3 -m unittest discover -s tests -p 'test_v91_eth_prospective_retest.py' -q
           test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
@@ -66,13 +67,31 @@ jobs:
             assert a["riskPerTradeIsHighAndNotRecommendedForLive"]
           print("V7_AND_V91_VIRTUAL_ACCOUNTS_INDEPENDENT_NO_RETROACTIVE_FILLS")
           PY
+      - name: Preserve previously inspected full-archive scenario separately from forward accounts
+        run: |
+          set -euo pipefail
+          python3 -u v91_dual_paper_historical_reference.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v91_dual_paper_accounts/historical_reference.json").read_text())
+          assert x["notForwardAccountBalances"] is True
+          assert x["noBrokerOrders"] and x["noNotifications"]
+          assert x["historicalTradesSelectedFromFullReplayNotJustNightCandleColors"]
+          assert x["ETHHistoricalTwoYearArchiveNotAvailableForEqualComparison"]
+          assert x["accounts"]["V7_ORIGINAL"]["totalClosedHistoricalReplayedTrades"]==20
+          assert x["accounts"]["V91_RETEST_MAX4H"]["totalClosedHistoricalReplayedTrades"]==14
+          print("FROZEN_ALL_CANDLE_HISTORICAL_EQUITY_IS_SEPARATE_FROM_NEW_FORWARD_PAPER")
+          PY
       - name: Persist the independent portfolio status only to research branch
         run: |
           set -euo pipefail
           test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add forward/v91_dual_paper_accounts/latest.json forward/v91_dual_paper_accounts/latest.md
+          git add forward/v91_dual_paper_accounts/latest.json forward/v91_dual_paper_accounts/latest.md \
+                  forward/v91_dual_paper_accounts/historical_reference.json \
+                  forward/v91_dual_paper_accounts/historical_reference.md
           if git diff --cached --quiet; then
             echo "PAPER_ACCOUNT_STATUS_NO_CHANGE"
             exit 0
@@ -104,5 +123,7 @@ jobs:
           path: |
             forward/v91_dual_paper_accounts/latest.json
             forward/v91_dual_paper_accounts/latest.md
+            forward/v91_dual_paper_accounts/historical_reference.json
+            forward/v91_dual_paper_accounts/historical_reference.md
           retention-days: 14
           if-no-files-found: ignore
