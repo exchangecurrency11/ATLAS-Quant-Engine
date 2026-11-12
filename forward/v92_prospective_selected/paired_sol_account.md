@@ -2,8 +2,8 @@
 
 **Prospective paper only. No orders, alerts, or live strategy changes.**
 First eligible close: 2026-11-12T11:00:00Z
-Latest verified close: 2026-11-12T13:00:00Z
-Saved hours: 3; sealed: 3
+Latest verified close: 2026-11-12T15:00:00Z
+Saved hours: 4; sealed: 3
 
 | Arm | Closed trades | Win % | Net R (9bp/side) | Stress R (25bp/side) | Max DD R |
 |---|---:|---:|---:|---:|---:|
@@ -22,4 +22,6 @@ Minimum review sample: 30 closed baseline trades and 5 sealed direct veto events
 Missing hourly captures are listed, never backfilled. Only exits with a matching, pre-exit Git-committed retest snapshot are counted.
 The assumed next-hour-open fill is not proven executable; fees use 9 bp/side base and 25 bp/side stress. Funding, variable spread, market impact, and liquidation are not fully modeled.
 A positive paper result is not live approval.
+
+Missing hours not backfilled: 2026-11-12T14:00:00Z
 
