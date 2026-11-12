@@ -86,7 +86,7 @@ class V92SOLPairedProspectiveTests(unittest.TestCase):
             path_at(folder,FIRST).parent.mkdir(parents=True,exist_ok=True)
             path_at(folder,FIRST).write_text(json.dumps(retest))
             path_at(folder,FIRST+3600).write_text(json.dumps(exit_))
-            def commit_time(path):
+            def commit_time(repo_path,path):
                 obj=json.loads(Path(path).read_text())
                 return epoch(obj["capturedAtUTC"])+5
             with patch("v92_sol_paired_prospective.verified_first_commit",
