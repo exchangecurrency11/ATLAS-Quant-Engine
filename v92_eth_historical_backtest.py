@@ -18,7 +18,7 @@ from signal_quality_v7 import evaluate_bos_quality
 from v92_bull_bear_candle_invalidation import (
     START, END, HOUR, stamp, metrics
 )
-from v92_higher_timeframe_context import context_at
+from v92_higher_timeframe_context import context_at, aggregate_3d_from_daily
 from v92_multi_candle_invalidation import warnings_at_retest
 
 MODES=(
@@ -85,21 +85,31 @@ def _gate(four,daily,*,candle_enabled,daily_enabled,three_enabled,audit):
     return gate,candle_audit
 
 
-def run(histories):
+def run(histories, warmup_daily):
     hour=histories["1hour"]
     four=histories["4hour"]
     daily=histories["daily"]
     h=candles_from_history(hour,"1hour",END)
     f=candles_from_history(four,"4hour",END)
     d=candles_from_history(daily,"daily",END)
-    if len(h)!=17520 or len(f)!=4380 or len(d)!=730:
+    warm=candles_from_history(warmup_daily,"daily",END)
+    d_context=candles_from_history(warmup_daily+daily,"daily",END)
+    if (len(h)!=17520 or len(f)!=4380 or len(d)!=730
+        or len(warm)!=183 or len(d_context)!=913):
         raise ValueError("V92_ETH_OFFICIAL_BINANCE_ARCHIVE_COUNT_MISMATCH")
+    if context_at(d_context,START)["3D"]=="insufficient":
+        raise ValueError("V92_ETH_3D_EMA50_WARMUP_INCOMPLETE")
+    if len(aggregate_3d_from_daily(d_context))<300:
+        raise ValueError("V92_ETH_EXPECTED_3D_CONTEXT_MISSING")
     result={
         "status":"V92_ETH_OFFICIAL_BINANCE_1D_3D_HISTORICAL_PAPER_ABLATION",
         "symbol":"ETHUSDT",
         "fromUTC":stamp(START),
         "toUTCExclusive":stamp(END),
         "verifiedCandles":{"1H":len(h),"4H":len(f),"1D":len(d)},
+        "contextWarmupDailyBars":len(warm),
+        "contextWarmupPeriodUTC":["2024-04-01T00:00:00Z","2024-10-01T00:00:00Z"],
+        "derived3DContextCandlesWithWarmup":len(aggregate_3d_from_daily(d_context)),
         "source":"Official Binance USD-M Futures monthly 1H klines; each monthly ZIP SHA256 verified; 4H and 1D derived from 1H",
         "3D":"Derived from three consecutive fully closed UTC daily bars on epoch-aligned 3-day boundaries",
         "nativeExchange3DParityProven":False,
@@ -127,7 +137,7 @@ def run(histories):
             audit["dailyTrends"]=Counter()
             audit["threeDayTrends"]=Counter()
             gate,candle_audit=_gate(
-                f,d,candle_enabled=candle_enabled,
+                f,d_context,candle_enabled=candle_enabled,
                 daily_enabled=daily_enabled,three_enabled=three_enabled,
                 audit=audit)
             rep=replay_pair(hour,four,daily,as_of=END,
@@ -187,7 +197,9 @@ def markdown(x):
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--archive",default="eth_verified_archive")
-    parser.add_argument("--out",default="forward/v92_eth_historical_backtest")
+    parser.add_argument("--warmup-daily",default="eth_verified_warmup/history_daily_warmup.json")
+    parser.add_argument("--warmup-manifest",default="eth_verified_warmup/source_manifest.json")
+    parser.add_argument("--out",default="forward/v92_eth_historical_backtest_warmup")
     args=parser.parse_args()
     root=Path(args.archive)
     manifest=json.loads((root/"source_manifest.json").read_text())
@@ -201,12 +213,26 @@ def main():
         if len(rows)!=1 or rows[0].get("symbol")!="ETHUSDT_PERP.A":
             raise ValueError("V92_ETH_WRONG_ARCHIVE_SYMBOL")
         histories[tf]=rows[0]["history"]
-    data=run(histories)
+    warm_path=Path(args.warmup_daily)
+    warm_rows=json.loads(warm_path.read_text())
+    if len(warm_rows)!=1 or warm_rows[0].get("symbol")!="ETHUSDT_PERP.A":
+        raise ValueError("V92_ETH_WARMUP_WRONG_SYMBOL")
+    warm_history=warm_rows[0]["history"]
+    warm_manifest=json.loads(Path(args.warmup_manifest).read_text())
+    if (warm_manifest.get("checksumsVerified")!=6
+        or warm_manifest.get("dailyBars")!=183
+        or warm_manifest.get("warmupOnlyNotPerformancePeriod") is not True):
+        raise ValueError("V92_ETH_WARMUP_MANIFEST_INVALID")
+    data=run(histories,warm_history)
+    data["contextWarmupSource"]="Official Binance USD-M ETH monthly 1H ZIPs; six additional SHA256-verified files; 1D derived from complete 1H bars"
+    data["contextWarmupExcludedFromPerformancePeriod"]=True
     data["sourceManifest"]={
         "checksumsVerified":manifest["checksumsVerified"],
         "firstUTC":manifest["firstUTC"],
         "endExclusiveUTC":manifest["endExclusiveUTC"],
         "monthlyFiles":[{"month":x["month"],"sha256":x["sha256"]} for x in manifest["inputFiles"]],
+        "warmupChecksumsVerified":warm_manifest["checksumsVerified"],
+        "warmupFiles":[{"month":x["month"],"sha256":x["sha256"]} for x in warm_manifest["inputFiles"]],
     }
     out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
     (out/"historical.json").write_text(json.dumps(data,ensure_ascii=False,indent=2)+"\n")
