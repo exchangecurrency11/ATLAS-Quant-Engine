@@ -6,12 +6,14 @@ V9.2 selected SOL star/harami prior-20 sweep/reentry veto, then optional
 flow gates. Exploratory historical paper only; never production.
 """
 import argparse, json, math
+from collections import Counter
 from pathlib import Path
 from market_structure import candles_from_history
 from signal_quality_v7 import evaluate_bos_quality
 from v7_paper_comparison import read_history
 from backtest_retest_long_v4 import replay_pair
-from v92_bull_bear_candle_invalidation import gated_retest_factory, START, END, stamp
+from v92_bull_bear_candle_invalidation import START, END, stamp
+from v92_selected_reversal_patterns import make_selective_gate
 from sol_flow_01 import FlowIndex, score, decision, ARMS as FLOW_ARMS
 
 SYMBOL = "SOLUSDT_PERP.A"
@@ -111,18 +113,25 @@ def run(histories, v92_reference, manifest):
         audit = {"v92EligibleRetests": 0, "v92Vetoes": 0,
                  "flowEligibleRetests": 0, "flowVetoes": 0,
                  "flowReasonCounts": {}}
-        v92_gate = gated_retest_factory(four_closed, True, {
-            "examples": [], "eligibleOriginalRetestsChecked": 0,
-            "oppositePatternVetoCount": 0, "MORNING_STAR_1H": 0,
-            "EVENING_STAR_1H": 0, "MORNING_STAR_4H": 0,
-            "EVENING_STAR_4H": 0})
+        v92_audit = Counter()
+        v92_audit["examples"] = []
+        v92_gate = make_selective_gate(
+            "SOLUSDT", four_closed, "SELECTED_SOL_STRICT_SWEEP", v92_audit)
         gate = compose_gate(v92_gate, flow, arm, audit)
         replay = replay_pair(hour, four, daily, as_of=END,
                              retest_hours=4,
                              bos_quality_filter=evaluate_bos_quality,
                              retest_quality_filter=gate)
         summary = score(replay)
-        out["results"][arm] = {"summary": summary, "audit": audit}
+        out["results"][arm] = {"summary": summary, "audit": audit,
+                               "v92SelectedPatternAudit": {
+                                   "retests": v92_audit["retests"],
+                                   "opposingPatternsObserved": v92_audit["opposingSelectedPatternsObserved"],
+                                   "vetoes": v92_audit["vetoes"],
+                                   "byPattern": {k:v for k,v in v92_audit.items()
+                                      if isinstance(v,int) and k not in
+                                      ("retests","opposingSelectedPatternsObserved","vetoes")},
+                                   "examples": v92_audit["examples"]}}
     base = out["results"][BASE]["summary"]
     if (base["trades"] != EXPECTED_BASE_TRADES or
         base["winsNet"] != EXPECTED_BASE_WINS or
