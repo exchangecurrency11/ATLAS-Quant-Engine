@@ -35,7 +35,7 @@ from v92_selected_reversal_patterns import (
     RESEARCH_QUALIFICATION, make_selective_gate,
     summarize_audit, soldier_crow
 )
-from v92_multi_candle_invalidation import all_patterns_at
+from v92_multi_candle_invalidation import all_patterns_at, warnings_at_retest
 from v92_higher_timeframe_context import higher_timeframe_context
 
 MODE="V92_SELECTED_CANDLE_IMMUTABLE_HOURLY_FORWARD_PAPER_ONLY"
@@ -95,6 +95,59 @@ def verify_source(source, v7, *, target, now, v91_source_file=None,
             raise ValueError("V92_FORWARD_V91_SOURCE_NOT_SEALED_BEFORE_CAPTURE")
     return True
 
+def current_close_retest_evaluation(symbol, one, four, target,
+                                    baseline_state, selected_state):
+    """Record only this newly closed hour's paired baseline/filter decision."""
+    base=baseline_state.get("pendingNextOpenPaperEntry")
+    selected=selected_state.get("pendingNextOpenPaperEntry")
+    if base is None or int(base.get("retestKnownUTC",-1))!=target:
+        selected_current=(selected is not None and
+                          int(selected.get("retestKnownUTC",-1))==target)
+        return {
+          "candidateRetestAtThisClose":False,
+          "baselineRetestPresent":False,
+          "selectedRetestPresent":selected_current,
+          "currentPatternWarnings":[],
+          "directCurrentFilterVeto":False,
+          "downstreamStateDivergence":selected_current,
+          "interpretation":"No baseline V9.1 retest was created at this close",
+        }
+    warnings=warnings_at_retest(
+        one,four,target,base["side"],
+        {"STAR","HARAMI_CONFIRMED"},require_sweep=True)
+    direct_veto=bool(symbol=="SOLUSDT" and warnings)
+    selected_matches=(selected is not None and
+        all(
+          (math.isclose(float(selected[k]),float(base[k]),
+                        rel_tol=1e-8,abs_tol=1e-7) if k=="stop"
+           else selected.get(k)==base.get(k))
+          for k in ("side","watchKnownUTC","retestKnownUTC","stop")
+        ))
+    if direct_veto and selected_matches:
+        raise ValueError("V92_CURRENT_FILTER_FAILED_TO_VETO_MATCHED_SOL_RETTEST")
+    return {
+      "candidateRetestAtThisClose":True,
+      "baselineRetestPresent":True,
+      "activeBOSDirection":base["side"],
+      "watchKnownUTC":base["watchKnownUTC"],
+      "retestKnownUTC":base["retestKnownUTC"],
+      "selectedRetestPresent":selected is not None and
+          int(selected.get("retestKnownUTC",-1))==target,
+      "selectedRetestMatchesBaseline":selected_matches,
+      "currentPatternWarnings":warnings,
+      "directCurrentFilterVeto":direct_veto,
+      "downstreamStateDivergence":bool(not direct_veto and not selected_matches),
+      "interpretation":(
+        "Current SOL retest directly vetoed by predeclared opposing Star/Harami plus prior20 sweep"
+        if direct_veto else
+        "Baseline retest present without a qualifying current veto; compare state for prior-path divergence"
+        if not selected_matches else
+        "Baseline and filtered retest both retained"
+      ),
+      "onlyClosed1HAndCompleted4HUsed":True,
+      "noFutureBarsUsed":True,
+    }
+
 def capture(source, original_v7, main_market, raw, *, now,
             dest, v91_source_file=None, v91_repo=None):
     target=now//HOUR*HOUR
@@ -135,6 +188,9 @@ def capture(source, original_v7, main_market, raw, *, now,
         pending=selected["currentPaperState"]["pendingNextOpenPaperEntry"]
         if pending is not None and pending.get("retestKnownUTC")!=target:
             raise ValueError("V92_FORWARD_SELECTED_RETEST_NOT_CURRENT")
+        current_retest=current_close_retest_evaluation(
+            symbol,h,four,target,
+            alt["currentPaperState"],selected["currentPaperState"])
         diagnostics={}
         # Only observe fully closed patterns THIS hour; 4H may be older.
         for tf,bars,length in (("1H",h,HOUR),("4H",four,4*HOUR)):
@@ -155,6 +211,7 @@ def capture(source, original_v7, main_market, raw, *, now,
           "originalV91":alt,
           "selectedV92":selected,
           "selectedV92Audit":summarize_audit(audit),
+          "currentCloseRetestEvaluation":current_retest,
           "recentPatternObservations":diagnostics,
           "modelPolicy":"SOL_STRICT_SELECTED_STAR_HARAMI_SWEEP_VETO"
              if symbol=="SOLUSDT" else "BTC_OBSERVATION_ONLY_NO_VETO",
