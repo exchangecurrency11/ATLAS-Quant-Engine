@@ -2,8 +2,8 @@
   "mode": "V92_INDEPENDENT_1000USDT_100USDT_RISK_PAPER_ACCOUNT",
   "requestedAtUTC": "2026-11-12T10:43:17Z",
   "firstEligible1HCloseUTC": "2026-11-12T11:00:00Z",
-  "lastDistinctVerifiedClosed1HUTC": "2026-11-12T11:00:00Z",
-  "savedDistinctVerifiedHours": 1,
+  "lastDistinctVerifiedClosed1HUTC": "2026-11-12T12:00:00Z",
+  "savedDistinctVerifiedHours": 2,
   "accountName": "V92_SELECTED_SOL_STRICT_CANDLES_BTC_WATCH",
   "virtualInitialUSDT": 1000.0,
   "targetVirtualRiskUSDTPerTrade": 100.0,
@@ -20,39 +20,123 @@
   "stateBySymbol": {
     "BTCUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-12T11:00:00Z",
+      "lastClosedUTC": "2026-11-12T12:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-12T11:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-12T12:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "HIKKAKE_CONFIRMED",
+              "name": "BEARISH_HIKKAKE_CONFIRMED",
+              "direction": "bearish",
+              "firstUTC": "2026-11-12T06:00:00Z",
+              "confirmedUTC": "2026-11-12T12:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": true,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-12T08:00:00Z",
+          "lastClosedCandleUTC": "2026-11-12T12:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
+        },
+        "1D": {
+          "lastClosedCandleUTC": "2026-11-12T00:00:00Z",
+          "closedCandlesAvailable": 259,
+          "close": 73980.0,
+          "EMA20": 77399.55639703,
+          "EMA50": 78866.77809645,
+          "trendByCloseVsEMA20EMA50": "bearish",
+          "observedReversalsAtLastCompletedCandle": [],
+          "onlyFullyClosedCandlesUsed": true,
+          "informationOnlyNotAutomaticNewTrade": true,
+          "notVetoOrEntryFilter": true,
+          "threeDaySource": "VERIFIED_ORIGINAL_DAILY_CLOSED_OHLCV",
+          "exchangeNative3DParityNotProven": false
+        },
+        "3D": {
+          "lastClosedCandleUTC": "2026-11-12T00:00:00Z",
+          "closedCandlesAvailable": 86,
+          "close": 73980.0,
+          "EMA20": 78479.90596332,
+          "EMA50": 76230.98748351,
+          "trendByCloseVsEMA20EMA50": "bearish",
+          "observedReversalsAtLastCompletedCandle": [],
+          "onlyFullyClosedCandlesUsed": true,
+          "informationOnlyNotAutomaticNewTrade": true,
+          "notVetoOrEntryFilter": true,
+          "threeDaySource": "DERIVED_UTC_UNIX_EPOCH_ALIGNED_3_COMPLETE_DAILY_OHLCV_BARS",
+          "exchangeNative3DParityNotProven": true
         }
       }
     },
     "SOLUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-12T11:00:00Z",
+      "lastClosedUTC": "2026-11-12T12:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-12T11:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-12T12:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "HIKKAKE_CONFIRMED",
+              "name": "BEARISH_HIKKAKE_CONFIRMED",
+              "direction": "bearish",
+              "firstUTC": "2026-11-12T06:00:00Z",
+              "confirmedUTC": "2026-11-12T12:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": true,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-12T08:00:00Z",
+          "lastClosedCandleUTC": "2026-11-12T12:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
+        },
+        "1D": {
+          "lastClosedCandleUTC": "2026-11-12T00:00:00Z",
+          "closedCandlesAvailable": 259,
+          "close": 83.22,
+          "EMA20": 93.10021368,
+          "EMA50": 98.96603948,
+          "trendByCloseVsEMA20EMA50": "bearish",
+          "observedReversalsAtLastCompletedCandle": [],
+          "onlyFullyClosedCandlesUsed": true,
+          "informationOnlyNotAutomaticNewTrade": true,
+          "notVetoOrEntryFilter": true,
+          "threeDaySource": "VERIFIED_ORIGINAL_DAILY_CLOSED_OHLCV",
+          "exchangeNative3DParityNotProven": false
+        },
+        "3D": {
+          "lastClosedCandleUTC": "2026-11-12T00:00:00Z",
+          "closedCandlesAvailable": 86,
+          "close": 83.22,
+          "EMA20": 98.51119004,
+          "EMA50": 95.39378125,
+          "trendByCloseVsEMA20EMA50": "bearish",
+          "observedReversalsAtLastCompletedCandle": [],
+          "onlyFullyClosedCandlesUsed": true,
+          "informationOnlyNotAutomaticNewTrade": true,
+          "notVetoOrEntryFilter": true,
+          "threeDaySource": "DERIVED_UTC_UNIX_EPOCH_ALIGNED_3_COMPLETE_DAILY_OHLCV_BARS",
+          "exchangeNative3DParityNotProven": true
         }
       }
     }
