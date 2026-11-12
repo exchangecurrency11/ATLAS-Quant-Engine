@@ -74,7 +74,11 @@ class FlowTests(unittest.TestCase):
         def agg(rows, count):
             return [{'t':z[0]['t'],'o':z[0]['o'],'h':max(b['h'] for b in z),
                      'l':min(b['l'] for b in z),'c':z[-1]['c'],
-                     'v':sum(b['v'] for b in z)}
+                     'v':sum(b['v'] for b in z),
+                     'qv':sum(b['qv'] for b in z),
+                     'trades':sum(b['trades'] for b in z),
+                     'tbv':sum(b['tbv'] for b in z),
+                     'tbq':sum(b['tbq'] for b in z)}
                     for z in (rows[i:i+count] for i in range(0,len(rows),count))]
         four=agg(rows,4)
         day=agg(rows,24)
