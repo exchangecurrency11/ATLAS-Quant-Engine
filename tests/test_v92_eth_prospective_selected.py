@@ -89,6 +89,13 @@ def hour(t):
     }
 
 class TestETHV92(unittest.TestCase):
+    def test_eth_source_window_allows_last_minute_but_never_rollover(self):
+        self.assertTrue(verify_eth_v92_source(
+            base_v91(),base_v7(),FIRST_ETH,FIRST_ETH+3599))
+        with self.assertRaisesRegex(ValueError,"NOT_CURRENT"):
+            verify_eth_v92_source(
+                base_v91(),base_v7(),FIRST_ETH,FIRST_ETH+3600)
+
     def test_eth_first_allowed_later_than_request(self):
         self.assertTrue(REQUESTED_ETH<FIRST_ETH)
         self.assertEqual(FIRST_ETH%3600,0)
