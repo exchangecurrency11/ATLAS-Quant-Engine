@@ -34,6 +34,7 @@ from v91_prospective_retest import (
 from v92_multi_candle_invalidation import all_patterns_at
 from v92_selected_reversal_patterns import soldier_crow
 from v92_prospective_selected import verified_first_commit
+from v92_higher_timeframe_context import higher_timeframe_context
 
 MODE="V92_ETH_VERIFIED_HOURLY_CANDLES_OBSERVATIONAL_PAPER"
 BOOK="V92_ETH_COMPONENT_OF_SHARED_THIRD_FORWARD_PAPER"
@@ -123,6 +124,8 @@ def capture(source,original,raw,*,now,
           "lastCompletedCandleCloseUTC":iso(bars[-1]["t"]+seconds),
           "confirmedReversalPatterns":pats,
           "ethObservationalOnlyNoAutoVeto":True}
+    # 1D + derived 3D observe validated ETH daily bars only; NO ETH veto.
+    higher_obs=higher_timeframe_context(d,target)
     return {
       "mode":MODE,"symbol":"ETHUSDT",
       "targetClosed1HUTC":iso(target),
@@ -135,6 +138,7 @@ def capture(source,original,raw,*,now,
       "crossTimeframeOHLCV":cross,
       "independentBinanceTruthNotEstablished":True,
       "ethReversalPatternRecognition1H4H":obs,
+      "ethHigherTimeframeRecognition1D3D":higher_obs,
       "originalV7":original_v7,
       "originalV91":original_v91,
       "selectedV92":original_v91,
