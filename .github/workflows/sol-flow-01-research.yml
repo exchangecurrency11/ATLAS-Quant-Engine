@@ -8,6 +8,7 @@ on:
       - sol_flow_01.py
       - tests/test_sol_flow_01.py
       - SOL_FLOW_01_RESEARCH.md
+      - .github/workflows/sol-flow-01-research.yml
 
 permissions:
   contents: write
@@ -157,7 +158,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sol-flow-01-historical-\${{ github.run_id }}
+          name: sol-flow-01-historical
           path: |
             sol_flow_01_archive/source_manifest.json
             forward/sol_flow_01/latest.json
