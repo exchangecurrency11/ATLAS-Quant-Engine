@@ -1,21 +1,21 @@
 name: 'V9 BTC ETH SOL separate Daily 4H close commentary research'
 
 # Produces Daily + 4H commentary, NOT the next 4H pre-start prediction.
-# Schedules ~32 minutes AFTER each closed 4H candle, allowing existing
-# main market-data/structure and independent ETH hourly publishers to run.
-# Data mismatch/stale ETH=>fail closed, no fabricated context.
+# Check exact ETH 4H source readiness BEFORE reading BTC/SOL/structure.
+# Independent ETH hourly publication can lag or be missing; a successful
+# unrelated market-data workflow is NOT proof the ETH snapshot exists.
+# Missing source means defer until a later trigger, never infer ETH data.
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/v9-scheduled-verified-daily-4h-commentary.yml'
   schedule:
-    - cron: '32 0,4,8,12,16,20 * * *'
+    - cron: '32,47 0,4,8,12,16,20 * * *'
     # Independent retry in the following UTC hour; no historical backfill.
     - cron: '12,42 1,5,9,13,17,21 * * *'
   workflow_run:
     workflows:
-      - Publish BTC SOL Market Data
       - ETH V7 Independent Hourly Paper Forward (no orders)
     types: [completed]
     branches: [main]
@@ -57,8 +57,55 @@ jobs:
           print("reason="+("ELIGIBLE_NEW_LATEST_4H" if ok else "ALREADY_SEALED_OR_NOT_FRESH"))
           PY
 
-      - name: Revalidate as-of time, indicator and no future data tests
+      - name: Require exact VERIFIED ETH 4H-close evidence before building report
+        id: eth_ready
         if: steps.retry_gate.outputs.capture == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ steps.retry_gate.outputs.target }}
+        run: |
+          set -euo pipefail
+          mkdir -p forward/v9_close_commentary/input
+          file="forward/v9_close_commentary/input/eth.json"
+          # An ETH observation for the same EXACT 4H closing hour must
+          # already have been committed; never substitute a later hour or
+          # claim market-data workflow success means ETH was ready.
+          if ! gh api "repos/$GITHUB_REPOSITORY/contents/forward/eth/snapshots/$TARGET.json?ref=experiment/v7-signal-quality-20261103" --jq '.content' > "$file.b64" 2>/dev/null; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=4H ETH source pending::No independently sealed ETH snapshot for $TARGET yet; safe skip, future ETH/scheduled retry will recheck."
+            echo "4H_CONTEXT_DEFERRED_MISSING_ETH_SAME_CLOSE $TARGET" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if ! base64 --decode "$file.b64" > "$file"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=4H ETH source invalid::ETH blob was not valid base64; no report generated."
+            echo "4H_CONTEXT_DEFERRED_INVALID_ETH_BLOB $TARGET" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if ! python3 - <<'PY'
+          import json,os,datetime
+          path="forward/v9_close_commentary/input/eth.json"
+          d=json.load(open(path))
+          target=os.environ["TARGET"]
+          hour=datetime.datetime.strptime(target,"%Y-%m-%dT%H-00Z").replace(tzinfo=datetime.timezone.utc)
+          expected=hour.strftime("%Y-%m-%dT%H:%M:%SZ")
+          assert d.get("status")=="VERIFIED_PAPER_OBSERVATION", "ETH_SOURCE_NOT_VERIFIED"
+          assert d.get("targetClosed1HUTC")==expected, "ETH_4H_TARGET_HOUR_MISMATCH"
+          assert d.get("brokerOrders") is False, "ETH_SOURCE_NOT_PAPER_ONLY"
+          assert d.get("symbol")=="ETHUSDT_PERP.A", "ETH_SYMBOL_NOT_EXPECTED"
+          PY
+          then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=4H ETH source not verified::ETH exact-hour record failed validation; do not create commentary."
+            echo "4H_CONTEXT_DEFERRED_UNVERIFIED_ETH $TARGET" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "run=true" >> "$GITHUB_OUTPUT"
+          echo "4H_ETH_VERIFIED_AND_READY $TARGET"
+
+      - name: Revalidate as-of time, indicator and no future data tests
+        if: steps.retry_gate.outputs.capture == 'true' && steps.eth_ready.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -66,7 +113,7 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_v9_daily_4h_close_commentary.py' -q
 
       - name: Pull main BTC SOL and ETH independent read-only verified close sources
-        if: steps.retry_gate.outputs.capture == 'true'
+        if: steps.retry_gate.outputs.capture == 'true' && steps.eth_ready.outputs.run == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -91,11 +138,12 @@ jobs:
           print(t.strftime('%Y-%m-%dT%H-00Z'))
           PY
           )
-          gh api "repos/$GITHUB_REPOSITORY/contents/forward/eth/snapshots/$TIME.json?ref=experiment/v7-signal-quality-20261103" \
-            --jq '.content' | base64 --decode > forward/v9_close_commentary/input/eth.json
+          # The source was already verified against the immutable target at
+          # the eth_ready gate and is reused here without a second fetch.
+          test -s forward/v9_close_commentary/input/eth.json
 
       - name: Generate BTC ETH SOL Daily + 4H close analysis independently of predicted color
-        if: steps.retry_gate.outputs.capture == 'true'
+        if: steps.retry_gate.outputs.capture == 'true' && steps.eth_ready.outputs.run == 'true'
         run: |
           python3 -u v9_daily_4h_close_commentary.py \
             --main forward/v9_close_commentary/input/main.json \
@@ -103,7 +151,7 @@ jobs:
             --structure forward/v9_close_commentary/input/structure.json
 
       - name: Attest matching candle times and append-only 4H interpretation history
-        if: steps.retry_gate.outputs.capture == 'true'
+        if: steps.retry_gate.outputs.capture == 'true' && steps.eth_ready.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -132,7 +180,7 @@ jobs:
           PY
 
       - name: Commit only interpretation reports to separate experimental branch
-        if: steps.retry_gate.outputs.capture == 'true'
+        if: steps.retry_gate.outputs.capture == 'true' && steps.eth_ready.outputs.run == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -157,7 +205,7 @@ jobs:
           exit 1
 
       - name: Save separate Daily + 4H audit artifact
-        if: always() && steps.retry_gate.outputs.capture == 'true'
+        if: always() && steps.retry_gate.outputs.capture == 'true' && steps.eth_ready.outputs.run == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: v9-verified-close-context-${{ github.run_id }}
