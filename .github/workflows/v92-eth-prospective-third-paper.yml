@@ -60,6 +60,19 @@ jobs:
           python3 -m unittest discover -s tests -p test_v91_eth_prospective_retest.py -q
           python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
           python3 -m unittest discover -s tests -p test_v92_multi_candle_invalidation.py -q
+          python3 -u v92_third_paper_aggregate.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path("forward/v92_prospective_selected/combined_three_asset_account.json").read_text())
+          assert j["mode"]=="V92_BTC_ETH_SOL_SINGLE_THIRD_1000USDT_PROSPECTIVE_PAPER_ACCOUNT"
+          assert j["virtualInitialUSDT"]==1000
+          assert j["assets"]==["BTCUSDT","ETHUSDT","SOLUSDT"]
+          assert j["sharedSingleVirtualPortfolioNotThreeTimes1000"]
+          assert j["noBrokerOrders"] and j["noUserNotifications"]
+          assert j["noHistorical836USDBackfilledIntoThisAccount"]
+          print("ETH_V92_AGGREGATE_VERIFIED_SAME_1000_USDT_NOT_THREE_DEPOSITS")
+          PY
       - name: Gate only NEW ETH V7 and V9.1 confirmed same-hour snapshots
         id: gate
         shell: bash
