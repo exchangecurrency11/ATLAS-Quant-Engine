@@ -8,7 +8,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 from v91_eth_prospective_retest import (
-    MODE, capture, scoreboard, verify_eth_source, prior_commit_evidence
+    MODE, capture, scoreboard, verify_eth_source, prior_commit_evidence,
+    current_hour_capture_window
 )
 from v91_prospective_retest import path_at
 from v7_forward_observer import iso
@@ -53,6 +54,12 @@ def empty_snapshot(t):
             "originalV7":no_trade(),"max4hRetest":no_trade()}
 
 class ETHV91Tests(unittest.TestCase):
+    def test_capture_window_allows_last_minute_but_never_next_hour(self):
+        self.assertTrue(current_hour_capture_window(T,T+3599))
+        self.assertTrue(current_hour_capture_window(T,T+12*60))
+        self.assertFalse(current_hour_capture_window(T,T+11*60+59))
+        self.assertFalse(current_hour_capture_window(T,T+3600))
+
     def test_current_verified_exact_v7_hour_and_replay(self):
         with tempfile.TemporaryDirectory() as d, \
              patch("v91_eth_prospective_retest.validate_sources",
