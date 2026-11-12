@@ -23,11 +23,11 @@ class V92SOLHoldoutTests(unittest.TestCase):
     def test_holdout_is_earlier_than_v92_selection_window(self):
         self.assertEqual(START,1664582400)
         self.assertEqual(END,1727740800)
-        self.assertEqual(WARMUP_START,1648771200)
+        self.assertEqual(WARMUP_START,1651363200)
         self.assertLess(WARMUP_START,START)
         self.assertEqual(END,1727740800)
-        self.assertEqual(len(MONTHS),30)
-        self.assertEqual(MONTHS[0],"2022-04")
+        self.assertEqual(len(MONTHS),29)
+        self.assertEqual(MONTHS[0],"2022-05")
         self.assertEqual(MONTHS[-1],"2024-09")
 
     def test_archive_manifest_requires_all_60_monthly_checksums(self):
