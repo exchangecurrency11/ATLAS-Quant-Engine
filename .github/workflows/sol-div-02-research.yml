@@ -124,7 +124,7 @@ jobs:
           for key,label in labels.items():
             if key== "V92_STRICT_SWEEP_CONTROL": continue
             a=x["results"][key]["audit"]
-            lines.append(f"- **{label}:** divergence eligible {a['divergenceEligible']}, divergence passed {a['divergencePassed']}, divergence vetoes {a['divergenceVetoes']}, sweep vetoes {a['sweepVetoes']}, volume vetoes {a['volumeVetoes']}, final passed {a['finalPassed']}.")
+            lines.append(f"- **{label}:** divergence eligible {a['divergenceEligible']}, divergence passed {a['divergencePassed']}, divergence vetoes {a.get('divergenceVetoes',0)}, sweep vetoes {a.get('sweepVetoes',0)}, volume vetoes {a.get('volumeVetoes',0)}, final passed {a.get('finalPassed',0)}.")
           lines += ["","## Interpretation","",
             "- Compare net R and cost stress, not win rate alone; the candidate sample may be very small.",
             "- The divergence-only arm must reproduce DIV-01 exactly before interpreting the added filters.",
