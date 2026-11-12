@@ -369,7 +369,7 @@ def main():
     core=read_hourly(a.v92_btcsol,BTC_SOL_FIRST,
                     "V92_SELECTED_CANDLE_IMMUTABLE_HOURLY_FORWARD_PAPER_ONLY","CORE")
     eth=read_hourly(a.v92_eth,ETH_FIRST,
-                   "ETH_V92_SELECTED_HOURLY_SEALED_PAPER_ONLY","ETH")
+                   "V92_ETH_VERIFIED_HOURLY_CANDLES_OBSERVATIONAL_PAPER","ETH")
     result=audit(core,eth,a.v91_root,a.v7_root)
     dest=Path(a.out);dest.parent.mkdir(parents=True,exist_ok=True)
     dest.write_text(json.dumps(result,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
