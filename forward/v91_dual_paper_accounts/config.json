@@ -6,8 +6,8 @@
     "V7_ORIGINAL",
     "V91_RETEST_MAX4H"
   ],
-  "initialVirtualCapitalUSDTPerAccount": 100,
-  "fixedPaperRiskUSDTPerEligibleTrade": 0.5,
+  "initialVirtualCapitalUSDTPerAccount": 1000,
+  "fixedPaperRiskUSDTPerEligibleTrade": 100,
   "assumedRoundTripCostBpsPerSide": 9,
   "stressCostBpsPerSide": 25,
   "coveredPairs": [
@@ -22,5 +22,10 @@
   "noLiveOrders": true,
   "noNewNotifications": true,
   "V7ProductionAndExistingV91TradingRulesUnchanged": true,
-  "note": "Paper risk/account value is a simple 0.5 USDT per net-R hypothetical ledger. No live fill, funding, margin, liquidation or execution guaranteed."
+  "note": "Two independent virtual 1000 USDT accounts, fixed target risk 100 USDT per eligible hypothetical trade (10% of INITIAL capital). High-risk paper simulation, not a recommended live risk limit. Original after-request first eligible 2026-11-12T09:00Z remains unchanged. Historical replay kept strictly separate, no invented fills or past executed orders.",
+  "updatedByUserAtUTC": "2026-11-12T08:52:36Z",
+  "userExplicitlyRequested10PctRiskOnlyInVirtualPaper": true,
+  "historicalReferenceMode": "SEPARATE_PREVIOUSLY_INSPECTED_ARCHIVE_REPLAY_NOT_PROSPECTIVE_OR_REAL_TRADES",
+  "historicalReferenceStartUTC": "2024-10-01T00:00:00Z",
+  "historicalReferenceEndExclusiveUTC": "2026-10-01T00:00:00Z"
 }
