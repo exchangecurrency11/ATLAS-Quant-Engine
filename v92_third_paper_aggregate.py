@@ -41,6 +41,38 @@ def verified_trade(x,source):
         raise ValueError("V92_COMBINED_NONCAUSAL_OR_NONFINITE_TRADE")
     return x
 
+def _coverage_audit(first_utc,last_utc,saved_count,through_utc):
+    """Summarize source freshness and gaps; never infer missing observations."""
+    saved=int(saved_count)
+    if saved<0:
+        raise ValueError("V92_COMBINED_NEGATIVE_SOURCE_HOUR_COUNT")
+    if through_utc is None:
+        if saved!=0 or last_utc is not None:
+            raise ValueError("V92_COMBINED_SOURCE_HOURS_WITHOUT_COMMON_HORIZON")
+        return {"firstExpectedHourUTC":None,"expectedThroughUTC":None,
+                "expectedHours":0,"savedVerifiedHours":0,
+                "missingHourCount":0,"lastVerifiedHourUTC":None,
+                "lagHours":None,"noBackfill":True}
+    if first_utc%3600 or through_utc%3600 or through_utc<first_utc:
+        raise ValueError("V92_COMBINED_COVERAGE_WINDOW_NOT_ALIGNED")
+    expected=((through_utc-first_utc)//3600)+1
+    last=epoch(last_utc) if last_utc is not None else None
+    if ((last is None and saved!=0) or
+        (last is not None and (last<first_utc or last>through_utc or saved==0)) or
+        saved>expected):
+        raise ValueError("V92_COMBINED_SOURCE_COVERAGE_INCONSISTENT")
+    return {
+        "firstExpectedHourUTC":iso(first_utc),
+        "expectedThroughUTC":iso(through_utc),
+        "expectedHours":expected,
+        "savedVerifiedHours":saved,
+        "missingHourCount":expected-saved,
+        "lastVerifiedHourUTC":iso(last) if last is not None else None,
+        "lagHours":((through_utc-last)//3600 if last is not None else expected),
+        "noBackfill":True
+    }
+
+
 def build(core,eth=None):
     if (core.get("mode")!=CORE_MODE
         or core.get("virtualInitialUSDT")!=INITIAL
@@ -88,6 +120,19 @@ def build(core,eth=None):
     total=sum(float(x["netR9Bps"]) for x in rows)
     stress=sum(float(x["netR25Bps"]) for x in rows)
     counts=Counter(x["symbol"] for x in rows)
+    core_first=epoch(core["firstEligible1HCloseUTC"])
+    core_last=core.get("lastDistinctVerifiedClosed1HUTC")
+    eth_first=epoch(eth["firstEligible1HCloseUTC"]) if eth else epoch(ETH_START)
+    eth_last=eth.get("lastVerifiedETHCloseUTC") if eth else None
+    latest_candidates=[epoch(x) for x in (core_last,eth_last) if x is not None]
+    common_latest=max(latest_candidates) if latest_candidates else None
+    coverage={
+        "BTC_SOL":_coverage_audit(
+            core_first,core_last,core["savedDistinctVerifiedHours"],common_latest),
+        "ETH":_coverage_audit(
+            eth_first,eth_last,eth["savedDistinctVerifiedETHHours"] if eth else 0,
+            common_latest)
+    }
     by_asset={
         x:{"closedEligiblePaperTrades":counts[x],
            "wins":sum(t["netR9Bps"]>0 for t in rows if t["symbol"]==x),
@@ -105,6 +150,7 @@ def build(core,eth=None):
       "sourceBTCandSOLVerifiedClosedHours":core["savedDistinctVerifiedHours"],
       "sourceETHVerifiedClosedHours":
           eth["savedDistinctVerifiedETHHours"] if eth else 0,
+      "sourceCoverageAudit":coverage,
       "lastCapturedBTCandSOLHourUTC":core["lastDistinctVerifiedClosed1HUTC"],
       "lastCapturedETHHourUTC":eth["lastVerifiedETHCloseUTC"] if eth else None,
       "sharedSingleVirtualPortfolioNotThreeTimes1000":True,
@@ -150,6 +196,18 @@ def markdown(z):
     for coin,x in z["perAssetScores"].items():
         text.append("| {} | {} | {} | {} |".format(
             coin,x["closedEligiblePaperTrades"],x["wins"],x["netR"]))
+    coverage=z.get("sourceCoverageAudit",{})
+    text += [
+       "",
+       "**Saatlik kaynak kapsama denetimi (eksik saatler doldurulmaz):**",
+       "",
+       "| Kaynak | Kaydedilen / beklenen | Eksik saat | Son doğrulanmış saat | Gecikme |",
+       "|---|---:|---:|---|---:|"]
+    for label,row in coverage.items():
+        text.append("| {} | {}/{} | {} | {} | {} saat |".format(
+            label,row["savedVerifiedHours"],row["expectedHours"],
+            row["missingHourCount"],row["lastVerifiedHourUTC"] or "yok",
+            row["lagHours"] if row["lagHours"] is not None else "—"))
     text += [
        "",
        "| Toplam | İşlem | Win % | Net R | Sanal PnL | Sanal bakiye |",
