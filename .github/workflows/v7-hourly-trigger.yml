@@ -8,6 +8,10 @@ name: V7 Hourly Paper Forward Runner
 # Important: GITHUB_TOKEN-created push commits do not trigger additional
 # push workflows. Run the observer directly rather than chaining a push.
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v7-hourly-trigger.yml
   schedule:
     # Multiple independent opportunities per hour; each existing snapshot is immutable.
     # Extra late-minute chances reduce missing hours during GitHub scheduler gaps.
