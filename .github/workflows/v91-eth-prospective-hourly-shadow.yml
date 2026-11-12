@@ -55,7 +55,7 @@ jobs:
           minute="$(date -u +%M)"
           target="$(date -u +%Y-%m-%dT%H-00Z)"
           echo "target=$target" >> "$GITHUB_OUTPUT"
-          if (( 10#$minute < 12 || 10#$minute > 57 )); then
+          if (( 10#$minute < 12 )); then
             echo "run=false" >> "$GITHUB_OUTPUT"
             echo "ETH_V91_SKIP_OUTSIDE_CURRENT_HOUR_WINDOW"
           elif test -f "forward/v91_eth_prospective_retest/hourly/$target.json"; then
