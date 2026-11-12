@@ -1,0 +1,26 @@
+{
+  "mode": "V7_VS_V91_PROSPECTIVE_SEPARATE_PAPER_ACCOUNTS",
+  "requestedAtUTC": "2026-11-12T08:44:55Z",
+  "firstEligible1HCloseUTC": "2026-11-12T09:00:00Z",
+  "accountNames": [
+    "V7_ORIGINAL",
+    "V91_RETEST_MAX4H"
+  ],
+  "initialVirtualCapitalUSDTPerAccount": 100,
+  "fixedPaperRiskUSDTPerEligibleTrade": 0.5,
+  "assumedRoundTripCostBpsPerSide": 9,
+  "stressCostBpsPerSide": 25,
+  "coveredPairs": [
+    "BTCUSDT",
+    "SOLUSDT"
+  ],
+  "optionalETHUSDTOnlyAfterIndependentVerifiedProspectiveCapture": true,
+  "onlyCountPreCommittedProspectivePaperExits": true,
+  "noRetroactiveExecution": true,
+  "previousNightBeforeRequestIsObservationOnly": true,
+  "priorVerified4HColorForecastBelongsToV9NotV91": true,
+  "noLiveOrders": true,
+  "noNewNotifications": true,
+  "V7ProductionAndExistingV91TradingRulesUnchanged": true,
+  "note": "Paper risk/account value is a simple 0.5 USDT per net-R hypothetical ledger. No live fill, funding, margin, liquidation or execution guaranteed."
+}
