@@ -1,0 +1,76 @@
+{
+  "status": "V92_STABLE_SHADOW_AUDIT_READY_FOR_NEW_ADMISSION_REVIEW",
+  "mode": "V92_STABLE_SHADOW_HARDENING_ONLY",
+  "sharedVirtualInitialUSDT": 1000,
+  "policy": {
+    "paperInitialUSDT": 1000.0,
+    "maxRiskUSDTPerPosition": 10.0,
+    "maxCombinedOpenRiskUSDT": 20.0,
+    "stressCostBpsPerSide": 25.0,
+    "maxLeverageForNotionalCeiling": 10.0,
+    "requireMostRecentConsecutiveHours": 4,
+    "noRealOrders": true
+  },
+  "newCappedBookPolicyNotAppliedToLegacyV92": true,
+  "legacyV92RiskUSDTUnchanged": 100,
+  "legacyV92OrdersSent": false,
+  "newBrokerOrders": false,
+  "newUserNotifications": false,
+  "noRetroactiveTradesOrRewrittenCandles": true,
+  "coverage": {
+    "BTC_SOL": {
+      "expected": 12,
+      "saved": 11,
+      "missingHoursUTC": [
+        "2026-11-12T14:00:00Z"
+      ],
+      "latestUTC": "2026-11-12T22:00:00Z",
+      "consecutiveRecentHours": 8
+    },
+    "ETH": {
+      "expected": 11,
+      "saved": 8,
+      "missingHoursUTC": [
+        "2026-11-12T13:00:00Z",
+        "2026-11-12T14:00:00Z",
+        "2026-11-12T15:00:00Z"
+      ],
+      "latestUTC": "2026-11-12T22:00:00Z",
+      "consecutiveRecentHours": 7
+    }
+  },
+  "latestCommonHourUTC": "2026-11-12T22:00:00Z",
+  "matchedVerifiedHours": 8,
+  "matchedAssetChecks": 24,
+  "exactStoredReplayParities": {
+    "BTC": "V91+V7 and V92 selected equals V91",
+    "SOL": "V91+V7; V92 filter veto audited",
+    "ETH": "V91+V7 and V92 selected equals V91"
+  },
+  "crossAssetLastClosed1H4HDailyAlignmentChecked": true,
+  "missingHourNotBackfilled": true,
+  "parityErrors": [],
+  "newEntryAdmissionReadiness": true,
+  "latestShadowEntryDecisions": [
+    {
+      "symbol": "BTCUSDT",
+      "status": "NO_NEW_ENTRY_CANDIDATE",
+      "allowed": false,
+      "legacyUnchanged": true
+    },
+    {
+      "symbol": "ETHUSDT",
+      "status": "NO_NEW_ENTRY_CANDIDATE",
+      "allowed": false,
+      "legacyUnchanged": true
+    },
+    {
+      "symbol": "SOLUSDT",
+      "status": "NO_NEW_ENTRY_CANDIDATE",
+      "allowed": false,
+      "legacyUnchanged": true
+    }
+  ],
+  "limitsCannotGuaranteeExecutionOrStopFill": true,
+  "fundingVariableSlippageAndLiquidationNotFullyModeled": true
+}
