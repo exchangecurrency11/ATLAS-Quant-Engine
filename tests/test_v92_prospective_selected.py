@@ -72,7 +72,7 @@ class V92ForwardTests(unittest.TestCase):
         self.assertTrue(result["candidateRetestAtThisClose"])
         self.assertTrue(result["directCurrentFilterVeto"])
         self.assertEqual(result["currentPatternWarnings"][0]["name"],
-                         "BULLISH_STAR")
+                         "MORNING_STAR")
         self.assertTrue(result["currentPatternWarnings"][0]
                         ["prior20LiquiditySweepAndReentry"])
 
