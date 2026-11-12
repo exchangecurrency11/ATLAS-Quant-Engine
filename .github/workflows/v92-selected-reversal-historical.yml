@@ -1,0 +1,122 @@
+name: V9.2 Selective Harami Star high-profile candles historical paper only
+
+# Pure historical research; SOL strict Morning/Evening Star or confirmed
+# Harami + prior20 sweep. BTC and other candidate patterns watch only.
+# Main, V7, V9.1 signal dispatchers, 1K virtual paper books unchanged.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-selected-reversal-historical.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: v92-selected-reversals-full-historical-paper
+  cancel-in-progress: false
+
+jobs:
+  selective-reversals-historical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Research-only checkout
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          persist-credentials: true
+          fetch-depth: 0
+      - name: Validate selected patterns, bullish/bearish tests, previous reference
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile v92_selected_reversal_patterns.py
+          python3 -m unittest discover -s tests -p 'test_v92_selected_reversal_patterns.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_bull_bear_candle_invalidation.py' -q
+          python3 -m unittest discover -s tests -p 'test_v91_dual_paper_historical_reference.py' -q
+      - name: Download exact Binance SHA-verified historical archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p v92_verified_artifact v92_verified_archive
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+            --name btc-sol-official-binance-verified-through-2026-11-02 \
+            --dir v92_verified_artifact
+          for tf in 1hour 4hour daily; do
+            count="$(find v92_verified_artifact -type f -name "history_$tf.json" | wc -l)"
+            test "$count" -eq 1
+            src="$(find v92_verified_artifact -type f -name "history_$tf.json" -print -quit)"
+            cp "$src" "v92_verified_archive/history_$tf.json"
+          done
+      - name: Execute selected SOL-only reversal veto vs identical unchanged BTC/SOL V7 and V9.1
+        run: |
+          set -euo pipefail
+          python3 -u v92_selected_reversal_patterns.py \
+            --archive v92_verified_archive \
+            --prior forward/v92_multi_candle_invalidation/historical.json \
+            --out forward/v92_selected_reversal_patterns
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("forward/v92_selected_reversal_patterns/historical.json").read_text())
+          assert data["status"]=="SELECTIVE_SOL_STAR_HARAMI_AND_OTHER_HIGH_PROFILE_CANDLE_WATCHES_HISTORICAL_ONLY"
+          assert data["noV7V91ProductionChanges"] and data["noNewTradeNotifications"] and data["noBrokerOrders"]
+          assert data["sameVerifiedBinanceBTCAndSOLSource"] and data["requiresOnlyClosed1HAnd4HBars"]
+          assert set(data["symbols"])=={"BTCUSDT","SOLUSDT"}
+          for symbol,v in data["symbols"].items():
+              assert v["verifiedCandles"]=={"1H":17520,"4H":4380,"Daily":730}
+              assert len(v["variants"])==8
+              assert all(k in v["additionalSoldiersCrowsResearchOnlyCounts"]
+                         for k in ("1H","4H"))
+              for base in ("V7_ORIGINAL","V91_RETEST_MAX4H"):
+                  p=v["variants"][base]
+                  no_action=v["variants"][base+"__OBSERVE_ONLY"]
+                  assert p["trades"]==no_action["trades"]
+                  assert p["wins"]==no_action["wins"]
+                  assert abs(p["totalNetR9BpsPerSide"]-no_action["totalNetR9BpsPerSide"])<1e-5
+                  if symbol=="BTCUSDT":
+                      assert no_action["totalNetR9BpsPerSide"]==v["variants"][base+"__SELECTED_SOL_STRICT_SWEEP"]["totalNetR9BpsPerSide"]
+          print("V92_SELECTED_PATTERNS_HISTORICAL_VALIDATED")
+          PY
+      - name: Commit research-only paper report to isolated V9.2 branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_selected_reversal_patterns/historical.json \
+                  forward/v92_selected_reversal_patterns/historical.md
+          git commit -m "V9.2 selected Star Harami SOL-only historical experiment and Soldiers Crows observational counts"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_SELECTIVE_PATTERNS_ARCHIVE_VERIFIED_COMMITTED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Show historical research summary, never imply live PnL
+        if: always()
+        run: |
+          if test -s forward/v92_selected_reversal_patterns/historical.md; then
+            cat forward/v92_selected_reversal_patterns/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Selective V9.2 historical results not verified; do not claim profit." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "No orders, original strategies or notifications changed." >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload auditable research results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-selective-reversal-historical-${{ github.run_id }}
+          path: |
+            forward/v92_selected_reversal_patterns/historical.json
+            forward/v92_selected_reversal_patterns/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
