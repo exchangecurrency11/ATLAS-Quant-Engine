@@ -1,0 +1,156 @@
+name: V9.2 SOL paired prospective paper study (V9.1 control vs selected filter)
+
+on:
+  schedule:
+    - cron: "20 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-sol-paired-prospective-paper.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-sol-paired-prospective-paper
+  cancel-in-progress: false
+
+jobs:
+  paired-forward-study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout isolated V9.2 research branch only
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test immutable capture, veto attribution, and paired paper ledger
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v92_prospective_selected.py v92_sol_paired_prospective.py
+          python3 -m unittest discover -s tests -p 'test_v92_prospective_selected.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_sol_paired_prospective.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_selected_reversal_patterns.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
+          python3 -m unittest discover -s tests -p 'test_v91_prospective_retest.py' -q
+
+      - name: Fetch full-history V9.1 and V7 sealed source branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --single-branch --branch research/v9-prestart-live-data-compatibility-20261111 \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" v91_evidence
+          git clone --single-branch --branch experiment/v7-signal-quality-20261103 \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" v7_evidence
+          test -d v91_evidence/.git
+          test -d v7_evidence/.git
+
+      - name: Fetch same-hour public market snapshot and closed 1H 4H daily history
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p forward/tmp/v92_history
+          gh api "repos/${GITHUB_REPOSITORY}/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/tmp/v92_main_market.json
+          test -s forward/tmp/v92_main_market.json
+          for tf in 1hour 4hour daily; do
+            curl --fail --location --silent --show-error \
+              --retry 2 --retry-delay 2 --max-time 80 \
+              -H 'Cache-Control: no-cache' \
+              "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=${tf}" \
+              -o "forward/tmp/v92_history/history_${tf}.json"
+            test -s "forward/tmp/v92_history/history_${tf}.json"
+          done
+
+      - name: Capture only current eligible UTC close; missing or stale sources safely skip
+        run: |
+          set -euo pipefail
+          mkdir -p forward/v92_prospective_selected/hourly
+          python3 -u v92_prospective_selected.py \
+            --source-dir v91_evidence \
+            --v7-dir v7_evidence/forward/snapshots \
+            --market forward/tmp/v92_main_market.json \
+            --history forward/tmp/v92_history
+
+      - name: Recompute paired V9.1 control and V9.2 filtered SOL accounts
+        run: |
+          set -euo pipefail
+          python3 -u v92_sol_paired_prospective.py \
+            --hourly forward/v92_prospective_selected/hourly \
+            --json forward/v92_prospective_selected/paired_sol_account.json \
+            --markdown forward/v92_prospective_selected/paired_sol_account.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_prospective_selected/paired_sol_account.json").read_text())
+          assert x["status"]=="V92_SOL_PAIRED_PROSPECTIVE_PAPER_ONLY"
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["noRetrospectiveBackfill"]
+          assert set(x["arms"])=={"V91_UNFILTERED_CONTROL","V92_STAR_HARAMI_SWEEP_FILTER"}
+          assert x["researchDecision"] in {
+            "INSUFFICIENT_PROSPECTIVE_SAMPLE",
+            "PROMISING_BUT_NOT_APPROVED_FOR_LIVE",
+            "NO_CLEAR_ROBUST_IMPROVEMENT_DO_NOT_PROMOTE"}
+          print("V92_SOL_PAIRED_ACCOUNT_VALIDATED",json.dumps({
+            "hours":x["savedDistinctVerifiedHours"],
+            "baselineTrades":x["arms"]["V91_UNFILTERED_CONTROL"]["trades"],
+            "filteredTrades":x["arms"]["V92_STAR_HARAMI_SWEEP_FILTER"]["trades"],
+            "vetoes":x["directRetestAudit"].get("directFilterVetoes",0),
+            "decision":x["researchDecision"]}))
+          PY
+
+      - name: Commit append-only V9.2 hourly evidence and paired report to research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_prospective_selected/hourly \
+                  forward/v92_prospective_selected/third_paper_account.json \
+                  forward/v92_prospective_selected/third_paper_account.md \
+                  forward/v92_prospective_selected/paired_sol_account.json \
+                  forward/v92_prospective_selected/paired_sol_account.md
+          if git diff --cached --quiet; then
+            echo "No new sealed hourly evidence or report changes; no commit."
+            exit 0
+          fi
+          git commit -m "V9.2 SOL paired prospective paper observation"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_SOL_PAIRED_PROSPECTIVE_EVIDENCE_SEALED_NO_LIVE_CHANGES"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Upload temporary source evidence and paired report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-sol-paired-prospective-${{ github.run_id }}
+          path: |
+            forward/tmp/v92_main_market.json
+            forward/tmp/v92_history/history_*.json
+            forward/v92_prospective_selected/third_paper_account.json
+            forward/v92_prospective_selected/paired_sol_account.json
+            forward/v92_prospective_selected/paired_sol_account.md
+          if-no-files-found: ignore
+          retention-days: 45
+
+      - name: Summarize paper-only status
+        if: always()
+        run: |
+          if test -s forward/v92_prospective_selected/paired_sol_account.md; then
+            cat forward/v92_prospective_selected/paired_sol_account.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No new paired result was produced. Missing/stale data is never backfilled." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "No broker orders, user alerts, V7/V9.1 edits, or production changes." >> "$GITHUB_STEP_SUMMARY"
