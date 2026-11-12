@@ -39,10 +39,20 @@ def latest_hour_records(path, expected_mode, *, first_utc, asset_refs):
         if target in result:
             raise ValueError("PORTFOLIO_DUPLICATE_SOURCE_HOUR")
         captured=epoch(j["capturedAtUTC"])
+        # The sealed BTC/SOL V9.1 schema calls this noNotifications; the
+        # separate ETH V9.1 schema calls it noUserNotifications. Validate
+        # the source-specific contract instead of rejecting valid BTC/SOL
+        # snapshots or accepting a missing notification-safety assertion.
+        if expected_mode==BTC_SOL_MODE:
+            notifications_disabled=(j.get("noNotifications") is True)
+        elif expected_mode==ETH_MODE:
+            notifications_disabled=(j.get("noUserNotifications") is True)
+        else:
+            raise ValueError("PORTFOLIO_UNKNOWN_PROSPECTIVE_SOURCE_MODE")
         if (j.get("mode")!=expected_mode or
             captured<target or captured>=target+3600 or
             j.get("noBrokerOrders") is not True or
-            j.get("noUserNotifications") is not True):
+            not notifications_disabled):
             raise ValueError("PORTFOLIO_UNVERIFIED_PROSPECTIVE_SOURCE")
         if expected_mode==BTC_SOL_MODE:
             if (j.get("V7SnapshotAndIndependentRecomputeExactMatch") is not True or
