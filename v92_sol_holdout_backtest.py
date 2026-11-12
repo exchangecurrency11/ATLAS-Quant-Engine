@@ -39,7 +39,7 @@ def validate_manifest(m):
         raise ValueError("V92_SOL_HOLDOUT_BINANCE_MANIFEST_INVALID")
     expected_pairs={(sym,month) for sym in ("BTCUSDT","SOLUSDT") for month in MONTHS}
     actual={(x.get("symbol"),x.get("month")) for x in m.get("inputFiles",[])}
-    if (actual!=expected_pairs or len(m.get("inputFiles",[]))!=60
+    if (actual!=expected_pairs or len(m.get("inputFiles",[]))!=58
         or any(len(x.get("sha256",""))!=64 for x in m["inputFiles"])):
         raise ValueError("V92_SOL_HOLDOUT_MONTHLY_SHA256_COVERAGE_INVALID")
     for sym in ("BTCUSDT","SOLUSDT"):
