@@ -8,7 +8,7 @@ from unittest.mock import patch
 from v92_sol_paired_prospective import (
     ARMS, build, score, trade_evidence, key_of
 )
-from v92_prospective_selected import FIRST, MODE, path_at, iso
+from v92_prospective_selected import FIRST, MODE, path_at, iso, epoch
 
 
 def pending():
@@ -82,15 +82,13 @@ class V92SOLPairedProspectiveTests(unittest.TestCase):
             exit_=snapshot(
               FIRST+3600,baseline_exits=[trade(FIRST+3600)],
               selected_exits=[])
-            for obj in (retest,exit_):
-                p=path_at(folder,int(obj["targetClosed1HUTC"].replace("Z","+00:00").replace("T"," ").replace("-","-",1)[:0] or FIRST))
             # Use exact timestamp-derived filenames for immutable hourly snapshots.
+            path_at(folder,FIRST).parent.mkdir(parents=True,exist_ok=True)
             path_at(folder,FIRST).write_text(json.dumps(retest))
             path_at(folder,FIRST+3600).write_text(json.dumps(exit_))
             def commit_time(path):
                 obj=json.loads(Path(path).read_text())
-                return int(obj["targetClosed1HUTC"].replace("Z","+00:00")[:19].replace("T"," ").replace("-","-",1) and
-                           (FIRST if obj["targetClosed1HUTC"]==iso(FIRST) else FIRST+3600))+905
+                return epoch(obj["capturedAtUTC"])+5
             with patch("v92_sol_paired_prospective.verified_first_commit",
                        side_effect=commit_time):
                 result=build(folder)
