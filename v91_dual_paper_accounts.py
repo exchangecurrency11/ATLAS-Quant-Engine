@@ -155,8 +155,10 @@ def build(config, btc_sol_snapshots, btc_sol_score, eth_snapshots=None, eth_scor
         raise ValueError("PORTFOLIO_RETROACTIVE_OR_UNALIGNED_START")
     capital=float(config["initialVirtualCapitalUSDTPerAccount"])
     stake=float(config["fixedPaperRiskUSDTPerEligibleTrade"])
-    if capital<=0 or not 0<stake<=capital*.01:
+    if capital<=0 or not 0<stake<=capital*.10:
         raise ValueError("PORTFOLIO_INVALID_FIXED_RISK")
+    if stake>capital*.01 and config.get("userExplicitlyRequested10PctRiskOnlyInVirtualPaper") is not True:
+        raise ValueError("PORTFOLIO_HIGH_RISK_PAPER_SIMULATION_NOT_EXPLICITLY_REQUESTED")
     btc_sol=latest_hour_records(btc_sol_snapshots,BTC_SOL_MODE,first_utc=first,
                                 asset_refs={"BTCUSDT","SOLUSDT"})
     eth=(latest_hour_records(eth_snapshots,ETH_MODE,first_utc=first,
@@ -181,6 +183,8 @@ def build(config, btc_sol_snapshots, btc_sol_score, eth_snapshots=None, eth_scor
         accounts[model]={
           "virtualInitialUSDT":capital,
           "virtualPaperRiskPerTradeUSDT":stake,
+          "riskPctOfInitialCapital":round(100*stake/capital,4),
+          "riskPerTradeIsHighAndNotRecommendedForLive":stake/capital>=.05,
           "virtualEquityUSDT":round(equity,6),
           "virtualRealizedPnlUSDT":round(stake*totalR,6),
           "virtualRealizedPnlStress25BpsUSDT":round(stake*stressR,6),
@@ -207,6 +211,7 @@ def build(config, btc_sol_snapshots, btc_sol_score, eth_snapshots=None, eth_scor
        "ETHAddedOnlyIfIndependentV7ParityVerified":bool(eth),
        "accounts":accounts,
        "nightBeforeRequestRetrospectiveOnlyNoOrders":True,
+       "riskSizingIsFixedPaper100USDTPerRNotRealPositionFill":True,
        "noForcedEntriesFromMarketTrendOrV9ColorForecast":True,
        "forecastColorsAreV9NotV91EntrySignals":True,
        "noFabricatedMissingHours":True,
@@ -238,7 +243,8 @@ def markdown(result):
          "V9 önceden dondurulan 4H renk tahminleri ayrıca değerlendirilir, V9.1 işleme giriş sinyali sayılmaz.",
          "Önceki geceye sonradan emir yazılmaz; 1H eksikleri kapatılmaz.",
          "ETH sadece V7 ile birebir doğrulanan gerçek ileriye dönük ETH V9.1 kayıtları geldikten sonra dahil edilir.",
-         "Sanal hesaplar sabit 0,5 USDT/işlem risk kullanır; fonlama, likidasyon, gerçek spread ve uygulanabilir fill garanti edilmez.",""]
+         "Sanal hesaplar her işlem için sabit {} USDT hedef risk kullanır (başlangıç bakiyesinin %{}'u). %10 çok yüksek risktir. Stop kayması ve kaldıraç nedeniyle gerçek zarar daha yüksek olabilir.".format(next(iter(result["accounts"].values()))["virtualPaperRiskPerTradeUSDT"], next(iter(result["accounts"].values()))["riskPctOfInitialCapital"]),
+         "Fonlama, likidasyon, gerçek spread ve uygulanabilir fill garanti edilmez.",""]
     return "\n".join(p)
 
 def main():
