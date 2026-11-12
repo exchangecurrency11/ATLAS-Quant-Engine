@@ -37,10 +37,11 @@ REFERENCE_STATUS="V91_FULL_CHRONOLOGICAL_RETEST_ABLATION_PAPER_ONLY"
 
 def validate_tail(bars, seconds):
     if len(bars)<27:return False
-    for a,b in zip(bars[-32:-1],bars[-31:]):
+    tail=bars[-32:]
+    for a,b in zip(tail,tail[1:]):
         if int(b["t"])-int(a["t"])!=seconds or int(a["t"])%seconds:
             raise ValueError("V92_EXT_GAPPED_OR_UNALIGNED_CANDLES")
-    for bar in bars[-32:]:
+    for bar in tail:
         o,h,l,c,v=(float(bar[k]) for k in ("o","h","l","c","v"))
         if (not all(math.isfinite(x) for x in (o,h,l,c,v)) or
             l<=0 or l>min(o,c) or h<max(o,c) or v<0):
