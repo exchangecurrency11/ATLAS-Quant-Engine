@@ -1,0 +1,105 @@
+name: V7 vs V9.1 two separate virtual paper accounts (NO ALERTS / NO ORDERS)
+
+# Read-only reporting on already VERIFIED, immutable, prospective signals.
+# No forced market-direction trades; yesterday's hours are not backfilled.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v91-dual-separate-paper-accounts.yml
+  workflow_dispatch:
+  schedule:
+    - cron: '30,47,57 * * * *'
+  workflow_run:
+    workflows:
+      - V9.1 hourly V7 vs max4h retest prospective paper shadow NO ALERTS
+      - V9.1 ETH original V7 vs max4h prospective paper shadow NO ALERTS
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v91-dual-paper-accounts-only-no-alerts
+  cancel-in-progress: false
+
+jobs:
+  dual-paper:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout only isolated V9.1 research
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Validate virtual portfolio accounting and original strategy contracts
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v91_dual_paper_accounts.py
+          python3 -m unittest discover -s tests -p 'test_v91_dual_paper_accounts.py' -v
+          python3 -m unittest discover -s tests -p 'test_v91_prospective_retest.py' -q
+          python3 -m unittest discover -s tests -p 'test_v91_eth_prospective_retest.py' -q
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+      - name: Produce two independent forward paper accounts with sealed source
+        run: |
+          set -euo pipefail
+          python3 -u v91_dual_paper_accounts.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v91_dual_paper_accounts/latest.json").read_text())
+          assert x["status"]=="TWO_SEPARATE_PROSPECTIVE_VIRTUAL_PAPER_ACCOUNTS"
+          assert x["firstEligible1HCloseUTC"]=="2026-11-12T09:00:00Z"
+          assert x["nightBeforeRequestRetrospectiveOnlyNoOrders"]
+          assert x["noForcedEntriesFromMarketTrendOrV9ColorForecast"]
+          assert x["noActualOrders"] and x["noUserAlerts"]
+          assert set(x["accounts"])=={"V7_ORIGINAL","V91_RETEST_MAX4H"}
+          for a in x["accounts"].values():
+            assert a["brokerOrders"]==0 and a["realExecutableFillsVerified"]==0
+            assert a["virtualInitialUSDT"]==100 and a["virtualPaperRiskPerTradeUSDT"]==0.5
+          print("V7_AND_V91_VIRTUAL_ACCOUNTS_INDEPENDENT_NO_RETROACTIVE_FILLS")
+          PY
+      - name: Persist the independent portfolio status only to research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v91_dual_paper_accounts/latest.json forward/v91_dual_paper_accounts/latest.md
+          if git diff --cached --quiet; then
+            echo "PAPER_ACCOUNT_STATUS_NO_CHANGE"
+            exit 0
+          fi
+          git commit -m "V7 vs V9.1 separate prospective virtual paper accounts status only"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "V7_V91_PAPER_ACCOUNTS_PUBLISHED"
+              exit 0
+            fi
+            sleep 3
+          done
+          echo "PAPER_ACCOUNT_STATUS_COMMIT_FAILED"
+          exit 1
+      - name: Summarize paper-only outcome (never a trading alert)
+        if: always()
+        run: |
+          if test -s forward/v91_dual_paper_accounts/latest.md; then
+            cat forward/v91_dual_paper_accounts/latest.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Paper accounts report not generated; no claims of trade entries." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Retain 14-day virtual paper audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v7-v91-dual-paper-only-${{ github.run_id }}
+          path: |
+            forward/v91_dual_paper_accounts/latest.json
+            forward/v91_dual_paper_accounts/latest.md
+          retention-days: 14
+          if-no-files-found: ignore
