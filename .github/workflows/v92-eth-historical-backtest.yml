@@ -58,11 +58,30 @@ jobs:
           print("ETH_SOURCE_MANIFEST_VERIFIED",m["pairCounts"],m["checksumsVerified"])
           PY
 
+      - name: Download six-month official Binance ETH EMA50 warmup and verify SHA256
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_eth_warmup.py \
+            --start 2024-04 --end 2024-09 \
+            --output-dir eth_verified_warmup --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("eth_verified_warmup/source_manifest.json").read_text())
+          assert m["checksumsVerified"]==6
+          assert m["dailyBars"]==183
+          assert m["warmupOnlyNotPerformancePeriod"] is True
+          assert all(len(x["sha256"])==64 for x in m["inputFiles"])
+          print("ETH_WARMUP_ARCHIVE_VERIFIED",m["dailyBars"],m["checksumsVerified"])
+          PY
+
       - name: Run full chronological ETH V7/V9.1 baseline and V9.2 candle 1D 3D ablations
         run: |
           set -euo pipefail
           python3 -u v92_eth_historical_backtest.py \
             --archive eth_verified_archive \
+            --warmup-daily eth_verified_warmup/history_daily_warmup.json \
+            --warmup-manifest eth_verified_warmup/source_manifest.json \
             --out forward/v92_eth_historical_backtest
           python3 - <<'PY'
           import json
@@ -71,6 +90,9 @@ jobs:
           assert x["status"]=="V92_ETH_OFFICIAL_BINANCE_1D_3D_HISTORICAL_PAPER_ABLATION"
           assert x["verifiedCandles"]=={"1H":17520,"4H":4380,"1D":730}
           assert x["sourceManifest"]["checksumsVerified"]==24
+          assert x["sourceManifest"]["warmupChecksumsVerified"]==6
+          assert x["contextWarmupDailyBars"]==183
+          assert x["contextWarmupExcludedFromPerformancePeriod"] is True
           assert x["noBrokerOrders"] and x["noUserNotifications"]
           assert x["nativeExchange3DParityProven"] is False
           for base in ("V7_ORIGINAL","V91_RETEST_MAX4H"):
@@ -115,6 +137,7 @@ jobs:
           name: v92-eth-official-binance-backtest-${{ github.run_id }}
           path: |
             eth_verified_archive/source_manifest.json
+            eth_verified_warmup/source_manifest.json
             forward/v92_eth_historical_backtest/historical.json
             forward/v92_eth_historical_backtest/historical.md
           if-no-files-found: ignore
