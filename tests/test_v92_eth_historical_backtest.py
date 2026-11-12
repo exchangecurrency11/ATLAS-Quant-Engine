@@ -38,6 +38,27 @@ class ETHArchiveTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"GAP_DUPLICATE"):
             build({("ETHUSDT","2024-10"):bars},"2024-10","2024-10")
 
+    def test_eth_1d_and_3d_retest_gate_rejects_opposing_trend(self):
+        from collections import Counter
+        from v92_eth_historical_backtest import _gate
+        d=[]
+        for i in range(255):
+            if i < 165:
+                o=100+i*.1
+            else:
+                o=130-(i-165)*.2
+            d.append({"t":i*DAY,"o":o,"h":o+1,"l":o-1,
+                      "c":o+.2,"v":100})
+        audit=Counter()
+        audit["dailyTrends"]=Counter()
+        audit["threeDayTrends"]=Counter()
+        gate,_=_gate([],d,candle_enabled=False,daily_enabled=True,
+                     three_enabled=True,audit=audit)
+        decision=gate([],{"side":"bullish"},{"t":254*DAY})
+        self.assertFalse(decision["passed"])
+        self.assertTrue(any("NOT_ALIGNED" in reason
+                            for reason in decision["reasons"]))
+
 
 if __name__=="__main__":
     unittest.main()
