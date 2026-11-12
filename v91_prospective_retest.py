@@ -38,6 +38,11 @@ TIMEFRAME_SECONDS={"1hour":HOUR,"4hour":4*HOUR,"daily":24*HOUR}
 OHLC_MAPPING={"open":"o","high":"h","low":"l","close":"c","volume":"v"}
 
 
+def current_hour_capture_window(target, now):
+    """Allow capture through the last second of the same closed UTC hour."""
+    return target == now//HOUR*HOUR and 12*60 <= now-target < HOUR
+
+
 def path_at(base, t):
     return Path(base) / (datetime.fromtimestamp(t,timezone.utc).strftime("%Y-%m-%dT%H-00Z")+".json")
 
@@ -155,14 +160,14 @@ def verify_candle_quality_against_v7(original, parsed, target):
 def capture(original, main, raw, *, now, folder):
     """Compute only CURRENT completed UTC hour; original V7 data must exist."""
     target=(now//HOUR)*HOUR
-    if not (12*60<=now-target<=57*60):
-        raise ValueError("V91_NOT_WITHIN_CONTEMPORANEOUS_12_TO_57_MIN_CLOSE_WINDOW")
+    if not current_hour_capture_window(target,now):
+        raise ValueError("V91_NOT_WITHIN_CONTEMPORANEOUS_CURRENT_HOUR_WINDOW")
     if original.get("status")!="VERIFIED_PAPER_OBSERVATION" or original.get("brokerOrders") is not False:
         raise ValueError("V91_ORIGINAL_V7_NOT_VERIFIED_PAPER_ONLY")
     if epoch(original["targetClosed1HUTC"])!=target:
         raise ValueError("V91_V7_NOT_MATCHED_TO_CURRENT_HOUR")
     recorded=epoch(original["observedAtUTC"])
-    if not (target<=recorded<=now+90 and recorded<target+58*60):
+    if not (target<=recorded<=now+90 and recorded<target+HOUR):
         raise ValueError("V91_V7_SOURCE_NOT_SEALED_CONTEMPORANEOUSLY")
     parsed=validate_inputs(main,raw,target,now)
     if set(parsed)!={"1hour","4hour","daily"}:
