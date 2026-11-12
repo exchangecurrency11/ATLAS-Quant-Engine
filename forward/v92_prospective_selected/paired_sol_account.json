@@ -1,0 +1,76 @@
+{
+  "status": "V92_SOL_PAIRED_PROSPECTIVE_PAPER_ONLY",
+  "symbol": "SOLUSDT",
+  "firstEligibleCloseUTC": "2026-11-12T11:00:00Z",
+  "lastDistinctVerifiedCloseUTC": "2026-11-12T12:00:00Z",
+  "savedDistinctVerifiedHours": 2,
+  "sealedHoursWithGitTimestamp": 2,
+  "unsealedHoursExcludedFromVetoAudit": 0,
+  "missingHoursNotBackfilled": [],
+  "frozenPolicy": {
+    "baseline": "V9.1 max-4h retest, no additional candle veto",
+    "candidate": "Only opposite fully closed 1H/4H Morning/Evening Star or third-candle-confirmed Harami AND prior-20 liquidity sweep plus close back inside may veto a SOL retest",
+    "BTC": "Observation only; no veto",
+    "HikkakeAndEngulfing": "Observation only; no veto",
+    "parametersChangedDuringProspectiveStudy": false
+  },
+  "source": {
+    "sameHourV7V91RecomputeParityRequired": true,
+    "sameClosedCandleSetForBothArms": true,
+    "liveBinanceExchangeParityIndependentlyProven": false,
+    "nextOpenFillExecutable": false
+  },
+  "directRetestAudit": {
+    "warningCounts": {}
+  },
+  "arms": {
+    "V91_UNFILTERED_CONTROL": {
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "winRatePct": null,
+      "netR": 0,
+      "stressNetR": 0,
+      "averageR": null,
+      "profitFactor": null,
+      "maxDrawdownR": 0.0,
+      "tradeLedger": []
+    },
+    "V92_STAR_HARAMI_SWEEP_FILTER": {
+      "trades": 0,
+      "wins": 0,
+      "losses": 0,
+      "winRatePct": null,
+      "netR": 0,
+      "stressNetR": 0,
+      "averageR": null,
+      "profitFactor": null,
+      "maxDrawdownR": 0.0,
+      "tradeLedger": []
+    }
+  },
+  "comparison": {
+    "matchedTradeKeys": 0,
+    "baselineOnlyTradeKeys": 0,
+    "filteredOnlyTradeKeys": 0,
+    "deltaNetR9Bps": 0,
+    "deltaNetR25BpsStress": 0,
+    "baselineOnlyTradeKeyExamples": [],
+    "filteredOnlyTradeKeyExamples": []
+  },
+  "excludedUnsealedOrUnprovenExits": {
+    "V91_UNFILTERED_CONTROL": {},
+    "V92_STAR_HARAMI_SWEEP_FILTER": {}
+  },
+  "minimumReviewThreshold": {
+    "eligibleClosedBaselineTrades": 30,
+    "sealedDirectFilterVetoEvents": 5
+  },
+  "researchDecision": "INSUFFICIENT_PROSPECTIVE_SAMPLE",
+  "noBrokerOrders": true,
+  "noUserNotifications": true,
+  "noProductionOrV7V91Changes": true,
+  "noRetrospectiveBackfill": true,
+  "paperOnlyNotRealPnL": true,
+  "fixedRiskDollarPnLNotRecommendedForLive": true
+}
