@@ -1,0 +1,67 @@
+{
+  "mode": "V91_COINBASE_HOURLY_SPOT_INDEPENDENT_SHADOW_READ_ONLY",
+  "targetClosed1HUTC": "2026-11-12T21:00:00Z",
+  "observedAtUTC": "2026-11-12T21:12:11.144261Z",
+  "venue": "COINBASE_EXCHANGE_SPOT_USD_NOT_BINANCE_USDM_FUTURES",
+  "assets": {
+    "BTC": {
+      "coinbaseSpotClosed1H": {
+        "status": "VALID_COINBASE_SPOT_CLOSED_1H",
+        "httpCode": 200,
+        "candle": {
+          "openTimeUTC": "2026-11-12T20:00:00Z",
+          "closeTimeUTC": "2026-11-12T21:00:00Z",
+          "open": 71597.52,
+          "high": 71621.86,
+          "low": 71307.84,
+          "close": 71341.7,
+          "spotBaseVolume": 605.60349285
+        }
+      },
+      "comparisonStatus": "UNAVAILABLE_OR_NOT_SAME_HOUR"
+    },
+    "ETH": {
+      "coinbaseSpotClosed1H": {
+        "status": "VALID_COINBASE_SPOT_CLOSED_1H",
+        "httpCode": 200,
+        "candle": {
+          "openTimeUTC": "2026-11-12T20:00:00Z",
+          "closeTimeUTC": "2026-11-12T21:00:00Z",
+          "open": 2015.25,
+          "high": 2020.65,
+          "low": 2011.0,
+          "close": 2014.14,
+          "spotBaseVolume": 7692.52238542
+        }
+      },
+      "comparisonStatus": "UNAVAILABLE_OR_NOT_SAME_HOUR"
+    },
+    "SOL": {
+      "coinbaseSpotClosed1H": {
+        "status": "VALID_COINBASE_SPOT_CLOSED_1H",
+        "httpCode": 200,
+        "candle": {
+          "openTimeUTC": "2026-11-12T20:00:00Z",
+          "closeTimeUTC": "2026-11-12T21:00:00Z",
+          "open": 81.53,
+          "high": 81.62,
+          "low": 81.21,
+          "close": 81.23,
+          "spotBaseVolume": 51893.18257829
+        }
+      },
+      "comparisonStatus": "UNAVAILABLE_OR_NOT_SAME_HOUR"
+    }
+  },
+  "coinalyzeComparisonStatus": "V9_REFERENCE_UNAVAILABLE",
+  "successAllThreeCoinbaseSpotClosed1H": true,
+  "allThreeSameHourV9Comparisons": false,
+  "noIndependentLiveBinancePerpetualOHLCParity": true,
+  "noCoinalyzeVolumeParityClaim": true,
+  "noEntrySignalOrVeto": true,
+  "originalV7Unmodified": true,
+  "v91RulesUnmodified": true,
+  "noBrokerOrders": true,
+  "noNotifications": true,
+  "noPaperTradesSynthesized": true
+}
