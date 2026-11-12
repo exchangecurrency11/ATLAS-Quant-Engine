@@ -37,7 +37,7 @@ class HigherTimeframeBacktestTests(unittest.TestCase):
         d=daily_bars(255)
         # Reverse the last 90 daily closes to force a downward EMA regime.
         for i in range(165,255):
-            x=254-i
+            x=i-165
             d[i]={"t":i*DAY,"o":130-x*.2,"h":131-x*.2,
                   "l":129-x*.2,"c":129.5-x*.2,"v":200}
         audit=Counter()
