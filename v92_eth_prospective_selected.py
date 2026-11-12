@@ -29,7 +29,8 @@ from signal_quality_v7 import evaluate_bos_quality
 from v7_forward_observer import iso, epoch, latest_events
 from v91_eth_prospective_retest import verify_eth_source
 from v91_prospective_retest import (
-    HOUR,path_at,fetch_json,safe_trade,require_exact_replay
+    HOUR,path_at,fetch_json,safe_trade,require_exact_replay,
+    current_hour_capture_window
 )
 from v92_multi_candle_invalidation import all_patterns_at
 from v92_selected_reversal_patterns import soldier_crow
@@ -47,7 +48,7 @@ def verify_eth_v92_source(source, original, target, now,
                           source_path=None, source_repo=None):
     if FIRST_ETH<=REQUESTED_ETH or target<FIRST_ETH:
         raise ValueError("ETH_V92_RETROACTIVE_START_FORBIDDEN")
-    if target!=now//HOUR*HOUR or not 12*60<=now-target<=57*60:
+    if not current_hour_capture_window(target,now):
         raise ValueError("ETH_V92_NOT_CURRENT_VERIFIED_HOUR_WINDOW")
     if (source.get("mode")!="V91_ETH_PROSPECTIVE_4H_RETEST_IMMUTABLE_PAPER_SHADOW"
         or source.get("symbol")!="ETHUSDT"
