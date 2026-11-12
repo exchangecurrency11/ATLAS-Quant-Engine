@@ -1,0 +1,121 @@
+name: V9.2 ETH official Binance 1D 3D historical paper backtest
+
+# Independent ETH historical data, SHA256-verified from official Binance USD-M.
+# Research only. Does not modify the live ETH V7/V9.1/V9.2 paper signal engine.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-eth-historical-backtest.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-higher-timeframe-backtest-only
+  cancel-in-progress: false
+
+jobs:
+  eth-historical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test ETH archive and higher-timeframe no-lookahead
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile download_binance_um_eth_history.py v92_eth_historical_backtest.py v92_higher_timeframe_context.py
+          python3 -m unittest discover -s tests -p 'test_v92_eth_historical_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_context.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_bull_bear_candle_invalidation.py' -q
+
+      - name: Download 24 complete official Binance USD-M ETH monthly 1H archives and verify every SHA256
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_eth_history.py \
+            --start 2024-10 --end 2026-09 \
+            --output-dir eth_verified_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("eth_verified_archive/source_manifest.json").read_text())
+          assert m["source"].startswith("Binance official data.binance.vision FUTURES/UM")
+          assert m["symbol"]=="ETHUSDT_PERP.A"
+          assert m["checksumsVerified"]==24
+          assert m["pairCounts"]=={"1hour":17520,"4hour":4380,"daily":730}
+          assert len(m["inputFiles"])==24
+          assert all(len(x["sha256"])==64 for x in m["inputFiles"])
+          print("ETH_SOURCE_MANIFEST_VERIFIED",m["pairCounts"],m["checksumsVerified"])
+          PY
+
+      - name: Run full chronological ETH V7/V9.1 baseline and V9.2 candle 1D 3D ablations
+        run: |
+          set -euo pipefail
+          python3 -u v92_eth_historical_backtest.py \
+            --archive eth_verified_archive \
+            --out forward/v92_eth_historical_backtest
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_eth_historical_backtest/historical.json").read_text())
+          assert x["status"]=="V92_ETH_OFFICIAL_BINANCE_1D_3D_HISTORICAL_PAPER_ABLATION"
+          assert x["verifiedCandles"]=={"1H":17520,"4H":4380,"1D":730}
+          assert x["sourceManifest"]["checksumsVerified"]==24
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["nativeExchange3DParityProven"] is False
+          for base in ("V7_ORIGINAL","V91_RETEST_MAX4H"):
+            for mode in ("CANDLE_ONLY","DAILY_RETEST_CONFIRM","3D_RETEST_CONFIRM","DAILY_AND_3D_RETEST_CONFIRM","CANDLE_PLUS_3D"):
+              assert base+"__"+mode in x["variants"]
+          print("V92_ETH_OFFICIAL_BINANCE_HISTORICAL_BACKTEST_VALIDATED")
+          PY
+
+      - name: Commit ETH research report to isolated V9.2 branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_eth_historical_backtest/historical.json \
+                  forward/v92_eth_historical_backtest/historical.md
+          git commit -m "V9.2 ETH official Binance SHA256 historical 1D 3D paper backtest"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_ETH_OFFICIAL_BINANCE_BACKTEST_SEALED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Summarize results or report failure without inventing performance
+        if: always()
+        run: |
+          if test -s forward/v92_eth_historical_backtest/historical.md; then
+            cat forward/v92_eth_historical_backtest/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No verified ETH historical result produced. Do not claim performance." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Paper only. No orders, alerts, or production strategy changes." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload auditable ETH archive manifest and backtest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-eth-official-binance-backtest-${{ github.run_id }}
+          path: |
+            eth_verified_archive/source_manifest.json
+            forward/v92_eth_historical_backtest/historical.json
+            forward/v92_eth_historical_backtest/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
