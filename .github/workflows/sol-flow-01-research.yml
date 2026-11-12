@@ -1,0 +1,166 @@
+name: SOL-FLOW-01 closed-candle taker-flow ablation (research only)
+
+on:
+  push:
+    branches:
+      - research/sol-flow-01-20261112
+    paths:
+      - sol_flow_01.py
+      - tests/test_sol_flow_01.py
+      - SOL_FLOW_01_RESEARCH.md
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sol-flow-01-research-only
+  cancel-in-progress: false
+
+jobs:
+  historical-ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/sol-flow-01-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile unchanged replay dependencies and run integrity tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            download_binance_um_history.py \
+            backtest_retest_long_v4.py \
+            market_structure.py \
+            signal_quality_v7.py \
+            v7_paper_comparison.py \
+            sol_flow_01.py
+          python3 -m unittest discover -s tests -p 'test_sol_flow_01.py' -v
+
+      - name: Download exact official Binance USD-M 1H klines with full taker fields
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_history.py \
+            --start 2024-10 --end 2026-09 \
+            --output-dir sol_flow_01_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("sol_flow_01_archive/source_manifest.json").read_text())
+          assert m["source"].startswith("Binance official data.binance.vision")
+          assert m["checksumsVerified"]==48 and len(m["inputFiles"])==48
+          assert m["firstUTC"].startswith("2024-10-01T00:00:00")
+          assert m["endExclusiveUTC"].startswith("2026-10-01T00:00:00")
+          assert m["pairCounts"]["SOLUSDT"]=={"1hour":17520,"4hour":4380,"daily":730}
+          assert all(len(x["sha256"])==64 for x in m["inputFiles"])
+          for tf in ("1hour","4hour","daily"):
+              data=json.loads(Path(f"sol_flow_01_archive/history_{tf}.json").read_text())
+              sol=next(x["history"] for x in data if x["symbol"]=="SOLUSDT_PERP.A")
+              assert sol
+              assert all(all(k in b for k in ("qv","trades","tbv","tbq")) for b in sol)
+          print("SOL_FLOW_01_OFFICIAL_ARCHIVE_AND_TAKER_COVERAGE_VERIFIED")
+          PY
+
+      - name: Run five identical chronological V9.1 replay arms
+        run: |
+          set -euo pipefail
+          python3 -u sol_flow_01.py \
+            --hour sol_flow_01_archive/history_1hour.json \
+            --four sol_flow_01_archive/history_4hour.json \
+            --daily sol_flow_01_archive/history_daily.json \
+            --manifest sol_flow_01_archive/source_manifest.json \
+            --v91-reference forward/v92_selected_reversal_patterns/historical.json \
+            --output forward/sol_flow_01/latest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_flow_01/latest.json").read_text())
+          assert x["status"]=="SOL_FLOW_01_EXPLORATORY_HISTORICAL_PAPER_ONLY"
+          assert x["sameHistoryEveryArm"] and x["4HAndDailyVerifiedAgainst1H"]
+          assert x["externalV91ReferenceParityVerified"] is True
+          assert x["brokerOrders"] is False and x["alerts"] is False
+          assert x["productionModified"] is False and x["promotionApproved"] is False
+          assert set(x["results"])=={
+            "V91_UNFILTERED_CONTROL",
+            "FLOW_1H_TAKER_AGREES",
+            "FLOW_4H_CVD_AGREES",
+            "FLOW_1H_4H_RVOL",
+            "FLOW_1H_4H_RVOL_SIZE"}
+          for name,item in x["results"].items():
+            s=item["summary"]
+            assert s["trades"]>=0
+            assert s["BOSWatches"]>=s["trades"]
+            assert item["gateEvidence"]["vetoedRetests"]<=item["gateEvidence"]["eligibleOriginalRetestsAssessed"]
+          print("SOL_FLOW_01_HISTORICAL_REPLAY_AND_V91_PARITY_VERIFIED")
+          PY
+
+      - name: Build auditable Markdown summary
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_flow_01/latest.json").read_text())
+          lines=[
+            "# SOL-FLOW-01 historical taker-flow ablation",
+            "",
+            "**Exploratory historical paper replay only. Not live PnL, not independent forward evidence, no orders or alerts.**",
+            "",
+            f"Period: {x['startUTC']} to {x['endExclusiveUTC']} (exclusive).",
+            f"Source: {x['source']}; checksum-verified monthly files: {x['archiveChecksumEntriesReported']}.",
+            f"V9.1 control parity: {x['externalV91ReferenceParityVerified']}.",
+            "",
+            "| Arm | Trades | Wins | Win rate | Net R (9 bps/side) | Net R (25 bps/side) | PF | Max DD R | Retest vetoes |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+          ]
+          for name,item in x["results"].items():
+            s=item["summary"]
+            pf=s["profitFactorR"]
+            lines.append(
+              f"| {name} | {s['trades']} | {s['winsNet']} | "
+              f"{s['winRatePct'] if s['winRatePct'] is not None else '—'}% | "
+              f"{s['netR9BpsPerSide']:.4f} | {s['netR25BpsPerSide']:.4f} | "
+              f"{pf if pf is not None else '—'} | {s['maxSequentialDrawdownR']:.4f} | "
+              f"{s['retestVetoes']} |")
+          lines += ["", "## Interpretation guardrails", ""]
+          lines += [f"- {v}" for v in x["limitations"]]
+          lines += [
+            "- The best arm is exploratory only: these historical periods and candidate filters have already been inspected.",
+            "- No live deployment, alert, broker order, paper account mutation, or production strategy change.",
+            "- V9.1 control was checked against the previously published SOL historical reference before interpreting any filter delta."
+          ]
+          Path("forward/sol_flow_01/latest.md").write_text("\n".join(lines)+"\n")
+          print("\n".join(lines))
+          PY
+
+      - name: Commit research report to isolated branch only
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/sol-flow-01-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/sol_flow_01/latest.json forward/sol_flow_01/latest.md
+          git commit -m "SOL-FLOW-01 official Binance taker-flow historical ablation"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/sol-flow-01-20261112
+            if git push origin HEAD:research/sol-flow-01-20261112; then
+              echo "SOL_FLOW_01_REPORT_COMMITTED_TO_RESEARCH_BRANCH"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Upload report and source manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-flow-01-historical-\${{ github.run_id }}
+          path: |
+            sol_flow_01_archive/source_manifest.json
+            forward/sol_flow_01/latest.json
+            forward/sol_flow_01/latest.md
+          if-no-files-found: ignore
+          retention-days: 90
