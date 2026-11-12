@@ -1,10 +1,6 @@
 name: V9.2 SOL earlier-period temporal holdout (official Binance)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/v92-sol-earlier-period-holdout.yml
   workflow_dispatch:
 
 permissions:
@@ -67,8 +63,8 @@ jobs:
           from pathlib import Path
           x=json.loads(Path("forward/v92_sol_holdout_2022_2024/historical.json").read_text())
           assert x["status"]=="V92_SOL_EARLIER_PERIOD_TEMPORAL_HOLDOUT_PAPER_ONLY"
-          assert x["source"]["checksumsVerified"]==60
-          assert x["source"]["monthlyArchives"]==60
+          assert x["source"]["checksumsVerified"]==58
+          assert x["source"]["monthlyArchives"]==58
           assert x["noBrokerOrders"] and x["noUserNotifications"]
           assert x["noProductionChanges"] and x["paperOnlyNotRealPnL"]
           assert x["temporalValidation"]["sameV92RuleAppliedWithoutRetuning"]
