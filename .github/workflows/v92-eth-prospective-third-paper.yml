@@ -1,0 +1,177 @@
+name: V9.2 ETH sealed hourly selected-pattern watch third shared paper NO ALERTS
+
+# ETHUSDT_PERP.A Binance perpetual only. Original ETH V7 and V9.1
+# sealed independently in GitHub BEFORE V9.2 same-hour capture.
+# No past fills or retrospective PnL. ETH patterns WATCH ONLY.
+# Merge accepted future ETH paper exits with BTC/SOL in ONE shared 1k book.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/v92-eth-prospective-third-paper.yml]
+  workflow_dispatch:
+  schedule:
+    - cron: '37,49,56 * * * *'
+  workflow_run:
+    workflows:
+      - V9.1 ETH original V7 vs max4h prospective paper shadow NO ALERTS
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+# Same concurrency key as V9.2 BTC/SOL account: no race to combined report.
+concurrency:
+  group: v92-selected-third-paper-no-orders
+  cancel-in-progress: false
+
+jobs:
+  eth-closed-hour:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Read only independently sealed ETH V9.1 source
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          path: v91_evidence
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read only original ETH V7 source
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+      - name: Validate ETH symmetric candles exact source and one shared paper capital
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile v92_eth_prospective_selected.py v92_third_paper_aggregate.py
+          python3 -m unittest discover -s tests -p test_v92_eth_prospective_selected.py -v
+          python3 -m unittest discover -s tests -p test_v92_prospective_selected.py -q
+          python3 -m unittest discover -s tests -p test_v91_eth_prospective_retest.py -q
+          python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
+          python3 -m unittest discover -s tests -p test_v92_multi_candle_invalidation.py -q
+      - name: Gate only NEW ETH V7 and V9.1 confirmed same-hour snapshots
+        id: gate
+        shell: bash
+        env:
+          ETH_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          set -euo pipefail
+          target="$(date -u +'%Y-%m-%dT%H-00Z')"
+          minute="$(date -u +%M)"
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          if [[ "$target" < "2026-11-12T12-00Z" ]]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V92_SKIP_BEFORE_NEW_REQUEST_ELIGIBLE_CLOSE"
+          elif (( 10#$minute < 12 || 10#$minute > 57 )); then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V92_SKIP_NOT_CURRENT_CLOSED_HOUR_WINDOW"
+          elif test -f "forward/v92_prospective_eth/hourly/$target.json"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V92_SKIP_ALREADY_SEALED_IMMUTABLE_HOUR"
+          elif ! test -s "v91_evidence/forward/v91_eth_prospective_retest/hourly/$target.json"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V92_SKIP_MISSING_PRIOR_GIT_SEALED_V91_ETH_HOUR"
+          elif ! test -s "v7_evidence/forward/eth/snapshots/$target.json"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V92_SKIP_MISSING_PRIOR_ORIGINAL_V7_ETH_HOUR"
+          elif ! test -n "$ETH_API_KEY"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V92_SKIP_MISSING_READONLY_PROVIDER_KEY"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "ETH_V92_MATCHED_CLOSED_SOURCE_READY_INDEPENDENT_REPLAY_PENDING"
+          fi
+      - name: Re-fetch fresh ETH USD-M perpetual and require EXACT V7 V9.1 replay agreement
+        if: steps.gate.outputs.run == 'true'
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          set -euo pipefail
+          python3 -u v92_eth_prospective_selected.py \
+            --source-dir v91_evidence \
+            --eth-v7-dir v7_evidence/forward/eth/snapshots \
+            --hours forward/v92_prospective_eth/hourly \
+            --component forward/v92_prospective_eth/component.json \
+            --md forward/v92_prospective_eth/component.md
+          test -s "forward/v92_prospective_eth/hourly/${{ steps.gate.outputs.target }}.json"
+          python3 -u v92_third_paper_aggregate.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          snap=Path("forward/v92_prospective_eth/hourly") / "${{ steps.gate.outputs.target }}.json"
+          s=json.loads(snap.read_text())
+          assert s["mode"]=="V92_ETH_VERIFIED_HOURLY_CANDLES_OBSERVATIONAL_PAPER"
+          assert s["verifiedSourceAndExactV7AndV91Replay"]
+          assert s["ethPatternObservationsOnly"] and s["ethV92RetestVetoEnabled"] is False
+          assert set(s["ethReversalPatternRecognition1H4H"])=={"1H","4H"}
+          assert s["noBrokerOrders"] and s["noUserNotifications"]
+          merged=json.loads(Path("forward/v92_prospective_selected/combined_three_asset_account.json").read_text())
+          assert merged["mode"]=="V92_BTC_ETH_SOL_SINGLE_THIRD_1000USDT_PROSPECTIVE_PAPER_ACCOUNT"
+          assert merged["assets"]==["BTCUSDT","ETHUSDT","SOLUSDT"]
+          assert merged["virtualInitialUSDT"]==1000
+          assert merged["sharedSingleVirtualPortfolioNotThreeTimes1000"]
+          assert merged["noHistorical836USDBackfilledIntoThisAccount"]
+          assert merged["noBrokerOrders"] and merged["noUserNotifications"]
+          assert merged["sourceETHVerifiedClosedHours"]>=1
+          print("ETH_V92_THIRD_ACCOUNT_ONE_SHARED_1000_USDT_READY",
+                merged["sourceETHVerifiedClosedHours"],merged["closedEligiblePaperTrades"])
+          PY
+      - name: Git seal contemporaneous ETH hour and recomputed combined three coin report
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "forward/v92_prospective_eth/hourly/${{ steps.gate.outputs.target }}.json" \
+            forward/v92_prospective_eth/component.json \
+            forward/v92_prospective_eth/component.md \
+            forward/v92_prospective_selected/combined_three_asset_account.json \
+            forward/v92_prospective_selected/combined_three_asset_account.md
+          git commit -m "V9.2 sealed independent ETH 1H 4H reversal watch and single 1k BTC ETH SOL paper score NO ORDERS"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "ETH_V92_MATCHED_HOUR_GIT_SEALED_NO_REAL_ORDERS"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+      - name: Report no-data skip separately from verified closed hour
+        if: always()
+        env:
+          DID_RUN: ${{ steps.gate.outputs.run }}
+        run: |
+          if [ "${DID_RUN:-false}" != true ]; then
+            echo "ETH V9.2 SAFE SKIP, no verified new sealed 1H / V7 / V9.1 evidence. Green is NOT capture." >> "$GITHUB_STEP_SUMMARY"
+          elif test -s forward/v92_prospective_selected/combined_three_asset_account.md; then
+            cat forward/v92_prospective_selected/combined_three_asset_account.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ETH V9.2 source failure; NO new paper result." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "No orders, no user alerts, no retroactive ETH PnL." >> "$GITHUB_STEP_SUMMARY"
+      - name: Save only audited ETH third paper artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-eth-third-paper-${{ github.run_id }}
+          path: |
+            forward/v92_prospective_eth/hourly/${{ steps.gate.outputs.target }}.json
+            forward/v92_prospective_eth/component.json
+            forward/v92_prospective_eth/component.md
+            forward/v92_prospective_selected/combined_three_asset_account.json
+            forward/v92_prospective_selected/combined_three_asset_account.md
+          if-no-files-found: ignore
+          retention-days: 14
