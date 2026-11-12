@@ -8,6 +8,12 @@
     "4H": 4380,
     "1D": 730
   },
+  "contextWarmupDailyBars": 183,
+  "contextWarmupPeriodUTC": [
+    "2024-04-01T00:00:00Z",
+    "2024-10-01T00:00:00Z"
+  ],
+  "derived3DContextCandlesWithWarmup": 304,
   "source": "Official Binance USD-M Futures monthly 1H klines; each monthly ZIP SHA256 verified; 4H and 1D derived from 1H",
   "3D": "Derived from three consecutive fully closed UTC daily bars on epoch-aligned 3-day boundaries",
   "nativeExchange3DParityProven": false,
@@ -172,9 +178,8 @@
           "bearish": 4
         },
         "threeDayTrends": {
-          "insufficient": 2,
-          "bearish": 3,
-          "bullish": 2,
+          "bullish": 3,
+          "bearish": 4,
           "mixed": 1
         },
         "dailyRejections": 0,
@@ -265,9 +270,8 @@
           "bearish": 4
         },
         "threeDayTrends": {
-          "insufficient": 2,
-          "bearish": 3,
-          "bullish": 2,
+          "bullish": 3,
+          "bearish": 4,
           "mixed": 1
         },
         "dailyRejections": 0,
@@ -350,15 +354,14 @@
           "bearish": 4
         },
         "threeDayTrends": {
-          "insufficient": 2,
-          "bearish": 3,
-          "bullish": 2,
+          "bullish": 3,
+          "bearish": 4,
           "mixed": 2
         },
         "dailyRejections": 0,
         "threeDayRejections": 2,
         "dailyWarmupPasses": 0,
-        "threeDayWarmupPasses": 2,
+        "threeDayWarmupPasses": 0,
         "candleCheckedRetests": 0,
         "candleVetoes": 0,
         "candlePatternCounts": {}
@@ -435,15 +438,14 @@
           "bearish": 4
         },
         "threeDayTrends": {
-          "insufficient": 2,
-          "bearish": 3,
-          "bullish": 2,
+          "bullish": 3,
+          "bearish": 4,
           "mixed": 2
         },
         "dailyRejections": 0,
         "threeDayRejections": 2,
         "dailyWarmupPasses": 0,
-        "threeDayWarmupPasses": 2,
+        "threeDayWarmupPasses": 0,
         "candleCheckedRetests": 0,
         "candleVetoes": 0,
         "candlePatternCounts": {}
@@ -520,15 +522,14 @@
           "bearish": 4
         },
         "threeDayTrends": {
-          "insufficient": 2,
-          "bearish": 3,
-          "bullish": 2,
+          "bullish": 3,
+          "bearish": 4,
           "mixed": 2
         },
         "dailyRejections": 0,
         "threeDayRejections": 2,
         "dailyWarmupPasses": 0,
-        "threeDayWarmupPasses": 2,
+        "threeDayWarmupPasses": 0,
         "candleCheckedRetests": 9,
         "candleVetoes": 0,
         "candlePatternCounts": {}
@@ -995,6 +996,8 @@
       }
     }
   },
+  "contextWarmupSource": "Official Binance USD-M ETH monthly 1H ZIPs; six additional SHA256-verified files; 1D derived from complete 1H bars",
+  "contextWarmupExcludedFromPerformancePeriod": true,
   "sourceManifest": {
     "checksumsVerified": 24,
     "firstUTC": "2024-10-01T00:00:00+00:00",
@@ -1095,6 +1098,33 @@
       {
         "month": "2026-09",
         "sha256": "f4331baae4c38dea1c123836808f3353473cc28e6c434ef38669698ae79599fc"
+      }
+    ],
+    "warmupChecksumsVerified": 6,
+    "warmupFiles": [
+      {
+        "month": "2024-04",
+        "sha256": "290b594fa46ef95ab9c1486e2640ce2d1894eecd4d71b79bcd30d6632ca75b9f"
+      },
+      {
+        "month": "2024-05",
+        "sha256": "a9b42949325fd4f236c7c88b63f35d94910109218ce2db80b8e29f7a2b2d623b"
+      },
+      {
+        "month": "2024-06",
+        "sha256": "479dced4a591035987e084dc8a5e5f3f1f2593704c0aeecdebc20c89b35c1d98"
+      },
+      {
+        "month": "2024-07",
+        "sha256": "8cc8d8b6ef13fa0393f53690e5d569afb8a50488e4d7852e20ac22d7bcf17cf5"
+      },
+      {
+        "month": "2024-08",
+        "sha256": "00eddbb3297515be14426119f07468846cd04dc527dbc19834dd45294740a67c"
+      },
+      {
+        "month": "2024-09",
+        "sha256": "37bea2dbe4281fbcaa45a849b6eed4393713b7236c5cb35cff63876e96df5677"
       }
     ]
   }
