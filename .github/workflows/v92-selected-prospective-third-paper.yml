@@ -1,0 +1,183 @@
+name: V9.2 selected SOL reversals independent forward paper 1000 USDT NO ALERTS
+
+# V7/V9.1 source-only and original two paper accounts entirely unchanged.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/v92-selected-prospective-third-paper.yml]
+  workflow_dispatch:
+  schedule:
+    - cron: '39,48,54 * * * *'
+  workflow_run:
+    workflows:
+      - V9.1 hourly V7 vs max4h retest prospective paper shadow NO ALERTS
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-selected-third-paper-no-orders
+  cancel-in-progress: false
+
+jobs:
+  new-hour-paper:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated V9.2 research branch only
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Read original sealed V9.1 hourly snapshots
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          path: v91_evidence
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read original V7 immutable snapshots
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+      - name: Validate risk controls source parity bullish bearish and new hour integrity
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile v92_prospective_selected.py
+          python3 -m unittest discover -s tests -p test_v92_prospective_selected.py -v
+          python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
+          python3 -m unittest discover -s tests -p test_v92_multi_candle_invalidation.py -q
+          python3 -m unittest discover -s tests -p test_v92_bull_bear_candle_invalidation.py -q
+          python3 -m unittest discover -s tests -p test_v91_prospective_retest.py -q
+      - name: Gate current hour after 11 UTC and independent original V7 V9.1 source
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$(date -u +'%Y-%m-%dT%H-00Z')"
+          minute="$(date -u +%M)"
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          if [[ "$target" < "2026-11-12T11-00Z" ]]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V92_SKIP_BEFORE_FIRST_NEW_HOUR"
+          elif [ "$((10#$minute))" -lt 12 ] || [ "$((10#$minute))" -gt 57 ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V92_SKIP_OUTSIDE_SAME_CURRENT_HOUR_WINDOW"
+          elif [ ! -f "v91_evidence/forward/v91_prospective_retest/hourly/$target.json" ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V92_SKIP_NO_PREVIOUSLY_GIT_SEALED_V91_SAME_HOUR"
+          elif [ ! -f "v7_evidence/forward/snapshots/$target.json" ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V92_SKIP_NO_ORIGINAL_V7_SAME_HOUR"
+          elif [ -f "forward/v92_prospective_selected/hourly/$target.json" ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo "V92_SKIP_IMMUTABLE_HOUR_ALREADY_EXISTS"
+          else
+            echo "capture=true" >> "$GITHUB_OUTPUT"
+            echo "V92_MATCHED_SOURCE_AVAILABLE_PENDING_INDEPENDENT_REPLAY"
+          fi
+      - name: Independently re-fetch same worker closed 1H 4H Daily market candles
+        if: steps.gate.outputs.capture == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p forward/tmp/v92_history
+          gh api "repos/$GITHUB_REPOSITORY/contents/market_data.json?ref=main" \
+            --jq '.content' | base64 --decode > forward/tmp/v92_main_market.json
+          test -s forward/tmp/v92_main_market.json
+          for tf in 1hour 4hour daily; do
+            curl --fail --location --silent --show-error --retry 2 --retry-delay 2 \
+              --max-time 80 -H 'Cache-Control: no-cache' \
+              "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=$tf" \
+              -o "forward/tmp/v92_history/history_$tf.json"
+            test -s "forward/tmp/v92_history/history_$tf.json"
+          done
+      - name: Recompute unchanged V7 and V9.1 with exact source parity then selected V9.2 third paper account
+        if: steps.gate.outputs.capture == 'true'
+        run: |
+          set -euo pipefail
+          python3 -u v92_prospective_selected.py \
+            --source-dir v91_evidence \
+            --v7-dir v7_evidence/forward/snapshots \
+            --market forward/tmp/v92_main_market.json \
+            --history forward/tmp/v92_history \
+            --hourly forward/v92_prospective_selected/hourly \
+            --account forward/v92_prospective_selected/third_paper_account.json \
+            --report forward/v92_prospective_selected/third_paper_account.md
+          test -s "forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          f=Path("forward/v92_prospective_selected/third_paper_account.json")
+          b=json.loads(f.read_text())
+          assert b["mode"]=="V92_INDEPENDENT_1000USDT_100USDT_RISK_PAPER_ACCOUNT"
+          assert b["firstEligible1HCloseUTC"]=="2026-11-12T11:00:00Z"
+          assert b["virtualInitialUSDT"]==1000
+          assert b["targetVirtualRiskUSDTPerTrade"]==100
+          assert b["historicalPlus836USDNotTransferredHere"]
+          assert b["V7V91CurrentPaperAccountsUnchanged"]
+          assert b["neverCountExitWithoutPrecommittedRetest"]
+          assert b["noBrokerOrders"] and b["noUserNotifications"]
+          assert b["noActualExchangeExecutionOrFill"]
+          assert set(b["stateBySymbol"])=={"BTCUSDT","SOLUSDT"}
+          assert "ETHUSDT" not in b["stateBySymbol"]
+          print("V92_THIRD_1K_USDT_PAPER_ACCOUNT_PREPARED",b["lastDistinctVerifiedClosed1HUTC"],
+                "trades",b["closedEligiblePaperTrades"],"equity",b["virtualEquityUSDT"])
+          PY
+      - name: Git commit the exact new V9.2 hour BEFORE any future exit may be counted
+        if: steps.gate.outputs.capture == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json" \
+            forward/v92_prospective_selected/third_paper_account.json \
+            forward/v92_prospective_selected/third_paper_account.md
+          git commit -m "V9.2 independently sealed same-hour selected SOL candle paper third account NO ORDERS"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_THIRD_PAPER_HOUR_COMMITTED_PRE_FUTURE_EXIT"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+      - name: Report actual capture or safe skip never claim a trade from a green workflow
+        if: always()
+        env:
+          DID_CAPTURE: ${{ steps.gate.outputs.capture }}
+          TARGET: ${{ steps.gate.outputs.target }}
+        run: |
+          echo "### V9.2 third paper only (no orders, no alerts)" >> "$GITHUB_STEP_SUMMARY"
+          echo "UTC hour: ${TARGET:-none}" >> "$GITHUB_STEP_SUMMARY"
+          if [ "${DID_CAPTURE:-false}" != "true" ]; then
+            echo "**SAFE SKIP** — no new qualified matching sealed hour; green workflow is not an observation." >> "$GITHUB_STEP_SUMMARY"
+          elif test -s forward/v92_prospective_selected/third_paper_account.md; then
+            cat forward/v92_prospective_selected/third_paper_account.md >> "$GITHUB_STEP_SUMMARY"
+            echo "Git commit/push success must be checked before trusting any new hour." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "SOURCE REJECTED — no successful paper observation." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Retain independent research audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-third-paper-hour-${{ github.run_id }}
+          path: |
+            forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json
+            forward/v92_prospective_selected/third_paper_account.json
+            forward/v92_prospective_selected/third_paper_account.md
+            forward/tmp/v92_history/history_*.json
+          if-no-files-found: ignore
+          retention-days: 14
