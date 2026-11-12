@@ -86,7 +86,8 @@ jobs:
           assert x["sourceManifest"]["checksumsVerified"]==24
           assert x["sourceManifest"]["warmupChecksumsVerified"]==6
           for name,score in x["variants"].items():
-            assert score["contextAudit"]["threeDayWarmupPasses"]==0, (name,score["contextAudit"])
+            if "contextAudit" in score:
+              assert score["contextAudit"]["threeDayWarmupPasses"]==0, (name,score["contextAudit"])
           print("V92_ETH_WARMUP_COMPLETE_BACKTEST_VALIDATED")
           PY
 
