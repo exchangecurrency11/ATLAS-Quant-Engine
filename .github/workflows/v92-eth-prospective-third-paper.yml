@@ -56,6 +56,7 @@ jobs:
           test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
           python3 -m py_compile v92_eth_prospective_selected.py v92_third_paper_aggregate.py
           python3 -m unittest discover -s tests -p test_v92_eth_prospective_selected.py -v
+          python3 -m unittest discover -s tests -p test_v92_higher_timeframe_context.py -v
           python3 -m unittest discover -s tests -p test_v92_prospective_selected.py -q
           python3 -m unittest discover -s tests -p test_v91_eth_prospective_retest.py -q
           python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
@@ -128,6 +129,8 @@ jobs:
           assert s["verifiedSourceAndExactV7AndV91Replay"]
           assert s["ethPatternObservationsOnly"] and s["ethV92RetestVetoEnabled"] is False
           assert set(s["ethReversalPatternRecognition1H4H"])=={"1H","4H"}
+          assert set(s["ethHigherTimeframeRecognition1D3D"])=={"1D","3D"}
+          assert all(z["notVetoOrEntryFilter"] and z["onlyFullyClosedCandlesUsed"] for z in s["ethHigherTimeframeRecognition1D3D"].values())
           assert s["noBrokerOrders"] and s["noUserNotifications"]
           merged=json.loads(Path("forward/v92_prospective_selected/combined_three_asset_account.json").read_text())
           assert merged["mode"]=="V92_BTC_ETH_SOL_SINGLE_THIRD_1000USDT_PROSPECTIVE_PAPER_ACCOUNT"
