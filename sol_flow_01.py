@@ -77,6 +77,12 @@ def validate_aggregate(hour, aggregate, width):
         expected = {"t":part[0]["t"], "o":part[0]["o"],
                     "h":max(x["h"] for x in part), "l":min(x["l"] for x in part),
                     "c":part[-1]["c"], "v":sum(x["v"] for x in part)}
+        flow_keys = ("qv", "trades", "tbv", "tbq")
+        if not all(all(key in x for key in flow_keys) for x in part):
+            raise ValueError("FLOW_MISSING_TAKER_FIELDS_IN_AGGREGATE_SOURCE")
+        if not all(key in bar for key in flow_keys):
+            raise ValueError("FLOW_MISSING_TAKER_FIELDS_IN_AGGREGATE")
+        expected.update({key:sum(x[key] for x in part) for key in flow_keys})
         if expected["t"] % (width*HOUR):
             raise ValueError("FLOW_MISALIGNED_AGGREGATE")
         for key,value in expected.items():
