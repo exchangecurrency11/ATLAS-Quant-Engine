@@ -87,7 +87,7 @@ jobs:
           if [[ "$target" < "2026-11-12T12-00Z" ]]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
             echo "ETH_V92_SKIP_BEFORE_NEW_REQUEST_ELIGIBLE_CLOSE"
-          elif (( 10#$minute < 12 || 10#$minute > 57 )); then
+          elif (( 10#$minute < 12 )); then
             echo "run=false" >> "$GITHUB_OUTPUT"
             echo "ETH_V92_SKIP_NOT_CURRENT_CLOSED_HOUR_WINDOW"
           elif test -f "forward/v92_prospective_eth/hourly/$target.json"; then
