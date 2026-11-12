@@ -56,6 +56,9 @@ def compose_gate(v92_gate, flow_index, arm, audit):
                                 float(retest[k]), rel_tol=1e-9, abs_tol=1e-6):
                 raise ValueError("FLOW02_V92_RETEST_SOURCE_MISMATCH_" + k)
         allowed, reasons = decision(f, active["side"], flow_arm)
+        if arm == ARMS[4] and f["relativeAvgTradeSize20"] < 1.0:
+            allowed = False
+            reasons = list(reasons) + ["MEAN_TRADE_SIZE_BELOW_ONE"]
         audit["flowEligibleRetests"] += 1
         if not allowed:
             audit["flowVetoes"] += 1
