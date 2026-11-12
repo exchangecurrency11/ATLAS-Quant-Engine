@@ -62,7 +62,7 @@ def trade_evidence(folder, trade, arm_field):
 def key_of(trade):
     return (
         int(trade["watchKnownUTC"]),int(trade["retestKnownUTC"]),
-        int(trade["entryOpenUTC"]),trade["side"],
+        int(trade["entryUTC"] if "entryUTC" in trade else trade["entryOpenUTC"]),trade["side"],
         round(float(trade["stop"]),8)
     )
 
