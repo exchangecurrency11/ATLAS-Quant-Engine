@@ -36,6 +36,7 @@ from v92_selected_reversal_patterns import (
     summarize_audit, soldier_crow
 )
 from v92_multi_candle_invalidation import all_patterns_at
+from v92_higher_timeframe_context import higher_timeframe_context
 
 MODE="V92_SELECTED_CANDLE_IMMUTABLE_HOURLY_FORWARD_PAPER_ONLY"
 BOOK="V92_INDEPENDENT_1000USDT_100USDT_RISK_PAPER_ACCOUNT"
@@ -146,6 +147,9 @@ def capture(source, original_v7, main_market, raw, *, now,
               "lastClosedCandleUTC":iso(int(bars[-1]["t"])+length),
               "observedReversalsAtLastCompletedCandle":observations,
               "informationOnlyNotAutomaticNewTrade":True}
+        # 1D and derived 3D use ONLY the already validated closed daily source.
+        # Watch/context only: do NOT change original V7/V9.1 or selected retest logic.
+        diagnostics.update(higher_timeframe_context(daily,target))
         assets[symbol]={
           "originalV7":base,
           "originalV91":alt,
