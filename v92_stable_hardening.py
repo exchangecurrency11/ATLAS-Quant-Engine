@@ -280,6 +280,24 @@ def audit(core_docs,eth_docs,v91_root,v7_root,policy=POLICY):
                e["consecutiveRecentHours"]>=policy["requireMostRecentConsecutiveHours"])
     latest_parity_ok=(not errors and common_latest and
                       any(x["timeUTC"]==stamp(last) for x in matched))
+    # Count what has *actually* been observed. When every asset is FLAT,
+    # hourly backtest state-parity is real but entry/exit parity is untested.
+    observed_open=0
+    observed_exits=0
+    observed_pending=0
+    old_schema_hours=0
+    for t in common:
+        cc=core_docs[t]
+        ee=eth_docs[t]
+        if any("currentCloseRetestEvaluation" not in cc["assets"][s]
+               for s in ("BTCUSDT","SOLUSDT")):
+            old_schema_hours+=1
+        for symbol in ASSETS:
+            z=ee["selectedV92"] if symbol=="ETHUSDT" else cc["assets"][symbol]["selectedV92"]
+            st=z["currentPaperState"]
+            observed_open+=int(st.get("openHypotheticalPosition") is not None)
+            observed_pending+=int(st.get("pendingNextOpenPaperEntry") is not None)
+            observed_exits+=len(z.get("paperTradeExitsObservedAtThisClose",[]))
     # Existing 100 USDT V9.2 ledger NEVER gets downsized or rewritten here.
     # Shadow only admits NEW, previously-precommitted next-open entries.
     current_state={}
@@ -326,6 +344,11 @@ def audit(core_docs,eth_docs,v91_root,v7_root,policy=POLICY):
         "latestCommonHourUTC":stamp(last) if common_latest else None,
         "matchedVerifiedHours":len(matched)//3,
         "matchedAssetChecks":len(matched),
+        "actualObservedOpenPositionSnapshots":observed_open,
+        "actualObservedRetestPendingSnapshots":observed_pending,
+        "actualObservedExitEvents":observed_exits,
+        "tradeEntryStopTPParityOnLiveTradeProven":bool(observed_open or observed_exits),
+        "olderSchemaHoursWithReducedVetoDiagnostics":old_schema_hours,
         "exactStoredReplayParities":{"BTC":"V91+V7 and V92 selected equals V91",
                                      "SOL":"V91+V7; V92 filter veto audited",
                                      "ETH":"V91+V7 and V92 selected equals V91"},
@@ -356,6 +379,9 @@ def markdown(x):
             "",
             f"- Matched 1H source hours: **{x['matchedVerifiedHours']}**.",
             f"- Coin-hour replay checks: **{x['matchedAssetChecks']}**.",
+            f"- Actually observed open-position snapshots: **{x['actualObservedOpenPositionSnapshots']}**; pending-retest snapshots: **{x['actualObservedRetestPendingSnapshots']}**; closed-exit events: **{x['actualObservedExitEvents']}**.",
+            f"- Older immutable hours with reduced direct-veto diagnostics: **{x['olderSchemaHoursWithReducedVetoDiagnostics']}**; accepted only when unchanged V9.1/V9.2 parity and zero veto were independently confirmed.",
+            "- Stored BOS/retest state parity is checked, but when no real paper trades exist, trade-specific entry/stop/TP parity remains UNPROVEN outside synthetic unit tests.",
             "- Comparison is based on independently stored forward 1H snapshots and their prior V7/V9.1 reference records, not a claim of executable live fills.",
             "- Original V9.2 already replays the same closed OHLCV as of each hour; audit double-checks serialized strategy state, BOS/retest, stop/TP fields when open, and timeframe stamps.",
             f"- Latest strict paper admission gate: **{'READY FOR REVIEW' if x['newEntryAdmissionReadiness'] else 'FAIL CLOSED'}**."]
