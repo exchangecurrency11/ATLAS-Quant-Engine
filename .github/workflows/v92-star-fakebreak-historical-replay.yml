@@ -1,0 +1,124 @@
+name: V9.2 Bull Bear Star Fake Breakout full archived 1H 4H Daily RETEST paper
+
+# Original SHA-verified Binance USD-M BTC/SOL archive.
+# Strict symmetric Morning/Evening Star invalidation; no production edits.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-star-fakebreak-historical-replay.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: v92-full-candle-historical-paper-only
+  cancel-in-progress: false
+
+jobs:
+  full-archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Validate bull/bear candle patterns and strict no-lookahead tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m unittest discover -s tests -p 'test_v92_bull_bear_candle_invalidation.py' -v
+          python3 -m unittest discover -s tests -p 'test_v91_dual_paper_historical_reference.py' -q
+          python3 -m unittest discover -s tests -p 'test_v91_dual_paper_accounts.py' -q
+          python3 -m py_compile v92_bull_bear_candle_invalidation.py
+      - name: Download original independently SHA-verified official Binance BTC SOL archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p v92_verified_artifact v92_verified_archive
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+             --name btc-sol-official-binance-verified-through-2026-11-02 \
+             --dir v92_verified_artifact
+          for tf in 1hour 4hour daily; do
+            count="$(find v92_verified_artifact -type f -name "history_$tf.json" | wc -l)"
+            echo "V92_HISTORY_SOURCE $tf count=$count"
+            test "$count" -eq 1
+            found="$(find v92_verified_artifact -type f -name "history_$tf.json" -print -quit)"
+            cp "$found" "v92_verified_archive/history_$tf.json"
+          done
+          find v92_verified_artifact -type f -name '*manifest*.json' -print | head -12
+          python3 - <<'PY'
+          import json,pathlib
+          for tf,minsize in (("1hour",17000),("4hour",4000),("daily",600)):
+              p=pathlib.Path("v92_verified_archive")/("history_"+tf+".json")
+              j=json.loads(p.read_text())
+              assert {r["symbol"] for r in j}=={"BTCUSDT_PERP.A","SOLUSDT_PERP.A"}
+              assert len(j)==2 and all(len(z["history"])>=minsize for z in j)
+              print("ARCHIVE_SOURCE_CLOSED_BARS",tf,{z["symbol"]:len(z["history"]) for z in j})
+          PY
+      - name: Re-run V7 and V9.1 against V9.2 warning and false-break veto on same full archived history
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u v92_bull_bear_candle_invalidation.py \
+            --archive v92_verified_archive \
+            --reference forward/v91_retest_full_replay/compare.json \
+            --out forward/v92_candle_invalidation
+          python3 - <<'PY'
+          import json,pathlib
+          x=json.loads(pathlib.Path("forward/v92_candle_invalidation/historical.json").read_text())
+          assert x["status"]=="V92_MORNING_EVENING_STAR_FAKE_BREAKOUT_RETEST_INVALIDATION_HISTORICAL_PAPER_ONLY"
+          assert x["sameExactSourceHistoryForAllVariants"]
+          assert x["noBrokerOrders"] and x["noNotifications"]
+          assert x["fourHourUnclosedCandleNeverUsed"]
+          assert set(x["symbols"])=={"BTCUSDT","SOLUSDT"}
+          for sym,item in x["symbols"].items():
+              assert item["verifiedCandleCount"]["1H"]>=17000
+              assert len(item["variants"])==6
+              print("V92_VERIFIED_SYMBOL",sym,"PATTERNS",item["allHistoryPatternCounts"])
+          PY
+      - name: Commit research only historical results to V9.2 isolated branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_candle_invalidation/historical.json \
+                  forward/v92_candle_invalidation/historical.md
+          git commit -m "V9.2 Morning/Evening Star and false-breakout invalidation full BTC SOL historical replay"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_RESEARCH_ONLY_HISTORICAL_RESULTS_VERIFIED_AND_COMMITTED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Display paper research report
+        if: always()
+        run: |
+          if test -s forward/v92_candle_invalidation/historical.md; then
+            cat forward/v92_candle_invalidation/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "V9.2 full historical result not verified or not produced: do NOT claim improvement." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "No orders, no V7/V9.1 strategy changes, no notifications." >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve research audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-full-historical-star-invalidation-${{ github.run_id }}
+          path: |
+            forward/v92_candle_invalidation/historical.json
+            forward/v92_candle_invalidation/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
