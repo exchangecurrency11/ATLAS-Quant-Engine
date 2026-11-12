@@ -1,0 +1,213 @@
+{
+  "status": "SOL_DIV_01_CAUSAL_PRICE_CVD_DIVERGENCE_HISTORICAL_PAPER_ONLY",
+  "symbol": "SOLUSDT",
+  "startUTC": "2024-10-01T00:00:00Z",
+  "endExclusiveUTC": "2026-10-01T00:00:00Z",
+  "source": "Binance official USD-M monthly 1H klines with taker-buy base volume",
+  "sameHistoryAllArms": true,
+  "v92StrictSweepAppliedBeforeDivergence": true,
+  "v92StrictSweepControlParityVerified": true,
+  "pivotRule": {
+    "leftClosedBars": 2,
+    "rightClosedBars": 2,
+    "maxPivotAgeBars": 48,
+    "bullish": "lower price low + higher cumulative taker CVD low",
+    "bearish": "higher price high + lower cumulative taker CVD high"
+  },
+  "onlyClosedCandles": true,
+  "pivotConfirmationWaited": true,
+  "noFutureFeatures": true,
+  "noOpenInterestUsed": true,
+  "brokerOrders": false,
+  "alerts": false,
+  "productionModified": false,
+  "promotionApproved": false,
+  "historicalPeriodPreviouslyInspected": true,
+  "notIndependentProspectiveEvidence": true,
+  "results": {
+    "V92_STRICT_SWEEP_CONTROL": {
+      "summary": {
+        "trades": 8,
+        "winsNet": 5,
+        "winRatePct": 62.5,
+        "netR9BpsPerSide": 4.260655,
+        "netR25BpsPerSide": 2.409915,
+        "meanNetR": 0.532582,
+        "profitFactorR": 2.28988,
+        "maxSequentialDrawdownR": 1.127137,
+        "BOSWatches": 30,
+        "rejectedBOS": 49,
+        "retestVetoes": 1,
+        "expiredRetests": 21,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92": 0.0
+      },
+      "divergenceAudit": {
+        "eligibleRetests": 0,
+        "alignedRetests": 0,
+        "vetoes": 0,
+        "noAlignedDivergence": 0,
+        "examples": []
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 10,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1
+      }
+    },
+    "V92_PLUS_1H_CONFIRMED_CVD_DIVERGENCE": {
+      "summary": {
+        "trades": 1,
+        "winsNet": 1,
+        "winRatePct": 100.0,
+        "netR9BpsPerSide": 1.325925,
+        "netR25BpsPerSide": 1.21545,
+        "meanNetR": 1.325925,
+        "profitFactorR": null,
+        "maxSequentialDrawdownR": 0.0,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 13,
+        "expiredRetests": 29,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92": -2.93473
+      },
+      "divergenceAudit": {
+        "eligibleRetests": 13,
+        "alignedRetests": 1,
+        "vetoes": 12,
+        "noAlignedDivergence": 12,
+        "examples": [
+          {
+            "knownAtUTC": "2026-06-03T21:00:00Z",
+            "side": "bearish",
+            "1H": {
+              "knownAtUTC": "2026-06-03T21:00:00Z",
+              "bullish": false,
+              "bearish": true,
+              "bullishEvidence": null,
+              "bearishEvidence": {
+                "priorPivotUTC": "2026-06-03T07:00:00Z",
+                "latestPivotUTC": "2026-06-03T11:00:00Z",
+                "priorPivotKnownUTC": "2026-06-03T10:00:00Z",
+                "latestPivotKnownUTC": "2026-06-03T14:00:00Z",
+                "priorPrice": 75.39,
+                "latestPrice": 75.67,
+                "priorCVD": -221782506.15000004,
+                "latestCVD": -221847685.98000005
+              },
+              "pivotRightBars": 2
+            },
+            "4H": {
+              "knownAtUTC": "2026-06-03T20:00:00Z",
+              "bullish": false,
+              "bearish": false,
+              "bullishEvidence": null,
+              "bearishEvidence": null,
+              "pivotRightBars": 2
+            }
+          }
+        ]
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 14,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1
+      }
+    },
+    "V92_PLUS_4H_CONFIRMED_CVD_DIVERGENCE": {
+      "summary": {
+        "trades": 0,
+        "winsNet": 0,
+        "winRatePct": null,
+        "netR9BpsPerSide": 0,
+        "netR25BpsPerSide": 0,
+        "meanNetR": null,
+        "profitFactorR": null,
+        "maxSequentialDrawdownR": 0.0,
+        "BOSWatches": 30,
+        "rejectedBOS": 52,
+        "retestVetoes": 16,
+        "expiredRetests": 30,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92": -4.260655
+      },
+      "divergenceAudit": {
+        "eligibleRetests": 15,
+        "alignedRetests": 0,
+        "vetoes": 15,
+        "noAlignedDivergence": 15,
+        "examples": []
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 16,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1
+      }
+    },
+    "V92_PLUS_1H_OR_4H_CVD_DIVERGENCE": {
+      "summary": {
+        "trades": 1,
+        "winsNet": 1,
+        "winRatePct": 100.0,
+        "netR9BpsPerSide": 1.325925,
+        "netR25BpsPerSide": 1.21545,
+        "meanNetR": 1.325925,
+        "profitFactorR": null,
+        "maxSequentialDrawdownR": 0.0,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 13,
+        "expiredRetests": 29,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92": -2.93473
+      },
+      "divergenceAudit": {
+        "eligibleRetests": 13,
+        "alignedRetests": 1,
+        "vetoes": 12,
+        "noAlignedDivergence": 12,
+        "examples": [
+          {
+            "knownAtUTC": "2026-06-03T21:00:00Z",
+            "side": "bearish",
+            "1H": {
+              "knownAtUTC": "2026-06-03T21:00:00Z",
+              "bullish": false,
+              "bearish": true,
+              "bullishEvidence": null,
+              "bearishEvidence": {
+                "priorPivotUTC": "2026-06-03T07:00:00Z",
+                "latestPivotUTC": "2026-06-03T11:00:00Z",
+                "priorPivotKnownUTC": "2026-06-03T10:00:00Z",
+                "latestPivotKnownUTC": "2026-06-03T14:00:00Z",
+                "priorPrice": 75.39,
+                "latestPrice": 75.67,
+                "priorCVD": -221782506.15000004,
+                "latestCVD": -221847685.98000005
+              },
+              "pivotRightBars": 2
+            },
+            "4H": {
+              "knownAtUTC": "2026-06-03T20:00:00Z",
+              "bullish": false,
+              "bearish": false,
+              "bullishEvidence": null,
+              "bearishEvidence": null,
+              "pivotRightBars": 2
+            }
+          }
+        ]
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 14,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1
+      }
+    }
+  }
+}
