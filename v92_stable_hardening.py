@@ -192,16 +192,26 @@ def parity_one_hour(t,core,eth,v91,v7):
         if sym=="BTCUSDT":
             exact_events(live["selectedV92"],live["originalV91"],"BTC_SELECTED_EQUALS_V91")
         else:
-            e=live["currentCloseRetestEvaluation"]
-            if e.get("directCurrentFilterVeto"):
-                if (not e.get("baselineRetestPresent")
-                    or e.get("selectedRetestPresent")
-                    or not e.get("currentPatternWarnings")):
-                    raise ValueError("STABLE_SOL_INVALID_DIRECT_VETO")
-            if (e.get("selectedRetestPresent") and
-                not e.get("baselineRetestPresent") and
-                not e.get("downstreamStateDivergence")):
-                raise ValueError("STABLE_SOL_UNEXPLAINED_NEW_RETEST")
+            e=live.get("currentCloseRetestEvaluation")
+            if e is None:
+                # Older immutable first-day V9.2 snapshots predate detailed
+                # direct-veto diagnostics. Never mutate or backfill them.
+                # The old schema is usable only when the selected replay
+                # EXACTLY matches the original V9.1 and veto count is zero.
+                if (live.get("selectedV92Audit",{}).get("rejectedRetests") != 0
+                    or any(live["selectedV92"].get(k)!=live["originalV91"].get(k)
+                           for k in EVENT_FIELDS)):
+                    raise ValueError("STABLE_SOL_OLD_SCHEMA_UNPROVEN_VETO")
+            else:
+                if e.get("directCurrentFilterVeto"):
+                    if (not e.get("baselineRetestPresent")
+                        or e.get("selectedRetestPresent")
+                        or not e.get("currentPatternWarnings")):
+                        raise ValueError("STABLE_SOL_INVALID_DIRECT_VETO")
+                if (e.get("selectedRetestPresent") and
+                    not e.get("baselineRetestPresent") and
+                    not e.get("downstreamStateDivergence")):
+                    raise ValueError("STABLE_SOL_UNEXPLAINED_NEW_RETEST")
         parity=core["originalV7_1H4HDailyCandleParity"][sym]
         for tf in ("1hour","4hour","daily"):
             p=parity[tf]
