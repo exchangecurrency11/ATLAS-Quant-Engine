@@ -43,7 +43,8 @@ def _checked_closed_daily(daily, as_of):
     return closed
 
 
-def _closed_3d(daily):
+def aggregate_3d_from_daily(daily):
+    """Aggregate only complete, UTC epoch-aligned triplets of daily bars."""
     by_start = {bar["t"]: bar for bar in daily}
     result = []
     for start in sorted(t for t in by_start if t % THREE_DAYS == 0):
@@ -66,6 +67,35 @@ def _closed_3d(daily):
     return result
 
 
+def ema20_50_trend(bars):
+    """Shared closed-bar EMA20/EMA50 direction rule for live and replay."""
+    if len(bars) < 50:
+        return "insufficient"
+    closes = [z["c"] for z in bars]
+    ema20 = _ema(closes, 20)
+    ema50 = _ema(closes, 50)
+    close = closes[-1]
+    return ("bullish" if close > max(ema20, ema50)
+            else "bearish" if close < min(ema20, ema50)
+            else "mixed")
+
+
+def context_at(daily, as_of):
+    """Higher-timeframe trend at an intraday timestamp; future daily bars excluded."""
+    closed_daily = [b for b in daily if b["t"] + DAY <= as_of]
+    if not closed_daily:
+        return {"1D": "insufficient", "3D": "insufficient",
+                "closedDailyBars": 0, "closed3DBars": 0}
+    three = aggregate_3d_from_daily(closed_daily)
+    closed_three = [b for b in three if b["t"] + THREE_DAYS <= as_of]
+    return {
+        "1D": ema20_50_trend(closed_daily),
+        "3D": ema20_50_trend(closed_three),
+        "closedDailyBars": len(closed_daily),
+        "closed3DBars": len(closed_three),
+    }
+
+
 def _ema(values, n):
     if len(values) < n:
         raise ValueError("V92_HIGHER_TF_EMA_NOT_ENOUGH_BARS")
@@ -84,9 +114,7 @@ def _observation(tf, bars, seconds, as_of):
     ema20 = _ema(closes, 20)
     ema50 = _ema(closes, 50)
     close = closes[-1]
-    trend = ("bullish" if close > max(ema20, ema50)
-             else "bearish" if close < min(ema20, ema50)
-             else "mixed")
+    trend = ema20_50_trend(bars)
     idx = len(bars)-1
     patterns = [{**p, "tf": tf}
                 for p in all_patterns_at(bars, idx, seconds)]
@@ -115,7 +143,7 @@ def _observation(tf, bars, seconds, as_of):
 def higher_timeframe_context(daily, as_of):
     """Return reproducible 1D/3D WATCH data; fail closed on gaps/partials."""
     closed = _checked_closed_daily(daily, as_of)
-    derived = _closed_3d(closed)
+    derived = aggregate_3d_from_daily(closed)
     return {
         "1D": _observation("1D", closed, DAY, as_of),
         "3D": _observation("3D", derived, THREE_DAYS, as_of),
