@@ -41,7 +41,7 @@ def original():
             }}}}
 
 def bars():
-    return {tf:[{"t":T-sec,"o":2000.,"h":2001.,
+    return {tf:[{"t":T//sec*sec-sec,"o":2000.,"h":2001.,
                  "l":1999.,"c":2000.5,"v":1000.}]
             for tf,sec in (("1hour",H),("4hour",4*H),("daily",24*H))}
 
