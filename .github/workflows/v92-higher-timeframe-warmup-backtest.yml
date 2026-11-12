@@ -1,0 +1,134 @@
+name: V9.2 BTC SOL 1D 3D backtest with full EMA50 warmup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-higher-timeframe-warmup-backtest.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: v92-higher-timeframe-backtest-only
+  cancel-in-progress: false
+
+jobs:
+  warmup-complete-ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and run higher-timeframe regression tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile download_binance_um_warmup.py v92_higher_timeframe_context.py v92_higher_timeframe_backtest.py
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_context.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_selected_reversal_patterns.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_prospective_selected.py' -q
+
+      - name: Download original SHA-verified 2-year BTC/SOL Binance archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p v92_verified_artifact v92_verified_archive
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+            --name btc-sol-official-binance-verified-through-2026-11-02 \
+            --dir v92_verified_artifact
+          for tf in 1hour 4hour daily; do
+            test "$(find v92_verified_artifact -type f -name "history_$tf.json" | wc -l)" -eq 1
+            cp "$(find v92_verified_artifact -type f -name "history_$tf.json" -print -quit)" \
+              "v92_verified_archive/history_$tf.json"
+          done
+
+      - name: Download six months of official Binance daily EMA warmup and verify 12 SHA256 archives
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_warmup.py \
+            --start 2024-04 --end 2024-09 \
+            --output-dir v92_verified_warmup --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("v92_verified_warmup/source_manifest.json").read_text())
+          assert m["checksumsVerified"]==12
+          assert m["dailyCounts"]=={"BTCUSDT":183,"SOLUSDT":183}
+          assert m["warmupOnlyNotPerformancePeriod"] is True
+          assert len(m["inputFiles"])==12
+          assert all(len(x["sha256"])==64 for x in m["inputFiles"])
+          print("V92_1D_3D_WARMUP_SOURCE_VERIFIED",m["dailyCounts"],m["checksumsVerified"])
+          PY
+
+      - name: Run warmup-complete full chronological BTC/SOL V7 V9.1 V9.2 ablation
+        run: |
+          set -euo pipefail
+          python3 -u v92_higher_timeframe_backtest.py \
+            --archive v92_verified_archive \
+            --selected forward/v92_selected_reversal_patterns/historical.json \
+            --warmup-daily v92_verified_warmup/history_daily_warmup.json \
+            --out forward/v92_higher_timeframe_backtest_warmup
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_higher_timeframe_backtest_warmup/historical.json").read_text())
+          assert x["status"]=="V92_1D_3D_RETEST_CONTEXT_ABLATION_HISTORICAL_PAPER_ONLY"
+          assert x["contextWarmupExcludedFromPerformancePeriod"] is True
+          for sym,item in x["symbols"].items():
+              assert item["contextWarmupDailyBars"]==183
+              assert item["derived3DContextCandlesWithWarmup"]>=300
+              for name,score in item["variants"].items():
+                  if "contextAudit" in score:
+                      assert score["contextAudit"]["threeDayWarmupPasses"]==0, (sym,name,score["contextAudit"])
+          print("V92_1D_3D_WARMUP_COMPLETE_BACKTEST_VALIDATED")
+          PY
+
+      - name: Commit warmup-complete report to isolated V9.2 branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_higher_timeframe_backtest_warmup/historical.json \
+                  forward/v92_higher_timeframe_backtest_warmup/historical.md
+          git commit -m "V9.2 BTC SOL 1D 3D backtest with verified EMA50 warmup"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_1D_3D_WARMUP_BACKTEST_SEALED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Summarize result or explicitly report missing output
+        if: always()
+        run: |
+          if test -s forward/v92_higher_timeframe_backtest_warmup/historical.md; then
+            cat forward/v92_higher_timeframe_backtest_warmup/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No warmup-complete result produced; do not claim a 3D filter improvement." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Research only; no orders, alerts, or production filter changes." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload warmup source manifest and backtest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-btc-sol-1d-3d-warmup-backtest-${{ github.run_id }}
+          path: |
+            v92_verified_warmup/source_manifest.json
+            forward/v92_higher_timeframe_backtest_warmup/historical.json
+            forward/v92_higher_timeframe_backtest_warmup/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
