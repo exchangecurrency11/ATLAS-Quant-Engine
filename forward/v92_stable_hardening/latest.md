@@ -19,6 +19,9 @@
 
 - Matched 1H source hours: **8**.
 - Coin-hour replay checks: **24**.
+- Actually observed open-position snapshots: **0**; pending-retest snapshots: **0**; closed-exit events: **0**.
+- Older immutable hours with reduced direct-veto diagnostics: **1**; accepted only when unchanged V9.1/V9.2 parity and zero veto were independently confirmed.
+- Stored BOS/retest state parity is checked, but when no real paper trades exist, trade-specific entry/stop/TP parity remains UNPROVEN outside synthetic unit tests.
 - Comparison is based on independently stored forward 1H snapshots and their prior V7/V9.1 reference records, not a claim of executable live fills.
 - Original V9.2 already replays the same closed OHLCV as of each hour; audit double-checks serialized strategy state, BOS/retest, stop/TP fields when open, and timeframe stamps.
 - Latest strict paper admission gate: **READY FOR REVIEW**.
