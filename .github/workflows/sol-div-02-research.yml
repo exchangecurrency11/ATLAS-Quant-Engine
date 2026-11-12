@@ -1,0 +1,164 @@
+name: SOL-DIV-02 CVD + BOS retest / liquidity / volume (research only)
+
+on:
+  push:
+    branches:
+      - research/sol-flow-01-20261112
+    paths:
+      - sol_div_02.py
+      - tests/test_sol_div_02.py
+      - .github/workflows/sol-div-02-research.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sol-div-02-research-only
+  cancel-in-progress: false
+
+jobs:
+  matched-comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/sol-flow-01-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test rules
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            download_binance_um_history.py backtest_retest_long_v4.py \
+            market_structure.py signal_quality_v7.py v7_paper_comparison.py \
+            v92_bull_bear_candle_invalidation.py v92_multi_candle_invalidation.py \
+            v92_selected_reversal_patterns.py sol_flow_01.py sol_div_01.py sol_div_02.py
+          python3 -m unittest discover -s tests -p 'test_sol_div_02.py' -v
+
+      - name: Download checksum-verified official Binance history
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_history.py \
+            --start 2024-10 --end 2026-09 \
+            --output-dir sol_div_02_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("sol_div_02_archive/source_manifest.json").read_text())
+          assert m["source"].startswith("Binance official data.binance.vision")
+          assert m["checksumsVerified"]==48 and len(m["inputFiles"])==48
+          assert m["firstUTC"].startswith("2024-10-01T00:00:00")
+          assert m["endExclusiveUTC"].startswith("2026-10-01T00:00:00")
+          assert m["pairCounts"]["SOLUSDT"]=={"1hour":17520,"4hour":4380,"daily":730}
+          for tf,n in (("1hour",17520),("4hour",4380),("daily",730)):
+            d=json.loads(Path(f"sol_div_02_archive/history_{tf}.json").read_text())
+            h=next(x["history"] for x in d if x["symbol"]=="SOLUSDT_PERP.A")
+            assert len(h)==n
+            assert all(all(k in b for k in ("qv","trades","tbv","tbq")) for b in h)
+          print("SOL_DIV_02_SOURCE_VERIFIED")
+          PY
+
+      - name: Run matched four-arm comparison plus V9.2 control
+        run: |
+          set -euo pipefail
+          python3 -u sol_div_02.py \
+            --hour sol_div_02_archive/history_1hour.json \
+            --four sol_div_02_archive/history_4hour.json \
+            --daily sol_div_02_archive/history_daily.json \
+            --manifest sol_div_02_archive/source_manifest.json \
+            --v92-reference forward/v92_selected_reversal_patterns/historical.json \
+            --output forward/sol_div_02/latest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_div_02/latest.json").read_text())
+          assert x["v92StrictSweepControlParityVerified"]
+          assert x["divergenceOnlyParityVerifiedAgainstDIV01"]
+          assert x["onlyClosedCandles"] and x["pivotConfirmationWaited"]
+          assert x["noFutureFeatures"]
+          assert x["brokerOrders"] is False and x["alerts"] is False
+          assert x["productionModified"] is False and x["promotionApproved"] is False
+          assert len(x["results"])==5
+          b=x["results"]["V92_STRICT_SWEEP_CONTROL"]["summary"]
+          assert b["trades"]==8 and b["winsNet"]==5
+          assert abs(b["netR9BpsPerSide"]-4.260655)<0.00011
+          d=x["results"]["CVD_1H_DIVERGENCE_PLUS_BOS_RETEST"]["summary"]
+          assert d["trades"]==1 and abs(d["netR9BpsPerSide"]-1.325925)<0.00011
+          print("SOL_DIV_02_BASELINE_AND_DIV01_PARITY_VERIFIED")
+          PY
+
+      - name: Build comparison report
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_div_02/latest.json").read_text())
+          labels={
+            "V92_STRICT_SWEEP_CONTROL":"V9.2 control",
+            "CVD_1H_DIVERGENCE_PLUS_BOS_RETEST":"CVD divergence + BOS retest",
+            "CVD_DIVERGENCE_PLUS_BOS_RETEST_PLUS_LIQUIDITY_SWEEP":"CVD + BOS retest + liquidity sweep",
+            "CVD_DIVERGENCE_PLUS_BOS_RETEST_PLUS_VOLUME_INCREASE":"CVD + BOS retest + volume increase",
+            "CVD_DIVERGENCE_PLUS_BOS_RETEST_PLUS_SWEEP_AND_VOLUME":"CVD + BOS + sweep + volume"}
+          lines=[
+            "# SOL-DIV-02 — CVD divergence combinations",
+            "",
+            "**Exploratory historical paper comparison only. No live orders, alerts or production changes.**",
+            "",
+            f"Period: {x['startUTC']} to {x['endExclusiveUTC']} (exclusive).",
+            f"V9.2 control parity: {x['v92StrictSweepControlParityVerified']}. DIV-01 divergence-only parity: {x['divergenceOnlyParityVerifiedAgainstDIV01']}.",
+            "All candidate arms retain the same V9.2 strict-sweep veto, BOS -> closed retest -> next 1H open hypothetical fill, same stop-first exits and same historical source.",
+            "CVD divergence: 1H pivots confirmed with 2 left + 2 right closed bars; no future candles.",
+            "Liquidity sweep: retest wick crosses the prior 20 completed 1H high/low and retest closes back inside.",
+            f"Volume increase: retest 1H base volume >= {x['volumeThresholdMultiple']:.2f}x preceding 20 completed 1H candle mean.",
+            "",
+            "| Model | Trades | Wins | Win % | Net R 9 bps/side | Net R 25 bps/side | PF | Max DD R | Δ Net R vs V9.2 |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+          for key,label in labels.items():
+            item=x["results"][key];s=item["summary"]
+            pf="—" if s["profitFactorR"] is None else str(s["profitFactorR"])
+            lines.append(f"| {label} | {s['trades']} | {s['winsNet']} | {s['winRatePct']} | {s['netR9BpsPerSide']:.4f} | {s['netR25BpsPerSide']:.4f} | {pf} | {s['maxSequentialDrawdownR']:.4f} | {s['deltaNetRVsV92']:+.4f} |")
+          lines += ["","## Gate audit",""]
+          for key,label in labels.items():
+            if key== "V92_STRICT_SWEEP_CONTROL": continue
+            a=x["results"][key]["audit"]
+            lines.append(f"- **{label}:** divergence eligible {a['divergenceEligible']}, divergence passed {a['divergencePassed']}, divergence vetoes {a['divergenceVetoes']}, sweep vetoes {a['sweepVetoes']}, volume vetoes {a['volumeVetoes']}, final passed {a['finalPassed']}.")
+          lines += ["","## Interpretation","",
+            "- Compare net R and cost stress, not win rate alone; the candidate sample may be very small.",
+            "- The divergence-only arm must reproduce DIV-01 exactly before interpreting the added filters.",
+            "- The period has been inspected previously and is not independent prospective evidence.",
+            "- CVD is Binance 1H kline taker-buy minus taker-sell base volume, not tick-level order flow.",
+            "- Funding, actual fills, spread, liquidation and account-specific fees are not fully modeled.",
+            "- No arm is automatically promoted; require sealed forward paper observations before any production change."]
+          Path("forward/sol_div_02/latest.md").write_text("\n".join(lines)+"\n")
+          print("\n".join(lines))
+          PY
+
+      - name: Commit report to isolated research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/sol-flow-01-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/sol_div_02/latest.json forward/sol_div_02/latest.md
+          git commit -m "SOL-DIV-02 matched CVD BOS sweep volume comparison"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/sol-flow-01-20261112
+            if git push origin HEAD:research/sol-flow-01-20261112; then exit 0; fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Upload report and source manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-div-02-historical
+          path: |
+            sol_div_02_archive/source_manifest.json
+            forward/sol_div_02/latest.json
+            forward/sol_div_02/latest.md
+          if-no-files-found: ignore
+          retention-days: 90
