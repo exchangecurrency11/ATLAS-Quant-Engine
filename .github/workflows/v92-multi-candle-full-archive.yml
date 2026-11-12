@@ -1,0 +1,128 @@
+name: V9.2 Harami Hikkake Engulfing Star full archive research replay NO ALERTS
+
+# GitHub Actions is only used to complete and record this historical test.
+# No orders. Prior V7/V9.1 research accounts and alerts remain unchanged.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-multi-candle-full-archive.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: v92-multi-candle-full-history-only
+  cancel-in-progress: false
+
+jobs:
+  multi-pattern-archived:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Checkout isolated V9.2 research branch without changing V7 or V9.1
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Validate symmetric bullish/bearish patterns and retest-only no-lookahead
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile v92_multi_candle_invalidation.py
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_bull_bear_candle_invalidation.py' -v
+          python3 -m unittest discover -s tests -p 'test_v91_dual_paper_historical_reference.py' -q
+      - name: Fetch 2-year official SHA-verified Binance BTC SOL 1H 4H and Daily archived candles
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p v92_verified_artifact v92_verified_archive
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+            --name btc-sol-official-binance-verified-through-2026-11-02 \
+            --dir v92_verified_artifact
+          for tf in 1hour 4hour daily; do
+            count="$(find v92_verified_artifact -type f -name "history_$tf.json" | wc -l)"
+            test "$count" -eq 1
+            found="$(find v92_verified_artifact -type f -name "history_$tf.json" -print -quit)"
+            cp "$found" "v92_verified_archive/history_$tf.json"
+          done
+          python3 - <<'PY'
+          import json,pathlib
+          for tf,minsize in (("1hour",17000),("4hour",4000),("daily",600)):
+              data=json.loads((pathlib.Path("v92_verified_archive")/("history_"+tf+".json")).read_text())
+              assert {x["symbol"] for x in data}=={"BTCUSDT_PERP.A","SOLUSDT_PERP.A"}
+              assert all(len(x["history"])>=minsize for x in data)
+              print("V92_SOURCE_ARCHIVE_VERIFIED",tf,{x["symbol"]:len(x["history"]) for x in data})
+          PY
+      - name: Full chronological V7 V9.1 vs Harami Hikkake Engulfing and combined V9.2
+        run: |
+          set -euo pipefail
+          python3 -u v92_multi_candle_invalidation.py \
+            --archive v92_verified_archive \
+            --reference forward/v91_retest_full_replay/compare.json \
+            --out forward/v92_multi_candle_invalidation
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_multi_candle_invalidation/historical.json").read_text())
+          assert x["mode"]=="V92_HARAMI_HIKKAKE_ENGULFING_STAR_RETEST_INVALIDATION_FULL_HISTORY_PAPER_ONLY"
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["sameConfirmedSourceForAllVariants"]
+          assert x["noIncomplete4HCandleUsed"]
+          assert x["HikkakeMustBeConfirmedWithinNextThreeClosedBars"]
+          assert x["HaramiRequiresThirdCandleConfirmation"]
+          assert set(x["symbols"])=={"BTCUSDT","SOLUSDT"}
+          for symbol,s in x["symbols"].items():
+              assert s["verifiedCandleCounts"]["1H"]==17520
+              assert s["verifiedCandleCounts"]["4H"]==4380
+              assert s["verifiedCandleCounts"]["Daily"]==730
+              assert len(s["variants"])==12
+              for name,z in s["variants"].items():
+                  assert z["trades"]>=0
+                  assert z["totalNetR9BpsPerSide"]==z["totalNetR9BpsPerSide"]
+              print("V92_MULTI_CANDLE_FINISHED",symbol,{
+                  k:{"trades":v["trades"],"netR":v["totalNetR9BpsPerSide"]}
+                  for k,v in s["variants"].items()})
+          PY
+      - name: Commit full V9.2 research results only to isolated research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_multi_candle_invalidation/historical.json \
+                  forward/v92_multi_candle_invalidation/historical.md
+          git commit -m "Full archived V9.2 Harami Hikkake Engulfing Star symmetric paper replay"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_MULTI_CANDLE_HISTORY_VERIFIED_AND_SEALED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Summarize verified past-only paper results or failed-data status
+        if: always()
+        run: |
+          if test -s forward/v92_multi_candle_invalidation/historical.md; then
+            cat forward/v92_multi_candle_invalidation/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No verified multi-pattern result produced; do not claim new returns." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Research only. No real orders, no notifications, no original V7/V9.1 changes." >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain V9.2 independent historical audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-multi-candle-historical-only-${{ github.run_id }}
+          path: |
+            forward/v92_multi_candle_invalidation/historical.json
+            forward/v92_multi_candle_invalidation/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
