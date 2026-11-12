@@ -9,6 +9,13 @@
 | ETHUSDT | 0 | 0 | 0 |
 | SOLUSDT | 0 | 0 | 0 |
 
+**Saatlik kaynak kapsama denetimi (eksik saatler doldurulmaz):**
+
+| Kaynak | Kaydedilen / beklenen | Eksik saat | Son doğrulanmış saat | Gecikme |
+|---|---:|---:|---|---:|
+| BTC_SOL | 4/6 | 2 | 2026-11-12T15:00:00Z | 1 saat |
+| ETH | 2/5 | 3 | 2026-11-12T16:00:00Z | 0 saat |
+
 | Toplam | İşlem | Win % | Net R | Sanal PnL | Sanal bakiye |
 |---|---:|---:|---:|---:|---:|
 | V9.2 BTC+ETH+SOL | 0 | None | 0 | 0.0 USDT | 1000.0 USDT |
