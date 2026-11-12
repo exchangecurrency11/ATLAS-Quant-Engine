@@ -23,7 +23,8 @@ from v91_prospective_retest import (
     HOUR, TIMEFRAME_SECONDS, OHLC_MAPPING,
     PRICE_REL_TOLERANCE, VOLUME_REL_TOLERANCE,
     path_at, fetch_json, safe_trade, require_exact_replay,
-    retest_diagnostics, _first_commit_epoch, _statistics
+    retest_diagnostics, _first_commit_epoch, _statistics,
+    current_hour_capture_window
 )
 
 MODE="V91_ETH_PROSPECTIVE_4H_RETEST_IMMUTABLE_PAPER_SHADOW"
@@ -65,12 +66,12 @@ def verify_eth_source(original, rows, target):
 
 def capture(original, raw, *, now, folder):
     target=now//HOUR*HOUR
-    if not (12*60<=now-target<=57*60):
+    if not current_hour_capture_window(target,now):
         raise ValueError("ETH_V91_NOT_CURRENT_CLOSED_HOUR_WINDOW")
     if epoch(original["targetClosed1HUTC"])!=target:
         raise ValueError("ETH_V91_ORIGINAL_HOUR_MISMATCH")
     observed=epoch(original["observedAtUTC"])
-    if not (target<=observed<=now+90 and observed<target+58*60):
+    if not (target<=observed<=now+90 and observed<target+HOUR):
         raise ValueError("ETH_V91_NOT_CONTEMPORANEOUS_ORIGINAL_V7")
     parsed,signatures,cross=validate_sources(raw,target,now)
     integrity=verify_eth_source(original,parsed,target)
