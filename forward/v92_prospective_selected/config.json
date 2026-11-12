@@ -1,0 +1,39 @@
+{
+  "mode": "V92_SELECTED_CANDLES_THIRD_SEPARATE_FORWARD_VIRTUAL_ACCOUNT",
+  "requestedAtUTC": "2026-11-12T10:43:17Z",
+  "firstEligibleVerifiedHourlyCloseUTC": "2026-11-12T11:00:00Z",
+  "assets": [
+    "BTCUSDT",
+    "SOLUSDT"
+  ],
+  "initialVirtualCapitalUSDT": 1000,
+  "fixedTargetRiskUSDTPerEligibleHypotheticalTrade": 100,
+  "virtualRiskPctOfInitialCapital": 10,
+  "paperRiskTenPctAggressiveNotLiveAdvice": true,
+  "selectedSolFilters": [
+    "MORNING_STAR",
+    "EVENING_STAR",
+    "BULLISH_HARAMI_CONFIRMED",
+    "BEARISH_HARAMI_CONFIRMED"
+  ],
+  "mustMatchOppositeDirectionAtConfirmedRetest": true,
+  "requirePrior20HighLowSweepAndReturnClose": true,
+  "bitcoinPatternsOnlyObserveDoNotVeto": true,
+  "otherCandidatePatternsObserveOnly": [
+    "HIKKAKE_CONFIRMED",
+    "ENGULFING",
+    "THREE_WHITE_SOLDIERS",
+    "THREE_BLACK_CROWS"
+  ],
+  "sourceMustBeSameHourAlreadySealedV7AndV91": true,
+  "retestMustHavePreviousGitCommitBeforeExit": true,
+  "forbidRetroactiveTradeEntries": true,
+  "historicalEightPointThreeRNotTransferred": true,
+  "ETHExcludedPendingSameSourceParity": true,
+  "nextOpenHypotheticalFillNotRealTimeExecutable": true,
+  "riskNotHardCappedAcrossSimultaneousAssets": true,
+  "noRealBrokerOrders": true,
+  "noChatGPTNotifications": true,
+  "originalV7V91VirtualAccountsRemainIndependent": true,
+  "note": "Third account research only; first hypothetical eligible close strictly after user request. Initial virtual balance 1000 USDT; no performance claim until contemporaneous, independent and committed hourly source snapshots. No real fills."
+}
