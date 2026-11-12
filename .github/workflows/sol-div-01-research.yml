@@ -1,0 +1,166 @@
+name: SOL-DIV-01 causal price CVD divergence (research only)
+
+on:
+  push:
+    branches:
+      - research/sol-flow-01-20261112
+    paths:
+      - sol_div_01.py
+      - tests/test_sol_div_01.py
+      - .github/workflows/sol-div-01-research.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sol-div-01-research-only
+  cancel-in-progress: false
+
+jobs:
+  historical-divergence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/sol-flow-01-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and run causal divergence tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            download_binance_um_history.py \
+            backtest_retest_long_v4.py \
+            market_structure.py \
+            signal_quality_v7.py \
+            v7_paper_comparison.py \
+            v92_bull_bear_candle_invalidation.py \
+            v92_multi_candle_invalidation.py \
+            v92_selected_reversal_patterns.py \
+            sol_flow_01.py sol_div_01.py
+          python3 -m unittest discover -s tests -p 'test_sol_div_01.py' -v
+
+      - name: Download official checksum-verified Binance source
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_history.py \
+            --start 2024-10 --end 2026-09 \
+            --output-dir sol_div_01_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("sol_div_01_archive/source_manifest.json").read_text())
+          assert m["source"].startswith("Binance official data.binance.vision")
+          assert m["checksumsVerified"]==48 and len(m["inputFiles"])==48
+          assert m["firstUTC"].startswith("2024-10-01T00:00:00")
+          assert m["endExclusiveUTC"].startswith("2026-10-01T00:00:00")
+          assert m["pairCounts"]["SOLUSDT"]=={"1hour":17520,"4hour":4380,"daily":730}
+          for tf,n in (("1hour",17520),("4hour",4380),("daily",730)):
+            d=json.loads(Path(f"sol_div_01_archive/history_{tf}.json").read_text())
+            h=next(x["history"] for x in d if x["symbol"]=="SOLUSDT_PERP.A")
+            assert len(h)==n
+            assert all(all(k in b for k in ("qv","trades","tbv","tbq")) for b in h)
+          print("SOL_DIV_01_BINANCE_SOURCE_VERIFIED")
+          PY
+
+      - name: Run matched V9.2 control and three divergence arms
+        run: |
+          set -euo pipefail
+          python3 -u sol_div_01.py \
+            --hour sol_div_01_archive/history_1hour.json \
+            --four sol_div_01_archive/history_4hour.json \
+            --daily sol_div_01_archive/history_daily.json \
+            --manifest sol_div_01_archive/source_manifest.json \
+            --v92-reference forward/v92_selected_reversal_patterns/historical.json \
+            --output forward/sol_div_01/latest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_div_01/latest.json").read_text())
+          assert x["v92StrictSweepControlParityVerified"] is True
+          assert x["v92StrictSweepAppliedBeforeDivergence"] is True
+          assert x["onlyClosedCandles"] and x["pivotConfirmationWaited"]
+          assert x["noFutureFeatures"] and x["noOpenInterestUsed"]
+          assert x["brokerOrders"] is False and x["alerts"] is False
+          assert x["productionModified"] is False and x["promotionApproved"] is False
+          assert set(x["results"])=={
+            "V92_STRICT_SWEEP_CONTROL",
+            "V92_PLUS_1H_CONFIRMED_CVD_DIVERGENCE",
+            "V92_PLUS_4H_CONFIRMED_CVD_DIVERGENCE",
+            "V92_PLUS_1H_OR_4H_CVD_DIVERGENCE"}
+          base=x["results"]["V92_STRICT_SWEEP_CONTROL"]["summary"]
+          assert base["trades"]==8 and base["winsNet"]==5
+          assert abs(base["netR9BpsPerSide"]-4.260655)<0.00011
+          for name,item in x["results"].items():
+            assert item["summary"]["trades"]<=8
+          print("SOL_DIV_01_BASELINE_PARITY_AND_CAUSAL_REPLAY_VERIFIED")
+          PY
+
+      - name: Build auditable divergence report
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_div_01/latest.json").read_text())
+          lines=[
+            "# SOL-DIV-01 — causal price/CVD divergence",
+            "",
+            "**Exploratory historical paper only. No live orders, alerts, production changes or prospective validation.**",
+            "",
+            f"Period: {x['startUTC']} to {x['endExclusiveUTC']} (exclusive).",
+            "V9.2 strict-sweep baseline parity: "+str(x["v92StrictSweepControlParityVerified"]),
+            "Pivot: 2 left + 2 right closed candles; pivot becomes available only after the second right candle closes.",
+            "Bullish: lower price low + higher cumulative taker CVD low. Bearish: higher price high + lower cumulative taker CVD high.",
+            "Maximum pivot age: 48 bars on the tested timeframe. No OI data is used in this experiment.",
+            "",
+            "| Arm | Trades | Wins | Win % | Net R 9 bps/side | Net R 25 bps/side | PF | Max DD R | Delta vs V9.2 | Divergence vetoes |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+          ]
+          for name,item in x["results"].items():
+            s=item["summary"];a=item["divergenceAudit"]
+            lines.append(
+              f"| {name} | {s['trades']} | {s['winsNet']} | {s['winRatePct']} | "
+              f"{s['netR9BpsPerSide']:.4f} | {s['netR25BpsPerSide']:.4f} | "
+              f"{s['profitFactorR'] if s['profitFactorR'] is not None else '—'} | "
+              f"{s['maxSequentialDrawdownR']:.4f} | {s['deltaNetR9VsV92']:+.4f} | {a['vetoes']} |")
+          lines += ["","## Interpretation guardrails","",
+            "- CVD is cumulative taker-buy minus taker-sell base volume derived from Binance 1H kline aggregates; it is not tick-level aggressor flow or order-book delta.",
+            "- Divergence requires two confirmed pivots; no pivot is used before both right-hand confirmation candles close.",
+            "- The same V9.2 strict Star/confirmed-Harami prior-20 sweep/re-entry gate is applied before divergence in every arm.",
+            "- All tested dates have been examined before; this is not independent prospective evidence.",
+            "- A higher win rate with fewer trades is not sufficient; compare net R, stress costs, drawdown and sample size.",
+            "- Funding, actual fills, spread, liquidation and account-specific fees are not fully modeled.",
+            "- Open Interest is deliberately excluded until a complete, checksum-auditable historical source is available."]
+          Path("forward/sol_div_01/latest.md").write_text("\n".join(lines)+"\n")
+          print("\n".join(lines))
+          PY
+
+      - name: Commit report to isolated research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/sol-flow-01-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/sol_div_01/latest.json forward/sol_div_01/latest.md
+          git commit -m "SOL-DIV-01 causal price CVD divergence replay"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/sol-flow-01-20261112
+            if git push origin HEAD:research/sol-flow-01-20261112; then exit 0; fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Upload report and source manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-div-01-historical
+          path: |
+            sol_div_01_archive/source_manifest.json
+            forward/sol_div_01/latest.json
+            forward/sol_div_01/latest.md
+          if-no-files-found: ignore
+          retention-days: 90
