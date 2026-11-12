@@ -1,0 +1,116 @@
+name: V9.2 Stable - risk/data/replay source hardening (shadow only)
+
+on:
+  push:
+    branches:
+      - research/v92-stable-hardening-20261112
+    paths:
+      - v92_stable_hardening.py
+      - tests/test_v92_stable_hardening.py
+      - .github/workflows/v92-stable-hardening-audit.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-stable-hardening-shadow-only
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated hardening code
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-stable-hardening-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Fetch immutable source observations (read only)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          path: v92_live_evidence
+          persist-credentials: false
+
+      - name: Fetch previously sealed V9.1 source observations (read only)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          path: v91_evidence
+          persist-credentials: false
+
+      - name: Fetch original V7 source observations (read only)
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+
+      - name: Run fail-closed risk, gaps and replay parity unit tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v92_stable_hardening.py
+          python3 -m unittest discover -s tests -p 'test_v92_stable_hardening.py' -v
+
+      - name: Audit every sealed source hour and compare BTC/SOL/ETH to V7/V9.1
+        run: |
+          set -euo pipefail
+          python3 -u v92_stable_hardening.py \
+            --v92-btcsol v92_live_evidence/forward/v92_prospective_selected/hourly \
+            --v92-eth v92_live_evidence/forward/v92_prospective_eth/hourly \
+            --v91-root v91_evidence \
+            --v7-root v7_evidence \
+            --out forward/v92_stable_hardening/latest.json \
+            --md forward/v92_stable_hardening/latest.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_stable_hardening/latest.json").read_text())
+          assert x["mode"]=="V92_STABLE_SHADOW_HARDENING_ONLY"
+          assert x["newCappedBookPolicyNotAppliedToLegacyV92"] is True
+          assert x["legacyV92RiskUSDTUnchanged"]==100
+          assert x["policy"]["maxRiskUSDTPerPosition"]==10
+          assert x["policy"]["maxCombinedOpenRiskUSDT"]==20
+          assert x["newBrokerOrders"] is False
+          assert x["noRetroactiveTradesOrRewrittenCandles"] is True
+          assert x["matchedVerifiedHours"] >= 1
+          assert len(x["parityErrors"])==0, x["parityErrors"]
+          assert x["matchedAssetChecks"]==3*x["matchedVerifiedHours"]
+          print("STABLE_VERIFIED_SOURCE_PARITY_AND_RISK_POLICY_TESTS_PASSED")
+          PY
+
+      - name: Commit only standalone audit JSON and Markdown to research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-stable-hardening-20261112
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_stable_hardening/latest.json forward/v92_stable_hardening/latest.md
+          if git diff --cached --quiet; then
+            echo "STABLE_NO_NEW_AUDIT_CHANGE"
+            exit 0
+          fi
+          git commit -m 'V9.2 stable shadow risk, source coverage and replay parity audit'
+          for i in 1 2 3; do
+            git pull --rebase origin research/v92-stable-hardening-20261112
+            if git push origin HEAD:research/v92-stable-hardening-20261112; then
+              echo "STABLE_AUDIT_PUBLISHED_ONLY_TO_RESEARCH_BRANCH"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+
+      - name: Archive stand-alone audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-stable-hardening-shadow
+          path: |
+            forward/v92_stable_hardening/latest.json
+            forward/v92_stable_hardening/latest.md
+          if-no-files-found: ignore
+          retention-days: 60
