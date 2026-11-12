@@ -1,0 +1,167 @@
+name: SOL-FLOW-02 add taker CVD on V9.2 strict sweep baseline (research only)
+
+on:
+  push:
+    branches:
+      - research/sol-flow-01-20261112
+    paths:
+      - sol_flow_02.py
+      - .github/workflows/sol-flow-02-research.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sol-flow-02-research-only
+  cancel-in-progress: false
+
+jobs:
+  historical-ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/sol-flow-01-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile research and unchanged baseline dependencies
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            download_binance_um_history.py \
+            backtest_retest_long_v4.py \
+            market_structure.py \
+            signal_quality_v7.py \
+            v7_paper_comparison.py \
+            v92_bull_bear_candle_invalidation.py \
+            v92_multi_candle_invalidation.py \
+            v92_selected_reversal_patterns.py \
+            sol_flow_01.py sol_flow_02.py
+          python3 -m unittest discover -s tests -p 'test_sol_flow_01.py' -v
+
+      - name: Download complete official Binance USD-M source with taker columns
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_history.py \
+            --start 2024-10 --end 2026-09 \
+            --output-dir sol_flow_02_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("sol_flow_02_archive/source_manifest.json").read_text())
+          assert m["source"].startswith("Binance official data.binance.vision")
+          assert m["checksumsVerified"]==48 and len(m["inputFiles"])==48
+          assert m["firstUTC"].startswith("2024-10-01T00:00:00")
+          assert m["endExclusiveUTC"].startswith("2026-10-01T00:00:00")
+          assert m["pairCounts"]["SOLUSDT"]=={"1hour":17520,"4hour":4380,"daily":730}
+          for tf in ("1hour","4hour","daily"):
+              d=json.loads(Path(f"sol_flow_02_archive/history_{tf}.json").read_text())
+              h=next(x["history"] for x in d if x["symbol"]=="SOLUSDT_PERP.A")
+              assert len(h)=={"1hour":17520,"4hour":4380,"daily":730}[tf]
+              assert all(all(k in b for k in ("qv","trades","tbv","tbq")) for b in h)
+          print("SOL_FLOW_02_SOURCE_AND_TAKER_FIELDS_VERIFIED")
+          PY
+
+      - name: Run paired five-arm V9.2 strict-sweep plus flow replay
+        run: |
+          set -euo pipefail
+          python3 -u sol_flow_02.py \
+            --hour sol_flow_02_archive/history_1hour.json \
+            --four sol_flow_02_archive/history_4hour.json \
+            --daily sol_flow_02_archive/history_daily.json \
+            --manifest sol_flow_02_archive/source_manifest.json \
+            --v92-reference forward/v92_selected_reversal_patterns/historical.json \
+            --output forward/sol_flow_02/latest.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_flow_02/latest.json").read_text())
+          assert x["baseV92StrictSweepParityVerified"] is True
+          assert x["V92StrictSweepAppliedBeforeEveryFlowFilter"] is True
+          assert x["V9_1BOSRetestStopTargetEngineUnchanged"] is True
+          assert x["noFutureFlowFeatures"] is True
+          assert x["brokerOrders"] is False and x["alerts"] is False
+          assert x["productionModified"] is False and x["promotionApproved"] is False
+          assert set(x["results"])=={
+            "V92_STRICT_SWEEP_CONTROL",
+            "V92_PLUS_1H_TAKER",
+            "V92_PLUS_4H_CVD",
+            "V92_PLUS_TAKER_AND_CVD",
+            "V92_PLUS_TAKER_CVD_RVOL"}
+          base=x["results"]["V92_STRICT_SWEEP_CONTROL"]["summary"]
+          assert base["trades"]==8 and base["winsNet"]==5
+          assert abs(base["netR9BpsPerSide"]-4.260655)<0.00011
+          assert abs(base["netR25BpsPerSide"]-2.409915)<0.00011
+          for name,item in x["results"].items():
+            assert item["audit"]["v92Vetoes"]==1
+            assert item["summary"]["trades"]<=8
+          print("SOL_FLOW_02_V92_CONTROL_PARITY_AND_ALL_FILTER_REPLAYS_VERIFIED")
+          PY
+
+      - name: Build comparative report
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/sol_flow_02/latest.json").read_text())
+          lines=[
+            "# SOL-FLOW-02 — V9.2 strict sweep + taker/CVD",
+            "",
+            "**Exploratory historical paper replay only. No live orders, alerts, production changes or independent prospective evidence.**",
+            "",
+            f"Period: {x['startUTC']} to {x['endExclusiveUTC']} (exclusive).",
+            f"V9.2 strict-sweep control parity: {x['baseV92StrictSweepParityVerified']}.",
+            "Every arm uses the same V9.2 selected Star/confirmed-Harami prior-20 sweep/re-entry veto before its flow filter.",
+            "",
+            "| Arm | Trades | Wins | Win % | Net R 9 bps/side | Net R 25 bps/side | PF | Max DD R | Delta vs V9.2 | Flow veto |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+          ]
+          for name,item in x["results"].items():
+            s=item["summary"]
+            lines.append(
+              f"| {name} | {s['trades']} | {s['winsNet']} | {s['winRatePct']} | "
+              f"{s['netR9BpsPerSide']:.4f} | {s['netR25BpsPerSide']:.4f} | "
+              f"{s['profitFactorR'] if s['profitFactorR'] is not None else '—'} | "
+              f"{s['maxSequentialDrawdownR']:.4f} | "
+              f"{s['deltaNetR9VsV92StrictSweep']:+.4f} | {item['audit']['flowVetoes']} |")
+          lines += ["", "## Audit", "",
+            "- V9.2 control must reproduce 8 trades, 5 wins, +4.260655 net R at 9 bps/side and +2.409915 at 25 bps/side.",
+            "- 1H taker buy share and 4H CVD proxy use only completed 1H candles.",
+            "- Flow gates are applied only after the original V9.2 selected reversal gate passes.",
+            "- CVD is a candle-volume proxy, not tick-level delta or order-book flow.",
+            "- All dates were previously examined; any best arm is exploratory and requires new prospective paper events.",
+            "- Do not promote a filter merely because it raises win rate while collapsing trade count.",
+            "- Funding, actual fills, spread, liquidation and account-specific fees are not fully modeled."]
+          Path("forward/sol_flow_02/latest.md").write_text("\n".join(lines)+"\n")
+          print("\n".join(lines))
+          PY
+
+      - name: Commit report to isolated research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/sol-flow-01-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/sol_flow_02/latest.json forward/sol_flow_02/latest.md
+          git commit -m "SOL-FLOW-02 V9.2 strict sweep plus taker CVD replay"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/sol-flow-01-20261112
+            if git push origin HEAD:research/sol-flow-01-20261112; then exit 0; fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Upload research report and source manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sol-flow-02-historical
+          path: |
+            sol_flow_02_archive/source_manifest.json
+            forward/sol_flow_02/latest.json
+            forward/sol_flow_02/latest.md
+          if-no-files-found: ignore
+          retention-days: 90
