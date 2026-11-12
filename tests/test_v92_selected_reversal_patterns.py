@@ -17,6 +17,7 @@ def three(side,interval=HOUR):
     x=[bar(i,interval) for i in range(40)]
     if side=="bullish":
         x[35]["c"]=102.
+        x[35]["h"]=103.
         x[39]["c"]=99.
         x.extend([
             bar(40,interval,o=99,h=103,l=98,c=102),
@@ -25,6 +26,7 @@ def three(side,interval=HOUR):
     else:
         x[35]["c"]=99.
         x[39]["c"]=102.
+        x[39]["h"]=103.
         x.extend([
             bar(40,interval,o=102,h=103,l=98,c=99),
             bar(41,interval,o=100,h=101,l=97,c=98),
