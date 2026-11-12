@@ -256,16 +256,30 @@ def run(histories, source_manifest, reference=None):
                              retest_quality_filter=filter_fn)
         result["results"][arm] = {"summary":score(replay), "gateEvidence":counts}
     if reference is not None:
-        if not (reference.get("status") ==
-                "V91_FULL_CHRONOLOGICAL_RETEST_ABLATION_PAPER_ONLY"
-                and reference.get("originalV7BaselineVerifiedAgainstPublishedQualityBacktest") is True):
+        # Accept either the complete V9.1 replay report or the published
+        # V9.2 historical report that embeds the unchanged V9.1 baseline.
+        if reference.get("status") == "V91_FULL_CHRONOLOGICAL_RETEST_ABLATION_PAPER_ONLY":
+            if reference.get("originalV7BaselineVerifiedAgainstPublishedQualityBacktest") is not True:
+                raise ValueError("FLOW_INVALID_V91_REFERENCE")
+            expected = reference["results"]["SOLUSDT"]["V91_RETEST_MAX4H"]
+            expected_net = expected["totalNetR9bpsSide"]
+            expected_stress = expected["totalNetR25BpsSide"]
+        elif reference.get("status") == "SELECTIVE_SOL_STAR_HARAMI_AND_OTHER_HIGH_PROFILE_CANDLE_WATCHES_HISTORICAL_ONLY":
+            if (reference.get("noV7V91ProductionChanges") is not True or
+                    reference.get("sameVerifiedBinanceBTCAndSOLSource") is not True or
+                    reference.get("fromUTC") != iso(START) or
+                    reference.get("toUTCExclusive") != iso(END)):
+                raise ValueError("FLOW_INVALID_V92_EMBEDDED_V91_REFERENCE")
+            expected = reference["symbols"]["SOLUSDT"]["variants"]["V91_RETEST_MAX4H"]
+            expected_net = expected["totalNetR9BpsPerSide"]
+            expected_stress = expected["totalNetR25BpsPerSideStress"]
+        else:
             raise ValueError("FLOW_INVALID_V91_REFERENCE")
-        expected = reference["results"]["SOLUSDT"]["V91_RETEST_MAX4H"]
         actual = result["results"][ARMS[0]]["summary"]
         if (actual["trades"] != expected["trades"] or
                 actual["winsNet"] != expected["wins"] or
-                abs(actual["netR9BpsPerSide"]-expected["totalNetR9bpsSide"]) > .00011 or
-                abs(actual["netR25BpsPerSide"]-expected["totalNetR25bpsSide"]) > .00011):
+                abs(actual["netR9BpsPerSide"]-expected_net) > .00011 or
+                abs(actual["netR25BpsPerSide"]-expected_stress) > .00011):
             raise ValueError("FLOW_V91_BASELINE_REPLAY_PARITY_FAILED")
         result["externalV91ReferenceParityVerified"] = True
     return result
@@ -278,7 +292,7 @@ def main():
     p.add_argument("--daily", required=True)
     p.add_argument("--manifest", required=True)
     p.add_argument("--v91-reference", default=None,
-                   help="Optional saved original V9.1 complete replay for external baseline parity")
+                   help="Published V9.2 historical report or original V9.1 replay for baseline parity")
     p.add_argument("--output", default="forward/sol_flow_01/latest.json")
     a = p.parse_args()
     histories = {tf:read_history(file) for tf,file in
