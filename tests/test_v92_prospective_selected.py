@@ -53,6 +53,11 @@ def original(t=FIRST):
             "results":{"BTCUSDT_PERP.A":{},"SOLUSDT_PERP.A":{}}}
 
 class V92ForwardTests(unittest.TestCase):
+    def test_current_source_window_allows_last_minute_but_never_rollover(self):
+        self.assertTrue(verify_source(reference(),original(),target=FIRST,now=FIRST+3599))
+        with self.assertRaisesRegex(ValueError,"OUTSIDE_CURRENT"):
+            verify_source(reference(),original(),target=FIRST,now=FIRST+3600)
+
     def test_current_sol_opposing_star_sweep_is_logged_as_direct_veto(self):
         base=1794009600
         bars=[{"t":base+i*3600,"o":100.,"h":102.,"l":98.,
