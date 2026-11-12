@@ -50,8 +50,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
-          python3 -m py_compile v92_prospective_selected.py
+          python3 -m py_compile v92_prospective_selected.py v92_eth_prospective_selected.py v92_third_paper_aggregate.py
           python3 -m unittest discover -s tests -p test_v92_prospective_selected.py -v
+          python3 -m unittest discover -s tests -p test_v92_eth_prospective_selected.py -q
           python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
           python3 -m unittest discover -s tests -p test_v92_multi_candle_invalidation.py -q
           python3 -m unittest discover -s tests -p test_v92_bull_bear_candle_invalidation.py -q
@@ -113,6 +114,8 @@ jobs:
             --account forward/v92_prospective_selected/third_paper_account.json \
             --report forward/v92_prospective_selected/third_paper_account.md
           test -s "forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json"
+          python3 -u v92_third_paper_aggregate.py
+          test -s forward/v92_prospective_selected/combined_three_asset_account.json
           python3 - <<'PY'
           import json
           from pathlib import Path
@@ -129,6 +132,13 @@ jobs:
           assert b["noActualExchangeExecutionOrFill"]
           assert set(b["stateBySymbol"])=={"BTCUSDT","SOLUSDT"}
           assert "ETHUSDT" not in b["stateBySymbol"]
+          merged=json.loads(Path("forward/v92_prospective_selected/combined_three_asset_account.json").read_text())
+          assert merged["mode"]=="V92_BTC_ETH_SOL_SINGLE_THIRD_1000USDT_PROSPECTIVE_PAPER_ACCOUNT"
+          assert merged["assets"]==["BTCUSDT","ETHUSDT","SOLUSDT"]
+          assert merged["virtualInitialUSDT"]==1000
+          assert merged["sharedSingleVirtualPortfolioNotThreeTimes1000"]
+          assert merged["noBrokerOrders"] and merged["noUserNotifications"]
+          assert merged["noHistorical836USDBackfilledIntoThisAccount"]
           print("V92_THIRD_1K_USDT_PAPER_ACCOUNT_PREPARED",b["lastDistinctVerifiedClosed1HUTC"],
                 "trades",b["closedEligiblePaperTrades"],"equity",b["virtualEquityUSDT"])
           PY
@@ -142,7 +152,9 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add "forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json" \
             forward/v92_prospective_selected/third_paper_account.json \
-            forward/v92_prospective_selected/third_paper_account.md
+            forward/v92_prospective_selected/third_paper_account.md \
+            forward/v92_prospective_selected/combined_three_asset_account.json \
+            forward/v92_prospective_selected/combined_three_asset_account.md
           git commit -m "V9.2 independently sealed same-hour selected SOL candle paper third account NO ORDERS"
           for attempt in 1 2 3; do
             git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
@@ -163,8 +175,8 @@ jobs:
           echo "UTC hour: ${TARGET:-none}" >> "$GITHUB_STEP_SUMMARY"
           if [ "${DID_CAPTURE:-false}" != "true" ]; then
             echo "**SAFE SKIP** — no new qualified matching sealed hour; green workflow is not an observation." >> "$GITHUB_STEP_SUMMARY"
-          elif test -s forward/v92_prospective_selected/third_paper_account.md; then
-            cat forward/v92_prospective_selected/third_paper_account.md >> "$GITHUB_STEP_SUMMARY"
+          elif test -s forward/v92_prospective_selected/combined_three_asset_account.md; then
+            cat forward/v92_prospective_selected/combined_three_asset_account.md >> "$GITHUB_STEP_SUMMARY"
             echo "Git commit/push success must be checked before trusting any new hour." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "SOURCE REJECTED — no successful paper observation." >> "$GITHUB_STEP_SUMMARY"
@@ -178,6 +190,8 @@ jobs:
             forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json
             forward/v92_prospective_selected/third_paper_account.json
             forward/v92_prospective_selected/third_paper_account.md
+            forward/v92_prospective_selected/combined_three_asset_account.json
+            forward/v92_prospective_selected/combined_three_asset_account.md
             forward/tmp/v92_history/history_*.json
           if-no-files-found: ignore
           retention-days: 14
