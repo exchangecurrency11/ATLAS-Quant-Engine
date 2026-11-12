@@ -31,7 +31,7 @@ from signal_quality_v7 import evaluate_bos_quality
 from v7_forward_observer import epoch, iso, latest_events, validate_inputs
 from v91_prospective_retest import (
     HOUR, SYM, path_at, fetch_json, safe_trade, require_exact_replay,
-    verify_candle_quality_against_v7
+    verify_candle_quality_against_v7, current_hour_capture_window
 )
 from v92_selected_reversal_patterns import (
     RESEARCH_QUALIFICATION, make_selective_gate,
@@ -66,7 +66,7 @@ def verify_source(source, v7, *, target, now, v91_source_file=None,
                   v91_repo=None):
     if target<FIRST or FIRST<=USER_REQUEST:
         raise ValueError("V92_FORWARD_RETROACTIVE_START_FORBIDDEN")
-    if not 12*60<=now-target<=57*60 or target!=now//HOUR*HOUR:
+    if not current_hour_capture_window(target,now):
         raise ValueError("V92_FORWARD_OUTSIDE_CURRENT_UNSEALED_CLOSE_WINDOW")
     if (source.get("mode")!="V91_PROSPECTIVE_4H_RETEST_IMMUTABLE_PAPER_SHADOW"
         or source.get("sourceVerifiedSameHour") is not True
