@@ -45,7 +45,14 @@ def _checked_closed_daily(daily, as_of):
 
 def aggregate_3d_from_daily(daily):
     """Aggregate only complete, UTC epoch-aligned triplets of daily bars."""
+    if (not isinstance(daily, list) or len(daily) < 1
+        or any(int(b["t"]) % DAY for b in daily)
+        or any(int(daily[i]["t"]) - int(daily[i-1]["t"]) != DAY
+               for i in range(1, len(daily)))):
+        raise ValueError("V92_HIGHER_TF_DAILY_GAP_OR_MISALIGNMENT")
     by_start = {bar["t"]: bar for bar in daily}
+    if len(by_start) != len(daily):
+        raise ValueError("V92_HIGHER_TF_DUPLICATE_DAILY_BAR")
     result = []
     for start in sorted(t for t in by_start if t % THREE_DAYS == 0):
         bars = [by_start.get(start + i * DAY) for i in range(3)]
