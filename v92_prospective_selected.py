@@ -80,7 +80,7 @@ def verify_source(source, v7, *, target, now, v91_source_file=None,
     if (v7.get("status")!="VERIFIED_PAPER_OBSERVATION"
         or v7.get("brokerOrders") is not False
         or epoch(v7.get("targetClosed1HUTC"))!=target
-        or set(v7.get("results",{}))!=set(SYM)):
+        or set(v7.get("results",{}))!=set(SYM.values())):
         raise ValueError("V92_FORWARD_INVALID_ORIGINAL_V7_SOURCE")
     if epoch(v7.get("observedAtUTC"))>source_timestamp+90:
         raise ValueError("V92_FORWARD_V7_CAPTURE_LATER_THAN_V91")
