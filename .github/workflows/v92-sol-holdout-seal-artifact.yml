@@ -1,0 +1,112 @@
+name: Seal completed V9.2 SOL temporal holdout artifact
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-sol-holdout-seal-artifact.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: v92-sol-research-branch-writes
+  cancel-in-progress: false
+
+jobs:
+  seal-existing-audited-result:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Download the completed SHA256-verified holdout artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh run download 43224240533 --repo "$GITHUB_REPOSITORY" \
+            --name v92-sol-earlier-period-holdout-43224240533 \
+            --dir holdout_artifact
+          test -s holdout_artifact/v92_sol_holdout_archive/source_manifest.json
+          test -s holdout_artifact/forward/v92_sol_holdout_2022_2024/historical.json
+          test -s holdout_artifact/forward/v92_sol_holdout_2022_2024/historical.md
+
+      - name: Validate exact archive provenance and frozen-rule result before sealing
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("holdout_artifact")
+          m=json.loads((root/"v92_sol_holdout_archive/source_manifest.json").read_text())
+          x=json.loads((root/"forward/v92_sol_holdout_2022_2024/historical.json").read_text())
+          assert m["checksumsVerified"]==58 and len(m["inputFiles"])==58
+          assert all(len(z["sha256"])==64 for z in m["inputFiles"])
+          assert x["status"]=="V92_SOL_EARLIER_PERIOD_TEMPORAL_HOLDOUT_PAPER_ONLY"
+          assert x["source"]["checksumsVerified"]==58
+          assert x["source"]["monthlyArchives"]==58
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["noProductionChanges"] and x["paperOnlyNotRealPnL"]
+          sol=x["variants"]["SOLUSDT"]["scores"]
+          for base in ("V7_ORIGINAL","V91_RETEST_MAX4H"):
+            a=sol[base]
+            b=sol[base+"__V92_STRICT_SWEEP_FILTER"]
+            assert b["retestVetoes"]==0
+            assert b["trades"]==a["trades"]
+            assert abs(b["totalNetR9BpsPerSide"]-a["totalNetR9BpsPerSide"])<0.00001
+          print("V92_SOL_HOLDOUT_ARTIFACT_VALIDATED",{
+            "checksums":m["checksumsVerified"],
+            "SOL_V91_trades":sol["V91_RETEST_MAX4H"]["trades"],
+            "SOL_V91_netR":sol["V91_RETEST_MAX4H"]["totalNetR9BpsPerSide"],
+            "filter_vetoes":sol["V91_RETEST_MAX4H__V92_STRICT_SWEEP_FILTER"]["retestVetoes"]})
+          PY
+
+      - name: Copy and commit the exact completed report to the V9.2 research branch
+        run: |
+          set -euo pipefail
+          mkdir -p forward/v92_sol_holdout_2022_2024
+          cp holdout_artifact/forward/v92_sol_holdout_2022_2024/historical.json \
+             forward/v92_sol_holdout_2022_2024/historical.json
+          cp holdout_artifact/forward/v92_sol_holdout_2022_2024/historical.md \
+             forward/v92_sol_holdout_2022_2024/historical.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_sol_holdout_2022_2024/historical.json \
+                  forward/v92_sol_holdout_2022_2024/historical.md
+          git commit -m "Seal V9.2 SOL earlier-period temporal holdout report"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_SOL_TEMPORAL_HOLDOUT_REPORT_SEALED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+
+      - name: Upload validated report and preserve no-live-change statement
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-sol-temporal-holdout-sealed-${{ github.run_id }}
+          path: |
+            forward/v92_sol_holdout_2022_2024/historical.json
+            forward/v92_sol_holdout_2022_2024/historical.md
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Summarize
+        if: always()
+        run: |
+          if test -s forward/v92_sol_holdout_2022_2024/historical.md; then
+            cat forward/v92_sol_holdout_2022_2024/historical.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "This workflow only seals a completed paper backtest artifact. No broker orders, alerts, or production changes." >> "$GITHUB_STEP_SUMMARY"
