@@ -52,6 +52,7 @@ jobs:
           test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
           python3 -m py_compile v92_prospective_selected.py v92_eth_prospective_selected.py v92_third_paper_aggregate.py
           python3 -m unittest discover -s tests -p test_v92_prospective_selected.py -v
+          python3 -m unittest discover -s tests -p test_v92_higher_timeframe_context.py -v
           python3 -m unittest discover -s tests -p test_v92_eth_prospective_selected.py -q
           python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
           python3 -m unittest discover -s tests -p test_v92_multi_candle_invalidation.py -q
@@ -131,6 +132,12 @@ jobs:
           assert b["noBrokerOrders"] and b["noUserNotifications"]
           assert b["noActualExchangeExecutionOrFill"]
           assert set(b["stateBySymbol"])=={"BTCUSDT","SOLUSDT"}
+          import json as _json
+          _snap=_json.loads(Path("forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json").read_text())
+          for _symbol in ("BTCUSDT","SOLUSDT"):
+            _obs=_snap["assets"][_symbol]["recentPatternObservations"]
+            assert set(_obs)=={"1H","4H","1D","3D"}
+            assert all(_obs[_tf]["notVetoOrEntryFilter"] and _obs[_tf]["onlyFullyClosedCandlesUsed"] for _tf in ("1D","3D"))
           assert "ETHUSDT" not in b["stateBySymbol"]
           merged=json.loads(Path("forward/v92_prospective_selected/combined_three_asset_account.json").read_text())
           assert merged["mode"]=="V92_BTC_ETH_SOL_SINGLE_THIRD_1000USDT_PROSPECTIVE_PAPER_ACCOUNT"
