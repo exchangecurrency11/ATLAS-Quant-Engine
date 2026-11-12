@@ -1,0 +1,136 @@
+name: V9.2 1D and derived 3D causal retest backtest BTC SOL
+
+# Historical research only. Reuses the previously SHA-verified official Binance
+# BTC/SOL archive. Does not modify V7/V9.1, live signal rules or notifications.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-higher-timeframe-backtest.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: v92-higher-timeframe-backtest-only
+  cancel-in-progress: false
+
+jobs:
+  htf-historical-ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and run higher-timeframe and V9.2 regression tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile v92_higher_timeframe_context.py v92_higher_timeframe_backtest.py v92_prospective_selected.py v92_eth_prospective_selected.py
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_context.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_selected_reversal_patterns.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_bull_bear_candle_invalidation.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_prospective_selected.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_eth_prospective_selected.py' -q
+
+      - name: Download exact archived Binance SHA-verified BTC/SOL history artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p v92_verified_artifact v92_verified_archive
+          gh run download 41638329887 --repo "$GITHUB_REPOSITORY" \
+            --name btc-sol-official-binance-verified-through-2026-11-02 \
+            --dir v92_verified_artifact
+          for tf in 1hour 4hour daily; do
+            count="$(find v92_verified_artifact -type f -name "history_$tf.json" | wc -l)"
+            test "$count" -eq 1
+            src="$(find v92_verified_artifact -type f -name "history_$tf.json" -print -quit)"
+            cp "$src" "v92_verified_archive/history_$tf.json"
+          done
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for tf,minimum in (("1hour",17000),("4hour",4000),("daily",600)):
+              rows=json.loads((Path("v92_verified_archive")/f"history_{tf}.json").read_text())
+              assert len(rows)==2
+              assert {x["symbol"] for x in rows}=={"BTCUSDT_PERP.A","SOLUSDT_PERP.A"}
+              assert all(len(x["history"])>=minimum for x in rows)
+              print("ARCHIVE_INPUT_OK",tf,{x["symbol"]:len(x["history"]) for x in rows})
+          PY
+
+      - name: Run full chronological V7/V9.1/V9.2 candle and 1D/3D retest ablation
+        run: |
+          set -euo pipefail
+          test -s forward/v92_selected_reversal_patterns/historical.json
+          python3 -u v92_higher_timeframe_backtest.py \
+            --archive v92_verified_archive \
+            --selected forward/v92_selected_reversal_patterns/historical.json \
+            --out forward/v92_higher_timeframe_backtest
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/v92_higher_timeframe_backtest/historical.json")
+          x=json.loads(p.read_text())
+          assert x["status"]=="V92_1D_3D_RETEST_CONTEXT_ABLATION_HISTORICAL_PAPER_ONLY"
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["derived3D"].startswith("Three consecutive fully closed daily candles")
+          assert x["3DExchangeNativeParityProven"] is False
+          assert set(x["symbols"])=={"BTCUSDT","SOLUSDT"}
+          for sym,item in x["symbols"].items():
+              assert item["verifiedCandles"]=={"1H":17520,"4H":4380,"1D":730}
+              for base in ("V7_ORIGINAL","V91_RETEST_MAX4H"):
+                  assert base in item["variants"]
+                  for mode in ("CANDLE_ONLY","DAILY_RETEST_CONFIRM","3D_RETEST_CONFIRM","DAILY_AND_3D_RETEST_CONFIRM","CANDLE_PLUS_3D"):
+                      assert base+"__"+mode in item["variants"]
+          print("V92_1D_3D_CAUSAL_BACKTEST_VALIDATED")
+          PY
+
+      - name: Commit immutable higher-timeframe historical research to isolated branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_higher_timeframe_backtest/historical.json \
+                  forward/v92_higher_timeframe_backtest/historical.md
+          git commit -m "V9.2 causal 1D 3D retest-context historical BTC SOL ablation"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_HIGHER_TIMEFRAME_HISTORICAL_RESULTS_SEALED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Summarize result or explicitly report failed verification
+        if: always()
+        run: |
+          if test -s forward/v92_higher_timeframe_backtest/historical.md; then
+            cat forward/v92_higher_timeframe_backtest/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No verified 1D/3D historical result produced. Do not claim improvement." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Paper-only. No orders, alerts, V7/V9.1 modifications or live filter promotion." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload auditable backtest result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-higher-timeframe-backtest-${{ github.run_id }}
+          path: |
+            forward/v92_higher_timeframe_backtest/historical.json
+            forward/v92_higher_timeframe_backtest/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
