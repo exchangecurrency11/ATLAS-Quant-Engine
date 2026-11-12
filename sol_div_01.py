@@ -215,7 +215,7 @@ def run(histories, v92_reference, manifest):
     expected=v92_reference["symbols"]["SOLUSDT"]["variants"]["V91_RETEST_MAX4H__SELECTED_SOL_STRICT_SWEEP"]
     if (base["trades"]!=expected["trades"] or base["winsNet"]!=expected["wins"]
         or abs(base["netR9BpsPerSide"]-expected["totalNetR9BpsPerSide"])>.00011
-        or abs(base["netR25BpsPerSide"]-expected["totalNetR25BpsSideStress"])>.00011):
+        or abs(base["netR25BpsPerSide"]-expected["totalNetR25BpsPerSideStress"])>.00011):
         raise ValueError("DIV_V92_CONTROL_PARITY_FAILED")
     out["v92StrictSweepControlParityVerified"]=True
     for arm,item in out["results"].items():
