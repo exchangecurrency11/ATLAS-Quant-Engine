@@ -14,7 +14,7 @@
 
 ## Gerçek zamanda kaydedilmiş sessiz paper
 
-Gerçekten saklanmış karşılaştırılabilir saat: **28**
+Gerçekten saklanmış karşılaştırılabilir saat: **29**
 
 | Coin | V7 kapanmış paper | V9.1 kapanmış paper |
 |---|---:|---:|
