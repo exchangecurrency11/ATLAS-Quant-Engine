@@ -119,7 +119,7 @@ jobs:
           for key,label in labels.items():
             item=x["results"][key];s=item["summary"]
             pf="—" if s["profitFactorR"] is None else str(s["profitFactorR"])
-            lines.append(f"| {label} | {s['trades']} | {s['winsNet']} | {s['winRatePct']} | {s['netR9BpsPerSide']:.4f} | {s['netR25BpsPerSide']:.4f} | {pf} | {s['maxSequentialDrawdownR']:.4f} | {s['deltaNetRVsV92']:+.4f} |")
+            lines.append(f"| {label} | {s['trades']} | {s['winsNet']} | {s['winRatePct']} | {s['netR9BpsPerSide']:.4f} | {s['netR25BpsPerSide']:.4f} | {pf} | {s['maxSequentialDrawdownR']:.4f} | {s['deltaNetR9VsV92']:+.4f} |")
           lines += ["","## Gate audit",""]
           for key,label in labels.items():
             if key== "V92_STRICT_SWEEP_CONTROL": continue
