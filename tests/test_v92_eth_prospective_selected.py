@@ -178,6 +178,29 @@ class TestETHV92(unittest.TestCase):
                 report["excludedUnsealedETHExits"][0]["reason"],
                 "ETH_V92_MISSING_ORIGINALLY_GIT_SEALED_RETEST")
 
+    def test_combined_coverage_reports_missing_core_hour_and_eth_lag(self):
+        c=core()
+        c["savedDistinctVerifiedHours"]=4
+        c["lastDistinctVerifiedClosed1HUTC"]="2026-11-12T15:00:00Z"
+        e=eth()
+        e["savedDistinctVerifiedETHHours"]=1
+        e["lastVerifiedETHCloseUTC"]="2026-11-12T12:00:00Z"
+        merged=combined_build(c,e)
+        btc=merged["sourceCoverageAudit"]["BTC_SOL"]
+        eth_audit=merged["sourceCoverageAudit"]["ETH"]
+        self.assertEqual((btc["expectedHours"],btc["savedVerifiedHours"],
+                          btc["missingHourCount"],btc["lagHours"]),(5,4,1,0))
+        self.assertEqual((eth_audit["expectedHours"],eth_audit["savedVerifiedHours"],
+                          eth_audit["missingHourCount"],eth_audit["lagHours"]),(4,1,3,3))
+        self.assertTrue(btc["noBackfill"] and eth_audit["noBackfill"])
+
+    def test_combined_coverage_rejects_impossible_hour_count(self):
+        c=core()
+        c["savedDistinctVerifiedHours"]=6
+        c["lastDistinctVerifiedClosed1HUTC"]="2026-11-12T15:00:00Z"
+        with self.assertRaisesRegex(ValueError,"COVERAGE_INCONSISTENT"):
+            combined_build(c,eth())
+
     def test_three_assets_share_one_initial_1000(self):
         merged=combined_build(core(),eth())
         self.assertEqual(merged["mode"],COMBINED_MODE)
