@@ -202,11 +202,15 @@ class DataAndParityTests(unittest.TestCase):
 
     def test_stale_incomplete_latest_hour_blocks_new_admission(self):
         t=seconds(ETH_FIRST)
-        core={t-3600:{"targetClosed1HUTC":stamp(t-3600)},
-              t:{"targetClosed1HUTC":stamp(t)},
-              t+7200:{"targetClosed1HUTC":stamp(t+7200)}}
-        eth={t:{"targetClosed1HUTC":stamp(t)},
-             t+7200:{"targetClosed1HUTC":stamp(t+7200)}}
+        def cc(h):
+            return {"targetClosed1HUTC":stamp(h),
+                    "assets":{s:{"selectedV92":empty_event()}
+                              for s in ("BTCUSDT","SOLUSDT")}}
+        def ee(h):
+            return {"targetClosed1HUTC":stamp(h),
+                    "selectedV92":empty_event()}
+        core={t-3600:cc(t-3600),t:cc(t),t+7200:cc(t+7200)}
+        eth={t:ee(t),t+7200:ee(t+7200)}
         with patch("v92_stable_hardening.parity_one_hour") as p:
             p.side_effect=lambda hour,*args:[
                 {"timeUTC":stamp(hour),"symbol":s} for s in ASSETS]
