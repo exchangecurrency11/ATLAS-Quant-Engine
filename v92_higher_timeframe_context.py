@@ -59,8 +59,6 @@ def aggregate_3d_from_daily(daily):
             "c": bars[-1]["c"],
             "v": sum(x["v"] for x in bars),
         })
-    if len(result) < 51:
-        raise ValueError("V92_HIGHER_TF_NOT_ENOUGH_CLOSED_3D_BARS")
     if any(result[i]["t"] - result[i-1]["t"] != THREE_DAYS
            for i in range(1, len(result))):
         raise ValueError("V92_HIGHER_TF_3D_GAP")
