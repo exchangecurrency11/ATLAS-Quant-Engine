@@ -14,6 +14,11 @@ def history(interval, side, *, fake_sweep=True):
     history=[{"t":BASE+i*interval,"o":100.,"h":102.,"l":98.,
               "c":100.,"v":1000.} for i in range(27)]
     if side=="bearish":
+        if not fake_sweep:
+            # Prior resistance is higher than any star wick, so the same
+            # closed Evening Star is a warning but NOT a fake breakout.
+            for bar in history[-20:]:
+                bar["h"]=108.
         history[-5]["c"]=100.
         a={"o":101.,"h":106.,"l":100.,"c":105.}
         b={"o":105.,"h":(112. if fake_sweep else 107.),
