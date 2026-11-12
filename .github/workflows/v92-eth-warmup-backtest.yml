@@ -1,0 +1,132 @@
+name: V9.2 ETH Binance 1D 3D backtest with complete EMA50 warmup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-eth-warmup-backtest.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-higher-timeframe-backtest-only
+  cancel-in-progress: false
+
+jobs:
+  eth-warmup-ablation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test ETH data and higher-timeframe no-lookahead
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          python3 -m py_compile download_binance_um_eth_history.py download_binance_um_eth_warmup.py v92_eth_historical_backtest.py v92_higher_timeframe_context.py
+          python3 -m unittest discover -s tests -p 'test_v92_eth_historical_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_context.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
+
+      - name: Download official SHA256-verified Binance ETH main 24-month archive
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_eth_history.py \
+            --start 2024-10 --end 2026-09 \
+            --output-dir eth_verified_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("eth_verified_archive/source_manifest.json").read_text())
+          assert m["checksumsVerified"]==24
+          assert m["pairCounts"]=={"1hour":17520,"4hour":4380,"daily":730}
+          print("ETH_MAIN_ARCHIVE_OK",m["pairCounts"],m["checksumsVerified"])
+          PY
+
+      - name: Download official Binance ETH six-month EMA warmup and verify SHA256
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_eth_warmup.py \
+            --start 2024-04 --end 2024-09 \
+            --output-dir eth_verified_warmup --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("eth_verified_warmup/source_manifest.json").read_text())
+          assert m["checksumsVerified"]==6 and m["dailyBars"]==183
+          assert m["warmupOnlyNotPerformancePeriod"] is True
+          assert all(len(x["sha256"])==64 for x in m["inputFiles"])
+          print("ETH_WARMUP_ARCHIVE_OK",m["dailyBars"],m["checksumsVerified"])
+          PY
+
+      - name: Run warmup-complete ETH V7/V9.1/V9.2 historical ablation
+        run: |
+          set -euo pipefail
+          python3 -u v92_eth_historical_backtest.py \
+            --archive eth_verified_archive \
+            --warmup-daily eth_verified_warmup/history_daily_warmup.json \
+            --warmup-manifest eth_verified_warmup/source_manifest.json \
+            --out forward/v92_eth_historical_backtest_warmup
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_eth_historical_backtest_warmup/historical.json").read_text())
+          assert x["status"]=="V92_ETH_OFFICIAL_BINANCE_1D_3D_HISTORICAL_PAPER_ABLATION"
+          assert x["contextWarmupDailyBars"]==183
+          assert x["derived3DContextCandlesWithWarmup"]>=300
+          assert x["contextWarmupExcludedFromPerformancePeriod"] is True
+          assert x["sourceManifest"]["checksumsVerified"]==24
+          assert x["sourceManifest"]["warmupChecksumsVerified"]==6
+          for name,score in x["variants"].items():
+            assert score["contextAudit"]["threeDayWarmupPasses"]==0, (name,score["contextAudit"])
+          print("V92_ETH_WARMUP_COMPLETE_BACKTEST_VALIDATED")
+          PY
+
+      - name: Commit warmup-complete ETH report to isolated V9.2 branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_eth_historical_backtest_warmup/historical.json \
+                  forward/v92_eth_historical_backtest_warmup/historical.md
+          git commit -m "V9.2 ETH Binance 1D 3D backtest with verified EMA50 warmup"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_ETH_WARMUP_BACKTEST_SEALED"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Summarize warmup-complete result
+        if: always()
+        run: |
+          if test -s forward/v92_eth_historical_backtest_warmup/historical.md; then
+            cat forward/v92_eth_historical_backtest_warmup/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No warmup-complete ETH result produced. Do not claim 3D filter improvement." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Research only; no live orders, alerts or strategy changes." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload ETH warmup manifest and final backtest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-eth-warmup-backtest-${{ github.run_id }}
+          path: |
+            eth_verified_archive/source_manifest.json
+            eth_verified_warmup/source_manifest.json
+            forward/v92_eth_historical_backtest_warmup/historical.json
+            forward/v92_eth_historical_backtest_warmup/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
