@@ -1,0 +1,123 @@
+name: V9.2 Stable hourly risk-source-replay audit (READ ONLY to production)
+
+# The V9.2 strategy, original V7/V9.1 books and original $100 V9.2
+# paper risk are NOT modified. This checks all three locked 1H evidence
+# streams and publishes only a new isolated research-branch shadow audit.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/v92-stable-hourly-audit.yml]
+  schedule:
+    - cron: '25,45,55 * * * *'
+  workflow_run:
+    workflows:
+      - V9.2 selected SOL reversals independent forward paper 1000 USDT NO ALERTS
+      - V9.2 ETH sealed hourly selected-pattern watch third shared paper NO ALERTS
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-stable-hourly-readonly-research-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout research-only stable hardening code, not main strategy
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-stable-hardening-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Read locked V9.2 BTC/SOL and ETH observations
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          path: v92_live_evidence
+          persist-credentials: false
+
+      - name: Read original V9.1 pre-committed source evidence
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          path: v91_evidence
+          persist-credentials: false
+
+      - name: Read original V7 pre-committed source evidence
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+
+      - name: Check closed-only risk and full-source parity regression
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v92_stable_hardening.py
+          python3 -m unittest discover -s tests -p 'test_v92_stable_hardening.py' -q
+
+      - name: Audit exact saved hours and fail-closed shadow admission
+        run: |
+          set -euo pipefail
+          python3 -u v92_stable_hardening.py \
+            --v92-btcsol v92_live_evidence/forward/v92_prospective_selected/hourly \
+            --v92-eth v92_live_evidence/forward/v92_prospective_eth/hourly \
+            --v91-root v91_evidence \
+            --v7-root v7_evidence \
+            --out forward/v92_stable_hardening/latest.json \
+            --md forward/v92_stable_hardening/latest.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("forward/v92_stable_hardening/latest.json").read_text())
+          assert r["mode"]=="V92_STABLE_SHADOW_HARDENING_ONLY"
+          assert r["newBrokerOrders"] is False
+          assert r["newCappedBookPolicyNotAppliedToLegacyV92"] is True
+          assert r["legacyV92RiskUSDTUnchanged"] == 100
+          assert r["policy"]["maxRiskUSDTPerPosition"]==10
+          assert r["policy"]["maxCombinedOpenRiskUSDT"]==20
+          assert not r["parityErrors"],r["parityErrors"]
+          assert r["matchedAssetChecks"]==3*r["matchedVerifiedHours"]
+          print("V92_STABLE_HOURLY_RISK_GAPS_AND_REPLAY_PARITY_AUDITED")
+          PY
+
+      - name: Commit only isolated research report
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-stable-hardening-20261112
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_stable_hardening/latest.json forward/v92_stable_hardening/latest.md
+          if git diff --cached --quiet; then
+            echo 'NO_NEW_SEALED_SOURCE_AUDIT_DATA'
+            exit 0
+          fi
+          git commit -m 'V9.2 stable periodic hourly source and capped shadow risk audit'
+          for i in 1 2 3; do
+            git pull --rebase origin research/v92-stable-hardening-20261112
+            if git push origin HEAD:research/v92-stable-hardening-20261112; then
+              echo 'V92_STABLE_RESEARCH_REPORT_COMMITTED'
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+
+      - name: Archive audit diagnostics even when parity fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-stable-source-replay-audit
+          path: |
+            forward/v92_stable_hardening/latest.json
+            forward/v92_stable_hardening/latest.md
+          if-no-files-found: ignore
+          retention-days: 45
