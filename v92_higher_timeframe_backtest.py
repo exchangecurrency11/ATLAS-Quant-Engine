@@ -27,9 +27,7 @@ MODES = (
     "DAILY_RETEST_CONFIRM",
     "3D_RETEST_CONFIRM",
     "DAILY_AND_3D_RETEST_CONFIRM",
-    "CANDLE_PLUS_DAILY",
     "CANDLE_PLUS_3D",
-    "CANDLE_PLUS_DAILY_AND_3D",
 )
 
 
@@ -141,15 +139,12 @@ def run(hist, selected_reference):
             symbol_result["variants"][base_name] = baseline_metrics
 
             for mode in MODES[1:]:
-                candle_enabled = mode in (
-                    "CANDLE_ONLY", "CANDLE_PLUS_DAILY",
-                    "CANDLE_PLUS_3D", "CANDLE_PLUS_DAILY_AND_3D")
+                candle_enabled = mode in ("CANDLE_ONLY", "CANDLE_PLUS_3D")
                 daily_enabled = mode in (
-                    "DAILY_RETEST_CONFIRM", "DAILY_AND_3D_RETEST_CONFIRM",
-                    "CANDLE_PLUS_DAILY", "CANDLE_PLUS_DAILY_AND_3D")
+                    "DAILY_RETEST_CONFIRM", "DAILY_AND_3D_RETEST_CONFIRM")
                 three_enabled = mode in (
                     "3D_RETEST_CONFIRM", "DAILY_AND_3D_RETEST_CONFIRM",
-                    "CANDLE_PLUS_3D", "CANDLE_PLUS_DAILY_AND_3D")
+                    "CANDLE_PLUS_3D")
                 audit = Counter()
                 audit["dailyTrendCounts"] = Counter()
                 audit["threeDayTrendCounts"] = Counter()
