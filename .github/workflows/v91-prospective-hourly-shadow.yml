@@ -51,7 +51,7 @@ jobs:
           target="$(date -u +'%Y-%m-%dT%H-00Z')"
           minute="$(date -u +%M)"
           echo "target=$target" >> "$GITHUB_OUTPUT"
-          if [ "$((10#$minute))" -lt 12 ] || [ "$((10#$minute))" -gt 57 ]; then
+          if [ "$((10#$minute))" -lt 12 ]; then
             echo "capture=false" >> "$GITHUB_OUTPUT"
             echo "V91_SKIP_OUTSIDE_CURRENT_HOUR_GATE"
           elif [ ! -f "v7_evidence/forward/snapshots/$target.json" ]; then
