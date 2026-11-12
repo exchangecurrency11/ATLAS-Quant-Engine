@@ -1,0 +1,406 @@
+{
+  "status": "SOL_FLOW_02_V92_STRICT_SWEEP_PLUS_FLOW_EXPLORATORY_HISTORICAL_PAPER_ONLY",
+  "symbol": "SOLUSDT",
+  "startUTC": "2024-10-01T00:00:00Z",
+  "endExclusiveUTC": "2026-10-01T00:00:00Z",
+  "source": "Binance official USD-M monthly 1H klines, checksum verified",
+  "sameHistoryAllArms": true,
+  "baseV92StrictSweepParityVerified": true,
+  "V92StrictSweepAppliedBeforeEveryFlowFilter": true,
+  "V9_1BOSRetestStopTargetEngineUnchanged": true,
+  "next1HOpenHypotheticalEntry": true,
+  "sameCandleStopFirst": true,
+  "flowOnlyUsesCompleted1HCandles": true,
+  "noFutureFlowFeatures": true,
+  "brokerOrders": false,
+  "alerts": false,
+  "productionModified": false,
+  "promotionApproved": false,
+  "historicalPeriodPreviouslyInspected": true,
+  "notIndependentProspectiveEvidence": true,
+  "results": {
+    "V92_STRICT_SWEEP_CONTROL": {
+      "summary": {
+        "trades": 8,
+        "winsNet": 5,
+        "winRatePct": 62.5,
+        "netR9BpsPerSide": 4.260655,
+        "netR25BpsPerSide": 2.409915,
+        "meanNetR": 0.532582,
+        "profitFactorR": 2.28988,
+        "maxSequentialDrawdownR": 1.127137,
+        "BOSWatches": 30,
+        "rejectedBOS": 49,
+        "retestVetoes": 1,
+        "expiredRetests": 21,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92StrictSweep": 0.0,
+        "deltaNetR25VsV92StrictSweep": 0.0
+      },
+      "audit": {
+        "v92EligibleRetests": 10,
+        "v92Vetoes": 1,
+        "flowEligibleRetests": 0,
+        "flowVetoes": 0,
+        "flowReasonCounts": {}
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 10,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1,
+        "byPattern": {
+          "MORNING_STAR_1H": 1,
+          "BULLISH_HARAMI_CONFIRMED_1H": 1
+        },
+        "examples": [
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "STAR",
+              "name": "MORNING_STAR",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          },
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "HARAMI_CONFIRMED",
+              "name": "BULLISH_HARAMI_CONFIRMED",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          }
+        ]
+      }
+    },
+    "V92_PLUS_1H_TAKER": {
+      "summary": {
+        "trades": 5,
+        "winsNet": 3,
+        "winRatePct": 60.0,
+        "netR9BpsPerSide": 1.53715,
+        "netR25BpsPerSide": 0.609278,
+        "meanNetR": 0.30743,
+        "profitFactorR": 1.69449,
+        "maxSequentialDrawdownR": 1.127137,
+        "BOSWatches": 30,
+        "rejectedBOS": 49,
+        "retestVetoes": 7,
+        "expiredRetests": 24,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92StrictSweep": -2.723505,
+        "deltaNetR25VsV92StrictSweep": -1.800637
+      },
+      "audit": {
+        "v92EligibleRetests": 13,
+        "v92Vetoes": 1,
+        "flowEligibleRetests": 12,
+        "flowVetoes": 6,
+        "flowReasonCounts": {
+          "TAKER_1H_OPPOSITE": 6
+        }
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 13,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1,
+        "byPattern": {
+          "MORNING_STAR_1H": 1,
+          "BULLISH_HARAMI_CONFIRMED_1H": 1
+        },
+        "examples": [
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "STAR",
+              "name": "MORNING_STAR",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          },
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "HARAMI_CONFIRMED",
+              "name": "BULLISH_HARAMI_CONFIRMED",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          }
+        ]
+      }
+    },
+    "V92_PLUS_4H_CVD": {
+      "summary": {
+        "trades": 5,
+        "winsNet": 3,
+        "winRatePct": 60.0,
+        "netR9BpsPerSide": 1.761096,
+        "netR25BpsPerSide": 0.80003,
+        "meanNetR": 0.352219,
+        "profitFactorR": 1.79567,
+        "maxSequentialDrawdownR": 1.127137,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 6,
+        "expiredRetests": 25,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92StrictSweep": -2.499559,
+        "deltaNetR25VsV92StrictSweep": -1.609885
+      },
+      "audit": {
+        "v92EligibleRetests": 11,
+        "v92Vetoes": 1,
+        "flowEligibleRetests": 10,
+        "flowVetoes": 5,
+        "flowReasonCounts": {
+          "CVD_4H_OPPOSITE": 5
+        }
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 11,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1,
+        "byPattern": {
+          "MORNING_STAR_1H": 1,
+          "BULLISH_HARAMI_CONFIRMED_1H": 1
+        },
+        "examples": [
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "STAR",
+              "name": "MORNING_STAR",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          },
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "HARAMI_CONFIRMED",
+              "name": "BULLISH_HARAMI_CONFIRMED",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          }
+        ]
+      }
+    },
+    "V92_PLUS_TAKER_AND_CVD": {
+      "summary": {
+        "trades": 1,
+        "winsNet": 1,
+        "winRatePct": 100.0,
+        "netR9BpsPerSide": 1.325925,
+        "netR25BpsPerSide": 1.21545,
+        "meanNetR": 1.325925,
+        "profitFactorR": null,
+        "maxSequentialDrawdownR": 0.0,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 13,
+        "expiredRetests": 29,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92StrictSweep": -2.93473,
+        "deltaNetR25VsV92StrictSweep": -1.194465
+      },
+      "audit": {
+        "v92EligibleRetests": 14,
+        "v92Vetoes": 1,
+        "flowEligibleRetests": 13,
+        "flowVetoes": 12,
+        "flowReasonCounts": {
+          "RELATIVE_VOLUME_BELOW_ONE": 8,
+          "CVD_4H_OPPOSITE": 7,
+          "TAKER_1H_OPPOSITE": 6
+        }
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 14,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1,
+        "byPattern": {
+          "MORNING_STAR_1H": 1,
+          "BULLISH_HARAMI_CONFIRMED_1H": 1
+        },
+        "examples": [
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "STAR",
+              "name": "MORNING_STAR",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          },
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "HARAMI_CONFIRMED",
+              "name": "BULLISH_HARAMI_CONFIRMED",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          }
+        ]
+      }
+    },
+    "V92_PLUS_TAKER_CVD_RVOL": {
+      "summary": {
+        "trades": 1,
+        "winsNet": 1,
+        "winRatePct": 100.0,
+        "netR9BpsPerSide": 1.325925,
+        "netR25BpsPerSide": 1.21545,
+        "meanNetR": 1.325925,
+        "profitFactorR": null,
+        "maxSequentialDrawdownR": 0.0,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 13,
+        "expiredRetests": 29,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false,
+        "deltaNetR9VsV92StrictSweep": -2.93473,
+        "deltaNetR25VsV92StrictSweep": -1.194465
+      },
+      "audit": {
+        "v92EligibleRetests": 14,
+        "v92Vetoes": 1,
+        "flowEligibleRetests": 13,
+        "flowVetoes": 12,
+        "flowReasonCounts": {
+          "RELATIVE_VOLUME_BELOW_ONE": 8,
+          "MEAN_TRADE_SIZE_BELOW_ONE": 7,
+          "CVD_4H_OPPOSITE": 7,
+          "TAKER_1H_OPPOSITE": 6
+        }
+      },
+      "v92SelectedPatternAudit": {
+        "retests": 14,
+        "opposingPatternsObserved": 1,
+        "vetoes": 1,
+        "byPattern": {
+          "MORNING_STAR_1H": 1,
+          "BULLISH_HARAMI_CONFIRMED_1H": 1
+        },
+        "examples": [
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "STAR",
+              "name": "MORNING_STAR",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          },
+          {
+            "retestUTC": "2025-02-12T07:00:00Z",
+            "activeBOSDirection": "bearish",
+            "pattern": {
+              "family": "HARAMI_CONFIRMED",
+              "name": "BULLISH_HARAMI_CONFIRMED",
+              "direction": "bullish",
+              "firstUTC": "2025-02-12T03:00:00Z",
+              "confirmedUTC": "2025-02-12T06:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            },
+            "mode": "SELECTED_SOL_STRICT_SWEEP"
+          }
+        ]
+      }
+    }
+  }
+}
