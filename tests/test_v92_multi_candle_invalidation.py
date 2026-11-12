@@ -32,8 +32,8 @@ def synthetic(family,side,interval=HOUR):
                 bar(41,interval,o=100,c=99,h=101,l=98),
                 bar(42,interval,o=99,c=96,h=100,l=95)])
     elif family=="ENGULFING":
-        rows[34]["c"]=100.8 if side=="bullish" else 99.2
-        rows[38]["c"]=99.2 if side=="bullish" else 100.8
+        rows[35]["c"]=100.8 if side=="bullish" else 99.2
+        rows[39]["c"]=99.2 if side=="bullish" else 100.8
         if side=="bullish":
             rows.extend([
                 bar(40,interval,o=100,c=99,h=100.5,l=98.5),
@@ -81,12 +81,12 @@ class V92MultiPatternsTests(unittest.TestCase):
             self.assertTrue(pattern["internalHikkakeFalseBreakConfirmed"])
 
     def test_hikkake_confirmation_can_be_second_or_third_bar(self):
-        for steps in (2,3):
+        for confirm_index in (44,45):
             bars=synthetic("HIKKAKE_CONFIRMED","bullish")
             bars[-1]=bar(43,c=100)
-            for extra in range(steps-1):
-                bars.append(bar(44+extra,c=100))
-            bars.append(bar(43+steps,c=104,h=105))
+            for i in range(44,confirm_index):
+                bars.append(bar(i,c=100))
+            bars.append(bar(confirm_index,c=104,h=105))
             pattern=pattern_at(bars,len(bars)-1,HOUR,"HIKKAKE_CONFIRMED")
             self.assertIsNotNone(pattern)
 
