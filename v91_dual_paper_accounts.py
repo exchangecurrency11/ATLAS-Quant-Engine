@@ -24,6 +24,36 @@ ETH_FIELD={"ETHUSDT":"originalV7"}
 def load_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
+
+def coverage_audit(records, first_utc, through_utc):
+    """Report missing closed hours without inventing or backfilling snapshots."""
+    if through_utc is None:
+        return {
+            "firstExpectedHourUTC":None,"expectedThroughUTC":None,
+            "expectedHours":0,"savedExpectedHours":len(records),
+            "missingHourCount":0,"missingHoursUTC":[],
+            "lastSavedHourUTC":iso(max(records)) if records else None,
+            "lagHours":None,"noBackfill":True
+        }
+    if first_utc%3600 or through_utc%3600 or through_utc<first_utc:
+        raise ValueError("PORTFOLIO_COVERAGE_WINDOW_NOT_HOURLY_ALIGNED")
+    expected=list(range(first_utc,through_utc+3600,3600))
+    present=set(records)
+    missing=[t for t in expected if t not in present]
+    last=max(records) if records else None
+    return {
+        "firstExpectedHourUTC":iso(first_utc),
+        "expectedThroughUTC":iso(through_utc),
+        "expectedHours":len(expected),
+        "savedExpectedHours":sum(t in present for t in expected),
+        "missingHourCount":len(missing),
+        "missingHoursUTC":[iso(t) for t in missing],
+        "lastSavedHourUTC":iso(last) if last is not None else None,
+        "lagHours":((through_utc-last)//3600 if last is not None else len(expected)),
+        "noBackfill":True
+    }
+
+
 def latest_hour_records(path, expected_mode, *, first_utc, asset_refs):
     base=Path(path)
     result={}
@@ -32,6 +62,8 @@ def latest_hour_records(path, expected_mode, *, first_utc, asset_refs):
     for file in sorted(base.glob("*.json")):
         j=load_json(file)
         target=epoch(j["targetClosed1HUTC"])
+        if target%3600:
+            raise ValueError("PORTFOLIO_SOURCE_HOUR_NOT_ALIGNED")
         if file!=source_path(base,target):
             raise ValueError("PORTFOLIO_NONCANONICAL_SOURCE_FILENAME")
         if target<first_utc:
@@ -57,11 +89,18 @@ def latest_hour_records(path, expected_mode, *, first_utc, asset_refs):
         if expected_mode==BTC_SOL_MODE:
             if (j.get("V7SnapshotAndIndependentRecomputeExactMatch") is not True or
                 j.get("sourceVerifiedSameHour") is not True or
+                j.get("priceAndVolumeValidatedAgainstOriginalV7For1H4HDaily") is not True or
                 set(j.get("assets",{}))!={"BTCUSDT","SOLUSDT"}):
                 raise ValueError("PORTFOLIO_BTC_SOL_V7_PARITY_UNVERIFIED")
         else:
+            integrity=j.get("sourceIntegrity",{})
+            cross=j.get("crossTimeframeOHLCV",{})
             if (j.get("verifiedSourceAndExactV7Replay") is not True or
-                j.get("symbol")!="ETHUSDT"):
+                j.get("symbol")!="ETHUSDT" or
+                set(integrity)!={"1hour","4hour","daily"} or
+                not all(integrity[k].get("verified") is True for k in ("1hour","4hour","daily")) or
+                cross.get("1H_matches_4H")!=5 or
+                cross.get("1H_matches_daily")!=5):
                 raise ValueError("PORTFOLIO_ETH_V7_PARITY_UNVERIFIED")
         result[target]=j
     return result
@@ -212,12 +251,17 @@ def build(config, btc_sol_snapshots, btc_sol_score, eth_snapshots=None, eth_scor
           "brokerOrders":0,
           "realExecutableFillsVerified":0
         }
+    common_latest=max([*btc_sol.keys(),*eth.keys()]) if btc_sol or eth else None
     return {
        "status":"TWO_SEPARATE_PROSPECTIVE_VIRTUAL_PAPER_ACCOUNTS",
        "requestedAtUTC":config["requestedAtUTC"],
        "firstEligible1HCloseUTC":config["firstEligible1HCloseUTC"],
        "lastCapturedEligibleBTCandSOLHourUTC":iso(max(btc_sol)) if btc_sol else None,
        "lastCapturedEligibleETHHourUTC":iso(max(eth)) if eth else None,
+       "sourceCoverageAudit":{
+           "BTC_SOL":coverage_audit(btc_sol,first,common_latest),
+           "ETH":coverage_audit(eth,first,common_latest)
+       },
        "ETHAddedOnlyIfIndependentV7ParityVerified":bool(eth),
        "accounts":accounts,
        "nightBeforeRequestRetrospectiveOnlyNoOrders":True,
@@ -249,6 +293,12 @@ def markdown(result):
         for sym,row in a["perAssetLatestState"].items():
             p.append("- {} {}: {} — en son doğrulanmış 1H {}.".format(
                 name,sym,row["status"],row["lastClosedUTC"] or "yok"))
+    p+=["","**Kaynak saat kapsama denetimi (eksikler doldurulmaz):**",""]
+    for label,row in result.get("sourceCoverageAudit",{}).items():
+        p.append("- {}: {}/{} saat; eksik {}; son kayıt {}; gecikme {} saat.".format(
+            label,row["savedExpectedHours"],row["expectedHours"],
+            row["missingHourCount"],row["lastSavedHourUTC"] or "yok",
+            row["lagHours"] if row["lagHours"] is not None else "—"))
     p+=["",
          "V9 önceden dondurulan 4H renk tahminleri ayrıca değerlendirilir, V9.1 işleme giriş sinyali sayılmaz.",
          "Önceki geceye sonradan emir yazılmaz; 1H eksikleri kapatılmaz.",
