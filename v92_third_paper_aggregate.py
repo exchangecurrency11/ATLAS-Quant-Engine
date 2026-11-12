@@ -13,7 +13,7 @@ import json
 import math
 from pathlib import Path
 
-from v7_forward_observer import epoch
+from v7_forward_observer import epoch, iso
 from v92_prospective_selected import BOOK as CORE_MODE, INITIAL, RISK, FIRST
 from v92_eth_prospective_selected import (
     BOOK as ETH_MODE,FIRST_ETH
