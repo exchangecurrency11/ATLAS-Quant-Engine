@@ -18,7 +18,7 @@ from v7_paper_comparison import read_history
 from v92_bull_bear_candle_invalidation import (
     START, END, HOUR, FOUR, SYMBOLS, stamp, metrics
 )
-from v92_higher_timeframe_context import context_at
+from v92_higher_timeframe_context import context_at, aggregate_3d_from_daily
 from v92_selected_reversal_patterns import make_selective_gate, summarize_audit
 
 MODES = (
@@ -81,7 +81,7 @@ def _same(a, b, label):
             raise ValueError("V92_HTF_BASELINE_MISMATCH_" + label + "_" + key)
 
 
-def run(hist, selected_reference):
+def run(hist, selected_reference, warmup_daily):
     if (selected_reference.get("status") !=
         "SELECTIVE_SOL_STAR_HARAMI_AND_OTHER_HIGH_PROFILE_CANDLE_WATCHES_HISTORICAL_ONLY"
         or selected_reference.get("fromUTC") != stamp(START)
@@ -117,12 +117,22 @@ def run(hist, selected_reference):
         h = candles_from_history(hour, "1hour", END)
         f = candles_from_history(four, "4hour", END)
         d = candles_from_history(daily, "daily", END)
-        if (len(h) != 17520 or len(f) != 4380 or len(d) != 730):
+        warm = candles_from_history(warmup_daily[ref], "daily", END)
+        d_context = candles_from_history(warmup_daily[ref] + daily, "daily", END)
+        if (len(h) != 17520 or len(f) != 4380 or len(d) != 730
+            or len(warm) != 183 or len(d_context) != 913):
             raise ValueError("V92_HTF_ARCHIVE_COUNT_MISMATCH_" + symbol)
+        if context_at(d_context, START)["3D"] == "insufficient":
+            raise ValueError("V92_HTF_3D_EMA50_WARMUP_INCOMPLETE_" + symbol)
+        if len(aggregate_3d_from_daily(d_context)) < 300:
+            raise ValueError("V92_HTF_EXPECTED_FULL_3D_CONTEXT_MISSING_" + symbol)
 
         prior = selected_reference["symbols"][symbol]["variants"]
         symbol_result = {
             "verifiedCandles": {"1H": len(h), "4H": len(f), "1D": len(d)},
+            "contextWarmupDailyBars": len(warm),
+            "contextWarmupPeriodUTC": ["2024-04-01T00:00:00Z", "2024-10-01T00:00:00Z"],
+            "derived3DContextCandlesWithWarmup": len(aggregate_3d_from_daily(d_context)),
             "variants": {},
         }
         for base_name, retest_hours in (
@@ -149,7 +159,7 @@ def run(hist, selected_reference):
                 audit["dailyTrendCounts"] = Counter()
                 audit["threeDayTrendCounts"] = Counter()
                 gate, candle_audit = make_gate(
-                    symbol, f, d,
+                    symbol, f, d_context,
                     candle_enabled=candle_enabled,
                     daily_enabled=daily_enabled,
                     three_enabled=three_enabled,
@@ -231,14 +241,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--archive", default="v92_verified_archive")
     parser.add_argument("--selected", default="forward/v92_selected_reversal_patterns/historical.json")
-    parser.add_argument("--out", default="forward/v92_higher_timeframe_backtest")
+    parser.add_argument("--warmup-daily", default="v92_verified_warmup/history_daily_warmup.json")
+    parser.add_argument("--out", default="forward/v92_higher_timeframe_backtest_warmup")
     args = parser.parse_args()
     histories = {
         tf: read_history(str(Path(args.archive) / ("history_" + tf + ".json")))
         for tf in ("1hour", "4hour", "daily")
     }
     selected = json.loads(Path(args.selected).read_text())
-    data = run(histories, selected)
+    warmup_daily = read_history(args.warmup_daily)
+    data = run(histories, selected, warmup_daily)
+    data["contextWarmupSource"] = "Official Binance USD-M monthly 1H ZIPs; 12 SHA256-verified files; 1D derived from complete 1H bars"
+    data["contextWarmupExcludedFromPerformancePeriod"] = True
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     (out / "historical.json").write_text(
