@@ -23,19 +23,19 @@ from v92_bull_bear_candle_invalidation import (
 from v92_multi_candle_invalidation import warnings_at_retest
 from download_binance_um_history import months_inclusive
 
-WARMUP_START=int(datetime(2022,4,1,tzinfo=timezone.utc).timestamp())
+WARMUP_START=int(datetime(2022,5,1,tzinfo=timezone.utc).timestamp())
 START=int(datetime(2022,10,1,tzinfo=timezone.utc).timestamp())
 END=int(datetime(2024,10,1,tzinfo=timezone.utc).timestamp())
-MONTHS=months_inclusive("2022-04","2024-09")
-EXPECTED={"1hour":21912,"4hour":5478,"daily":913}
+MONTHS=months_inclusive("2022-05","2024-09")
+EXPECTED={"1hour":21216,"4hour":5304,"daily":884}
 SELECTED_FAMILIES={"STAR","HARAMI_CONFIRMED"}
 
 
 def validate_manifest(m):
     if (m.get("source")!="Binance official data.binance.vision FUTURES/UM monthly 1h klines"
-        or m.get("firstUTC")!="2022-04-01T00:00:00+00:00"
+        or m.get("firstUTC")!="2022-05-01T00:00:00+00:00"
         or m.get("endExclusiveUTC")!="2024-10-01T00:00:00+00:00"
-        or m.get("checksumsVerified")!=60):
+        or m.get("checksumsVerified")!=58):
         raise ValueError("V92_SOL_HOLDOUT_BINANCE_MANIFEST_INVALID")
     expected_pairs={(sym,month) for sym in ("BTCUSDT","SOLUSDT") for month in MONTHS}
     actual={(x.get("symbol"),x.get("month")) for x in m.get("inputFiles",[])}
