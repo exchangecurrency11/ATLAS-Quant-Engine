@@ -6,7 +6,8 @@ from datetime import datetime,timezone
 from pathlib import Path
 from unittest.mock import patch
 from v91_prospective_retest import (
-    MODE,HOUR,STRATEGIES,path_at,capture,safe_trade,scoreboard, _entry_evidence)
+    MODE,HOUR,STRATEGIES,path_at,capture,safe_trade,scoreboard, _entry_evidence,
+    current_hour_capture_window)
 
 END=int(datetime(2026,11,11,16,0,tzinfo=timezone.utc).timestamp())
 
@@ -65,6 +66,12 @@ def snapshot_at(t, *,candidate=None,baseline=None,pending=None):
 
 
 class V91ProspectiveTests(unittest.TestCase):
+    def test_capture_window_allows_last_minute_but_never_next_hour(self):
+        self.assertTrue(current_hour_capture_window(END,END+3599))
+        self.assertTrue(current_hour_capture_window(END,END+12*60))
+        self.assertFalse(current_hour_capture_window(END,END+11*60+59))
+        self.assertFalse(current_hour_capture_window(END,END+3600))
+
     def test_exit_timestamp_must_equal_exact_current_close(self):
         t=example_trade()
         self.assertTrue(safe_trade(t,END+HOUR))
