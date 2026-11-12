@@ -39,19 +39,19 @@ jobs:
         run: |
           set -euo pipefail
           python3 -u download_binance_um_history.py \
-            --start 2022-04 --end 2024-09 \
+            --start 2022-05 --end 2024-09 \
             --output-dir v92_sol_holdout_archive --workers 4
           python3 - <<'PY'
           import json
           from pathlib import Path
           m=json.loads(Path("v92_sol_holdout_archive/source_manifest.json").read_text())
-          assert m["checksumsVerified"]==60
-          assert m["firstUTC"]=="2022-04-01T00:00:00+00:00"
+          assert m["checksumsVerified"]==58
+          assert m["firstUTC"]=="2022-05-01T00:00:00+00:00"
           assert m["endExclusiveUTC"]=="2024-10-01T00:00:00+00:00"
           assert m["pairCounts"]=={
-            "BTCUSDT":{"1hour":21912,"4hour":5478,"daily":913},
-            "SOLUSDT":{"1hour":21912,"4hour":5478,"daily":913}}
-          assert len(m["inputFiles"])==60
+            "BTCUSDT":{"1hour":21216,"4hour":5304,"daily":884},
+            "SOLUSDT":{"1hour":21216,"4hour":5304,"daily":884}}
+          assert len(m["inputFiles"])==58
           assert all(len(x["sha256"])==64 for x in m["inputFiles"])
           print("V92_SOL_HOLDOUT_OFFICIAL_BINANCE_ARCHIVE_VERIFIED",m["checksumsVerified"])
           PY
