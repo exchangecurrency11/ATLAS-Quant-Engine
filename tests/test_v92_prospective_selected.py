@@ -7,7 +7,8 @@ from unittest.mock import patch
 
 from v92_prospective_selected import (
  FIRST,USER_REQUEST,MODE,BOOK,INITIAL,RISK,
- verify_source,account,load_all,evidence_for_entry,state_of,md
+ verify_source,account,load_all,evidence_for_entry,state_of,md,
+ current_close_retest_evaluation
 )
 from v7_forward_observer import iso
 
@@ -52,6 +53,58 @@ def original(t=FIRST):
             "results":{"BTCUSDT_PERP.A":{},"SOLUSDT_PERP.A":{}}}
 
 class V92ForwardTests(unittest.TestCase):
+    def test_current_sol_opposing_star_sweep_is_logged_as_direct_veto(self):
+        base=1794009600
+        bars=[{"t":base+i*3600,"o":100.,"h":102.,"l":98.,
+               "c":100.,"v":1000.} for i in range(27)]
+        bars.extend([
+          {"t":base+27*3600,"o":99.,"h":100.,"l":94.,"c":95.,"v":1000.},
+          {"t":base+28*3600,"o":95.,"h":96.,"l":88.,"c":94.8,"v":1000.},
+          {"t":base+29*3600,"o":95.,"h":102.,"l":94.,"c":101.,"v":1000.},
+        ])
+        target=bars[-1]["t"]+3600
+        pending={"side":"bearish","watchKnownUTC":target-7200,
+                 "retestKnownUTC":target,"stop":103.}
+        result=current_close_retest_evaluation(
+          "SOLUSDT",bars,[],target,
+          {"pendingNextOpenPaperEntry":pending},
+          {"pendingNextOpenPaperEntry":None})
+        self.assertTrue(result["candidateRetestAtThisClose"])
+        self.assertTrue(result["directCurrentFilterVeto"])
+        self.assertEqual(result["currentPatternWarnings"][0]["name"],
+                         "BULLISH_STAR")
+        self.assertTrue(result["currentPatternWarnings"][0]
+                        ["prior20LiquiditySweepAndReentry"])
+
+    def test_current_btc_star_is_observation_only_not_a_veto(self):
+        base=1794009600
+        bars=[{"t":base+i*3600,"o":100.,"h":102.,"l":98.,
+               "c":100.,"v":1000.} for i in range(27)]
+        bars.extend([
+          {"t":base+27*3600,"o":99.,"h":100.,"l":94.,"c":95.,"v":1000.},
+          {"t":base+28*3600,"o":95.,"h":96.,"l":88.,"c":94.8,"v":1000.},
+          {"t":base+29*3600,"o":95.,"h":102.,"l":94.,"c":101.,"v":1000.},
+        ])
+        target=bars[-1]["t"]+3600
+        pending={"side":"bearish","watchKnownUTC":target-7200,
+                 "retestKnownUTC":target,"stop":103.}
+        result=current_close_retest_evaluation(
+          "BTCUSDT",bars,[],target,
+          {"pendingNextOpenPaperEntry":pending},
+          {"pendingNextOpenPaperEntry":dict(pending)})
+        self.assertTrue(result["candidateRetestAtThisClose"])
+        self.assertFalse(result["directCurrentFilterVeto"])
+        self.assertTrue(result["selectedRetestMatchesBaseline"])
+
+    def test_no_baseline_retest_means_no_current_veto_count(self):
+        target=1794009600+30*3600
+        result=current_close_retest_evaluation(
+          "SOLUSDT",[],[],target,
+          {"pendingNextOpenPaperEntry":None},
+          {"pendingNextOpenPaperEntry":None})
+        self.assertFalse(result["candidateRetestAtThisClose"])
+        self.assertFalse(result["directCurrentFilterVeto"])
+
     def test_request_and_first_eligible_only_later_hour(self):
         self.assertLess(USER_REQUEST,FIRST)
         self.assertEqual(FIRST%3600,0)
