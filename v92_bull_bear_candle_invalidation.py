@@ -62,7 +62,7 @@ def candle_star(bars, end_index, seconds):
     prior-20 high/low re-entry are strictly prior/closed data.
     """
     if end_index<23:return None
-    ctx=bars[:end_index+1]
+    ctx=bars[max(0,end_index-34):end_index+1]
     if not _valid(ctx,seconds):return None
     a,b,c=ctx[-3:]
     body=lambda x:abs(float(x["c"])-float(x["o"]))
