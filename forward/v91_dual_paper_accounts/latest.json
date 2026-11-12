@@ -7,9 +7,11 @@
   "ETHAddedOnlyIfIndependentV7ParityVerified": false,
   "accounts": {
     "V7_ORIGINAL": {
-      "virtualInitialUSDT": 100.0,
-      "virtualPaperRiskPerTradeUSDT": 0.5,
-      "virtualEquityUSDT": 100.0,
+      "virtualInitialUSDT": 1000.0,
+      "virtualPaperRiskPerTradeUSDT": 100.0,
+      "riskPctOfInitialCapital": 10.0,
+      "riskPerTradeIsHighAndNotRecommendedForLive": true,
+      "virtualEquityUSDT": 1000.0,
       "virtualRealizedPnlUSDT": 0.0,
       "virtualRealizedPnlStress25BpsUSDT": 0.0,
       "netRealizedPaperR9BpsPerSide": 0,
@@ -48,9 +50,11 @@
       "realExecutableFillsVerified": 0
     },
     "V91_RETEST_MAX4H": {
-      "virtualInitialUSDT": 100.0,
-      "virtualPaperRiskPerTradeUSDT": 0.5,
-      "virtualEquityUSDT": 100.0,
+      "virtualInitialUSDT": 1000.0,
+      "virtualPaperRiskPerTradeUSDT": 100.0,
+      "riskPctOfInitialCapital": 10.0,
+      "riskPerTradeIsHighAndNotRecommendedForLive": true,
+      "virtualEquityUSDT": 1000.0,
       "virtualRealizedPnlUSDT": 0.0,
       "virtualRealizedPnlStress25BpsUSDT": 0.0,
       "netRealizedPaperR9BpsPerSide": 0,
@@ -90,6 +94,7 @@
     }
   },
   "nightBeforeRequestRetrospectiveOnlyNoOrders": true,
+  "riskSizingIsFixedPaper100USDTPerRNotRealPositionFill": true,
   "noForcedEntriesFromMarketTrendOrV9ColorForecast": true,
   "forecastColorsAreV9NotV91EntrySignals": true,
   "noFabricatedMissingHours": true,
