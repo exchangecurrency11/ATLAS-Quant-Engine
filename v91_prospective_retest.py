@@ -38,6 +38,11 @@ TIMEFRAME_SECONDS={"1hour":HOUR,"4hour":4*HOUR,"daily":24*HOUR}
 OHLC_MAPPING={"open":"o","high":"h","low":"l","close":"c","volume":"v"}
 
 
+def current_hour_capture_window(target, now):
+    """Allow capture through the last second of the same closed UTC hour."""
+    return target == now//HOUR*HOUR and 12*60 <= now-target < HOUR
+
+
 def path_at(base, t):
     return Path(base) / (datetime.fromtimestamp(t,timezone.utc).strftime("%Y-%m-%dT%H-00Z")+".json")
 
