@@ -1,0 +1,2610 @@
+{
+  "mode": "V92_HARAMI_HIKKAKE_ENGULFING_STAR_RETEST_INVALIDATION_FULL_HISTORY_PAPER_ONLY",
+  "historicalFromUTC": "2024-10-01T00:00:00Z",
+  "historicalUntilExclusiveUTC": "2026-10-01T00:00:00Z",
+  "originalBacktestAlreadyInspectedAndOptimismRisk": true,
+  "sameConfirmedSourceForAllVariants": true,
+  "candleSets": [
+    "1H",
+    "4H",
+    "Daily"
+  ],
+  "rulesFrozenBeforeReadingNewResults": true,
+  "HikkakeMustBeConfirmedWithinNextThreeClosedBars": true,
+  "HaramiRequiresThirdCandleConfirmation": true,
+  "noIncomplete4HCandleUsed": true,
+  "invalidationsOnlyAtRetestNotStandaloneTradeSignals": true,
+  "sourcePerp": "Original SHA-verified Binance BTC SOL USD-M Futures archive",
+  "patterns": [
+    "STAR",
+    "HARAMI_CONFIRMED",
+    "HIKKAKE_CONFIRMED",
+    "ENGULFING"
+  ],
+  "symbols": {
+    "BTCUSDT": {
+      "verifiedCandleCounts": {
+        "1H": 17520,
+        "4H": 4380,
+        "Daily": 730
+      },
+      "allHistoricalConfirmedPatternCounts": {
+        "1H": {
+          "EVENING_STAR": 163,
+          "BEARISH_HARAMI_CONFIRMED": 109,
+          "BULLISH_ENGULFING": 342,
+          "BULLISH_ENGULFING_PRIOR20_SWEEP": 74,
+          "BULLISH_HIKKAKE_CONFIRMED": 320,
+          "BEARISH_ENGULFING": 368,
+          "MORNING_STAR": 151,
+          "BEARISH_ENGULFING_PRIOR20_SWEEP": 80,
+          "BEARISH_HIKKAKE_CONFIRMED": 283,
+          "BULLISH_HARAMI_CONFIRMED": 94,
+          "MORNING_STAR_PRIOR20_SWEEP": 46,
+          "EVENING_STAR_PRIOR20_SWEEP": 48,
+          "BEARISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 58,
+          "BULLISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 57,
+          "BEARISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 44,
+          "BULLISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 31
+        },
+        "4H": {
+          "MORNING_STAR": 37,
+          "BULLISH_HARAMI_CONFIRMED": 22,
+          "BEARISH_HIKKAKE_CONFIRMED": 79,
+          "BEARISH_ENGULFING": 75,
+          "BULLISH_ENGULFING": 79,
+          "BULLISH_HIKKAKE_CONFIRMED": 76,
+          "EVENING_STAR": 43,
+          "EVENING_STAR_PRIOR20_SWEEP": 14,
+          "BEARISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 11,
+          "BEARISH_ENGULFING_PRIOR20_SWEEP": 16,
+          "BEARISH_HARAMI_CONFIRMED": 23,
+          "BULLISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 5,
+          "MORNING_STAR_PRIOR20_SWEEP": 5,
+          "BULLISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 10,
+          "BULLISH_ENGULFING_PRIOR20_SWEEP": 11,
+          "BEARISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 12
+        }
+      },
+      "variants": {
+        "V7_ORIGINAL": {
+          "trades": 9,
+          "wins": 5,
+          "winRatePct": 55.56,
+          "totalNetR9BpsPerSide": 3.663602,
+          "totalNetR25BpsPerSideStress": 1.328976,
+          "netRMean": 0.407067,
+          "profitFactor": 1.9692,
+          "maxDrawdownR": 3.550588,
+          "BOSWatches": 26,
+          "retestVetoes": 0,
+          "retestExpires": 17,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-03-10T04:00:00Z",
+              "exitUTC": "2025-03-10T10:00:00Z",
+              "watchUTC": "2025-03-09T22:00:00Z",
+              "retestUTC": "2025-03-10T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.126355
+            },
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-08-30T02:00:00Z",
+              "exitUTC": "2025-08-30T05:00:00Z",
+              "watchUTC": "2025-08-29T21:00:00Z",
+              "retestUTC": "2025-08-30T02:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.194308
+            },
+            {
+              "entryUTC": "2025-11-14T18:00:00Z",
+              "exitUTC": "2025-11-15T18:00:00Z",
+              "watchUTC": "2025-11-14T13:00:00Z",
+              "retestUTC": "2025-11-14T18:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.030238
+            },
+            {
+              "entryUTC": "2025-11-21T07:00:00Z",
+              "exitUTC": "2025-11-21T13:00:00Z",
+              "watchUTC": "2025-11-21T03:00:00Z",
+              "retestUTC": "2025-11-21T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.904024
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-03-16T10:00:00Z",
+              "exitUTC": "2026-03-17T02:00:00Z",
+              "watchUTC": "2026-03-16T04:00:00Z",
+              "retestUTC": "2026-03-16T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.852987
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ]
+        },
+        "V7_ORIGINAL__HARAMI_CONFIRMED": {
+          "trades": 9,
+          "wins": 5,
+          "winRatePct": 55.56,
+          "totalNetR9BpsPerSide": 3.663602,
+          "totalNetR25BpsPerSideStress": 1.328976,
+          "netRMean": 0.407067,
+          "profitFactor": 1.9692,
+          "maxDrawdownR": 3.550588,
+          "BOSWatches": 26,
+          "retestVetoes": 0,
+          "retestExpires": 17,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-03-10T04:00:00Z",
+              "exitUTC": "2025-03-10T10:00:00Z",
+              "watchUTC": "2025-03-09T22:00:00Z",
+              "retestUTC": "2025-03-10T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.126355
+            },
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-08-30T02:00:00Z",
+              "exitUTC": "2025-08-30T05:00:00Z",
+              "watchUTC": "2025-08-29T21:00:00Z",
+              "retestUTC": "2025-08-30T02:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.194308
+            },
+            {
+              "entryUTC": "2025-11-14T18:00:00Z",
+              "exitUTC": "2025-11-15T18:00:00Z",
+              "watchUTC": "2025-11-14T13:00:00Z",
+              "retestUTC": "2025-11-14T18:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.030238
+            },
+            {
+              "entryUTC": "2025-11-21T07:00:00Z",
+              "exitUTC": "2025-11-21T13:00:00Z",
+              "watchUTC": "2025-11-21T03:00:00Z",
+              "retestUTC": "2025-11-21T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.904024
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-03-16T10:00:00Z",
+              "exitUTC": "2026-03-17T02:00:00Z",
+              "watchUTC": "2026-03-16T04:00:00Z",
+              "retestUTC": "2026-03-16T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.852987
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "HARAMI_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": 0.0,
+          "audit": {
+            "originalRetestsAssessed": 9,
+            "vetoedOriginalRetests": 0,
+            "vetoPatternCounts": {},
+            "vetoExamples": []
+          }
+        },
+        "V7_ORIGINAL__HIKKAKE_CONFIRMED": {
+          "trades": 8,
+          "wins": 4,
+          "winRatePct": 50.0,
+          "totalNetR9BpsPerSide": 1.759579,
+          "totalNetR25BpsPerSideStress": -0.404423,
+          "netRMean": 0.219947,
+          "profitFactor": 1.4655,
+          "maxDrawdownR": 3.550588,
+          "BOSWatches": 26,
+          "retestVetoes": 1,
+          "retestExpires": 18,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-03-10T04:00:00Z",
+              "exitUTC": "2025-03-10T10:00:00Z",
+              "watchUTC": "2025-03-09T22:00:00Z",
+              "retestUTC": "2025-03-10T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.126355
+            },
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-08-30T02:00:00Z",
+              "exitUTC": "2025-08-30T05:00:00Z",
+              "watchUTC": "2025-08-29T21:00:00Z",
+              "retestUTC": "2025-08-30T02:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.194308
+            },
+            {
+              "entryUTC": "2025-11-14T18:00:00Z",
+              "exitUTC": "2025-11-15T18:00:00Z",
+              "watchUTC": "2025-11-14T13:00:00Z",
+              "retestUTC": "2025-11-14T18:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.030238
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-03-16T10:00:00Z",
+              "exitUTC": "2026-03-17T02:00:00Z",
+              "watchUTC": "2026-03-16T04:00:00Z",
+              "retestUTC": "2026-03-16T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.852987
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "HIKKAKE_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": -1.904023,
+          "audit": {
+            "originalRetestsAssessed": 9,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BULLISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BULLISH_HIKKAKE_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-11-21T02:00:00Z",
+                    "confirmedUTC": "2025-11-21T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V7_ORIGINAL__ENGULFING": {
+          "trades": 8,
+          "wins": 4,
+          "winRatePct": 50.0,
+          "totalNetR9BpsPerSide": 1.810615,
+          "totalNetR25BpsPerSideStress": -0.262656,
+          "netRMean": 0.226327,
+          "profitFactor": 1.479,
+          "maxDrawdownR": 3.550588,
+          "BOSWatches": 26,
+          "retestVetoes": 1,
+          "retestExpires": 18,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-03-10T04:00:00Z",
+              "exitUTC": "2025-03-10T10:00:00Z",
+              "watchUTC": "2025-03-09T22:00:00Z",
+              "retestUTC": "2025-03-10T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.126355
+            },
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-08-30T02:00:00Z",
+              "exitUTC": "2025-08-30T05:00:00Z",
+              "watchUTC": "2025-08-29T21:00:00Z",
+              "retestUTC": "2025-08-30T02:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.194308
+            },
+            {
+              "entryUTC": "2025-11-14T18:00:00Z",
+              "exitUTC": "2025-11-15T18:00:00Z",
+              "watchUTC": "2025-11-14T13:00:00Z",
+              "retestUTC": "2025-11-14T18:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.030238
+            },
+            {
+              "entryUTC": "2025-11-21T07:00:00Z",
+              "exitUTC": "2025-11-21T13:00:00Z",
+              "watchUTC": "2025-11-21T03:00:00Z",
+              "retestUTC": "2025-11-21T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.904024
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "ENGULFING",
+          "deltaTotalRVsOwnBaseline": -1.852987,
+          "audit": {
+            "originalRetestsAssessed": 9,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BEARISH_ENGULFING_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2026-03-16T10:00:00Z",
+                "side": "bullish",
+                "patterns": [
+                  {
+                    "family": "ENGULFING",
+                    "name": "BEARISH_ENGULFING",
+                    "direction": "bearish",
+                    "firstUTC": "2026-03-16T05:00:00Z",
+                    "confirmedUTC": "2026-03-16T07:00:00Z",
+                    "prior20LiquiditySweepAndReentry": false,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V7_ORIGINAL__ALL_REVERSALS": {
+          "trades": 7,
+          "wins": 3,
+          "winRatePct": 42.86,
+          "totalNetR9BpsPerSide": -0.093409,
+          "totalNetR25BpsPerSideStress": -1.996055,
+          "netRMean": -0.013344,
+          "profitFactor": 0.9753,
+          "maxDrawdownR": 3.550588,
+          "BOSWatches": 26,
+          "retestVetoes": 2,
+          "retestExpires": 19,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-03-10T04:00:00Z",
+              "exitUTC": "2025-03-10T10:00:00Z",
+              "watchUTC": "2025-03-09T22:00:00Z",
+              "retestUTC": "2025-03-10T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.126355
+            },
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-08-30T02:00:00Z",
+              "exitUTC": "2025-08-30T05:00:00Z",
+              "watchUTC": "2025-08-29T21:00:00Z",
+              "retestUTC": "2025-08-30T02:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.194308
+            },
+            {
+              "entryUTC": "2025-11-14T18:00:00Z",
+              "exitUTC": "2025-11-15T18:00:00Z",
+              "watchUTC": "2025-11-14T13:00:00Z",
+              "retestUTC": "2025-11-14T18:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.030238
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "ALL_REVERSALS",
+          "deltaTotalRVsOwnBaseline": -3.757011,
+          "audit": {
+            "originalRetestsAssessed": 9,
+            "vetoedOriginalRetests": 2,
+            "vetoPatternCounts": {
+              "BULLISH_HIKKAKE_CONFIRMED_1H": 1,
+              "BEARISH_ENGULFING_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BULLISH_HIKKAKE_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-11-21T02:00:00Z",
+                    "confirmedUTC": "2025-11-21T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              },
+              {
+                "atUTC": "2026-03-16T10:00:00Z",
+                "side": "bullish",
+                "patterns": [
+                  {
+                    "family": "ENGULFING",
+                    "name": "BEARISH_ENGULFING",
+                    "direction": "bearish",
+                    "firstUTC": "2026-03-16T05:00:00Z",
+                    "confirmedUTC": "2026-03-16T07:00:00Z",
+                    "prior20LiquiditySweepAndReentry": false,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V7_ORIGINAL__ALL_REVERSALS_SWEEP_CONTEXT": {
+          "trades": 8,
+          "wins": 4,
+          "winRatePct": 50.0,
+          "totalNetR9BpsPerSide": 1.759579,
+          "totalNetR25BpsPerSideStress": -0.404423,
+          "netRMean": 0.219947,
+          "profitFactor": 1.4655,
+          "maxDrawdownR": 3.550588,
+          "BOSWatches": 26,
+          "retestVetoes": 1,
+          "retestExpires": 18,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-03-10T04:00:00Z",
+              "exitUTC": "2025-03-10T10:00:00Z",
+              "watchUTC": "2025-03-09T22:00:00Z",
+              "retestUTC": "2025-03-10T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.126355
+            },
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-08-30T02:00:00Z",
+              "exitUTC": "2025-08-30T05:00:00Z",
+              "watchUTC": "2025-08-29T21:00:00Z",
+              "retestUTC": "2025-08-30T02:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.194308
+            },
+            {
+              "entryUTC": "2025-11-14T18:00:00Z",
+              "exitUTC": "2025-11-15T18:00:00Z",
+              "watchUTC": "2025-11-14T13:00:00Z",
+              "retestUTC": "2025-11-14T18:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.030238
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-03-16T10:00:00Z",
+              "exitUTC": "2026-03-17T02:00:00Z",
+              "watchUTC": "2026-03-16T04:00:00Z",
+              "retestUTC": "2026-03-16T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.852987
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "ALL_REVERSALS_SWEEP_CONTEXT",
+          "deltaTotalRVsOwnBaseline": -1.904023,
+          "audit": {
+            "originalRetestsAssessed": 9,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BULLISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BULLISH_HIKKAKE_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-11-21T02:00:00Z",
+                    "confirmedUTC": "2025-11-21T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V91_RETEST_MAX4H": {
+          "trades": 5,
+          "wins": 3,
+          "winRatePct": 60.0,
+          "totalNetR9BpsPerSide": 4.10104,
+          "totalNetR25BpsPerSideStress": 2.814628,
+          "netRMean": 0.820208,
+          "profitFactor": 3.8104,
+          "maxDrawdownR": 1.229924,
+          "BOSWatches": 26,
+          "retestVetoes": 0,
+          "retestExpires": 21,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-11-21T07:00:00Z",
+              "exitUTC": "2025-11-21T13:00:00Z",
+              "watchUTC": "2025-11-21T03:00:00Z",
+              "retestUTC": "2025-11-21T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.904024
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ]
+        },
+        "V91_RETEST_MAX4H__HARAMI_CONFIRMED": {
+          "trades": 5,
+          "wins": 3,
+          "winRatePct": 60.0,
+          "totalNetR9BpsPerSide": 4.10104,
+          "totalNetR25BpsPerSideStress": 2.814628,
+          "netRMean": 0.820208,
+          "profitFactor": 3.8104,
+          "maxDrawdownR": 1.229924,
+          "BOSWatches": 26,
+          "retestVetoes": 0,
+          "retestExpires": 21,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-11-21T07:00:00Z",
+              "exitUTC": "2025-11-21T13:00:00Z",
+              "watchUTC": "2025-11-21T03:00:00Z",
+              "retestUTC": "2025-11-21T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.904024
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "HARAMI_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": 0.0,
+          "audit": {
+            "originalRetestsAssessed": 5,
+            "vetoedOriginalRetests": 0,
+            "vetoPatternCounts": {},
+            "vetoExamples": []
+          }
+        },
+        "V91_RETEST_MAX4H__HIKKAKE_CONFIRMED": {
+          "trades": 4,
+          "wins": 2,
+          "winRatePct": 50.0,
+          "totalNetR9BpsPerSide": 2.197017,
+          "totalNetR25BpsPerSideStress": 1.081229,
+          "netRMean": 0.549254,
+          "profitFactor": 2.5056,
+          "maxDrawdownR": 1.229924,
+          "BOSWatches": 26,
+          "retestVetoes": 1,
+          "retestExpires": 22,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "HIKKAKE_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": -1.904023,
+          "audit": {
+            "originalRetestsAssessed": 5,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BULLISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BULLISH_HIKKAKE_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-11-21T02:00:00Z",
+                    "confirmedUTC": "2025-11-21T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V91_RETEST_MAX4H__ENGULFING": {
+          "trades": 5,
+          "wins": 3,
+          "winRatePct": 60.0,
+          "totalNetR9BpsPerSide": 4.10104,
+          "totalNetR25BpsPerSideStress": 2.814628,
+          "netRMean": 0.820208,
+          "profitFactor": 3.8104,
+          "maxDrawdownR": 1.229924,
+          "BOSWatches": 26,
+          "retestVetoes": 0,
+          "retestExpires": 21,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2025-11-21T07:00:00Z",
+              "exitUTC": "2025-11-21T13:00:00Z",
+              "watchUTC": "2025-11-21T03:00:00Z",
+              "retestUTC": "2025-11-21T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.904024
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "ENGULFING",
+          "deltaTotalRVsOwnBaseline": 0.0,
+          "audit": {
+            "originalRetestsAssessed": 5,
+            "vetoedOriginalRetests": 0,
+            "vetoPatternCounts": {},
+            "vetoExamples": []
+          }
+        },
+        "V91_RETEST_MAX4H__ALL_REVERSALS": {
+          "trades": 4,
+          "wins": 2,
+          "winRatePct": 50.0,
+          "totalNetR9BpsPerSide": 2.197017,
+          "totalNetR25BpsPerSideStress": 1.081229,
+          "netRMean": 0.549254,
+          "profitFactor": 2.5056,
+          "maxDrawdownR": 1.229924,
+          "BOSWatches": 26,
+          "retestVetoes": 1,
+          "retestExpires": 22,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "ALL_REVERSALS",
+          "deltaTotalRVsOwnBaseline": -1.904023,
+          "audit": {
+            "originalRetestsAssessed": 5,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BULLISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BULLISH_HIKKAKE_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-11-21T02:00:00Z",
+                    "confirmedUTC": "2025-11-21T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V91_RETEST_MAX4H__ALL_REVERSALS_SWEEP_CONTEXT": {
+          "trades": 4,
+          "wins": 2,
+          "winRatePct": 50.0,
+          "totalNetR9BpsPerSide": 2.197017,
+          "totalNetR25BpsPerSideStress": 1.081229,
+          "netRMean": 0.549254,
+          "profitFactor": 2.5056,
+          "maxDrawdownR": 1.229924,
+          "BOSWatches": 26,
+          "retestVetoes": 1,
+          "retestExpires": 22,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-05-02T18:00:00Z",
+              "exitUTC": "2025-05-02T22:00:00Z",
+              "watchUTC": "2025-05-02T15:00:00Z",
+              "retestUTC": "2025-05-02T18:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.229924
+            },
+            {
+              "entryUTC": "2026-02-05T04:00:00Z",
+              "exitUTC": "2026-02-05T19:00:00Z",
+              "watchUTC": "2026-02-05T03:00:00Z",
+              "retestUTC": "2026-02-05T04:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.927341
+            },
+            {
+              "entryUTC": "2026-05-27T17:00:00Z",
+              "exitUTC": "2026-05-28T04:00:00Z",
+              "watchUTC": "2026-05-27T14:00:00Z",
+              "retestUTC": "2026-05-27T17:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.728914
+            },
+            {
+              "entryUTC": "2026-06-05T16:00:00Z",
+              "exitUTC": "2026-06-06T16:00:00Z",
+              "watchUTC": "2026-06-05T14:00:00Z",
+              "retestUTC": "2026-06-05T16:00:00Z",
+              "side": "bearish",
+              "netR9bps": -0.229314
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "ALL_REVERSALS_SWEEP_CONTEXT",
+          "deltaTotalRVsOwnBaseline": -1.904023,
+          "audit": {
+            "originalRetestsAssessed": 5,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BULLISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-11-21T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BULLISH_HIKKAKE_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-11-21T02:00:00Z",
+                    "confirmedUTC": "2025-11-21T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "SOLUSDT": {
+      "verifiedCandleCounts": {
+        "1H": 17520,
+        "4H": 4380,
+        "Daily": 730
+      },
+      "allHistoricalConfirmedPatternCounts": {
+        "1H": {
+          "BULLISH_HIKKAKE_CONFIRMED": 254,
+          "EVENING_STAR": 154,
+          "EVENING_STAR_PRIOR20_SWEEP": 53,
+          "BULLISH_ENGULFING": 320,
+          "BEARISH_HARAMI_CONFIRMED": 97,
+          "BEARISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 35,
+          "MORNING_STAR": 139,
+          "BEARISH_HIKKAKE_CONFIRMED": 266,
+          "MORNING_STAR_PRIOR20_SWEEP": 39,
+          "BEARISH_ENGULFING": 370,
+          "BULLISH_ENGULFING_PRIOR20_SWEEP": 72,
+          "BEARISH_ENGULFING_PRIOR20_SWEEP": 103,
+          "BULLISH_HARAMI_CONFIRMED": 86,
+          "BULLISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 39,
+          "BEARISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 63,
+          "BULLISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 35
+        },
+        "4H": {
+          "BEARISH_HIKKAKE_CONFIRMED": 75,
+          "BEARISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 12,
+          "BEARISH_ENGULFING": 79,
+          "MORNING_STAR": 29,
+          "BULLISH_ENGULFING": 72,
+          "BULLISH_HARAMI_CONFIRMED": 22,
+          "BULLISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 12,
+          "BULLISH_HIKKAKE_CONFIRMED": 77,
+          "EVENING_STAR": 47,
+          "EVENING_STAR_PRIOR20_SWEEP": 19,
+          "BEARISH_HARAMI_CONFIRMED": 33,
+          "BEARISH_HARAMI_CONFIRMED_PRIOR20_SWEEP": 19,
+          "BULLISH_ENGULFING_PRIOR20_SWEEP": 13,
+          "MORNING_STAR_PRIOR20_SWEEP": 11,
+          "BEARISH_ENGULFING_PRIOR20_SWEEP": 24,
+          "BULLISH_HIKKAKE_CONFIRMED_PRIOR20_SWEEP": 14
+        }
+      },
+      "variants": {
+        "V7_ORIGINAL": {
+          "trades": 11,
+          "wins": 6,
+          "winRatePct": 54.55,
+          "totalNetR9BpsPerSide": 2.860985,
+          "totalNetR25BpsPerSideStress": 0.602613,
+          "netRMean": 0.26009,
+          "profitFactor": 1.5227,
+          "maxDrawdownR": 2.576374,
+          "BOSWatches": 29,
+          "retestVetoes": 0,
+          "retestExpires": 17,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-02-12T07:00:00Z",
+              "exitUTC": "2025-02-12T08:00:00Z",
+              "watchUTC": "2025-02-12T04:00:00Z",
+              "retestUTC": "2025-02-12T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.144707
+            },
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-08-27T21:00:00Z",
+              "exitUTC": "2025-08-28T00:00:00Z",
+              "watchUTC": "2025-08-27T15:00:00Z",
+              "retestUTC": "2025-08-27T21:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.063586
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2025-10-17T13:00:00Z",
+              "exitUTC": "2025-10-18T08:00:00Z",
+              "watchUTC": "2025-10-17T07:00:00Z",
+              "retestUTC": "2025-10-17T13:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.048036
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T00:00:00Z",
+              "exitUTC": "2026-06-07T00:00:00Z",
+              "watchUTC": "2026-06-05T19:00:00Z",
+              "retestUTC": "2026-06-06T00:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.77044
+            }
+          ]
+        },
+        "V7_ORIGINAL__HARAMI_CONFIRMED": {
+          "trades": 10,
+          "wins": 6,
+          "winRatePct": 60.0,
+          "totalNetR9BpsPerSide": 4.005691,
+          "totalNetR25BpsPerSideStress": 2.004576,
+          "netRMean": 0.400569,
+          "profitFactor": 1.9254,
+          "maxDrawdownR": 2.153376,
+          "BOSWatches": 29,
+          "retestVetoes": 1,
+          "retestExpires": 18,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-08-27T21:00:00Z",
+              "exitUTC": "2025-08-28T00:00:00Z",
+              "watchUTC": "2025-08-27T15:00:00Z",
+              "retestUTC": "2025-08-27T21:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.063586
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2025-10-17T13:00:00Z",
+              "exitUTC": "2025-10-18T08:00:00Z",
+              "watchUTC": "2025-10-17T07:00:00Z",
+              "retestUTC": "2025-10-17T13:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.048036
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T00:00:00Z",
+              "exitUTC": "2026-06-07T00:00:00Z",
+              "watchUTC": "2026-06-05T19:00:00Z",
+              "retestUTC": "2026-06-06T00:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.77044
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "HARAMI_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": 1.144706,
+          "audit": {
+            "originalRetestsAssessed": 12,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BULLISH_HARAMI_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-02-12T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HARAMI_CONFIRMED",
+                    "name": "BULLISH_HARAMI_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V7_ORIGINAL__HIKKAKE_CONFIRMED": {
+          "trades": 10,
+          "wins": 6,
+          "winRatePct": 60.0,
+          "totalNetR9BpsPerSide": 3.924571,
+          "totalNetR25BpsPerSideStress": 1.779241,
+          "netRMean": 0.392457,
+          "profitFactor": 1.89,
+          "maxDrawdownR": 2.271844,
+          "BOSWatches": 29,
+          "retestVetoes": 1,
+          "retestExpires": 18,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-02-12T07:00:00Z",
+              "exitUTC": "2025-02-12T08:00:00Z",
+              "watchUTC": "2025-02-12T04:00:00Z",
+              "retestUTC": "2025-02-12T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.144707
+            },
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2025-10-17T13:00:00Z",
+              "exitUTC": "2025-10-18T08:00:00Z",
+              "watchUTC": "2025-10-17T07:00:00Z",
+              "retestUTC": "2025-10-17T13:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.048036
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T00:00:00Z",
+              "exitUTC": "2026-06-07T00:00:00Z",
+              "watchUTC": "2026-06-05T19:00:00Z",
+              "retestUTC": "2026-06-06T00:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.77044
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "HIKKAKE_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": 1.063586,
+          "audit": {
+            "originalRetestsAssessed": 12,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BEARISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-08-27T21:00:00Z",
+                "side": "bullish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BEARISH_HIKKAKE_CONFIRMED",
+                    "direction": "bearish",
+                    "firstUTC": "2025-08-27T15:00:00Z",
+                    "confirmedUTC": "2025-08-27T20:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V7_ORIGINAL__ENGULFING": {
+          "trades": 11,
+          "wins": 6,
+          "winRatePct": 54.55,
+          "totalNetR9BpsPerSide": 2.860985,
+          "totalNetR25BpsPerSideStress": 0.602613,
+          "netRMean": 0.26009,
+          "profitFactor": 1.5227,
+          "maxDrawdownR": 2.576374,
+          "BOSWatches": 29,
+          "retestVetoes": 0,
+          "retestExpires": 17,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-02-12T07:00:00Z",
+              "exitUTC": "2025-02-12T08:00:00Z",
+              "watchUTC": "2025-02-12T04:00:00Z",
+              "retestUTC": "2025-02-12T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.144707
+            },
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-08-27T21:00:00Z",
+              "exitUTC": "2025-08-28T00:00:00Z",
+              "watchUTC": "2025-08-27T15:00:00Z",
+              "retestUTC": "2025-08-27T21:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.063586
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2025-10-17T13:00:00Z",
+              "exitUTC": "2025-10-18T08:00:00Z",
+              "watchUTC": "2025-10-17T07:00:00Z",
+              "retestUTC": "2025-10-17T13:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.048036
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T00:00:00Z",
+              "exitUTC": "2026-06-07T00:00:00Z",
+              "watchUTC": "2026-06-05T19:00:00Z",
+              "retestUTC": "2026-06-06T00:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.77044
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "ENGULFING",
+          "deltaTotalRVsOwnBaseline": 0.0,
+          "audit": {
+            "originalRetestsAssessed": 12,
+            "vetoedOriginalRetests": 0,
+            "vetoPatternCounts": {},
+            "vetoExamples": []
+          }
+        },
+        "V7_ORIGINAL__ALL_REVERSALS": {
+          "trades": 9,
+          "wins": 6,
+          "winRatePct": 66.67,
+          "totalNetR9BpsPerSide": 5.069277,
+          "totalNetR25BpsPerSideStress": 3.181204,
+          "netRMean": 0.563253,
+          "profitFactor": 2.5526,
+          "maxDrawdownR": 1.127137,
+          "BOSWatches": 29,
+          "retestVetoes": 2,
+          "retestExpires": 19,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2025-10-17T13:00:00Z",
+              "exitUTC": "2025-10-18T08:00:00Z",
+              "watchUTC": "2025-10-17T07:00:00Z",
+              "retestUTC": "2025-10-17T13:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.048036
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T00:00:00Z",
+              "exitUTC": "2026-06-07T00:00:00Z",
+              "watchUTC": "2026-06-05T19:00:00Z",
+              "retestUTC": "2026-06-06T00:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.77044
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "ALL_REVERSALS",
+          "deltaTotalRVsOwnBaseline": 2.208292,
+          "audit": {
+            "originalRetestsAssessed": 12,
+            "vetoedOriginalRetests": 2,
+            "vetoPatternCounts": {
+              "MORNING_STAR_1H": 1,
+              "BULLISH_HARAMI_CONFIRMED_1H": 1,
+              "BEARISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-02-12T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "STAR",
+                    "name": "MORNING_STAR",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  },
+                  {
+                    "family": "HARAMI_CONFIRMED",
+                    "name": "BULLISH_HARAMI_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              },
+              {
+                "atUTC": "2025-08-27T21:00:00Z",
+                "side": "bullish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BEARISH_HIKKAKE_CONFIRMED",
+                    "direction": "bearish",
+                    "firstUTC": "2025-08-27T15:00:00Z",
+                    "confirmedUTC": "2025-08-27T20:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V7_ORIGINAL__ALL_REVERSALS_SWEEP_CONTEXT": {
+          "trades": 9,
+          "wins": 6,
+          "winRatePct": 66.67,
+          "totalNetR9BpsPerSide": 5.069277,
+          "totalNetR25BpsPerSideStress": 3.181204,
+          "netRMean": 0.563253,
+          "profitFactor": 2.5526,
+          "maxDrawdownR": 1.127137,
+          "BOSWatches": 29,
+          "retestVetoes": 2,
+          "retestExpires": 19,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2025-10-17T13:00:00Z",
+              "exitUTC": "2025-10-18T08:00:00Z",
+              "watchUTC": "2025-10-17T07:00:00Z",
+              "retestUTC": "2025-10-17T13:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.048036
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T00:00:00Z",
+              "exitUTC": "2026-06-07T00:00:00Z",
+              "watchUTC": "2026-06-05T19:00:00Z",
+              "retestUTC": "2026-06-06T00:00:00Z",
+              "side": "bearish",
+              "netR9bps": 0.77044
+            }
+          ],
+          "baseline": "V7_ORIGINAL",
+          "filterMode": "ALL_REVERSALS_SWEEP_CONTEXT",
+          "deltaTotalRVsOwnBaseline": 2.208292,
+          "audit": {
+            "originalRetestsAssessed": 12,
+            "vetoedOriginalRetests": 2,
+            "vetoPatternCounts": {
+              "MORNING_STAR_1H": 1,
+              "BULLISH_HARAMI_CONFIRMED_1H": 1,
+              "BEARISH_HIKKAKE_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-02-12T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "STAR",
+                    "name": "MORNING_STAR",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  },
+                  {
+                    "family": "HARAMI_CONFIRMED",
+                    "name": "BULLISH_HARAMI_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              },
+              {
+                "atUTC": "2025-08-27T21:00:00Z",
+                "side": "bullish",
+                "patterns": [
+                  {
+                    "family": "HIKKAKE_CONFIRMED",
+                    "name": "BEARISH_HIKKAKE_CONFIRMED",
+                    "direction": "bearish",
+                    "firstUTC": "2025-08-27T15:00:00Z",
+                    "confirmedUTC": "2025-08-27T20:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": true,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V91_RETEST_MAX4H": {
+          "trades": 9,
+          "wins": 5,
+          "winRatePct": 55.56,
+          "totalNetR9BpsPerSide": 3.115948,
+          "totalNetR25BpsPerSideStress": 1.007952,
+          "netRMean": 0.346216,
+          "profitFactor": 1.7006,
+          "maxDrawdownR": 2.271844,
+          "BOSWatches": 30,
+          "retestVetoes": 0,
+          "retestExpires": 20,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-02-12T07:00:00Z",
+              "exitUTC": "2025-02-12T08:00:00Z",
+              "watchUTC": "2025-02-12T04:00:00Z",
+              "retestUTC": "2025-02-12T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.144707
+            },
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T07:00:00Z",
+              "exitUTC": "2026-06-06T09:00:00Z",
+              "watchUTC": "2026-06-06T05:00:00Z",
+              "retestUTC": "2026-06-06T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.086219
+            }
+          ]
+        },
+        "V91_RETEST_MAX4H__HARAMI_CONFIRMED": {
+          "trades": 8,
+          "wins": 5,
+          "winRatePct": 62.5,
+          "totalNetR9BpsPerSide": 4.260655,
+          "totalNetR25BpsPerSideStress": 2.409915,
+          "netRMean": 0.532582,
+          "profitFactor": 2.2899,
+          "maxDrawdownR": 1.127137,
+          "BOSWatches": 30,
+          "retestVetoes": 1,
+          "retestExpires": 21,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T07:00:00Z",
+              "exitUTC": "2026-06-06T09:00:00Z",
+              "watchUTC": "2026-06-06T05:00:00Z",
+              "retestUTC": "2026-06-06T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.086219
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "HARAMI_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": 1.144707,
+          "audit": {
+            "originalRetestsAssessed": 10,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "BULLISH_HARAMI_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-02-12T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "HARAMI_CONFIRMED",
+                    "name": "BULLISH_HARAMI_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V91_RETEST_MAX4H__HIKKAKE_CONFIRMED": {
+          "trades": 9,
+          "wins": 5,
+          "winRatePct": 55.56,
+          "totalNetR9BpsPerSide": 3.115948,
+          "totalNetR25BpsPerSideStress": 1.007952,
+          "netRMean": 0.346216,
+          "profitFactor": 1.7006,
+          "maxDrawdownR": 2.271844,
+          "BOSWatches": 30,
+          "retestVetoes": 0,
+          "retestExpires": 20,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-02-12T07:00:00Z",
+              "exitUTC": "2025-02-12T08:00:00Z",
+              "watchUTC": "2025-02-12T04:00:00Z",
+              "retestUTC": "2025-02-12T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.144707
+            },
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T07:00:00Z",
+              "exitUTC": "2026-06-06T09:00:00Z",
+              "watchUTC": "2026-06-06T05:00:00Z",
+              "retestUTC": "2026-06-06T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.086219
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "HIKKAKE_CONFIRMED",
+          "deltaTotalRVsOwnBaseline": 0.0,
+          "audit": {
+            "originalRetestsAssessed": 10,
+            "vetoedOriginalRetests": 0,
+            "vetoPatternCounts": {},
+            "vetoExamples": []
+          }
+        },
+        "V91_RETEST_MAX4H__ENGULFING": {
+          "trades": 9,
+          "wins": 5,
+          "winRatePct": 55.56,
+          "totalNetR9BpsPerSide": 3.115948,
+          "totalNetR25BpsPerSideStress": 1.007952,
+          "netRMean": 0.346216,
+          "profitFactor": 1.7006,
+          "maxDrawdownR": 2.271844,
+          "BOSWatches": 30,
+          "retestVetoes": 0,
+          "retestExpires": 20,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-02-12T07:00:00Z",
+              "exitUTC": "2025-02-12T08:00:00Z",
+              "watchUTC": "2025-02-12T04:00:00Z",
+              "retestUTC": "2025-02-12T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.144707
+            },
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T07:00:00Z",
+              "exitUTC": "2026-06-06T09:00:00Z",
+              "watchUTC": "2026-06-06T05:00:00Z",
+              "retestUTC": "2026-06-06T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.086219
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "ENGULFING",
+          "deltaTotalRVsOwnBaseline": 0.0,
+          "audit": {
+            "originalRetestsAssessed": 10,
+            "vetoedOriginalRetests": 0,
+            "vetoPatternCounts": {},
+            "vetoExamples": []
+          }
+        },
+        "V91_RETEST_MAX4H__ALL_REVERSALS": {
+          "trades": 8,
+          "wins": 5,
+          "winRatePct": 62.5,
+          "totalNetR9BpsPerSide": 4.260655,
+          "totalNetR25BpsPerSideStress": 2.409915,
+          "netRMean": 0.532582,
+          "profitFactor": 2.2899,
+          "maxDrawdownR": 1.127137,
+          "BOSWatches": 30,
+          "retestVetoes": 1,
+          "retestExpires": 21,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T07:00:00Z",
+              "exitUTC": "2026-06-06T09:00:00Z",
+              "watchUTC": "2026-06-06T05:00:00Z",
+              "retestUTC": "2026-06-06T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.086219
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "ALL_REVERSALS",
+          "deltaTotalRVsOwnBaseline": 1.144707,
+          "audit": {
+            "originalRetestsAssessed": 10,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "MORNING_STAR_1H": 1,
+              "BULLISH_HARAMI_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-02-12T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "STAR",
+                    "name": "MORNING_STAR",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  },
+                  {
+                    "family": "HARAMI_CONFIRMED",
+                    "name": "BULLISH_HARAMI_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "V91_RETEST_MAX4H__ALL_REVERSALS_SWEEP_CONTEXT": {
+          "trades": 8,
+          "wins": 5,
+          "winRatePct": 62.5,
+          "totalNetR9BpsPerSide": 4.260655,
+          "totalNetR25BpsPerSideStress": 2.409915,
+          "netRMean": 0.532582,
+          "profitFactor": 2.2899,
+          "maxDrawdownR": 1.127137,
+          "BOSWatches": 30,
+          "retestVetoes": 1,
+          "retestExpires": 21,
+          "unresolvedExcluded": false,
+          "tradeEntryExitEvidence": [
+            {
+              "entryUTC": "2025-06-05T07:00:00Z",
+              "exitUTC": "2025-06-05T13:00:00Z",
+              "watchUTC": "2025-06-05T06:00:00Z",
+              "retestUTC": "2025-06-05T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.127137
+            },
+            {
+              "entryUTC": "2025-07-09T10:00:00Z",
+              "exitUTC": "2025-07-10T03:00:00Z",
+              "watchUTC": "2025-07-09T06:00:00Z",
+              "retestUTC": "2025-07-09T10:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.848846
+            },
+            {
+              "entryUTC": "2025-07-17T13:00:00Z",
+              "exitUTC": "2025-07-17T14:00:00Z",
+              "watchUTC": "2025-07-17T10:00:00Z",
+              "retestUTC": "2025-07-17T13:00:00Z",
+              "side": "bullish",
+              "netR9bps": -1.08979
+            },
+            {
+              "entryUTC": "2025-09-10T12:00:00Z",
+              "exitUTC": "2025-09-10T13:00:00Z",
+              "watchUTC": "2025-09-10T08:00:00Z",
+              "retestUTC": "2025-09-10T12:00:00Z",
+              "side": "bullish",
+              "netR9bps": 1.740503
+            },
+            {
+              "entryUTC": "2025-09-10T14:00:00Z",
+              "exitUTC": "2025-09-11T14:00:00Z",
+              "watchUTC": "2025-09-10T13:00:00Z",
+              "retestUTC": "2025-09-10T14:00:00Z",
+              "side": "bullish",
+              "netR9bps": 0.827162
+            },
+            {
+              "entryUTC": "2026-06-02T12:00:00Z",
+              "exitUTC": "2026-06-02T16:00:00Z",
+              "watchUTC": "2026-06-02T10:00:00Z",
+              "retestUTC": "2026-06-02T12:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.821365
+            },
+            {
+              "entryUTC": "2026-06-03T21:00:00Z",
+              "exitUTC": "2026-06-04T21:00:00Z",
+              "watchUTC": "2026-06-03T20:00:00Z",
+              "retestUTC": "2026-06-03T21:00:00Z",
+              "side": "bearish",
+              "netR9bps": 1.325925
+            },
+            {
+              "entryUTC": "2026-06-06T07:00:00Z",
+              "exitUTC": "2026-06-06T09:00:00Z",
+              "watchUTC": "2026-06-06T05:00:00Z",
+              "retestUTC": "2026-06-06T07:00:00Z",
+              "side": "bearish",
+              "netR9bps": -1.086219
+            }
+          ],
+          "baseline": "V91_RETEST_MAX4H",
+          "filterMode": "ALL_REVERSALS_SWEEP_CONTEXT",
+          "deltaTotalRVsOwnBaseline": 1.144707,
+          "audit": {
+            "originalRetestsAssessed": 10,
+            "vetoedOriginalRetests": 1,
+            "vetoPatternCounts": {
+              "MORNING_STAR_1H": 1,
+              "BULLISH_HARAMI_CONFIRMED_1H": 1
+            },
+            "vetoExamples": [
+              {
+                "atUTC": "2025-02-12T07:00:00Z",
+                "side": "bearish",
+                "patterns": [
+                  {
+                    "family": "STAR",
+                    "name": "MORNING_STAR",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  },
+                  {
+                    "family": "HARAMI_CONFIRMED",
+                    "name": "BULLISH_HARAMI_CONFIRMED",
+                    "direction": "bullish",
+                    "firstUTC": "2025-02-12T03:00:00Z",
+                    "confirmedUTC": "2025-02-12T06:00:00Z",
+                    "prior20LiquiditySweepAndReentry": true,
+                    "internalHikkakeFalseBreakConfirmed": false,
+                    "crypto24hNoGapRequirement": true,
+                    "signalIsNotStandaloneTrade": true,
+                    "onlyClosedCandlesUsed": true,
+                    "tf": "1H"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "noBrokerOrders": true,
+  "noUserNotifications": true,
+  "BTC_SOL_V7_V91Unchanged": true,
+  "ETHNotComparableWithoutSameCompleteLongArchive": true,
+  "tradeFillsNotIndependentlyExecutable": true,
+  "fundingVariableSlippageLiquidationNotFullyModeled": true
+}
