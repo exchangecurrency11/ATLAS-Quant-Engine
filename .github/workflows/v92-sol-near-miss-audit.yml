@@ -1,0 +1,111 @@
+name: V9.2 SOL Star Harami near-miss diagnostic (observation only)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-sol-near-miss-audit.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-sol-research-branch-writes
+  cancel-in-progress: false
+
+jobs:
+  descriptive-near-miss-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test observation-only gate
+        run: |
+          set -euo pipefail
+          python3 -m py_compile download_binance_um_history.py v92_sol_holdout_backtest.py v92_sol_near_miss_audit.py
+          python3 -m unittest discover -s tests -p 'test_v92_sol_holdout_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_sol_near_miss_audit.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
+
+      - name: Download same 58 official Binance USD-M monthly archives used by temporal holdout
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_history.py \
+            --start 2022-05 --end 2024-09 \
+            --output-dir v92_sol_holdout_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("v92_sol_holdout_archive/source_manifest.json").read_text())
+          assert m["checksumsVerified"]==58 and len(m["inputFiles"])==58
+          assert m["firstUTC"]=="2022-05-01T00:00:00+00:00"
+          assert m["endExclusiveUTC"]=="2024-10-01T00:00:00+00:00"
+          print("V92_SOL_NEARMISS_ARCHIVE_VERIFIED",m["checksumsVerified"])
+          PY
+
+      - name: Count opposing Star Harami retests with and without sweep; never veto
+        run: |
+          set -euo pipefail
+          python3 -u v92_sol_near_miss_audit.py \
+            --archive v92_sol_holdout_archive \
+            --out forward/v92_sol_holdout_2022_2024_nearmiss
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_sol_holdout_2022_2024_nearmiss/diagnostic.json").read_text())
+          assert x["status"]=="V92_SOL_HOLDOUT_NEARMISS_DIAGNOSTIC_OBSERVATION_ONLY"
+          assert x["noVetoOrProductionChanges"] and x["noBrokerOrders"]
+          assert all(x["diagnosticReplayExactlyMatchesBaseline"].values())
+          a=x["audit"]
+          assert a["retestsWithQualifyingSweep"]+a["retestsWithPatternButNoSweep"]<=a["retestsWithOpposingPattern"]
+          print("V92_SOL_NEARMISS_AUDIT_VALIDATED",{
+            "retests":a["baselineRetests"],
+            "opposingPatterns":a["retestsWithOpposingPattern"],
+            "withSweep":a["retestsWithQualifyingSweep"],
+            "withoutSweep":a["retestsWithPatternButNoSweep"]})
+          PY
+
+      - name: Commit descriptive audit to isolated V9.2 research branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_sol_holdout_2022_2024_nearmiss/diagnostic.json \
+                  forward/v92_sol_holdout_2022_2024_nearmiss/diagnostic.md
+          git commit -m "V9.2 SOL Star Harami prior20 sweep near-miss audit only"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_SOL_NEARMISS_DIAGNOSTIC_SEALED_NO_FILTER_CHANGE"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+
+      - name: Upload audit bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-sol-nearmiss-audit-${{ github.run_id }}
+          path: |
+            v92_sol_holdout_archive/source_manifest.json
+            forward/v92_sol_holdout_2022_2024_nearmiss/diagnostic.json
+            forward/v92_sol_holdout_2022_2024_nearmiss/diagnostic.md
+          if-no-files-found: ignore
+          retention-days: 60
+
+      - name: Summarize
+        if: always()
+        run: |
+          if test -s forward/v92_sol_holdout_2022_2024_nearmiss/diagnostic.md; then
+            cat forward/v92_sol_holdout_2022_2024_nearmiss/diagnostic.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Observation only. No vetoes, broker orders, alerts, or production changes." >> "$GITHUB_STEP_SUMMARY"
