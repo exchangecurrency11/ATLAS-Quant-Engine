@@ -57,10 +57,13 @@ jobs:
           assert x["nightBeforeRequestRetrospectiveOnlyNoOrders"]
           assert x["noForcedEntriesFromMarketTrendOrV9ColorForecast"]
           assert x["noActualOrders"] and x["noUserAlerts"]
+          assert x["riskSizingIsFixedPaper100USDTPerRNotRealPositionFill"]
           assert set(x["accounts"])=={"V7_ORIGINAL","V91_RETEST_MAX4H"}
           for a in x["accounts"].values():
             assert a["brokerOrders"]==0 and a["realExecutableFillsVerified"]==0
-            assert a["virtualInitialUSDT"]==100 and a["virtualPaperRiskPerTradeUSDT"]==0.5
+            assert a["virtualInitialUSDT"]==1000 and a["virtualPaperRiskPerTradeUSDT"]==100
+            assert a["riskPctOfInitialCapital"]==10
+            assert a["riskPerTradeIsHighAndNotRecommendedForLive"]
           print("V7_AND_V91_VIRTUAL_ACCOUNTS_INDEPENDENT_NO_RETROACTIVE_FILLS")
           PY
       - name: Persist the independent portfolio status only to research branch
