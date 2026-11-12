@@ -1,0 +1,52 @@
+{
+  "status": "V92_SOL_HOLDOUT_NEARMISS_DIAGNOSTIC_OBSERVATION_ONLY",
+  "periodUTC": [
+    "2022-10-01T00:00:00Z",
+    "2024-10-01T00:00:00Z"
+  ],
+  "warmupUTC": [
+    "2022-05-01T00:00:00Z",
+    "2022-10-01T00:00:00Z"
+  ],
+  "source": {
+    "checksumsVerified": 58,
+    "monthlyArchives": 58,
+    "source": "Official Binance USD-M monthly 1H; SHA256 verified; 4H/Daily aggregated"
+  },
+  "frozenRuleUnderInspection": {
+    "opposingFamilies": [
+      "STAR",
+      "HARAMI_CONFIRMED"
+    ],
+    "strictVetoAlsoRequiresPrior20SweepAndReentry": true,
+    "thisDiagnosticIgnoresSweepForCountingOnly": true,
+    "noVetoApplied": true,
+    "noThresholdRetuned": true
+  },
+  "audit": {
+    "baselineRetests": 13,
+    "retestsWithOpposingPattern": 0,
+    "retestsWithQualifyingSweep": 0,
+    "retestsWithPatternButNoSweep": 0,
+    "patternInstances": {},
+    "examples": []
+  },
+  "baselineV91": {
+    "trades": 12,
+    "wins": 6,
+    "winRatePct": 50.0,
+    "netR": 4.627398,
+    "stressNetR": 2.00394
+  },
+  "diagnosticReplayExactlyMatchesBaseline": {
+    "trades": true,
+    "wins": true,
+    "netR": true,
+    "stressNetR": true
+  },
+  "noBrokerOrders": true,
+  "noUserNotifications": true,
+  "noVetoOrProductionChanges": true,
+  "paperOnlyNotRealPnL": true,
+  "notAnIndependentNewPerformanceHoldout": true
+}
