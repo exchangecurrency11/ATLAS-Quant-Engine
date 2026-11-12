@@ -8,6 +8,7 @@ from pathlib import Path
 
 from v91_dual_paper_accounts import build, verified_ledger, latest_hour_records
 from v91_prospective_retest import MODE as BTC_MODE, path_at
+from v91_eth_prospective_retest import MODE as ETH_MODE
 
 def iso(t):return datetime.fromtimestamp(t,timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 def epoch(s):return int(datetime.fromisoformat(s.replace("Z","+00:00")).timestamp())
@@ -38,7 +39,7 @@ def hour(t):
     return {
        "mode":BTC_MODE,"targetClosed1HUTC":iso(t),
        "capturedAtUTC":iso(t+19*60),
-       "noBrokerOrders":True,"noUserNotifications":True,
+       "noBrokerOrders":True,"noNotifications":True,
        "V7SnapshotAndIndependentRecomputeExactMatch":True,
        "sourceVerifiedSameHour":True,
        "assets":{coin:{"originalV7":events(),"max4hRetest":events()}
@@ -54,6 +55,48 @@ def score():
                      for coin in ("BTCUSDT","SOLUSDT")}}
 
 class DualPaperTests(unittest.TestCase):
+    def test_btc_sol_source_uses_its_real_no_notifications_schema(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            path_at(root,FIRST).write_text(json.dumps(hour(FIRST)))
+            records=latest_hour_records(root,BTC_MODE,first_utc=FIRST,
+                                        asset_refs={"BTCUSDT","SOLUSDT"})
+            self.assertEqual(list(records),[FIRST])
+
+    def test_eth_source_uses_its_separate_no_user_notifications_schema(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            h={"mode":ETH_MODE,"symbol":"ETHUSDT",
+               "targetClosed1HUTC":iso(FIRST),"capturedAtUTC":iso(FIRST+19*60),
+               "noBrokerOrders":True,"noUserNotifications":True,
+               "verifiedSourceAndExactV7Replay":True}
+            path_at(root,FIRST).write_text(json.dumps(h))
+            records=latest_hour_records(root,ETH_MODE,first_utc=FIRST,
+                                        asset_refs={"ETHUSDT"})
+            self.assertEqual(list(records),[FIRST])
+
+    def test_btc_sol_source_cannot_substitute_eth_notification_field(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);h=hour(FIRST)
+            h.pop("noNotifications")
+            h["noUserNotifications"]=True
+            path_at(root,FIRST).write_text(json.dumps(h))
+            with self.assertRaisesRegex(ValueError,"UNVERIFIED"):
+                latest_hour_records(root,BTC_MODE,first_utc=FIRST,
+                                    asset_refs={"BTCUSDT","SOLUSDT"})
+
+    def test_eth_source_cannot_substitute_btc_sol_notification_field(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            h={"mode":ETH_MODE,"symbol":"ETHUSDT",
+               "targetClosed1HUTC":iso(FIRST),"capturedAtUTC":iso(FIRST+19*60),
+               "noBrokerOrders":True,"noNotifications":True,
+               "verifiedSourceAndExactV7Replay":True}
+            path_at(root,FIRST).write_text(json.dumps(h))
+            with self.assertRaisesRegex(ValueError,"UNVERIFIED"):
+                latest_hour_records(root,ETH_MODE,first_utc=FIRST,
+                                    asset_refs={"ETHUSDT"})
+
     def test_start_flat_even_when_old_night_source_exists(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
