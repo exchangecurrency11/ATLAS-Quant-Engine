@@ -1,6 +1,6 @@
 # SOL-FLOW-01 — BTC/SOL project SOL research-only 1H taker ablation
 
-**Status: code + synthetic integrity tests only. Historical return figures have NOT been generated or validated.**
+**Status: research workflow prepared. Historical return figures have NOT been generated or validated until the GitHub Actions run succeeds.**
 **Main/production, notifications, broker orders, V7/V9.1 and V9.2 code: unchanged.**
 
 Created 2026-11-12 on independent research branch `research/sol-flow-01-20261112`.
@@ -21,9 +21,13 @@ Does pre-existing Binance USD-M 1H kline taker-buy volume and trade-count inform
 - 9bps each side: baseline costs are already subtracted by original replay; 25bps each side: subtract incremental 32bps round-trip in price-risk units.
 - Report completed net-R, win rate, max sequential R drawdown, profit factor, veto reasons, watches, rejected BOS and unresolved positions separately. No magic '75% win chance'.
 - Results are exploratory because historical data and other candidate configurations were previously examined. Require *new* prospective sealed paper events before promotion.
-- Source manifest and every individual 1H field must be present, contiguous and valid; 4H and Daily aggregate OHLCV must match **this exact 1H stream**.
+- Source manifest must prove all 48 Binance monthly files by SHA256; every individual 1H taker field must be present, contiguous and valid; 4H and Daily OHLCV + taker aggregates must match **this exact 1H stream**.
 - Optional external V9.1 baseline reference must reproduce original V9.1 MAX4H trade count, wins and total net-R within publication rounding.
 - No live orders, new alerts, settings edits, auto-promotions or new historical 'fills'.
+
+## Automated isolated research workflow
+
+The branch-specific workflow `.github/workflows/sol-flow-01-research.yml` runs on research-branch code/doc pushes. It downloads 24 complete months for BTC and SOL directly from Binance Data Vision, validates the 48 monthly checksums, runs the five ablation arms, checks the unfiltered SOL V9.1 control against the published historical baseline, then commits only the research report to this branch. It does not modify `main`, production, alerts, paper accounts or broker paths.
 
 ## Reproduce on a runner with Binance download access
 
@@ -43,6 +47,6 @@ For external parity, append `--v91-reference /path/to/v91_full_replay_reference.
 
 ## Current verification
 - Nine synthetic unit tests passed locally on authoring session.
-- Historical archive not available in that local session; **no backtest was run**.
+- An older published OHLCV-only archive was located, but it does not contain taker fields and is not used for the flow experiment. The branch workflow downloads the complete raw monthly Binance kline fields directly; **no historical flow backtest result exists yet**.
 - No external full V9.1 parity result claimed.
 - No new benchmark or performance improvement claimed.
