@@ -30,12 +30,12 @@ class V92SOLHoldoutTests(unittest.TestCase):
         self.assertEqual(MONTHS[0],"2022-05")
         self.assertEqual(MONTHS[-1],"2024-09")
 
-    def test_archive_manifest_requires_all_60_monthly_checksums(self):
+    def test_archive_manifest_requires_all_58_monthly_checksums(self):
         manifest={
           "source":"Binance official data.binance.vision FUTURES/UM monthly 1h klines",
-          "firstUTC":"2022-04-01T00:00:00+00:00",
+          "firstUTC":"2022-05-01T00:00:00+00:00",
           "endExclusiveUTC":"2024-10-01T00:00:00+00:00",
-          "checksumsVerified":60,
+          "checksumsVerified":58,
           "pairCounts":{"BTCUSDT":dict(EXPECTED),"SOLUSDT":dict(EXPECTED)},
           "inputFiles":[
             {"symbol":sym,"month":month,"sha256":"a"*64}
