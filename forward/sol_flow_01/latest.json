@@ -1,0 +1,161 @@
+{
+  "status": "SOL_FLOW_01_EXPLORATORY_HISTORICAL_PAPER_ONLY",
+  "source": "Binance official USD-M 1H kline (full taker columns)",
+  "symbol": "SOLUSDT",
+  "startUTC": "2024-10-01T00:00:00Z",
+  "endExclusiveUTC": "2026-10-01T00:00:00Z",
+  "archiveChecksumEntriesReported": 48,
+  "sameHistoryEveryArm": true,
+  "retestExpiryHours": 4,
+  "4HAndDailyVerifiedAgainst1H": true,
+  "externalV91ReferenceParityVerified": true,
+  "next1HOpenHypotheticalFill": true,
+  "sameCandleStopFirst": true,
+  "thresholdsPredeclared": {
+    "takerBuyShare": 0.5,
+    "4hCvdSignedPct": 0,
+    "relativeVolume20Min": 1.0,
+    "relativeAvgTradeSize20Min": 1.0
+  },
+  "allHistoricalPeriodsPreviouslyExamined": true,
+  "notIndependentForwardEvidence": true,
+  "brokerOrders": false,
+  "alerts": false,
+  "productionModified": false,
+  "promotionApproved": false,
+  "limitations": [
+    "No funding, real spread, real fills or liquidation effects",
+    "Repeated past comparisons; do not treat best arm as new validated edge",
+    "No trading fees tier verification or ex-ante slippage verification"
+  ],
+  "results": {
+    "V91_UNFILTERED_CONTROL": {
+      "summary": {
+        "trades": 9,
+        "winsNet": 5,
+        "winRatePct": 55.56,
+        "netR9BpsPerSide": 3.115948,
+        "netR25BpsPerSide": 1.007952,
+        "meanNetR": 0.346216,
+        "profitFactorR": 1.70055,
+        "maxSequentialDrawdownR": 2.271844,
+        "BOSWatches": 30,
+        "rejectedBOS": 49,
+        "retestVetoes": 0,
+        "expiredRetests": 20,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false
+      },
+      "gateEvidence": {
+        "eligibleOriginalRetestsAssessed": 0,
+        "vetoedRetests": 0,
+        "reasonCounts": {}
+      }
+    },
+    "FLOW_1H_TAKER_AGREES": {
+      "summary": {
+        "trades": 6,
+        "winsNet": 3,
+        "winRatePct": 50.0,
+        "netR9BpsPerSide": 0.392444,
+        "netR25BpsPerSide": -0.792685,
+        "meanNetR": 0.065407,
+        "profitFactorR": 1.11687,
+        "maxSequentialDrawdownR": 2.271844,
+        "BOSWatches": 30,
+        "rejectedBOS": 49,
+        "retestVetoes": 6,
+        "expiredRetests": 23,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false
+      },
+      "gateEvidence": {
+        "eligibleOriginalRetestsAssessed": 13,
+        "vetoedRetests": 6,
+        "reasonCounts": {
+          "TAKER_1H_OPPOSITE": 6
+        }
+      }
+    },
+    "FLOW_4H_CVD_AGREES": {
+      "summary": {
+        "trades": 6,
+        "winsNet": 3,
+        "winRatePct": 50.0,
+        "netR9BpsPerSide": 0.61639,
+        "netR25BpsPerSide": -0.601933,
+        "meanNetR": 0.102732,
+        "profitFactorR": 1.18356,
+        "maxSequentialDrawdownR": 2.271844,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 5,
+        "expiredRetests": 24,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false
+      },
+      "gateEvidence": {
+        "eligibleOriginalRetestsAssessed": 11,
+        "vetoedRetests": 5,
+        "reasonCounts": {
+          "CVD_4H_OPPOSITE": 5
+        }
+      }
+    },
+    "FLOW_1H_4H_RVOL": {
+      "summary": {
+        "trades": 1,
+        "winsNet": 1,
+        "winRatePct": 100.0,
+        "netR9BpsPerSide": 1.325925,
+        "netR25BpsPerSide": 1.21545,
+        "meanNetR": 1.325925,
+        "profitFactorR": null,
+        "maxSequentialDrawdownR": 0.0,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 13,
+        "expiredRetests": 29,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false
+      },
+      "gateEvidence": {
+        "eligibleOriginalRetestsAssessed": 14,
+        "vetoedRetests": 13,
+        "reasonCounts": {
+          "RELATIVE_VOLUME_BELOW_ONE": 9,
+          "CVD_4H_OPPOSITE": 7,
+          "TAKER_1H_OPPOSITE": 6
+        }
+      }
+    },
+    "FLOW_1H_4H_RVOL_SIZE": {
+      "summary": {
+        "trades": 1,
+        "winsNet": 1,
+        "winRatePct": 100.0,
+        "netR9BpsPerSide": 1.325925,
+        "netR25BpsPerSide": 1.21545,
+        "meanNetR": 1.325925,
+        "profitFactorR": null,
+        "maxSequentialDrawdownR": 0.0,
+        "BOSWatches": 30,
+        "rejectedBOS": 51,
+        "retestVetoes": 13,
+        "expiredRetests": 29,
+        "unresolvedPositionExcluded": false,
+        "pendingEntryExcluded": false
+      },
+      "gateEvidence": {
+        "eligibleOriginalRetestsAssessed": 14,
+        "vetoedRetests": 13,
+        "reasonCounts": {
+          "RELATIVE_VOLUME_BELOW_ONE": 9,
+          "MEAN_TRADE_SIZE_BELOW_ONE": 8,
+          "CVD_4H_OPPOSITE": 7,
+          "TAKER_1H_OPPOSITE": 6
+        }
+      }
+    }
+  }
+}
