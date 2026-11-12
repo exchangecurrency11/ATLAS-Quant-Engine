@@ -4,6 +4,7 @@
   "firstEligibleVerifiedHourlyCloseUTC": "2026-11-12T11:00:00Z",
   "assets": [
     "BTCUSDT",
+    "ETHUSDT",
     "SOLUSDT"
   ],
   "initialVirtualCapitalUSDT": 1000,
@@ -29,11 +30,19 @@
   "retestMustHavePreviousGitCommitBeforeExit": true,
   "forbidRetroactiveTradeEntries": true,
   "historicalEightPointThreeRNotTransferred": true,
-  "ETHExcludedPendingSameSourceParity": true,
+  "ETHExcludedPendingSameSourceParity": false,
   "nextOpenHypotheticalFillNotRealTimeExecutable": true,
   "riskNotHardCappedAcrossSimultaneousAssets": true,
   "noRealBrokerOrders": true,
   "noChatGPTNotifications": true,
   "originalV7V91VirtualAccountsRemainIndependent": true,
-  "note": "Third account research only; first hypothetical eligible close strictly after user request. Initial virtual balance 1000 USDT; no performance claim until contemporaneous, independent and committed hourly source snapshots. No real fills."
+  "note": "Third account research only; first hypothetical eligible close strictly after user request. Initial virtual balance 1000 USDT; no performance claim until contemporaneous, independent and committed hourly source snapshots. No real fills. ETH separately requested at 2026-11-12T11:01:54Z; earliest new ETH close 12:00Z; source must be sealed ETH V7 and V9.1. ETH patterns observe only, original V9.1 max4h ETH entry semantics; ETH adds NO extra initial 1000USDT.",
+  "ETHIntegratedAsIndependentSealedProspectiveSourceOnly": true,
+  "ETHsourceInstrument": "ETHUSDT_PERP.A",
+  "ETHNewRequestedAtUTC": "2026-11-12T11:01:54Z",
+  "ETHFirstEligibleVerifiedHourlyCloseUTC": "2026-11-12T12:00:00Z",
+  "ETHPatternMode": "OBSERVATION_ONLY_NO_VETO_UNTIL_INDEPENDENT_ETH_TRADE_BACKTEST",
+  "ETHMatchesOriginalV7AndV91ReplayExact": true,
+  "singleCombinedV92PaperPortfolio1000USDTNotSeparateETHCapital": true,
+  "threeAssetCombinedSummaryPath": "forward/v92_prospective_selected/combined_three_asset_account.json"
 }
