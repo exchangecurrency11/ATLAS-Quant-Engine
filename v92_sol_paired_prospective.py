@@ -60,10 +60,11 @@ def trade_evidence(folder, trade, arm_field):
 
 
 def key_of(trade):
+    entry_value=trade.get("entryUTC",trade.get("entryOpenUTC"))
+    entry_epoch=epoch(entry_value) if isinstance(entry_value,str) else int(entry_value)
     return (
         int(trade["watchKnownUTC"]),int(trade["retestKnownUTC"]),
-        int(trade["entryUTC"] if "entryUTC" in trade else trade["entryOpenUTC"]),trade["side"],
-        round(float(trade["stop"]),8)
+        entry_epoch,trade["side"],round(float(trade["stop"]),8)
     )
 
 
