@@ -1,0 +1,147 @@
+name: V9.1 ETH original V7 vs max4h prospective paper shadow NO ALERTS
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/v91-eth-prospective-hourly-shadow.yml]
+  schedule:
+    - cron: '25,44,54 * * * *'
+  workflow_run:
+    workflows:
+      - ETH V7 Independent Hourly Paper Forward (no orders)
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+concurrency:
+  group: v91-eth-prospective-only-no-alerts
+  cancel-in-progress: false
+
+jobs:
+  eth-paper:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout V9 research branch with full Git evidence
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Read only original ETH V7 snapshot in separate checkout
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+      - name: Run independent ETH and original V9.1 safety tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v91_eth_prospective_retest.py
+          python3 -m unittest discover -s tests -p test_v91_eth_prospective_retest.py -v
+          python3 -m unittest discover -s tests -p test_v91_prospective_retest.py -q
+          python3 -m unittest discover -s tests -p test_eth_v7_hourly_observer.py -q
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+      - name: Require same-current-hour verified ETH V7 Coinalyze perpetual evidence
+        id: gate
+        shell: bash
+        env:
+          ETH_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+        run: |
+          set -euo pipefail
+          minute="$(date -u +%M)"
+          target="$(date -u +%Y-%m-%dT%H-00Z)"
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          if (( 10#$minute < 12 || 10#$minute > 57 )); then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V91_SKIP_OUTSIDE_CURRENT_HOUR_WINDOW"
+          elif test -f "forward/v91_eth_prospective_retest/hourly/$target.json"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V91_SKIP_ALREADY_IMMUTABLY_CAPTURED"
+          elif ! test -s "v7_evidence/forward/eth/snapshots/$target.json"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V91_SKIP_MISSING_EXACT_HOUR_V7"
+          elif ! test -n "$ETH_KEY"; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V91_SKIP_MISSING_READONLY_COINALYZE_KEY"
+          elif ! python3 - "$target" <<'PY'
+          import json,sys
+          from pathlib import Path
+          t=sys.argv[1]
+          j=json.loads((Path("v7_evidence/forward/eth/snapshots")/(t+".json")).read_text())
+          assert j.get("status")=="VERIFIED_PAPER_OBSERVATION"
+          assert j.get("brokerOrders") is False
+          assert j.get("paperForwardObservation") is True
+          assert j.get("dataSource","").startswith("Coinalyze ETHUSDT_PERP.A / Binance perpetual")
+          assert j.get("targetClosed1HUTC")==t.replace("-00Z",":00:00Z")
+          PY
+          then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "ETH_V91_SKIP_UNVERIFIED_V7_SOURCE"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+            echo "ETH_V91_RETEST_MAX4H_MATCHED_V7_SOURCE_AVAILABLE"
+          fi
+      - name: Prospectively replay exact verified ETH perpetual V7 and max4h
+        if: steps.gate.outputs.run == 'true'
+        env:
+          ETH_V7_COINALYZE_API_KEY: ${{ secrets.ETH_V7_COINALYZE_API_KEY || secrets.COINALYZE_API_KEY }}
+          ETH_TARGET: ${{ steps.gate.outputs.target }}
+        run: |
+          set -euo pipefail
+          python3 -u v91_eth_prospective_retest.py --v7-dir v7_evidence/forward/eth/snapshots
+          test -s "forward/v91_eth_prospective_retest/hourly/$ETH_TARGET.json"
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          snap=json.loads((Path("forward/v91_eth_prospective_retest/hourly")/(os.environ["ETH_TARGET"]+".json")).read_text())
+          assert snap["verifiedSourceAndExactV7Replay"] is True
+          assert set(snap["sourceIntegrity"])=={"1hour","4hour","daily"}
+          assert snap["noBrokerOrders"] and snap["noUserNotifications"] and snap["noBackfill"]
+          assert snap["V7AndV9ProductionAndSignalsUnchanged"]
+          score=json.loads(Path("forward/v91_eth_prospective_retest/scoreboard.json").read_text())
+          assert score["realTimeExecutableEntryCountProven"]==0
+          assert score["noBrokerOrders"] and score["noNotifications"]
+          print("ETH_V91_IMMUTABLE_MATCHED_V7_PAPER_ONLY_NO_ALERTS")
+          PY
+      - name: Save only ETH V9.1 observations to isolated research branch
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v9-prestart-live-data-compatibility-20261111
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v91_eth_prospective_retest/hourly/ forward/v91_eth_prospective_retest/scoreboard.json
+          if git diff --cached --quiet; then
+            echo "ETH_V91_NO_NEW_COMMIT"
+            exit 0
+          fi
+          git commit -m "ETH V9.1 hourly V7 original vs max4h immutable paper shadow"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
+            if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
+              echo "ETH_V91_NEW_VERIFIED_HOUR_SEALED"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+      - name: Report distinction between verified capture and safe skip
+        if: always()
+        run: |
+          echo "ETH V9.1 exact-hour comparison gate: ${{ steps.gate.outputs.run }}." >> "$GITHUB_STEP_SUMMARY"
+          echo "Only real verified captures are persisted. No missing-hour backfill." >> "$GITHUB_STEP_SUMMARY"
+          echo "No real orders, no user notifications, original V7 and BTC/SOL V9.1 unchanged." >> "$GITHUB_STEP_SUMMARY"
+      - name: Keep ETH paper evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v91-eth-independent-paper-${{ github.run_id }}
+          path: |
+            forward/v91_eth_prospective_retest/scoreboard.json
+            forward/v91_eth_prospective_retest/hourly/${{ steps.gate.outputs.target }}.json
+          if-no-files-found: ignore
+          retention-days: 14
