@@ -1,0 +1,79 @@
+{
+  "mode": "V92_BTC_ETH_SOL_SINGLE_THIRD_1000USDT_PROSPECTIVE_PAPER_ACCOUNT",
+  "assets": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "virtualInitialUSDT": 1000,
+  "fixedVirtualStopRiskUSDTPerTrade": 100,
+  "virtualRiskPercentPerTradeOfInitialCapital": 10,
+  "risk10PctVeryAggressiveNotAdvisedLive": true,
+  "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
+  "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
+  "sourceBTCandSOLVerifiedClosedHours": 0,
+  "sourceETHVerifiedClosedHours": 0,
+  "lastCapturedBTCandSOLHourUTC": null,
+  "lastCapturedETHHourUTC": null,
+  "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
+  "virtualPaperEquityUSDT": 1000,
+  "virtualPaperPnLUSDT": 0,
+  "netRealizedPaperR9BpsSide": 0,
+  "virtualPaperPnLStress25BpsUSDT": 0,
+  "closedEligiblePaperTrades": 0,
+  "wins": 0,
+  "losses": 0,
+  "winRatePct": null,
+  "perAssetScores": {
+    "BTCUSDT": {
+      "closedEligiblePaperTrades": 0,
+      "wins": 0,
+      "netR": 0
+    },
+    "ETHUSDT": {
+      "closedEligiblePaperTrades": 0,
+      "wins": 0,
+      "netR": 0
+    },
+    "SOLUSDT": {
+      "closedEligiblePaperTrades": 0,
+      "wins": 0,
+      "netR": 0
+    }
+  },
+  "perAssetLatestState": {
+    "BTCUSDT": {
+      "state": "NO_NEW_V92_VERIFIED_HOUR",
+      "lastClosedUTC": null,
+      "newBOSWatches": 0,
+      "retestPending": false,
+      "openPaperPosition": false
+    },
+    "ETHUSDT": {
+      "state": "NO_NEW_V92_VERIFIED_ETH_HOUR",
+      "lastClosedUTC": null,
+      "retestPending": false,
+      "openPaperPosition": false,
+      "newBOSWatches": 0
+    },
+    "SOLUSDT": {
+      "state": "NO_NEW_V92_VERIFIED_HOUR",
+      "lastClosedUTC": null,
+      "newBOSWatches": 0,
+      "retestPending": false,
+      "openPaperPosition": false
+    }
+  },
+  "forwardOnlyPrecommittedPaperLedger": [],
+  "ethPatternsObservedButNotAutomaticTradeFilter": true,
+  "solStrictSelectedStarHaramiSweepOnly": true,
+  "btcPatternVetoDisabled": true,
+  "originalV7V91AndOtherV92BooksUnchanged": true,
+  "missingHistoryAndNoGitSealedRetestExcluded": true,
+  "noHistorical836USDBackfilledIntoThisAccount": true,
+  "noRealExecutableFillsProven": true,
+  "fundingVariableSpreadSlippageLiquidationNotFullyModeled": true,
+  "simultaneousAssetsDoNotHaveTotalRiskCap": true,
+  "noBrokerOrders": true,
+  "noUserNotifications": true
+}
