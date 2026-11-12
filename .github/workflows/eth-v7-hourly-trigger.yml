@@ -7,6 +7,11 @@ name: ETH V7 Independent Hourly Paper Forward (no orders)
 on:
   schedule:
     - cron: '12,27,42,57 * * * *'
+  workflow_run:
+    workflows:
+      - V7 Hourly Paper Forward Runner
+    types: [completed]
+    branches: [main]
   push:
     branches:
       - main
@@ -23,6 +28,7 @@ concurrency:
 
 jobs:
   eth-paper:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
