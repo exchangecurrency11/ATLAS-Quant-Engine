@@ -1,0 +1,125 @@
+name: V9.2 SOL earlier-period temporal holdout (official Binance)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-sol-earlier-period-holdout.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-sol-research-branch-writes
+  cancel-in-progress: false
+
+jobs:
+  temporal-holdout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated V9.2 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and run holdout no-lookahead and source-integrity tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile download_binance_um_history.py v92_sol_holdout_backtest.py
+          python3 -m unittest discover -s tests -p 'test_v92_sol_holdout_backtest.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_selected_reversal_patterns.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_bull_bear_candle_invalidation.py' -q
+
+      - name: Download 30 months of official Binance USD-M BTC and SOL 1H archives
+        run: |
+          set -euo pipefail
+          python3 -u download_binance_um_history.py \
+            --start 2022-04 --end 2024-09 \
+            --output-dir v92_sol_holdout_archive --workers 4
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("v92_sol_holdout_archive/source_manifest.json").read_text())
+          assert m["checksumsVerified"]==60
+          assert m["firstUTC"]=="2022-04-01T00:00:00+00:00"
+          assert m["endExclusiveUTC"]=="2024-10-01T00:00:00+00:00"
+          assert m["pairCounts"]=={
+            "BTCUSDT":{"1hour":21912,"4hour":5478,"daily":913},
+            "SOLUSDT":{"1hour":21912,"4hour":5478,"daily":913}}
+          assert len(m["inputFiles"])==60
+          assert all(len(x["sha256"])==64 for x in m["inputFiles"])
+          print("V92_SOL_HOLDOUT_OFFICIAL_BINANCE_ARCHIVE_VERIFIED",m["checksumsVerified"])
+          PY
+
+      - name: Run frozen V9.2 SOL filter on earlier 2022-2024 period
+        run: |
+          set -euo pipefail
+          python3 -u v92_sol_holdout_backtest.py \
+            --archive v92_sol_holdout_archive \
+            --out forward/v92_sol_holdout_2022_2024
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_sol_holdout_2022_2024/historical.json").read_text())
+          assert x["status"]=="V92_SOL_EARLIER_PERIOD_TEMPORAL_HOLDOUT_PAPER_ONLY"
+          assert x["source"]["checksumsVerified"]==60
+          assert x["source"]["monthlyArchives"]==60
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["noProductionChanges"] and x["paperOnlyNotRealPnL"]
+          assert x["temporalValidation"]["sameV92RuleAppliedWithoutRetuning"]
+          for symbol,item in x["variants"].items():
+            for base in ("V7_ORIGINAL","V91_RETEST_MAX4H"):
+              baseline=item["scores"][base]
+              filtered=item["scores"][base+"__V92_STRICT_SWEEP_FILTER"]
+              assert baseline["trades"]>=0 and filtered["trades"]>=0
+              if symbol=="BTCUSDT":
+                assert baseline["trades"]==filtered["trades"]
+                assert abs(baseline["totalNetR9BpsPerSide"]-filtered["totalNetR9BpsPerSide"])<0.00001
+          print("V92_SOL_EARLIER_TEMPORAL_HOLDOUT_VALIDATED")
+          PY
+
+      - name: Commit holdout report to isolated V9.2 research branch only
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_sol_holdout_2022_2024/historical.json \
+                  forward/v92_sol_holdout_2022_2024/historical.md
+          git commit -m "V9.2 SOL earlier-period official Binance temporal holdout"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
+            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
+              echo "V92_SOL_TEMPORAL_HOLDOUT_SEALED_NO_LIVE_CHANGES"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Upload auditable holdout archive manifest and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-sol-earlier-period-holdout-${{ github.run_id }}
+          path: |
+            v92_sol_holdout_archive/source_manifest.json
+            forward/v92_sol_holdout_2022_2024/historical.json
+            forward/v92_sol_holdout_2022_2024/historical.md
+          if-no-files-found: ignore
+          retention-days: 90
+
+      - name: Summarize holdout result
+        if: always()
+        run: |
+          if test -s forward/v92_sol_holdout_2022_2024/historical.md; then
+            cat forward/v92_sol_holdout_2022_2024/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No holdout result produced. Do not infer filter effectiveness." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Paper only. No broker orders, user notifications, or V7/V9.1 changes." >> "$GITHUB_STEP_SUMMARY"
