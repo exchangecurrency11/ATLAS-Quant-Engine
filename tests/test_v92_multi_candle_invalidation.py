@@ -135,7 +135,8 @@ class V92MultiPatternsTests(unittest.TestCase):
 
     def test_engulfing_without_previous_trend_rejected(self):
         x=synthetic("ENGULFING","bearish")
-        x[34]["c"]=100.5
+        x[35]["c"]=100.8
+        x[39]["c"]=99.2
         self.assertIsNone(pattern_at(x,len(x)-1,HOUR,"ENGULFING"))
 
     def test_sweep_requires_prior_twenty_and_reentry(self):
