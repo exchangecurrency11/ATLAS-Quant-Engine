@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""V9.2 strict selected candle forward paper-only hourly shadow + own 1000 USDT book.
+"""V9.2 BTC/SOL core capture for the shared third 1000 USDT paper portfolio.
 
-- Only new, same-hour V9.1 source snapshots already sealed in separate Git
-  research branch; independently re-fetch and cross-check original V7
-  and original V9.1 exact state on the same closed 1H/4H/Daily bars.
+- This module captures BTC and SOL; ETH is sealed by a separate source-specific
+  V9.2 module and merged into the SAME shared 1000 USDT aggregate, not a second
+  ETH deposit.
+- BTC/SOL: 1H/4H candle watches plus closed 1D/derived-3D trend and pattern
+  observations. Higher-timeframe observations are information-only.
 - BTC: original V9.1 max4h signals unchanged; candle pattern *observed*.
 - SOL: opposite closed Star/confirmed Harami + prior20 sweep invalidates
   retest in a completely separate full chronological replay.
@@ -237,6 +239,12 @@ def capture(source, original_v7, main_market, raw, *, now,
       "noBrokerOrders":True,
       "noUserNotifications":True,
       "originalV7V91StrategyAndPortfolioUntouched":True,
+      "ETHExcludedFromThisBTC_SOLCoreCapture":True,
+      "ETHMustBeMergedFromSeparateSealedV92Component":True,
+      "ETHUsesSameSharedThirdPaperPortfolioNotExtraCapital":True,
+      "ETHSelectedPatternVetoNotEnabled":True,
+      # Backward-compatible legacy flag: ETH is not part of this BTC/SOL
+      # capture, but is integrated by the separate ETH component workflow.
       "ETHExcludedUntilSameSourceParityAndHistoricalRules":True,
     }
 
