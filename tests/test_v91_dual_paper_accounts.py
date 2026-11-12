@@ -6,7 +6,7 @@ import unittest
 from datetime import datetime,timezone
 from pathlib import Path
 
-from v91_dual_paper_accounts import build, verified_ledger, latest_hour_records
+from v91_dual_paper_accounts import build, verified_ledger, latest_hour_records, coverage_audit
 from v91_prospective_retest import MODE as BTC_MODE, path_at
 from v91_eth_prospective_retest import MODE as ETH_MODE
 
@@ -42,6 +42,7 @@ def hour(t):
        "noBrokerOrders":True,"noNotifications":True,
        "V7SnapshotAndIndependentRecomputeExactMatch":True,
        "sourceVerifiedSameHour":True,
+       "priceAndVolumeValidatedAgainstOriginalV7For1H4HDaily":True,
        "assets":{coin:{"originalV7":events(),"max4hRetest":events()}
                  for coin in ("BTCUSDT","SOLUSDT")}}
 
@@ -55,6 +56,22 @@ def score():
                      for coin in ("BTCUSDT","SOLUSDT")}}
 
 class DualPaperTests(unittest.TestCase):
+    def test_missing_hours_are_reported_not_backfilled(self):
+        records={FIRST:hour(FIRST),FIRST+2*3600:hour(FIRST+2*3600)}
+        audit=coverage_audit(records,FIRST,FIRST+2*3600)
+        self.assertEqual(audit["expectedHours"],3)
+        self.assertEqual(audit["savedExpectedHours"],2)
+        self.assertEqual(audit["missingHourCount"],1)
+        self.assertEqual(audit["missingHoursUTC"],[iso(FIRST+3600)])
+        self.assertTrue(audit["noBackfill"])
+
+    def test_eth_lag_is_reported_against_shared_latest_hour(self):
+        records={FIRST:hour(FIRST),FIRST+3600:hour(FIRST+3600)}
+        audit=coverage_audit(records,FIRST,FIRST+3*3600)
+        self.assertEqual(audit["savedExpectedHours"],2)
+        self.assertEqual(audit["missingHourCount"],2)
+        self.assertEqual(audit["lagHours"],2)
+
     def test_btc_sol_source_uses_its_real_no_notifications_schema(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d)
@@ -69,7 +86,9 @@ class DualPaperTests(unittest.TestCase):
             h={"mode":ETH_MODE,"symbol":"ETHUSDT",
                "targetClosed1HUTC":iso(FIRST),"capturedAtUTC":iso(FIRST+19*60),
                "noBrokerOrders":True,"noUserNotifications":True,
-               "verifiedSourceAndExactV7Replay":True}
+               "verifiedSourceAndExactV7Replay":True,
+               "sourceIntegrity":{k:{"verified":True} for k in ("1hour","4hour","daily")},
+               "crossTimeframeOHLCV":{"1H_matches_4H":5,"1H_matches_daily":5}}
             path_at(root,FIRST).write_text(json.dumps(h))
             records=latest_hour_records(root,ETH_MODE,first_utc=FIRST,
                                         asset_refs={"ETHUSDT"})
@@ -82,6 +101,15 @@ class DualPaperTests(unittest.TestCase):
             h["noUserNotifications"]=True
             path_at(root,FIRST).write_text(json.dumps(h))
             with self.assertRaisesRegex(ValueError,"UNVERIFIED"):
+                latest_hour_records(root,BTC_MODE,first_utc=FIRST,
+                                    asset_refs={"BTCUSDT","SOLUSDT"})
+
+    def test_btc_sol_source_requires_full_ohlcv_parity_flag(self):
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d);h=hour(FIRST)
+            h["priceAndVolumeValidatedAgainstOriginalV7For1H4HDaily"]=False
+            path_at(root,FIRST).write_text(json.dumps(h))
+            with self.assertRaisesRegex(ValueError,"PARITY_UNVERIFIED"):
                 latest_hour_records(root,BTC_MODE,first_utc=FIRST,
                                     asset_refs={"BTCUSDT","SOLUSDT"})
 
