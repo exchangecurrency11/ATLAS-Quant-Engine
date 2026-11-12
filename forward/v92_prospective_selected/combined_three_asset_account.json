@@ -12,9 +12,9 @@
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
   "sourceBTCandSOLVerifiedClosedHours": 2,
-  "sourceETHVerifiedClosedHours": 0,
+  "sourceETHVerifiedClosedHours": 1,
   "lastCapturedBTCandSOLHourUTC": "2026-11-12T12:00:00Z",
-  "lastCapturedETHHourUTC": null,
+  "lastCapturedETHHourUTC": "2026-11-12T12:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1000.0,
   "virtualPaperPnLUSDT": 0.0,
@@ -104,11 +104,23 @@
       }
     },
     "ETHUSDT": {
-      "state": "NO_NEW_V92_VERIFIED_ETH_HOUR",
-      "lastClosedUTC": null,
+      "state": "FLAT",
+      "lastClosedUTC": "2026-11-12T12:00:00Z",
       "retestPending": false,
       "openPaperPosition": false,
-      "newBOSWatches": 0
+      "newBOSWatches": 0,
+      "patternWarnings": {
+        "1H": {
+          "lastCompletedCandleCloseUTC": "2026-11-12T12:00:00Z",
+          "confirmedReversalPatterns": [],
+          "ethObservationalOnlyNoAutoVeto": true
+        },
+        "4H": {
+          "lastCompletedCandleCloseUTC": "2026-11-12T12:00:00Z",
+          "confirmedReversalPatterns": [],
+          "ethObservationalOnlyNoAutoVeto": true
+        }
+      }
     },
     "SOLUSDT": {
       "state": "FLAT_NO_ENTRY",
