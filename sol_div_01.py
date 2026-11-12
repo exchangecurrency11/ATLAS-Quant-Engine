@@ -33,7 +33,22 @@ MAX_PIVOT_AGE = 48  # bars on the relevant timeframe
 
 class DivergenceIndex:
     def __init__(self, rows, seconds):
-        validate_source(rows)
+        if seconds == HOUR:
+            validate_source(rows)
+        else:
+            if not rows:
+                raise ValueError("DIV_EMPTY_TIMEFRAME")
+            for i,b in enumerate(rows):
+                if (int(b["t"]) % seconds or
+                    (i and int(b["t"])-int(rows[i-1]["t"]) != seconds)):
+                    raise ValueError("DIV_TIMEFRAME_GAP_OR_ALIGNMENT")
+                if not all(k in b for k in ("o","h","l","c","v","qv","tbv","tbq","trades")):
+                    raise ValueError("DIV_MISSING_TAKER_FIELD")
+                o,h,l,cl,v=(float(b[k]) for k in ("o","h","l","c","v"))
+                if not (0<l<=min(o,cl)<=max(o,cl)<=h and v>=0
+                        and 0<=float(b["tbv"])<=v+max(1e-8,v*1e-7)
+                        and 0<=float(b["tbq"])<=float(b["qv"])+max(1e-6,float(b["qv"])*1e-7)):
+                    raise ValueError("DIV_INVALID_TF_OHLC_OR_FLOW")
         self.rows = rows
         self.seconds = seconds
         self.times = [int(x["t"]) for x in rows]
