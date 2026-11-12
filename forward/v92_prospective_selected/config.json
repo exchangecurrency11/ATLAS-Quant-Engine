@@ -44,5 +44,24 @@
   "ETHPatternMode": "OBSERVATION_ONLY_NO_VETO_UNTIL_INDEPENDENT_ETH_TRADE_BACKTEST",
   "ETHMatchesOriginalV7AndV91ReplayExact": true,
   "singleCombinedV92PaperPortfolio1000USDTNotSeparateETHCapital": true,
-  "threeAssetCombinedSummaryPath": "forward/v92_prospective_selected/combined_three_asset_account.json"
+  "threeAssetCombinedSummaryPath": "forward/v92_prospective_selected/combined_three_asset_account.json",
+  "allAssetsObservedTimeframes": [
+    "1H",
+    "4H",
+    "1D",
+    "3D"
+  ],
+  "higherTimeframeRequestAtUTC": "2026-11-12T11:28:28Z",
+  "higherTimeframeFirstProspectiveEligibleHourUTC": "2026-11-12T12:00:00Z",
+  "higherTimeframeSymbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "daily1DFromAlreadyValidatedClosedDailySource": true,
+  "threeDay3DFromThreeContiguousFullyClosedUTCDailyCandles": true,
+  "threeDayAlignedToUnixUTC3DayGridNotYetExchangeNativeProven": true,
+  "noLookaheadNoCurrentOpenDailyOrThreeDayCandles": true,
+  "higherTimeframePatternsTrendObservationOnlyNoTradeVeto": true,
+  "originalSignalRulesAndHistoricalPaperPnLNotRetrofitted": true
 }
