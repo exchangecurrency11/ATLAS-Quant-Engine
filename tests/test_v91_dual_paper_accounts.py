@@ -19,9 +19,10 @@ def config():
       "mode":"V7_VS_V91_PROSPECTIVE_SEPARATE_PAPER_ACCOUNTS",
       "requestedAtUTC":iso(START),
       "firstEligible1HCloseUTC":iso(FIRST),
-      "initialVirtualCapitalUSDTPerAccount":100.0,
-      "fixedPaperRiskUSDTPerEligibleTrade":0.5,
+      "initialVirtualCapitalUSDTPerAccount":1000.0,
+      "fixedPaperRiskUSDTPerEligibleTrade":100.0,
       "noLiveOrders":True,"noRetroactiveExecution":True,
+      "userExplicitlyRequested10PctRiskOnlyInVirtualPaper":True,
       "noNewNotifications":True,
       "V7ProductionAndExistingV91TradingRulesUnchanged":True}
 
@@ -62,7 +63,7 @@ class DualPaperTests(unittest.TestCase):
             self.assertFalse(p["ETHAddedOnlyIfIndependentV7ParityVerified"])
             for name in ("V7_ORIGINAL","V91_RETEST_MAX4H"):
                 a=p["accounts"][name]
-                self.assertEqual(a["virtualEquityUSDT"],100)
+                self.assertEqual(a["virtualEquityUSDT"],1000)
                 self.assertEqual(a["closedEligiblePaperTrades"],0)
                 self.assertEqual(a["perAssetLatestState"]["BTCUSDT"]["status"],
                                  "NO_ELIGIBLE_CAPTURE_AFTER_START")
@@ -106,10 +107,10 @@ class DualPaperTests(unittest.TestCase):
                 "entryUTC":iso(entry),"exitUTC":iso(t),"side":"bearish",
                 "netR9Bps":1.5,"netR25Bps":.85})
             p=build(config(),root,sc)
-            self.assertEqual(p["accounts"]["V7_ORIGINAL"]["virtualEquityUSDT"],100)
-            self.assertEqual(p["accounts"]["V91_RETEST_MAX4H"]["virtualEquityUSDT"],100.75)
+            self.assertEqual(p["accounts"]["V7_ORIGINAL"]["virtualEquityUSDT"],1000)
+            self.assertEqual(p["accounts"]["V91_RETEST_MAX4H"]["virtualEquityUSDT"],1150)
             self.assertEqual(p["accounts"]["V91_RETEST_MAX4H"]["closedEligiblePaperTrades"],1)
-            self.assertEqual(p["accounts"]["V91_RETEST_MAX4H"]["virtualRealizedPnlUSDT"],.75)
+            self.assertEqual(p["accounts"]["V91_RETEST_MAX4H"]["virtualRealizedPnlUSDT"],150)
             self.assertEqual(p["accounts"]["V91_RETEST_MAX4H"]["realExecutableFillsVerified"],0)
 
     def test_forged_ledger_without_matching_source_exit_is_rejected(self):
@@ -143,6 +144,28 @@ class DualPaperTests(unittest.TestCase):
             z=config();z["firstEligible1HCloseUTC"]=iso(FIRST-3600)
             with self.assertRaisesRegex(ValueError,"RETROACTIVE"):
                 build(z,d,score())
+
+    def test_explicit_high_risk_opt_in_and_strict_ten_percent_ceiling(self):
+        with tempfile.TemporaryDirectory() as d:
+            z=config()
+            z["userExplicitlyRequested10PctRiskOnlyInVirtualPaper"]=False
+            with self.assertRaisesRegex(ValueError,"HIGH_RISK"):
+                build(z,d,score())
+            z=config()
+            z["fixedPaperRiskUSDTPerEligibleTrade"]=101
+            with self.assertRaisesRegex(ValueError,"INVALID_FIXED_RISK"):
+                build(z,d,score())
+
+    def test_user_requested_capital_risk_is_not_compounded_to_real_orders(self):
+        with tempfile.TemporaryDirectory() as d:
+            out=build(config(),d,score())
+            for a in out["accounts"].values():
+                self.assertEqual(a["virtualInitialUSDT"],1000)
+                self.assertEqual(a["virtualPaperRiskPerTradeUSDT"],100)
+                self.assertEqual(a["riskPctOfInitialCapital"],10)
+                self.assertTrue(a["riskPerTradeIsHighAndNotRecommendedForLive"])
+                self.assertEqual(a["brokerOrders"],0)
+            self.assertTrue(out["riskSizingIsFixedPaper100USDTPerRNotRealPositionFill"])
 
     def test_incomplete_trade_account_does_not_imply_executable_fill(self):
         with tempfile.TemporaryDirectory() as d:
