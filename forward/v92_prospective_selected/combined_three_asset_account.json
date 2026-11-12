@@ -5,21 +5,21 @@
     "ETHUSDT",
     "SOLUSDT"
   ],
-  "virtualInitialUSDT": 1000,
-  "fixedVirtualStopRiskUSDTPerTrade": 100,
+  "virtualInitialUSDT": 1000.0,
+  "fixedVirtualStopRiskUSDTPerTrade": 100.0,
   "virtualRiskPercentPerTradeOfInitialCapital": 10,
   "risk10PctVeryAggressiveNotAdvisedLive": true,
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
-  "sourceBTCandSOLVerifiedClosedHours": 0,
+  "sourceBTCandSOLVerifiedClosedHours": 1,
   "sourceETHVerifiedClosedHours": 0,
-  "lastCapturedBTCandSOLHourUTC": null,
+  "lastCapturedBTCandSOLHourUTC": "2026-11-12T11:00:00Z",
   "lastCapturedETHHourUTC": null,
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
-  "virtualPaperEquityUSDT": 1000,
-  "virtualPaperPnLUSDT": 0,
+  "virtualPaperEquityUSDT": 1000.0,
+  "virtualPaperPnLUSDT": 0.0,
   "netRealizedPaperR9BpsSide": 0,
-  "virtualPaperPnLStress25BpsUSDT": 0,
+  "virtualPaperPnLStress25BpsUSDT": 0.0,
   "closedEligiblePaperTrades": 0,
   "wins": 0,
   "losses": 0,
@@ -43,11 +43,23 @@
   },
   "perAssetLatestState": {
     "BTCUSDT": {
-      "state": "NO_NEW_V92_VERIFIED_HOUR",
-      "lastClosedUTC": null,
+      "state": "FLAT_NO_ENTRY",
+      "lastClosedUTC": "2026-11-12T11:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
-      "openPaperPosition": false
+      "openPaperPosition": false,
+      "patternWarnings": {
+        "1H": {
+          "lastClosedCandleUTC": "2026-11-12T11:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [],
+          "informationOnlyNotAutomaticNewTrade": true
+        },
+        "4H": {
+          "lastClosedCandleUTC": "2026-11-12T08:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [],
+          "informationOnlyNotAutomaticNewTrade": true
+        }
+      }
     },
     "ETHUSDT": {
       "state": "NO_NEW_V92_VERIFIED_ETH_HOUR",
@@ -57,11 +69,23 @@
       "newBOSWatches": 0
     },
     "SOLUSDT": {
-      "state": "NO_NEW_V92_VERIFIED_HOUR",
-      "lastClosedUTC": null,
+      "state": "FLAT_NO_ENTRY",
+      "lastClosedUTC": "2026-11-12T11:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
-      "openPaperPosition": false
+      "openPaperPosition": false,
+      "patternWarnings": {
+        "1H": {
+          "lastClosedCandleUTC": "2026-11-12T11:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [],
+          "informationOnlyNotAutomaticNewTrade": true
+        },
+        "4H": {
+          "lastClosedCandleUTC": "2026-11-12T08:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [],
+          "informationOnlyNotAutomaticNewTrade": true
+        }
+      }
     }
   },
   "forwardOnlyPrecommittedPaperLedger": [],

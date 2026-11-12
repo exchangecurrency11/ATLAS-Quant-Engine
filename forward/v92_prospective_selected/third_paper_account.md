@@ -1,14 +1,18 @@
-# V9.2 — Üçüncü ayrı ileri paper hesap (başlangıç kaydı)
+# V9.2 seçici formasyon — üçüncü ayrı ileri paper hesap
 
-**SADECE SANAL HESAP. GERÇEK EMİR VE BİLDİRİM YOK.**
+**GERÇEK EMİR, GERÇEK UYGULANABİLİR GİRİŞ VE KULLANICI BİLDİRİMİ YOK.**
+İleri paper başlangıç: 2026-11-12T11:00:00Z
+En son doğrulanmış kapanış: 2026-11-12T11:00:00Z
+Doğrulanan saat: 1
 
-- Başlangıç: 12 Kasım 2026, 14:00 TSİ (ilk uygun 1H mum kapanışı; henüz yakalanmadı).
-- Başlangıç sanal bakiye: **1.000 USDT**.
-- İşlem başına varsayımsal stop hedef riski: **100 USDT** (başlangıç bakiyesinin %10'u, çok agresif).
-- Doğrulanan ileriye dönük V9.2 saat: **0**.
-- Kapanmış uygun V9.2 paper işlem: **0**.
-- Gerçekleşmiş sanal paper kâr/zarar: **0 USDT**.
-- SOL: teyitli Morning/Evening Star + Harami + 20 mum likidite reddi; BTC ve diğer formasyonlar gözlem.
-- V7 ve V9.1 ayrı hesaplar değişmedi; geçmiş **+8,36R** bu hesaba eklenmedi.
+| Hesap | İşlem | Kazanç | Net R | Sanal PnL | Sanal bakiye |
+|---|---:|---:|---:|---:|---:|
+| V9.2 bağımsız | 0 | None | 0 | 0.0 USDT | 1000.0 USDT |
 
-Yalnız önceden GitHub'a kaydedilmiş aynı-saat V7/V9.1 kaynaklarıyla kaydedilen, retest kararı daha sonraki varsayımsal çıkıştan önce Git commit'le sabitlenmiş işlemler sayılır. Eksik saatler sonradan doldurulmaz. Kaynak/kapalı 4H tutarsızlığı işlemi geçersiz kılar. 9bp/yön maliyet varsayımı kullanılır; funding, dinamik spread, kayma, tasfiye ve gerçek broker dolumu güvenilir biçimde modellenmemiştir.
+BTC yalnız izleme; SOL 1H/4H kapanmış Morning/Evening Star veya 3 mum teyitli Harami ve likidite geri dönüşüyle karşıt retest reddi.
+Hikkake, Engulfing, Three Soldiers/Crows yalnız gözlem.
+Eski iki 1000 USDT hesap değişmedi. Eski +8,36R geçmiş getiri yeni hesaba taşınmadı.
+Gecikmeli veri nedeniyle sonraki mum açılışında gerçek emir dolumu kanıtlanmadı; bu yalnız sanal referans. Maliyet 9bp/yön; funding, gerçek spread, kayma ve likidasyon eksik.
+10%/işlem riski çok yüksektir ve gerçek işlemler için tavsiye edilmez.
+Eksik saatler ve retest öncesi commit'i olmayan işlemler sayılmaz.
+
