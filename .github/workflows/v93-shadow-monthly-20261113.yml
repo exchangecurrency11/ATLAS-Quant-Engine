@@ -1,0 +1,114 @@
+name: V9.3 frozen prospective monthly shadow (RESEARCH ONLY, NO ORDERS)
+
+# GitHub cron works on default branch only; intentionally not enabled.
+# Manually dispatch on isolated research branch after the complete monthly ZIP exists.
+on:
+  push:
+    branches:
+      - research/v93-prospective-shadow-20261113
+    paths:
+      - v93_shadow_monthly_20261113.py
+      - tests/test_v93_shadow_monthly_20261113.py
+      - .github/workflows/v93-shadow-monthly-20261113.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v93-shadow-research-only-frozen-monthly
+  cancel-in-progress: false
+
+jobs:
+  prospective:
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v93-prospective-shadow-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Source guards and no-production-modification tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v93-prospective-shadow-20261113
+          python3 -m py_compile v93_shadow_monthly_20261113.py
+          python3 -m unittest discover -s tests -p 'test_v93_shadow_monthly_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_filter_ablation_20261113.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_full_interactions_20261113.py' -q
+
+      - name: Verify 3 coin completed monthly SHA256 archives and replay frozen shadows
+        run: |
+          set -euo pipefail
+          python3 -u v93_shadow_monthly_20261113.py --workers 6
+
+      - name: Reject prospective leakage and missing SHA256 sources
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          from v93_shadow_monthly_20261113 import FREEZE_EPOCH,CANDIDATES
+          p=Path("forward/v93_shadow_prospective_20261113")
+          spec=json.loads((p/"frozen_spec.json").read_text())
+          assert spec["freezeUTC"]=="2026-11-14T00:00:00Z"
+          assert not spec["realOrders"] and not spec["notifications"]
+          assert not spec["currentV7V92AccountWrites"]
+          assert set(spec["candidates"])==set(CANDIDATES)
+          snaps=sorted((p/"snapshots").glob("*.json")) if (p/"snapshots").exists() else []
+          preflight=p/"preflight.json"
+          assert snaps or preflight.exists()
+          checks=snaps+([preflight] if preflight.exists() else [])
+          for snap in checks:
+            v=json.loads(snap.read_text())
+            assert v["neverRealOrders"] and v["cannotCreditAnyPreFreezeTrade"]
+            assert v["noExistingV7V92AccountWrites"]
+            assert len(v["reportedStreams"])==6
+            assert len(v["archiveSHA256"])==v["verifiedArchives"]
+            assert all(len(h)==64 for h in v["archiveSHA256"].values())
+            for stream in v["reportedStreams"].values():
+              assert stream["metrics25Bps"]["trades"]==len(stream["closedProspectiveTrades"])
+              assert stream["noBackfilledHistoricalTrades"] and not stream["isActualExecution"]
+              for t in stream["closedProspectiveTrades"]:
+                for k in ("watchKnownUTC","retestKnownUTC","entryOpenUTC"):
+                  from datetime import datetime
+                  ts=int(datetime.fromisoformat(t[k].replace("Z","+00:00")).timestamp())
+                  assert ts>=FREEZE_EPOCH
+          print("SIX_FROZEN_PROSPECTIVE_SHADOW_STREAMS_VERIFIED")
+          PY
+
+      - name: Commit exclusively to independent research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v93-prospective-shadow-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v93_shadow_prospective_20261113/
+          if git diff --cached --quiet; then
+            echo "NO_NEW_PROSPECTIVE_RESULT" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Seal immutable prospective-only monthly paper shadow research"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v93-prospective-shadow-20261113
+            if git push origin HEAD:research/v93-prospective-shadow-20261113; then
+              echo "SHADOW_RESEARCH_ONLY_COMMITTED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Display truthfulness reminder
+        if: always()
+        run: |
+          if test -s forward/v93_shadow_prospective_20261113/latest.json; then
+            echo "COMPLETED-MONTH PROSPECTIVE SHADOW STATE VERIFIED" >> "$GITHUB_STEP_SUMMARY"
+          elif test -s forward/v93_shadow_prospective_20261113/preflight.json; then
+            echo "PREFLIGHT ONLY: November prospective archive not yet published." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED PROSPECTIVE STATE" >> "$GITHUB_STEP_SUMMARY"
+          fi
