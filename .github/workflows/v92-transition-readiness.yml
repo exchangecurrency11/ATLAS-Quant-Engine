@@ -1,0 +1,98 @@
+name: V9.2 manual handover readiness - preserve V7 (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/v92-stable-hardening-20261112
+    paths:
+      - v92_transition_readiness.py
+      - tests/test_v92_transition_readiness.py
+      - .github/workflows/v92-transition-readiness.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-transition-readiness-no-cutover
+  cancel-in-progress: false
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout hardening branch only
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-stable-hardening-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Read previously sealed three-coin paper book (read-only)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          path: v92_paper_evidence
+          persist-credentials: false
+
+      - name: Run the mandatory no-V7-disable and fail-closed tests
+        run: |
+          set -euo pipefail
+          python3 -m py_compile v92_transition_readiness.py
+          python3 -m unittest discover -s tests -p test_v92_transition_readiness.py -v
+
+      - name: Compare latest immutable paper with stable audit
+        run: |
+          set -euo pipefail
+          python3 -u v92_transition_readiness.py \
+            --audit forward/v92_stable_hardening/latest.json \
+            --paper v92_paper_evidence/forward/v92_prospective_selected/combined_three_asset_account.json \
+            --out forward/v92_transition_readiness/latest.json \
+            --md forward/v92_transition_readiness/latest.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_transition_readiness/latest.json").read_text())
+          assert x["autoDisableV7"] is False
+          assert x["disableV7Data"] is False
+          assert x["disableV7Notifications"] is False
+          assert x["autoPromotion"] is False
+          assert x["approvedToChangeProduction"] is False
+          assert x["productionAndExistingPaperUnchanged"] is True
+          assert x["noBrokerOrders"] is True
+          assert x["status"] in (
+            "CONTINUE_V7_V92_PARALLEL_PAPER",
+            "ELIGIBLE_FOR_MANUAL_HANDOVER_REVIEW")
+          print("NO_AUTO_SWITCH_OR_V7_DEACTIVATION_PROVEN")
+          PY
+
+      - name: Commit readiness report only to research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-stable-hardening-20261112
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_transition_readiness/latest.json forward/v92_transition_readiness/latest.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'research: sealed V7-preserving V9.2 manual transition gate report'
+          for i in 1 2 3; do
+            git pull --rebase origin research/v92-stable-hardening-20261112
+            if git push origin HEAD:research/v92-stable-hardening-20261112; then
+              echo "V92_TRANSITION_RESEARCH_ONLY_REPORT_SEALED"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
+
+      - name: Store read-only handover diagnosis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-manual-handover-readiness
+          path: |
+            forward/v92_transition_readiness/latest.json
+            forward/v92_transition_readiness/latest.md
+          if-no-files-found: ignore
+          retention-days: 30
