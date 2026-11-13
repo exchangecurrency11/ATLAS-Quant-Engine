@@ -1,0 +1,128 @@
+name: V9.2 older ETH ATR and SOL BTC 4H temporal validation (NO ORDERS)
+
+# Research branch ONLY: no main/V7/V9.2 production or forward paper modification.
+on:
+  push:
+    branches:
+      - research/v92-older-eth-sol-regimes-20261113
+    paths:
+      - .github/workflows/v92-older-eth-sol-regimes-20261113.yml
+      - v92_older_eth_sol_regimes_20261113.py
+      - tests/test_v92_older_eth_sol_regimes_20261113.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-older-eth-sol-regimes-research-only
+  cancel-in-progress: false
+
+jobs:
+  historical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout research branch (not production)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-older-eth-sol-regimes-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test frozen causal regime decisions
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-older-eth-sol-regimes-20261113
+          python3 -m py_compile v92_older_eth_sol_regimes_20261113.py
+          python3 -m unittest discover -s tests -p test_v92_older_eth_sol_regimes_20261113.py -v
+          python3 -m unittest discover -s tests -p test_v92_three_asset_correlation_study.py -q
+          python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
+
+      - name: Verify 87 Binance USD-M BTC ETH SOL older monthly 1H archives by SHA256 and replay
+        run: |
+          set -euo pipefail
+          python3 -u v92_older_eth_sol_regimes_20261113.py \
+            --workers 6 --out forward/v92_older_eth_sol_regimes_20261113
+
+      - name: Validate exact old BTC SOL baseline reference and complete ETH SOL report
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root=Path("forward/v92_older_eth_sol_regimes_20261113")
+          x=json.loads((root/"historical.json").read_text())
+          assert x["status"]=="V92_OLDER_ETH_ATR_AND_SOL_BTC_4H_FIXED_RULE_TEMPORAL_CHECK"
+          assert x["data"]["monthlyVerifiedArchives"]==87
+          assert len(x["data"]["sourceManifest"])==87
+          assert all(len(m["sha256"])==64 for m in x["data"]["sourceManifest"])
+          assert x["data"]["verified1HCandlesEachSymbol"]==21216
+          assert x["data"]["verified1HCandlesAll"]==63648
+          assert x["noBrokerOrders"] and x["noUserNotifications"] and x["noProductionV7V91V92Changes"]
+          assert x["noForwardBookBackfills"] and x["historicalOnlyNotIndependentLiveExecutionEvidence"]
+          assert x["scoredPeriodUTC"]==["2022-10-01T00:00:00Z","2024-10-01T00:00:00Z"]
+          eth=x["assets"]["ETHUSDT"]["variants"]
+          sol=x["assets"]["SOLUSDT"]["variants"]
+          assert set(eth)=={"V91_V92_4H_BASELINE","ETH_ATR_LE_1P5_BTC",
+                             "ETH_BTC_4H_AGREE","ETH_BTC_4H_AGREE_AND_ATR_LE_1P5"}
+          assert set(sol)=={"V91_4H_UNFILTERED","V92_BASELINE_SOL_SELECTED","V92_BTC_4H_AGREE"}
+          for sym,variants in (("ETHUSDT",eth),("SOLUSDT",sol)):
+            for name,score in variants.items():
+              assert score["trades"]>=0,(sym,name)
+              assert len(score["tradeEvidence"])==score["trades"],(sym,name)
+              assert score["noHistoricalTradesEnteredIntoForwardAccount"]
+              assert sum(v["trades"] for v in score["byDirection"].values())==score["trades"]
+              assert abs(sum(v["netR9Bps"] for v in score["byDirection"].values()) -
+                         score["totalNetR9BpsPerSide"]) < 0.00002
+          assert sol["V91_4H_UNFILTERED"]["trades"]==12
+          assert abs(sol["V91_4H_UNFILTERED"]["totalNetR9BpsPerSide"]-4.6274)<0.00012
+          assert sol["V92_BASELINE_SOL_SELECTED"]["trades"]==12
+          assert abs(sol["V92_BASELINE_SOL_SELECTED"]["totalNetR25BpsPerSideStress"]-2.0039)<0.00012
+          assert (root/"historical.md").stat().st_size > 500
+          print("OLDER_ETH_SOL_87_SHA256_AND_2022_2024_BASELINE_PARITY_VERIFIED")
+          PY
+
+      - name: Seal only verified historical results on the isolated branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-older-eth-sol-regimes-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_older_eth_sol_regimes_20261113/historical.json \
+                  forward/v92_older_eth_sol_regimes_20261113/historical.md
+          if git diff --cached --quiet; then
+            echo "HISTORICAL_REPORT_ALREADY_SEALED" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Verify frozen older ETH ATR and SOL BTC 4H temporal research"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-older-eth-sol-regimes-20261113
+            if git push origin HEAD:research/v92-older-eth-sol-regimes-20261113; then
+              echo "OLDER_ETH_SOL_RESEARCH_ONLY_SAVED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Show verified research report or explicit lack of results
+        if: always()
+        run: |
+          if test -s forward/v92_older_eth_sol_regimes_20261113/historical.md; then
+            cat forward/v92_older_eth_sol_regimes_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED OLDER ETH/SOL RESULT. Do not infer PnL." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "V7 and V9.2 unchanged. Historical trades never count as forward." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep independent historical outputs and source hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-older-eth-sol-temporal-regimes
+          path: |
+            forward/v92_older_eth_sol_regimes_20261113/historical.json
+            forward/v92_older_eth_sol_regimes_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
