@@ -1,0 +1,138 @@
+name: V9.2 full pair interaction research BTC ETH SOL (NO ORDERS)
+
+# Independent branch only. Never touch production books, alerts or scheduled tasks.
+on:
+  push:
+    branches:
+      - research/v92-full-interaction-20261113
+    paths:
+      - .github/workflows/v92-full-interactions-20261113.yml
+      - v92_full_interactions_20261113.py
+      - tests/test_v92_full_interactions_20261113.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-full-factorial-20261113-research-only
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout exact research branch (NEVER default branch)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-full-interaction-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Inspect branch isolation and run unit/reference tests BEFORE download
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-full-interaction-20261113
+          python3 -m py_compile v92_full_interactions_20261113.py v92_filter_ablation_20261113.py
+          python3 -m unittest discover -s tests -p 'test_v92_full_interactions_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_filter_ablation_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_four_candle_models_20261113.py' -q
+          echo "NO_PRODUCTION_FILES_MODIFIED_BY_THIS_RESEARCH" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify 159 official Binance USD-M archives and replay all 91 pairs and 6 predeclared triples/quads
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u v92_full_interactions_20261113.py \
+            --workers 6 --out forward/v92_full_interactions_20261113
+
+      - name: Fail closed unless all six baseline and previous overlapping variant parity checks passed
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("forward/v92_full_interactions_20261113")
+          d=json.loads((p/"historical.json").read_text())
+          assert d["status"]=="V92_91_PAIRS_SIX_PREDECLARED_MULTI_RESEARCH_ONLY"
+          assert d["noProductionChanges"] and not d["orders"] and not d["notifications"] and not d["forwardAccountWrite"]
+          assert d["historicPeriodsAreNotIndependentHoldout"]
+          assert d["verifiedArchives"]==159
+          assert d["pairCount"]==91 and d["pureSignalPairs"]==66 and d["pairsContainingRiskSensitivity"]==25
+          assert d["singleCount"]==14 and d["multiCount"]==6 and d["scenarioCount"]==112
+          assert set(d["periods"])=={"2022_2024","2024_2026"}
+          expect={
+            ("2022_2024","BTCUSDT"):(10,-4.265784,-7.701252),
+            ("2022_2024","ETHUSDT"):(10,-.9789,-4.496945),
+            ("2022_2024","SOLUSDT"):(12,4.6274,2.0039),
+            ("2024_2026","BTCUSDT"):(5,4.1010,2.8146),
+            ("2024_2026","ETHUSDT"):(6,-2.0083,-4.1088),
+            ("2024_2026","SOLUSDT"):(8,4.2607,2.4099),
+          }
+          for pname,pdata in d["periods"].items():
+            assert pdata["verifiedArchives"]==(87 if pname=="2022_2024" else 72)
+            assert len(d["manifests"][pname])==pdata["verifiedArchives"]
+            assert all(len(x["sha256"])==64 for x in d["manifests"][pname])
+            assert set(pdata["assets"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+            for coin,asset in pdata["assets"].items():
+              modes=asset["variants"]
+              assert len(modes)==(112 if coin=="SOLUSDT" else 98)
+              baseline=modes["BASELINE"]
+              n,r,s=expect[pname,coin]
+              assert baseline["trades"]==n and abs(baseline["netR9Bps"]-r)<.00016 and abs(baseline["netR25Bps"]-s)<.00016
+              for mode,score in modes.items():
+                assert len(score["tradeEvidence"])==score["trades"]
+                assert sum(x["trades"] for x in score["direction"].values())==score["trades"]
+                assert score["pairedVsBaseline"]["tradeKeyCollisionChecked"]
+                assert score["at25bps"]["trades"]==score["trades"]
+                assert abs(score["at25bps"]["netR"]-score["netR25Bps"])<.00003
+          assert (p/"historical.md").stat().st_size>3000
+          print("ALL_91_PAIRS_6_FROZEN_MULTIS_159_SHA256_SIX_PARITY_PASS")
+          PY
+
+      - name: Save report exclusively to research branch; do not merge
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-full-interaction-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_full_interactions_20261113/historical.json forward/v92_full_interactions_20261113/historical.md
+          if git diff --cached --quiet; then
+            echo "REPORT_UNCHANGED" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Record verified V9.2 91-pair research outcomes (NO LIVE CHANGES)"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-full-interaction-20261113
+            if git push origin HEAD:research/v92-full-interaction-20261113; then
+              echo "RESEARCH_ONLY_RESULTS_COMMITTED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Print exact audit result
+        if: always()
+        shell: bash
+        run: |
+          if test -s forward/v92_full_interactions_20261113/historical.md; then
+            head -n 48 forward/v92_full_interactions_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED RESULTS: DO NOT CLAIM COMPLETION" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Retain historical JSON, Markdown and SHA256 manifests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-91-pair-research-only
+          path: |
+            forward/v92_full_interactions_20261113/historical.json
+            forward/v92_full_interactions_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 60
