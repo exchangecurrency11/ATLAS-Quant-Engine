@@ -185,6 +185,13 @@ def study_period(p,rows,full_doc):
 
 def run(workers):
     old.fork_source()
+    # Full interaction study froze this pair; historical source ABLATIONS
+    # only contains four original pairs. Register ONLY in this test process.
+    mode="PAIR__bos_break_atr__retest_window"
+    frozen=("bos_break_atr","retest_window")
+    if mode in old.ABLATIONS and tuple(old.ABLATIONS[mode])!=frozen:
+        raise ValueError("ETH_TP1_FROZEN_GATE_PAIR_DRIFT")
+    old.ABLATIONS[mode]=frozen
     source=json.loads(FROZEN_INPUT.read_text())
     if source["status"]!="V92_91_PAIRS_SIX_PREDECLARED_MULTI_RESEARCH_ONLY":
         raise ValueError("NO_VERIFIED_FROZEN_ARCHIVE_SOURCE")
