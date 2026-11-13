@@ -5,7 +5,7 @@ import unittest
 from v92_stable_hardening import seconds,stamp
 from v92_capped_paper import (
     FIRST,MODE,ASSETS,original_intents,pending_retest,step,
-    BPS_BASE,BPS_STRESS,MAX_HOLD_BARS
+    still_valid_original_position,BPS_BASE,BPS_STRESS,MAX_HOLD_BARS
 )
 
 T=seconds(FIRST)
@@ -22,8 +22,17 @@ def intent(sym,t=T,side="bullish",stop=99.):
         "sourceV92SealedCloseUTC":stamp(t),
         "paperOnlyNoRealOrder":True,"notAnEntryOrActualFill":True
     }
-def go(prev,t,b,si=None,commit=True,verified=True,ready=True):
+def go(prev,t,b,si=None,commit=True,verified=True,ready=True,original_override=None):
+    original={s:None for s in ASSETS}
+    if prev is not None:
+        for s,p in prev["intentNextObservation"].items():
+            original[s]={"side":p["side"],"stop":p["stop"],
+                         "watchKnownUTC":p["watchKnownUTC"],
+                         "retestKnownUTC":p["retestKnownUTC"]}
+    if original_override is not None:
+        original.update(original_override)
     return step(prev,t,b,si if si is not None else {},
+                original_open_positions=original,
                 prior_committed_before_this_close=commit,
                 verified=verified,stable_ready=ready,
                 captured_at=t+1800)
@@ -92,6 +101,23 @@ class CappedPaperTests(unittest.TestCase):
         self.assertEqual(s1["intentNextObservation"],{})
         s2=go(s1,T+7200,bars(),ready=True)
         self.assertEqual(s2["closedPaperTrades"],0)
+
+    def test_original_v92_early_stop_prevents_new_delayed_entry(self):
+        s0=go(None,T,bars(),{"SOLUSDT":intent("SOLUSDT")})
+        s1=go(s0,T+3600,bars(),
+              original_override={"SOLUSDT":None})
+        self.assertEqual(len(s1["openPositions"]),0)
+        reasons=[x.get("reason") for x in s1["observedEvents"]]
+        self.assertIn("ORIGINAL_V92_POSITION_ALREADY_EXITED_OR_CHANGED",reasons)
+
+    def test_original_v92_stop_or_retest_change_blocks(self):
+        s0=go(None,T,bars(),{"BTCUSDT":intent("BTCUSDT")})
+        s1=go(s0,T+3600,bars(),
+              original_override={"BTCUSDT":{"side":"bullish",
+                "watchKnownUTC":T-3600,"retestKnownUTC":T,
+                "stop":97.}})
+        self.assertEqual(s1["closedPaperTrades"],0)
+        self.assertEqual(len(s1["openPositions"]),0)
 
     def test_eligible_future_price_drift_invalidates_wrong_stop(self):
         s0=go(None,T,bars(),{"BTCUSDT":intent("BTCUSDT",stop=99.)})
