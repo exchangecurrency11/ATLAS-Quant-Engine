@@ -394,6 +394,48 @@ def load_previous(folder,target):
         raise ValueError("CAPPED_HISTORY_FILENAME_MISMATCH")
     return x,p
 
+def missing_hour_coverage(book_dir, current_hour):
+    """Report absent prospective ledger snapshots; NEVER synthesize any trades."""
+    target=seconds(current_hour)
+    first=seconds(FIRST)
+    if target<first:
+        return {"mode":"V92_CAPPED_COVERAGE_ONLY_NOT_TRADES",
+                "upToExcludingUTC":stamp(target),
+                "expectedClosedHours":0,"verifiedSealedPaperHours":0,
+                "missingHourCount":0,"missingHoursUTC":[],
+                "noHistoricalBackfill":True,"missingIsNotZeroSignal":True}
+    saved=set()
+    folder=Path(book_dir)
+    if folder.exists():
+        for p in folder.glob("*.json"):
+            try:
+                hour=datetime.strptime(p.name,"%Y-%m-%dT%H-00Z.json").replace(
+                    tzinfo=timezone.utc)
+            except ValueError as exc:
+                raise ValueError("CAPPED_COVERAGE_UNEXPECTED_HOUR_FILE") from exc
+            t=int(hour.timestamp())
+            if t<first or t>=target:
+                continue
+            j=json.loads(p.read_text(encoding="utf-8"))
+            if j.get("mode")!=MODE or j.get("lastClosed1HUTC")!=stamp(t):
+                raise ValueError("CAPPED_COVERAGE_UNVERIFIED_LEDGER")
+            saved.add(t)
+    expected=range(first,target,HOUR)
+    missed=[stamp(t) for t in expected if t not in saved]
+    return {
+        "mode":"V92_CAPPED_COVERAGE_ONLY_NOT_TRADES",
+        "firstEligibleHourUTC":FIRST,
+        "upToExcludingUTC":stamp(target),
+        "expectedClosedHours":len(expected),
+        "verifiedSealedPaperHours":len(saved),
+        "missingHourCount":len(missed),
+        "missingHoursUTC":missed,
+        "noHistoricalBackfill":True,
+        "missingIsNotZeroSignal":True,
+        "notEvidenceOfNoMarketOpportunity":True,
+        "doesNotChangeAnyPaperEntryExitOrPnL":True,
+    }
+
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--v92-btcsol",required=True)
