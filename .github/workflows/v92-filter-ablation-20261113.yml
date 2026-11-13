@@ -1,0 +1,144 @@
+name: V9.2 independent filter ablation BTC ETH SOL research (NO ORDERS)
+
+# Only independent research branch. No production orders, paper book changes,
+# notifications, baseline edits or future optimization.
+on:
+  push:
+    branches:
+      - research/v92-filter-ablation-20261113
+    paths:
+      - .github/workflows/v92-filter-ablation-20261113.yml
+      - v92_filter_ablation_20261113.py
+      - tests/test_v92_filter_ablation_20261113.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-full-filter-ablation-research-only
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated research branch only
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-filter-ablation-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test original engine parity before downloading
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-filter-ablation-20261113
+          python3 -m py_compile v92_filter_ablation_20261113.py
+          python3 -m unittest discover -s tests -p test_v92_filter_ablation_20261113.py -v
+          python3 -m unittest discover -s tests -p test_v92_four_candle_models_20261113.py -q
+
+      - name: Fetch SHA256-verified 159 official Binance monthly histories, test 6 original baselines and all isolated variants
+        run: |
+          set -euo pipefail
+          python3 -u v92_filter_ablation_20261113.py \
+            --workers 6 --out forward/v92_filter_ablation_20261113
+
+      - name: Fail closed on missing data, baseline mismatch or missing pair evidence
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("forward/v92_filter_ablation_20261113")
+          d=json.loads((p/"historical.json").read_text())
+          assert d["status"]=="V92_FULL_FILTER_ONE_BY_ONE_AND_FOUR_PAIRS_RESEARCH_ONLY"
+          assert d["archiveCountSHA256"]==159
+          assert d["noProductionV7V92Changes"] and d["noNewLiveSignalConfiguration"]
+          assert d["noOrders"] and d["noNotifications"] and d["noForwardCappedAccountEdits"]
+          assert len(d["oneAtATime"])==14
+          assert len(d["predeclaredPairs"])==4
+          assert len(d["variants"])==19
+          assert set(d["periods"])=={"2022_2024","2024_2026"}
+          assert len(d["earlierOnlyCandidateSelection"])==3
+          expect={
+            ("2022_2024","BTCUSDT"):(10,-4.265784,-7.701252),
+            ("2022_2024","ETHUSDT"):(10,-.9789,-4.496945),
+            ("2022_2024","SOLUSDT"):(12,4.6274,2.0039),
+            ("2024_2026","BTCUSDT"):(5,4.1010,2.8146),
+            ("2024_2026","ETHUSDT"):(6,-2.0083,-4.1088),
+            ("2024_2026","SOLUSDT"):(8,4.2607,2.4099),
+          }
+          for period,x in d["periods"].items():
+            expected=87 if period=="2022_2024" else 72
+            assert x["verifiedArchives"]==expected
+            assert len(x["sourceManifest"])==expected
+            assert all(len(z["sha256"])==64 for z in x["sourceManifest"])
+            assert len({(z["symbol"],z["month"]) for z in x["sourceManifest"]})==expected
+            assert set(x["assets"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+            for coin,a in x["assets"].items():
+              b=a["variants"]["BASELINE"]
+              n,r,stress=expect[period,coin]
+              assert b["trades"]==n
+              assert abs(b["netR9Bps"]-r)<.00016
+              assert abs(b["netR25Bps"]-stress)<.00016
+              required=set(d["variants"])-({"NO_SOL_SELECTED_REVERSAL_VETO"}
+                                        if coin!="SOLUSDT" else set())
+              assert set(a["variants"])==required
+              assert a["engineCaches"]["distinctCausalStructureComputations"]>=0
+              for mode,score in a["variants"].items():
+                assert score["trades"]>=score["wins"]>=0
+                assert len(score["tradeEvidence"])==score["trades"]
+                assert score["pairedVsBaseline"]["tradeKeyCollisionChecked"]
+                assert score["noHistoricalTradesCreditedToForward"]
+                assert sum(z["trades"] for z in score["direction"].values())==score["trades"]
+                assert abs(sum(z["netR9Bps"] for z in score["direction"].values()) -
+                           score["netR9Bps"])<.00002
+          assert (p/"historical.md").stat().st_size>3000
+          print("V92_159_SHA256_6_BASELINE_PARITY_14_INDIVIDUAL_4_PAIR_RESEARCH_VERIFIED")
+          PY
+
+      - name: Commit results exclusively on the isolated research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-filter-ablation-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_filter_ablation_20261113/historical.json \
+                  forward/v92_filter_ablation_20261113/historical.md
+          if git diff --cached --quiet; then
+            echo "NO_NEW_RESEARCH_REPORT" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Seal research-only V9.2 filter ablation on verified official Binance archives"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-filter-ablation-20261113
+            if git push origin HEAD:research/v92-filter-ablation-20261113; then
+              echo "ABLATION_SEALED_ISOLATED_NO_PRODUCTION_CHANGES" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Show verified results or explicit absence
+        if: always()
+        run: |
+          if test -s forward/v92_filter_ablation_20261113/historical.md; then
+            cat forward/v92_filter_ablation_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED FILTER ABLATION RESULTS. Do not invent any deltas." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "V7/V9.2 untouched. Historical trades never enter the forward paper ledger." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep verified SHA256 manifest and independent historical reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-filter-ablation-research-report
+          path: |
+            forward/v92_filter_ablation_20261113/historical.json
+            forward/v92_filter_ablation_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
