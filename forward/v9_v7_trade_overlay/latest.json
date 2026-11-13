@@ -1,8 +1,8 @@
 {
   "status": "V9_V7_ORIGINAL_TRADE_OPPORTUNITY_READONLY_SHADOW",
-  "sameClosed1HUTC": "2026-11-13T07:00:00Z",
-  "joinedAfterBothOriginalSnapshotsUTC": "2026-11-13T07:42:56Z",
-  "current4HTargetStartUTC": "2026-11-13T04:00:00Z",
+  "sameClosed1HUTC": "2026-11-13T08:00:00Z",
+  "joinedAfterBothOriginalSnapshotsUTC": "2026-11-13T08:14:39Z",
+  "current4HTargetStartUTC": "2026-11-13T08:00:00Z",
   "original4HForecastLockStatus": "FORECAST_CAPTURE_AFTER_EVIDENCED_COMMIT",
   "4HOwnColorIsSecondaryNotProfitTarget": true,
   "V7BOSRetestStrategyIsPrimary": true,
@@ -29,7 +29,7 @@
       "originalV7NewWatchesAtThisClose": 0,
       "v9QualityScoredOriginalV7NewWatches": 0,
       "v9QualityScoreIsOnlyResearchContextNotAProfitableTradeProbability": true,
-      "originalV7RetestConfirmedAtThisClose": false,
+      "originalV7RetestConfirmedAtThisClose": true,
       "originalV7PaperPositionAlreadyOpen": false,
       "originalV7NewPaperTradeExitsAtThisClose": 0,
       "v7VotesOnlyNotActionable": {
@@ -38,7 +38,19 @@
       },
       "v9IndependentHourContext": "BEARISH",
       "v9OriginalSealed4HColorContext": null,
-      "eventOverlayOnly": [],
+      "eventOverlayOnly": [
+        {
+          "v7Event": {
+            "kind": "V7_RETEST_CONFIRMED_NEXT_OPEN_PAPER_ONLY",
+            "side": "bearish",
+            "notAPreExecutedEntry": true
+          },
+          "v9BOSQualityScoreFromExact250ClosedHours": null,
+          "v9Primary94DirectionalAgreement": null,
+          "v9SignalFilterWouldBeHypotheticalNotExecuted": true,
+          "doNotTurnDirectionIntoProfitProbability": true
+        }
+      ],
       "noOriginalV7WatchOrRetestRewritten": true
     }
   },
