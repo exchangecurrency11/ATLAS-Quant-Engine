@@ -10,7 +10,7 @@ on:
     paths: [.github/workflows/v92-eth-prospective-third-paper.yml]
   workflow_dispatch:
   schedule:
-    - cron: '37,49,56 * * * *'
+    - cron: '18,30,40,50,57 * * * *'
   workflow_run:
     workflows:
       - V9.1 ETH original V7 vs max4h prospective paper shadow NO ALERTS
@@ -74,6 +74,27 @@ jobs:
           assert j["noHistorical836USDBackfilledIntoThisAccount"]
           print("ETH_V92_AGGREGATE_VERIFIED_SAME_1000_USDT_NOT_THREE_DEPOSITS")
           PY
+      - name: Retry late sealed ETH V7 and V9.1 source (same UTC hour only)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          target="$(date -u +'%Y-%m-%dT%H-00Z')"
+          deadline=$(($(date -u +%s)+150))
+          while [[ "$(date -u +'%Y-%m-%dT%H-00Z')" == "$target" ]] && (( $(date -u +%s) < deadline )); do
+            if gh api "repos/$GITHUB_REPOSITORY/contents/forward/v91_eth_prospective_retest/hourly/$target.json?ref=research/v9-prestart-live-data-compatibility-20261111" >/dev/null 2>&1 &&
+               gh api "repos/$GITHUB_REPOSITORY/contents/forward/eth/snapshots/$target.json?ref=experiment/v7-signal-quality-20261103" >/dev/null 2>&1; then
+              git -C v91_evidence fetch --quiet --depth=1 origin research/v9-prestart-live-data-compatibility-20261111
+              git -C v91_evidence reset --hard --quiet FETCH_HEAD
+              git -C v7_evidence fetch --quiet --depth=1 origin experiment/v7-signal-quality-20261103
+              git -C v7_evidence reset --hard --quiet FETCH_HEAD
+              echo "V92_ETH_SAME_HOUR_LATE_SOURCE_REFRESH_OK_$target"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "V92_ETH_SAFE_SKIP_LATE_SOURCE_NOT_YET_SEALED_$target"
       - name: Gate only NEW ETH V7 and V9.1 confirmed same-hour snapshots
         id: gate
         shell: bash
