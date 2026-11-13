@@ -1,0 +1,1872 @@
+{
+  "status": "HISTORICAL_ETH_TRADE_BY_TRADE_POST_MORTEM_ONLY",
+  "sourceFile": "forward/v92_full_interactions_20261113/historical.json",
+  "sourceSHA256": "9b15781c293eaf38abfd62ea6e087bc9ec35b0df48b8b78fc6f851d971e3d5ab",
+  "verifiedHistoricalBinanceArchiveCount": 159,
+  "bothTimeWindowsAlreadySeen": true,
+  "noGenuineUnseenHoldout": true,
+  "noOrders": true,
+  "noNotifications": true,
+  "noProductionWrites": true,
+  "noForwardPaperCredits": true,
+  "positiveNetRAfterCostsRequired": true,
+  "candidateSelectionFromThisReportForbidden": true,
+  "periods": {
+    "2022_2024": {
+      "reference": {
+        "n": 10,
+        "wins25bps": 3,
+        "winPct25bps": 30.0,
+        "winPctWilson95Descriptive": [
+          10.78,
+          60.32
+        ],
+        "netR25bps": -4.496933,
+        "grossPositiveR": 3.979022,
+        "grossNegativeR": -8.475954,
+        "profitFactor25bps": 0.4694,
+        "exitReasons": {
+          "STOP_FIRST_OR_AFTER_TP": {
+            "count": 7,
+            "netR25": -8.475954
+          },
+          "TP3_COMPLETE": {
+            "count": 3,
+            "netR25": 3.979022
+          }
+        },
+        "costFlipWinners9ToLosers25": 0,
+        "side": {
+          "bullish": {
+            "n": 4,
+            "wins25bps": 1,
+            "netR25bps": -0.605654
+          },
+          "bearish": {
+            "n": 6,
+            "wins25bps": 2,
+            "netR25bps": -3.891279
+          }
+        },
+        "riskPctOfLosers": [
+          1.79349,
+          0.75999,
+          1.05164,
+          1.31491,
+          2.48887,
+          1.23831,
+          0.46344
+        ]
+      },
+      "referenceNetR25Report": -4.496945,
+      "watchCount": 31,
+      "selected": {
+        "BASELINE": {
+          "outcome": {
+            "n": 10,
+            "wins25bps": 3,
+            "winPct25bps": 30.0,
+            "winPctWilson95Descriptive": [
+              10.78,
+              60.32
+            ],
+            "netR25bps": -4.496933,
+            "grossPositiveR": 3.979022,
+            "grossNegativeR": -8.475954,
+            "profitFactor25bps": 0.4694,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 7,
+                "netR25": -8.475954
+              },
+              "TP3_COMPLETE": {
+                "count": 3,
+                "netR25": 3.979022
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 4,
+                "wins25bps": 1,
+                "netR25bps": -0.605654
+              },
+              "bearish": {
+                "n": 6,
+                "wins25bps": 2,
+                "netR25bps": -3.891279
+              }
+            },
+            "riskPctOfLosers": [
+              1.79349,
+              0.75999,
+              1.05164,
+              1.31491,
+              2.48887,
+              1.23831,
+              0.46344
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 10,
+            "added": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "dropped": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [],
+            "droppedTradeEvidence": [],
+            "incrementalNetR25bps": 0,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 31,
+          "riskRejected": 0,
+          "replayDeltaR25": 0.0,
+          "testedGates": []
+        },
+        "NO_BOS_MIN_BREAK_0P20ATR": {
+          "outcome": {
+            "n": 14,
+            "wins25bps": 5,
+            "winPct25bps": 35.714,
+            "winPctWilson95Descriptive": [
+              16.34,
+              61.24
+            ],
+            "netR25bps": -4.221566,
+            "grossPositiveR": 7.380352,
+            "grossNegativeR": -11.601918,
+            "profitFactor25bps": 0.6361,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 9,
+                "netR25": -11.601918
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 1,
+                "netR25": 0.92994
+              },
+              "TP3_COMPLETE": {
+                "count": 4,
+                "netR25": 6.450412
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 6,
+                "wins25bps": 2,
+                "netR25bps": -0.661017
+              },
+              "bearish": {
+                "n": 8,
+                "wins25bps": 3,
+                "netR25bps": -3.560549
+              }
+            },
+            "riskPctOfLosers": [
+              1.18694,
+              1.79349,
+              0.75999,
+              1.05164,
+              1.31491,
+              0.70951,
+              2.48887,
+              1.23831,
+              0.46344
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 9,
+            "added": {
+              "n": 5,
+              "wins25bps": 3,
+              "winPct25bps": 60.0,
+              "winPctWilson95Descriptive": [
+                23.07,
+                88.24
+              ],
+              "netR25bps": 1.077645,
+              "grossPositiveR": 4.203609,
+              "grossNegativeR": -3.125964,
+              "profitFactor25bps": 1.3447,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 2,
+                  "netR25": -3.125964
+                },
+                "TIME_EXIT_AT_CLOSE": {
+                  "count": 1,
+                  "netR25": 0.92994
+                },
+                "TP3_COMPLETE": {
+                  "count": 2,
+                  "netR25": 3.273669
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 2,
+                  "wins25bps": 1,
+                  "netR25bps": -0.055363
+                },
+                "bearish": {
+                  "n": 3,
+                  "wins25bps": 2,
+                  "netR25bps": 1.133008
+                }
+              },
+              "riskPctOfLosers": [
+                1.18694,
+                0.70951
+              ]
+            },
+            "dropped": {
+              "n": 1,
+              "wins25bps": 1,
+              "winPct25bps": 100.0,
+              "winPctWilson95Descriptive": [
+                20.65,
+                100.0
+              ],
+              "netR25bps": 0.802278,
+              "grossPositiveR": 0.802278,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {
+                "TP3_COMPLETE": {
+                  "count": 1,
+                  "netR25": 0.802278
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 1,
+                  "wins25bps": 1,
+                  "netR25bps": 0.802278
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2022-11-17T11:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.421252
+              },
+              {
+                "entryUTC": "2023-05-11T13:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.62432
+              },
+              {
+                "entryUTC": "2023-10-23T22:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.649349
+              },
+              {
+                "entryUTC": "2024-02-21T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.704712
+              },
+              {
+                "entryUTC": "2024-08-01T03:00:00Z",
+                "side": "bearish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.92994
+              }
+            ],
+            "droppedTradeEvidence": [
+              {
+                "entryUTC": "2023-05-11T17:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 0.802278
+              }
+            ],
+            "incrementalNetR25bps": 0.275366,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 38,
+          "riskRejected": 0,
+          "replayDeltaR25": 0.275369,
+          "testedGates": [
+            "bos_break_atr"
+          ]
+        },
+        "NO_BOS_EMA20_MAX_EXTENSION_2P50ATR": {
+          "outcome": {
+            "n": 15,
+            "wins25bps": 6,
+            "winPct25bps": 40.0,
+            "winPctWilson95Descriptive": [
+              19.82,
+              64.25
+            ],
+            "netR25bps": -4.822647,
+            "grossPositiveR": 6.311105,
+            "grossNegativeR": -11.133753,
+            "profitFactor25bps": 0.5668,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 9,
+                "netR25": -11.133753
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 2,
+                "netR25": 1.005983
+              },
+              "TP3_COMPLETE": {
+                "count": 4,
+                "netR25": 5.305123
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 9,
+                "wins25bps": 4,
+                "netR25bps": -0.931369
+              },
+              "bearish": {
+                "n": 6,
+                "wins25bps": 2,
+                "netR25bps": -3.891279
+              }
+            },
+            "riskPctOfLosers": [
+              2.27287,
+              1.79349,
+              0.75999,
+              1.05164,
+              1.31491,
+              1.14204,
+              2.48887,
+              1.23831,
+              0.46344
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 10,
+            "added": {
+              "n": 5,
+              "wins25bps": 3,
+              "winPct25bps": 60.0,
+              "winPctWilson95Descriptive": [
+                23.07,
+                88.24
+              ],
+              "netR25bps": -0.325715,
+              "grossPositiveR": 2.332084,
+              "grossNegativeR": -2.657799,
+              "profitFactor25bps": 0.8774,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 2,
+                  "netR25": -2.657799
+                },
+                "TIME_EXIT_AT_CLOSE": {
+                  "count": 2,
+                  "netR25": 1.005983
+                },
+                "TP3_COMPLETE": {
+                  "count": 1,
+                  "netR25": 1.326101
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 5,
+                  "wins25bps": 3,
+                  "netR25bps": -0.325715
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": [
+                2.27287,
+                1.14204
+              ]
+            },
+            "dropped": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2022-10-26T18:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.219986
+              },
+              {
+                "entryUTC": "2022-11-04T13:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.552402
+              },
+              {
+                "entryUTC": "2023-11-05T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.326101
+              },
+              {
+                "entryUTC": "2024-02-09T11:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.45358
+              },
+              {
+                "entryUTC": "2024-02-15T17:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.437812
+              }
+            ],
+            "droppedTradeEvidence": [],
+            "incrementalNetR25bps": -0.325715,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 61,
+          "riskRejected": 0,
+          "replayDeltaR25": -0.32571,
+          "testedGates": [
+            "bos_ema_extension"
+          ]
+        },
+        "PAIR_NO_BREAK_ATR_AND_EMA_EXT": {
+          "outcome": {
+            "n": 19,
+            "wins25bps": 9,
+            "winPct25bps": 47.368,
+            "winPctWilson95Descriptive": [
+              27.33,
+              68.29
+            ],
+            "netR25bps": -3.164649,
+            "grossPositiveR": 9.875082,
+            "grossNegativeR": -13.039731,
+            "profitFactor25bps": 0.7573,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 10,
+                "netR25": -13.039731
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 4,
+                "netR25": 2.098568
+              },
+              "TP3_COMPLETE": {
+                "count": 5,
+                "netR25": 7.776514
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 11,
+                "wins25bps": 6,
+                "netR25bps": 0.3959
+              },
+              "bearish": {
+                "n": 8,
+                "wins25bps": 3,
+                "netR25bps": -3.560549
+              }
+            },
+            "riskPctOfLosers": [
+              1.18694,
+              1.79349,
+              0.75999,
+              1.05164,
+              1.31491,
+              1.14204,
+              0.70951,
+              2.48887,
+              1.23831,
+              0.46344
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 9,
+            "added": {
+              "n": 10,
+              "wins25bps": 7,
+              "winPct25bps": 70.0,
+              "winPctWilson95Descriptive": [
+                39.68,
+                89.22
+              ],
+              "netR25bps": 2.134562,
+              "grossPositiveR": 6.698339,
+              "grossNegativeR": -4.563777,
+              "profitFactor25bps": 1.4677,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 3,
+                  "netR25": -4.563777
+                },
+                "TIME_EXIT_AT_CLOSE": {
+                  "count": 4,
+                  "netR25": 2.098568
+                },
+                "TP3_COMPLETE": {
+                  "count": 3,
+                  "netR25": 4.59977
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 7,
+                  "wins25bps": 5,
+                  "netR25bps": 1.001554
+                },
+                "bearish": {
+                  "n": 3,
+                  "wins25bps": 2,
+                  "netR25bps": 1.133008
+                }
+              },
+              "riskPctOfLosers": [
+                1.18694,
+                1.14204,
+                0.70951
+              ]
+            },
+            "dropped": {
+              "n": 1,
+              "wins25bps": 1,
+              "winPct25bps": 100.0,
+              "winPctWilson95Descriptive": [
+                20.65,
+                100.0
+              ],
+              "netR25bps": 0.802278,
+              "grossPositiveR": 0.802278,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {
+                "TP3_COMPLETE": {
+                  "count": 1,
+                  "netR25": 0.802278
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 1,
+                  "wins25bps": 1,
+                  "netR25bps": 0.802278
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2022-10-26T11:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.162646
+              },
+              {
+                "entryUTC": "2022-11-04T13:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.552402
+              },
+              {
+                "entryUTC": "2022-11-17T11:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.421252
+              },
+              {
+                "entryUTC": "2023-05-11T13:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.62432
+              },
+              {
+                "entryUTC": "2023-10-23T22:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.649349
+              },
+              {
+                "entryUTC": "2023-11-05T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.326101
+              },
+              {
+                "entryUTC": "2024-02-09T11:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.45358
+              },
+              {
+                "entryUTC": "2024-02-15T17:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.437812
+              },
+              {
+                "entryUTC": "2024-02-21T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.704712
+              },
+              {
+                "entryUTC": "2024-08-01T03:00:00Z",
+                "side": "bearish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.92994
+              }
+            ],
+            "droppedTradeEvidence": [
+              {
+                "entryUTC": "2023-05-11T17:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 0.802278
+              }
+            ],
+            "incrementalNetR25bps": 1.332284,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 68,
+          "riskRejected": 1,
+          "replayDeltaR25": 1.332289,
+          "testedGates": [
+            "bos_break_atr",
+            "bos_ema_extension"
+          ]
+        },
+        "PAIR__bos_break_atr__retest_window": {
+          "outcome": {
+            "n": 16,
+            "wins25bps": 7,
+            "winPct25bps": 43.75,
+            "winPctWilson95Descriptive": [
+              23.1,
+              66.82
+            ],
+            "netR25bps": -1.656899,
+            "grossPositiveR": 9.94502,
+            "grossNegativeR": -11.601918,
+            "profitFactor25bps": 0.8572,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 9,
+                "netR25": -11.601918
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 1,
+                "netR25": 0.92994
+              },
+              "TP3_COMPLETE": {
+                "count": 6,
+                "netR25": 9.01508
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 6,
+                "wins25bps": 2,
+                "netR25bps": -0.661017
+              },
+              "bearish": {
+                "n": 10,
+                "wins25bps": 5,
+                "netR25bps": -0.995882
+              }
+            },
+            "riskPctOfLosers": [
+              1.18694,
+              1.79349,
+              0.75999,
+              1.05164,
+              1.31491,
+              0.70951,
+              2.48887,
+              1.23831,
+              0.46344
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 9,
+            "added": {
+              "n": 7,
+              "wins25bps": 5,
+              "winPct25bps": 71.429,
+              "winPctWilson95Descriptive": [
+                35.89,
+                91.78
+              ],
+              "netR25bps": 3.642312,
+              "grossPositiveR": 6.768276,
+              "grossNegativeR": -3.125964,
+              "profitFactor25bps": 2.1652,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 2,
+                  "netR25": -3.125964
+                },
+                "TIME_EXIT_AT_CLOSE": {
+                  "count": 1,
+                  "netR25": 0.92994
+                },
+                "TP3_COMPLETE": {
+                  "count": 4,
+                  "netR25": 5.838337
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 2,
+                  "wins25bps": 1,
+                  "netR25bps": -0.055363
+                },
+                "bearish": {
+                  "n": 5,
+                  "wins25bps": 4,
+                  "netR25bps": 3.697675
+                }
+              },
+              "riskPctOfLosers": [
+                1.18694,
+                0.70951
+              ]
+            },
+            "dropped": {
+              "n": 1,
+              "wins25bps": 1,
+              "winPct25bps": 100.0,
+              "winPctWilson95Descriptive": [
+                20.65,
+                100.0
+              ],
+              "netR25bps": 0.802278,
+              "grossPositiveR": 0.802278,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {
+                "TP3_COMPLETE": {
+                  "count": 1,
+                  "netR25": 0.802278
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 1,
+                  "wins25bps": 1,
+                  "netR25bps": 0.802278
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2022-11-17T11:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.421252
+              },
+              {
+                "entryUTC": "2023-03-09T05:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.293284
+              },
+              {
+                "entryUTC": "2023-05-11T13:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.62432
+              },
+              {
+                "entryUTC": "2023-08-01T02:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.271383
+              },
+              {
+                "entryUTC": "2023-10-23T22:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.649349
+              },
+              {
+                "entryUTC": "2024-02-21T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.704712
+              },
+              {
+                "entryUTC": "2024-08-01T03:00:00Z",
+                "side": "bearish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.92994
+              }
+            ],
+            "droppedTradeEvidence": [
+              {
+                "entryUTC": "2023-05-11T17:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 0.802278
+              }
+            ],
+            "incrementalNetR25bps": 2.840034,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 38,
+          "riskRejected": 0,
+          "replayDeltaR25": 2.840037,
+          "testedGates": [
+            "bos_break_atr",
+            "retest_window"
+          ]
+        }
+      },
+      "referenceWorstTrades": [
+        {
+          "entryUTC": "2024-06-30T05:00:00Z",
+          "side": "bearish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 0.46344,
+          "netR9": -1.388403,
+          "netR25": -2.078892
+        },
+        {
+          "entryUTC": "2023-05-22T02:00:00Z",
+          "side": "bearish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 0.75999,
+          "netR9": -1.236845,
+          "netR25": -1.657903
+        },
+        {
+          "entryUTC": "2024-02-01T04:00:00Z",
+          "side": "bearish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 1.31491,
+          "netR9": -1.136892,
+          "netR25": -1.380255
+        },
+        {
+          "entryUTC": "2022-11-21T20:00:00Z",
+          "side": "bearish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 1.79349,
+          "netR9": -1.100363,
+          "netR25": -1.278786
+        },
+        {
+          "entryUTC": "2023-06-30T08:00:00Z",
+          "side": "bullish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 1.05164,
+          "netR9": -0.504495,
+          "netR25": -0.808782
+        }
+      ]
+    },
+    "2024_2026": {
+      "reference": {
+        "n": 6,
+        "wins25bps": 2,
+        "winPct25bps": 33.333,
+        "winPctWilson95Descriptive": [
+          9.68,
+          70.0
+        ],
+        "netR25bps": -4.10879,
+        "grossPositiveR": 1.013444,
+        "grossNegativeR": -5.122233,
+        "profitFactor25bps": 0.1979,
+        "exitReasons": {
+          "STOP_FIRST_OR_AFTER_TP": {
+            "count": 4,
+            "netR25": -5.122233
+          },
+          "TIME_EXIT_AT_CLOSE": {
+            "count": 1,
+            "netR25": 0.281326
+          },
+          "TP3_COMPLETE": {
+            "count": 1,
+            "netR25": 0.732118
+          }
+        },
+        "costFlipWinners9ToLosers25": 0,
+        "side": {
+          "bullish": {
+            "n": 3,
+            "wins25bps": 1,
+            "netR25bps": -3.203794
+          },
+          "bearish": {
+            "n": 3,
+            "wins25bps": 1,
+            "netR25bps": -0.904996
+          }
+        },
+        "riskPctOfLosers": [
+          3.77866,
+          1.3651,
+          2.91616,
+          0.44689
+        ]
+      },
+      "referenceNetR25Report": -4.108804,
+      "watchCount": 18,
+      "selected": {
+        "BASELINE": {
+          "outcome": {
+            "n": 6,
+            "wins25bps": 2,
+            "winPct25bps": 33.333,
+            "winPctWilson95Descriptive": [
+              9.68,
+              70.0
+            ],
+            "netR25bps": -4.10879,
+            "grossPositiveR": 1.013444,
+            "grossNegativeR": -5.122233,
+            "profitFactor25bps": 0.1979,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 4,
+                "netR25": -5.122233
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 1,
+                "netR25": 0.281326
+              },
+              "TP3_COMPLETE": {
+                "count": 1,
+                "netR25": 0.732118
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 3,
+                "wins25bps": 1,
+                "netR25bps": -3.203794
+              },
+              "bearish": {
+                "n": 3,
+                "wins25bps": 1,
+                "netR25bps": -0.904996
+              }
+            },
+            "riskPctOfLosers": [
+              3.77866,
+              1.3651,
+              2.91616,
+              0.44689
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 6,
+            "added": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "dropped": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [],
+            "droppedTradeEvidence": [],
+            "incrementalNetR25bps": 0,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 18,
+          "riskRejected": 0,
+          "replayDeltaR25": 0.0,
+          "testedGates": []
+        },
+        "NO_BOS_MIN_BREAK_0P20ATR": {
+          "outcome": {
+            "n": 10,
+            "wins25bps": 5,
+            "winPct25bps": 50.0,
+            "winPctWilson95Descriptive": [
+              23.66,
+              76.34
+            ],
+            "netR25bps": -2.543095,
+            "grossPositiveR": 3.873121,
+            "grossNegativeR": -6.416216,
+            "profitFactor25bps": 0.6036,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 5,
+                "netR25": -6.416216
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 3,
+                "netR25": 1.377284
+              },
+              "TP3_COMPLETE": {
+                "count": 2,
+                "netR25": 2.495837
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 4,
+                "wins25bps": 2,
+                "netR25bps": -2.708193
+              },
+              "bearish": {
+                "n": 6,
+                "wins25bps": 3,
+                "netR25bps": 0.165098
+              }
+            },
+            "riskPctOfLosers": [
+              1.70078,
+              3.77866,
+              1.3651,
+              2.91616,
+              0.44689
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 6,
+            "added": {
+              "n": 4,
+              "wins25bps": 3,
+              "winPct25bps": 75.0,
+              "winPctWilson95Descriptive": [
+                30.06,
+                95.44
+              ],
+              "netR25bps": 1.565695,
+              "grossPositiveR": 2.859677,
+              "grossNegativeR": -1.293983,
+              "profitFactor25bps": 2.21,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 1,
+                  "netR25": -1.293983
+                },
+                "TIME_EXIT_AT_CLOSE": {
+                  "count": 2,
+                  "netR25": 1.095958
+                },
+                "TP3_COMPLETE": {
+                  "count": 1,
+                  "netR25": 1.76372
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 1,
+                  "wins25bps": 1,
+                  "netR25bps": 0.495601
+                },
+                "bearish": {
+                  "n": 3,
+                  "wins25bps": 2,
+                  "netR25bps": 1.070094
+                }
+              },
+              "riskPctOfLosers": [
+                1.70078
+              ]
+            },
+            "dropped": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2025-02-02T13:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.76372
+              },
+              {
+                "entryUTC": "2025-03-08T02:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.293983
+              },
+              {
+                "entryUTC": "2025-07-27T13:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.495601
+              },
+              {
+                "entryUTC": "2026-01-30T06:00:00Z",
+                "side": "bearish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.600357
+              }
+            ],
+            "droppedTradeEvidence": [],
+            "incrementalNetR25bps": 1.565695,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 26,
+          "riskRejected": 1,
+          "replayDeltaR25": 1.565694,
+          "testedGates": [
+            "bos_break_atr"
+          ]
+        },
+        "NO_BOS_EMA20_MAX_EXTENSION_2P50ATR": {
+          "outcome": {
+            "n": 13,
+            "wins25bps": 7,
+            "winPct25bps": 53.846,
+            "winPctWilson95Descriptive": [
+              29.14,
+              76.79
+            ],
+            "netR25bps": 1.482179,
+            "grossPositiveR": 8.688806,
+            "grossNegativeR": -7.206627,
+            "profitFactor25bps": 1.2057,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 6,
+                "netR25": -7.206627
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 1,
+                "netR25": 0.281326
+              },
+              "TP3_COMPLETE": {
+                "count": 6,
+                "netR25": 8.407479
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 7,
+                "wins25bps": 4,
+                "netR25bps": 0.055732
+              },
+              "bearish": {
+                "n": 6,
+                "wins25bps": 3,
+                "netR25bps": 1.426447
+              }
+            },
+            "riskPctOfLosers": [
+              3.77866,
+              1.3651,
+              1.73176,
+              1.08146,
+              2.91616,
+              0.44689
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 6,
+            "added": {
+              "n": 7,
+              "wins25bps": 5,
+              "winPct25bps": 71.429,
+              "winPctWilson95Descriptive": [
+                35.89,
+                91.78
+              ],
+              "netR25bps": 5.590968,
+              "grossPositiveR": 7.675362,
+              "grossNegativeR": -2.084393,
+              "profitFactor25bps": 3.6823,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 2,
+                  "netR25": -2.084393
+                },
+                "TP3_COMPLETE": {
+                  "count": 5,
+                  "netR25": 7.675362
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 4,
+                  "wins25bps": 3,
+                  "netR25bps": 3.259526
+                },
+                "bearish": {
+                  "n": 3,
+                  "wins25bps": 2,
+                  "netR25bps": 2.331443
+                }
+              },
+              "riskPctOfLosers": [
+                1.73176,
+                1.08146
+              ]
+            },
+            "dropped": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2025-02-02T08:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.516296
+              },
+              {
+                "entryUTC": "2025-07-08T22:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.637778
+              },
+              {
+                "entryUTC": "2025-07-20T17:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.288723
+              },
+              {
+                "entryUTC": "2025-09-25T20:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -0.79567
+              },
+              {
+                "entryUTC": "2026-06-04T00:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.610816
+              },
+              {
+                "entryUTC": "2026-08-21T13:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.544344
+              },
+              {
+                "entryUTC": "2026-09-21T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.366126
+              }
+            ],
+            "droppedTradeEvidence": [],
+            "incrementalNetR25bps": 5.590968,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 44,
+          "riskRejected": 1,
+          "replayDeltaR25": 5.59097,
+          "testedGates": [
+            "bos_ema_extension"
+          ]
+        },
+        "PAIR_NO_BREAK_ATR_AND_EMA_EXT": {
+          "outcome": {
+            "n": 16,
+            "wins25bps": 9,
+            "winPct25bps": 56.25,
+            "winPctWilson95Descriptive": [
+              33.18,
+              76.9
+            ],
+            "netR25bps": 1.284154,
+            "grossPositiveR": 9.784763,
+            "grossNegativeR": -8.50061,
+            "profitFactor25bps": 1.1511,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 7,
+                "netR25": -8.50061
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 3,
+                "netR25": 1.377284
+              },
+              "TP3_COMPLETE": {
+                "count": 6,
+                "netR25": 8.407479
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 8,
+                "wins25bps": 5,
+                "netR25bps": 0.551333
+              },
+              "bearish": {
+                "n": 8,
+                "wins25bps": 4,
+                "netR25bps": 0.732821
+              }
+            },
+            "riskPctOfLosers": [
+              1.70078,
+              3.77866,
+              1.3651,
+              1.73176,
+              1.08146,
+              2.91616,
+              0.44689
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 6,
+            "added": {
+              "n": 10,
+              "wins25bps": 7,
+              "winPct25bps": 70.0,
+              "winPctWilson95Descriptive": [
+                39.68,
+                89.22
+              ],
+              "netR25bps": 5.392943,
+              "grossPositiveR": 8.77132,
+              "grossNegativeR": -3.378376,
+              "profitFactor25bps": 2.5963,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 3,
+                  "netR25": -3.378376
+                },
+                "TIME_EXIT_AT_CLOSE": {
+                  "count": 2,
+                  "netR25": 1.095958
+                },
+                "TP3_COMPLETE": {
+                  "count": 5,
+                  "netR25": 7.675362
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 5,
+                  "wins25bps": 4,
+                  "netR25bps": 3.755127
+                },
+                "bearish": {
+                  "n": 5,
+                  "wins25bps": 3,
+                  "netR25bps": 1.637817
+                }
+              },
+              "riskPctOfLosers": [
+                1.70078,
+                1.73176,
+                1.08146
+              ]
+            },
+            "dropped": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2025-02-02T08:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.516296
+              },
+              {
+                "entryUTC": "2025-03-08T02:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.293983
+              },
+              {
+                "entryUTC": "2025-07-08T22:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.637778
+              },
+              {
+                "entryUTC": "2025-07-20T17:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.288723
+              },
+              {
+                "entryUTC": "2025-07-27T13:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.495601
+              },
+              {
+                "entryUTC": "2025-09-25T20:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -0.79567
+              },
+              {
+                "entryUTC": "2026-01-30T06:00:00Z",
+                "side": "bearish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.600357
+              },
+              {
+                "entryUTC": "2026-06-04T00:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.610816
+              },
+              {
+                "entryUTC": "2026-08-21T13:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.544344
+              },
+              {
+                "entryUTC": "2026-09-21T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.366126
+              }
+            ],
+            "droppedTradeEvidence": [],
+            "incrementalNetR25bps": 5.392943,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 53,
+          "riskRejected": 2,
+          "replayDeltaR25": 5.392945,
+          "testedGates": [
+            "bos_break_atr",
+            "bos_ema_extension"
+          ]
+        },
+        "PAIR__bos_break_atr__retest_window": {
+          "outcome": {
+            "n": 11,
+            "wins25bps": 5,
+            "winPct25bps": 45.455,
+            "winPctWilson95Descriptive": [
+              21.27,
+              71.99
+            ],
+            "netR25bps": -3.171824,
+            "grossPositiveR": 3.873121,
+            "grossNegativeR": -7.044945,
+            "profitFactor25bps": 0.5498,
+            "exitReasons": {
+              "STOP_FIRST_OR_AFTER_TP": {
+                "count": 6,
+                "netR25": -7.044945
+              },
+              "TIME_EXIT_AT_CLOSE": {
+                "count": 3,
+                "netR25": 1.377284
+              },
+              "TP3_COMPLETE": {
+                "count": 2,
+                "netR25": 2.495837
+              }
+            },
+            "costFlipWinners9ToLosers25": 0,
+            "side": {
+              "bullish": {
+                "n": 5,
+                "wins25bps": 2,
+                "netR25bps": -3.336922
+              },
+              "bearish": {
+                "n": 6,
+                "wins25bps": 3,
+                "netR25bps": 0.165098
+              }
+            },
+            "riskPctOfLosers": [
+              1.69265,
+              1.70078,
+              3.77866,
+              1.3651,
+              2.91616,
+              0.44689
+            ]
+          },
+          "pairedVsCurrentV92": {
+            "commonTrades": 6,
+            "added": {
+              "n": 5,
+              "wins25bps": 3,
+              "winPct25bps": 60.0,
+              "winPctWilson95Descriptive": [
+                23.07,
+                88.24
+              ],
+              "netR25bps": 0.936966,
+              "grossPositiveR": 2.859677,
+              "grossNegativeR": -1.922712,
+              "profitFactor25bps": 1.4873,
+              "exitReasons": {
+                "STOP_FIRST_OR_AFTER_TP": {
+                  "count": 2,
+                  "netR25": -1.922712
+                },
+                "TIME_EXIT_AT_CLOSE": {
+                  "count": 2,
+                  "netR25": 1.095958
+                },
+                "TP3_COMPLETE": {
+                  "count": 1,
+                  "netR25": 1.76372
+                }
+              },
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 2,
+                  "wins25bps": 1,
+                  "netR25bps": -0.133128
+                },
+                "bearish": {
+                  "n": 3,
+                  "wins25bps": 2,
+                  "netR25bps": 1.070094
+                }
+              },
+              "riskPctOfLosers": [
+                1.69265,
+                1.70078
+              ]
+            },
+            "dropped": {
+              "n": 0,
+              "wins25bps": 0,
+              "winPct25bps": null,
+              "winPctWilson95Descriptive": null,
+              "netR25bps": 0,
+              "grossPositiveR": 0,
+              "grossNegativeR": 0,
+              "profitFactor25bps": null,
+              "exitReasons": {},
+              "costFlipWinners9ToLosers25": 0,
+              "side": {
+                "bullish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                },
+                "bearish": {
+                  "n": 0,
+                  "wins25bps": 0,
+                  "netR25bps": 0
+                }
+              },
+              "riskPctOfLosers": []
+            },
+            "addedTradeEvidence": [
+              {
+                "entryUTC": "2024-12-05T03:00:00Z",
+                "side": "bullish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -0.628729
+              },
+              {
+                "entryUTC": "2025-02-02T13:00:00Z",
+                "side": "bearish",
+                "exitReason": "TP3_COMPLETE",
+                "netR25bps": 1.76372
+              },
+              {
+                "entryUTC": "2025-03-08T02:00:00Z",
+                "side": "bearish",
+                "exitReason": "STOP_FIRST_OR_AFTER_TP",
+                "netR25bps": -1.293983
+              },
+              {
+                "entryUTC": "2025-07-27T13:00:00Z",
+                "side": "bullish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.495601
+              },
+              {
+                "entryUTC": "2026-01-30T06:00:00Z",
+                "side": "bearish",
+                "exitReason": "TIME_EXIT_AT_CLOSE",
+                "netR25bps": 0.600357
+              }
+            ],
+            "droppedTradeEvidence": [],
+            "incrementalNetR25bps": 0.936966,
+            "incrementalAttribution": "new sequence trades less displaced baseline trades, not independent signal effects"
+          },
+          "retestVetoes": 0,
+          "BOSWatches": 25,
+          "riskRejected": 3,
+          "replayDeltaR25": 0.936966,
+          "testedGates": [
+            "bos_break_atr",
+            "retest_window"
+          ]
+        }
+      },
+      "referenceWorstTrades": [
+        {
+          "entryUTC": "2026-09-27T10:00:00Z",
+          "side": "bullish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 0.44689,
+          "netR9": -1.402786,
+          "netR25": -2.118846
+        },
+        {
+          "entryUTC": "2025-05-20T05:00:00Z",
+          "side": "bullish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 1.3651,
+          "netR9": -1.131859,
+          "netR25": -1.366274
+        },
+        {
+          "entryUTC": "2025-04-09T03:00:00Z",
+          "side": "bearish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 3.77866,
+          "netR9": -1.047636,
+          "netR25": -1.132322
+        },
+        {
+          "entryUTC": "2026-02-02T03:00:00Z",
+          "side": "bearish",
+          "exitReason": "STOP_FIRST_OR_AFTER_TP",
+          "riskPct": 2.91616,
+          "netR9": -0.395058,
+          "netR25": -0.504791
+        },
+        {
+          "entryUTC": "2026-07-20T18:00:00Z",
+          "side": "bullish",
+          "exitReason": "TIME_EXIT_AT_CLOSE",
+          "riskPct": 2.21968,
+          "netR9": 0.425491,
+          "netR25": 0.281326
+        }
+      ]
+    }
+  },
+  "observationsNotGeneralizedAcrossAssets": true
+}
