@@ -12,8 +12,8 @@
 
 | Source | Saved / expected | Missing UTC hours | Consecutive recent hours |
 |---|---:|---|---:|
-| BTC_SOL | 15/17 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z | 1 |
-| ETH | 13/16 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z | 12 |
+| BTC_SOL | 16/18 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z | 2 |
+| ETH | 13/17 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z, 2026-11-13T04:00:00Z | 0 |
 
 ## Backtest / forward snapshot parity
 
@@ -28,8 +28,5 @@
 
 ## New-entry review
 
-- BTCUSDT: NO_NEW_ENTRY_CANDIDATE.
-- ETHUSDT: NO_NEW_ENTRY_CANDIDATE.
-- SOLUSDT: NO_NEW_ENTRY_CANDIDATE.
 
 **Limits:** Data gaps are not backfilled; risk limits cannot prevent stop gaps, funding/variable spreads/slippage are not fully modeled; no strategy promotion.
