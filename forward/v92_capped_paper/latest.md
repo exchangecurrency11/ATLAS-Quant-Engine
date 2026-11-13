@@ -1,6 +1,6 @@
 # V9.2 — ayrı 10/20 USDT risk limitli paper hesap
 
-**Doğrulanmış kapanış (UTC):** 2026-11-13T21:00:00Z
+**Doğrulanmış kapanış (UTC):** 2026-11-13T22:00:00Z
 **Sanal gerçekleşmiş bakiye (9 bps/yön):** 1000.0000 USDT
 **25 bps stres bakiye:** 1000.0000 USDT
 **Kapanmış paper işlem:** 0
