@@ -1,0 +1,29 @@
+name: V9.2 capped 10-20 paper test suite (research branch only)
+on:
+  push:
+    branches: [research/v92-stable-hardening-20261112]
+    paths:
+      - v92_capped_paper.py
+      - tests/test_v92_capped_paper.py
+      - .github/workflows/v92-capped-paper-ci.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: research/v92-stable-hardening-20261112
+      - name: Parse modules
+        run: |
+          python3 -m py_compile v92_capped_paper.py v92_stable_hardening.py
+      - name: Test 10/20 USDT capped forward paper only
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v92_capped_paper.py' -v
+      - name: Preserve previous stable safety test contract
+        run: |
+          python3 -m unittest discover -s tests -p 'test_v92_stable_hardening.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_transition_readiness.py' -q
