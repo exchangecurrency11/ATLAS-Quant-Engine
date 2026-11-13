@@ -2,8 +2,8 @@
   "mode": "V92_INDEPENDENT_1000USDT_100USDT_RISK_PAPER_ACCOUNT",
   "requestedAtUTC": "2026-11-12T10:43:17Z",
   "firstEligible1HCloseUTC": "2026-11-12T11:00:00Z",
-  "lastDistinctVerifiedClosed1HUTC": "2026-11-13T01:00:00Z",
-  "savedDistinctVerifiedHours": 14,
+  "lastDistinctVerifiedClosed1HUTC": "2026-11-13T03:00:00Z",
+  "savedDistinctVerifiedHours": 15,
   "accountName": "V92_SELECTED_SOL_STRICT_CANDLES_BTC_WATCH",
   "virtualInitialUSDT": 1000.0,
   "targetVirtualRiskUSDTPerTrade": 100.0,
@@ -20,13 +20,13 @@
   "stateBySymbol": {
     "BTCUSDT": {
       "state": "BOS_WATCH_FOR_RETEST",
-      "lastClosedUTC": "2026-11-13T01:00:00Z",
-      "newBOSWatches": 1,
+      "lastClosedUTC": "2026-11-13T03:00:00Z",
+      "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-13T01:00:00Z",
+          "lastClosedCandleUTC": "2026-11-13T03:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
@@ -66,15 +66,29 @@
       }
     },
     "SOLUSDT": {
-      "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-13T01:00:00Z",
-      "newBOSWatches": 0,
+      "state": "BOS_WATCH_FOR_RETEST",
+      "lastClosedUTC": "2026-11-13T03:00:00Z",
+      "newBOSWatches": 1,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-13T01:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-13T03:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "HIKKAKE_CONFIRMED",
+              "name": "BEARISH_HIKKAKE_CONFIRMED",
+              "direction": "bearish",
+              "firstUTC": "2026-11-12T21:00:00Z",
+              "confirmedUTC": "2026-11-13T03:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": true,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
