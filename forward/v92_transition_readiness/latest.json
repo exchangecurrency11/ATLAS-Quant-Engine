@@ -1,0 +1,46 @@
+{
+  "status": "CONTINUE_V7_V92_PARALLEL_PAPER",
+  "approvedToChangeProduction": false,
+  "autoPromotion": false,
+  "autoDisableV7": false,
+  "disableV7Data": false,
+  "disableV7Notifications": false,
+  "noBrokerOrders": true,
+  "productionAndExistingPaperUnchanged": true,
+  "migrationPhase": "PARALLEL_OBSERVATION",
+  "lastSealedCommonHourUTC": "2026-11-13T00:00:00Z",
+  "closedForwardTrades": 0,
+  "netForwardR9BpsSide": 0,
+  "forwardStressPnL25BpsUSDT": 0.0,
+  "riskPolicyTarget": {
+    "riskUSDTPerTrade": 10.0,
+    "combinedRiskUSDT": 20.0
+  },
+  "tests": {
+    "sourceParityNoErrors": true,
+    "sameLatestSealedHour": true,
+    "sevenDayContinuousRecentCoverage": false,
+    "forwardTradeSampleAtLeast50": false,
+    "livePaperEntryStopTPParityVerified": false,
+    "riskPolicyUnitTestsDefined": true,
+    "riskCapAppliedToActualForwardPaperBook": false,
+    "positiveRiskAndCostStressedPaperResults": false,
+    "existingV7V91EvidenceRequiredUnchanged": true,
+    "noHistoricalBackfillsOrUnverifiedFills": true
+  },
+  "blockingChecks": [
+    "sevenDayContinuousRecentCoverage",
+    "forwardTradeSampleAtLeast50",
+    "livePaperEntryStopTPParityVerified",
+    "riskCapAppliedToActualForwardPaperBook",
+    "positiveRiskAndCostStressedPaperResults"
+  ],
+  "rollback": "Keep V7 hourly source and independent reference running; revert any future V9.2 notification owner switch to last verified V7 path; never rewrite sealed paper evidence.",
+  "nextAction": "Continue sealed, simultaneous V7+V9.1+V9.2 paper evidence; manual review only after all gates pass.",
+  "notes": [
+    "Passing is not trading approval nor a guarantee of future profitability.",
+    "Historical initial gaps remain explicitly reported; require 7 days of recent continuous forward coverage.",
+    "Do not infer TP/SL execution parity until an observed prospective position and close exist.",
+    "The 10/20 USDT shadow risk policy is NOT applied to the current original 100 USDT per trade account."
+  ]
+}
