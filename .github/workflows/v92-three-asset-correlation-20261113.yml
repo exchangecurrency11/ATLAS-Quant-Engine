@@ -1,0 +1,125 @@
+name: V9.2 BTC ETH SOL triple correlation and 4H regime historical study NO ORDERS
+
+# One-off independent historical research, no V7/V9.2 production edits.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-three-asset-correlation-20261113.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-triple-correlation-historical-only
+  cancel-in-progress: false
+
+jobs:
+  triple-correlation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated correlation research branch only
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-three-asset-correlation-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and run no-lookahead and causal replay tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-three-asset-correlation-20261113
+          python3 -m py_compile v92_three_asset_correlation_study.py
+          python3 -m unittest discover -s tests -p test_v92_three_asset_correlation_study.py -v
+          python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
+          python3 -m unittest discover -s tests -p test_v92_higher_timeframe_context.py -q
+
+      - name: Download 72 SHA256-verified official Binance BTC ETH SOL monthly 1H archives and replay 4H regimes
+        run: |
+          set -euo pipefail
+          python3 -u v92_three_asset_correlation_study.py \
+            --workers 6 \
+            --out forward/v92_three_asset_correlation_20261113
+
+      - name: Enforce Binance archive and exact V9.2 three-asset historical source parity
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/v92_three_asset_correlation_20261113/historical.json")
+          x=json.loads(p.read_text())
+          assert x["status"]=="V92_THREE_ASSET_ASOF_4H_CORRELATION_AND_ETH_LOSS_HISTORICAL_RESEARCH"
+          assert x["verifiedMonthlySHA256Files"]==72 and len(x["sourceManifest"])==72
+          assert all(len(m["sha256"])==64 for m in x["sourceManifest"])
+          assert x["noFutureCandleAtRetest"] and x["productionV7V91V92Unchanged"]
+          assert x["noRealOrders"] and x["noUserNotifications"]
+          assert x["historicalBacktestDoesNotCountAsForwardPaper"]
+          assert set(x["assets"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          expected={
+           "BTCUSDT":(5,4.101040,2.814628),
+           "ETHUSDT":(6,-2.008289,-4.108804),
+           "SOLUSDT":(8,4.260655,2.409915),
+          }
+          for sym,(n,r,stress) in expected.items():
+            a=x["assets"][sym]
+            assert a["verified1H"]==17520
+            assert len(a["baselineTrades"])==n
+            base=a["variants"]["V92_BASELINE"]
+            assert base["trades"]==n,(sym,"baseline_n",base["trades"],n)
+            assert abs(base["totalNetR9BpsPerSide"]-r)<0.0001,(sym,"baseline_r",base["totalNetR9BpsPerSide"],r)
+            assert abs(base["totalNetR25BpsPerSideStress"]-stress)<0.0001,(sym,"stress",base["totalNetR25BpsPerSideStress"],stress)
+            for mode,c in a["variants"].items():
+              assert c["trades"]>=0 and c["retestVetoes"]>=0
+              assert not c["unresolvedExcluded"]
+            for tr in a["baselineTrades"]:
+              assert tr["onlyPreRetestClosed4HUsed"]
+              assert tr["last4HKnownUTC"]<=tr["retestUTC"]
+          print("V92_THREE_ASSET_BASELINES_PARITY_AND_72_SHA256_VERIFIED")
+          PY
+
+      - name: Commit verified results exclusively to isolated research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-three-asset-correlation-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_three_asset_correlation_20261113/historical.json \
+                  forward/v92_three_asset_correlation_20261113/historical.md
+          if git diff --cached --quiet; then
+            echo "V92_CORRELATION_ALREADY_SEALED" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "V9.2 three coin verified 30D 4H correlation and ETH regime retrospective"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-three-asset-correlation-20261113
+            if git push origin HEAD:research/v92-three-asset-correlation-20261113; then
+              echo "V92_CORRELATION_VERIFIED_RESEARCH_ONLY_SAVED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Report results only when verified
+        if: always()
+        run: |
+          if test -s forward/v92_three_asset_correlation_20261113/historical.md; then
+            cat forward/v92_three_asset_correlation_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED TRIPLE CORRELATION BACKTEST. Do not claim model outcomes." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "No V7/V9.2 production edits or paper backfills, no actual orders, no user alerts." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Archive auditable report and 72 SHA256 source manifests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-three-asset-correlation-research
+          path: |
+            forward/v92_three_asset_correlation_20261113/historical.json
+            forward/v92_three_asset_correlation_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
