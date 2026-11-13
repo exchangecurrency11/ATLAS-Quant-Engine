@@ -1,0 +1,85 @@
+name: ETH V9.2 trade-level failure forensics (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/eth-v92-failure-forensics-20261113
+    paths:
+      - eth_v92_loss_attribution_20261113.py
+      - tests/test_eth_v92_loss_attribution_20261113.py
+      - .github/workflows/eth-v92-loss-forensics-20261113.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eth-v92-isolated-read-only-trade-forensics
+  cancel-in-progress: false
+
+jobs:
+  archived-trade-forensics:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated ETH investigation only
+        uses: actions/checkout@v5
+        with:
+          ref: research/eth-v92-failure-forensics-20261113
+          fetch-depth: 0
+
+      - name: Strict source, causal and cost tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v92-failure-forensics-20261113
+          test -s forward/v92_full_interactions_20261113/historical.json
+          python3 -m py_compile eth_v92_loss_attribution_20261113.py
+          python3 -m unittest discover -s tests -p 'test_eth_v92_loss_attribution_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_full_interactions_20261113.py' -q
+
+      - name: Match every ETH retrospective trade and calculate 25bps errors
+        run: |
+          set -euo pipefail
+          python3 -u eth_v92_loss_attribution_20261113.py
+          test -s forward/eth_v92_loss_attribution_20261113/eth_loss_attribution.json
+          test -s forward/eth_v92_loss_attribution_20261113/eth_loss_attribution.md
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/eth_v92_loss_attribution_20261113/eth_loss_attribution.json")
+          a=json.loads(p.read_text())
+          assert a["bothTimeWindowsAlreadySeen"] and a["noGenuineUnseenHoldout"]
+          assert a["noOrders"] and a["noNotifications"] and a["noProductionWrites"]
+          assert a["noForwardPaperCredits"]
+          assert list(a["periods"])==["2022_2024","2024_2026"]
+          assert a["periods"]["2022_2024"]["reference"]["n"]==10
+          assert a["periods"]["2024_2026"]["reference"]["n"]==6
+          for name,part in a["periods"].items():
+            assert len(part["selected"])==5
+            for candidate,v in part["selected"].items():
+              pa=v["pairedVsCurrentV92"]
+              assert abs(pa["incrementalNetR25bps"]-v["replayDeltaR25"])<.00025
+          print("ETH_PAIRED_FORENSICS_PARITY_AND_NO_PRODUCTION_EDITS_VALID")
+          PY
+
+      - name: Store only new ETH research report in isolated branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v92-failure-forensics-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/eth_v92_loss_attribution_20261113/
+          if git diff --cached --quiet; then
+            echo "NO_ETH_REPORT_DIFF" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Save ETH losing trades, missed winners and 25bps pair attribution"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/eth-v92-failure-forensics-20261113
+            if git push origin HEAD:research/eth-v92-failure-forensics-20261113; then
+              echo "ETH_RESEARCH_REPORT_PERSISTED_V7_V92_UNCHANGED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
