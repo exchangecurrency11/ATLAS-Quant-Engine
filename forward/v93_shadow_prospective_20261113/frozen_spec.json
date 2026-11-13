@@ -1,0 +1,71 @@
+{
+  "candidates": {
+    "BTC_V92_REFERENCE": {
+      "disabledGates": [],
+      "mode": "BASELINE",
+      "symbol": "BTCUSDT"
+    },
+    "ETH_BOS_EMA_RELAX": {
+      "disabledGates": [
+        "bos_break_atr",
+        "bos_ema_extension"
+      ],
+      "mode": "PAIR_NO_BREAK_ATR_AND_EMA_EXT",
+      "symbol": "ETHUSDT"
+    },
+    "ETH_BOS_RETEST6": {
+      "disabledGates": [
+        "bos_break_atr",
+        "retest_window"
+      ],
+      "mode": "PAIR__bos_break_atr__retest_window",
+      "symbol": "ETHUSDT"
+    },
+    "ETH_V92_REFERENCE": {
+      "disabledGates": [],
+      "mode": "BASELINE",
+      "symbol": "ETHUSDT"
+    },
+    "SOL_V92_REFERENCE": {
+      "disabledGates": [],
+      "mode": "BASELINE",
+      "symbol": "SOLUSDT"
+    },
+    "SOL_VOLUME_RELAX": {
+      "disabledGates": [
+        "volume_burst"
+      ],
+      "mode": "NO_1H_VOLUME_SURGE_20PCT",
+      "symbol": "SOLUSDT"
+    }
+  },
+  "causalStructure": [
+    "causal_1h_confirmed_BOS",
+    "retest_touches_and_closes_beyond_structure",
+    "entry_next_1h_open_only",
+    "stop_wick_plus_0.1_ATR",
+    "take_profit_1R_2R_3R_one_third_each",
+    "same_hour_stop_first",
+    "max_24_1h_bars_held",
+    "closed_4h_and_daily_context_only"
+  ],
+  "costPerSideBps": [
+    9,
+    25
+  ],
+  "currentV7V92AccountWrites": false,
+  "entryEligibility": "watchKnownUTC >= freeze AND retestKnownUTC >= freeze AND entryOpenUTC >= freeze",
+  "freezeUTC": "2026-11-14T00:00:00Z",
+  "immutableEngineHashes": {
+    "backtest_retest_long_v4.py": "04d8142281fd58e3c8b8e635594ae442b750a0c4be35525c67dd815f552a7f79",
+    "market_structure.py": "d3b05a16544edc0b6f20f28675b535d9151b71959eff8856dce32b8c7d372d78",
+    "signal_quality_v7.py": "80cdaee3ba6b60405c4e3f19b0ad8ed2d98aef0b52796ec12a5cfdca3a87bbb4",
+    "v92_filter_ablation_20261113.py": "d1b48b99e18c87f7845a78103499bc5264e0d5b8b790d0848718e214d74a9f20",
+    "v92_four_candle_models_20261113.py": "6558b24f627d50128cb146151310f0769f019361240cb8f323c653daa0c7718d",
+    "v92_full_interactions_20261113.py": "01aa012d17efbad97bc78b99427a71fb327960a4c46484e36269048eed82403c",
+    "v92_selected_reversal_patterns.py": "51b4a50d2aec8b69d532558a3de710702fd77dba9a4b054888b74e2db0554fd0"
+  },
+  "notifications": false,
+  "realOrders": false,
+  "warmupFirstUTC": "2026-04-01T00:00:00Z"
+}

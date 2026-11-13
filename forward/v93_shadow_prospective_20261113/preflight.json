@@ -1,0 +1,228 @@
+{
+  "archiveMayArriveAfterMonthEnd": true,
+  "archiveSHA256": {
+    "BTCUSDT:2026-04": "c822801b16eb317f4672e376a73664f2e5f9180409c57b6c7517707f4f873e8c",
+    "BTCUSDT:2026-05": "9a367708c90de999a7a9d3114fd111ff28203b13c8daef77d154b5216fb571f7",
+    "BTCUSDT:2026-06": "30bba473837a672a6a00a181a447446852414e6927bbda6684f873571788e9aa",
+    "BTCUSDT:2026-07": "a09f135066ace6925ce051ddbbdd4345c103423fbe35d32b568942de978dcc7c",
+    "BTCUSDT:2026-08": "b594301740cbb39818ba60f2835e4636aa06ad53308e25b1b312f1443fe0ccfe",
+    "BTCUSDT:2026-09": "07ab960882feb6d3120673a851f2a654c4c3f31f3a74d1f3fc4b0351a8ee1483",
+    "BTCUSDT:2026-10": "da0ec480b8857600067635308423022972e994d9dffe8b0251f0b7813018e2c8",
+    "ETHUSDT:2026-04": "b72f5a102bd468d1e3d0c3b88619f1354a29e81616f9a55935d2e00837958e4b",
+    "ETHUSDT:2026-05": "5353c7cd71f610eca5a58824606ba1016efe34ea62fd6e6cd4b7be4b99277915",
+    "ETHUSDT:2026-06": "138bcb6c7c8be4c5bdd8048fa417be551fbeffe4024f64e5bef5ed30d3069d8c",
+    "ETHUSDT:2026-07": "2036043c65c50a1d9c817db4c93db0c97366851d7cc972efb8c5e951cb3b5cdd",
+    "ETHUSDT:2026-08": "52ede96e424bdc696b4b7a30aa4f2f56cd32e58c6598400f25f7b3a8dc6cf50a",
+    "ETHUSDT:2026-09": "f4331baae4c38dea1c123836808f3353473cc28e6c434ef38669698ae79599fc",
+    "ETHUSDT:2026-10": "ead58fea8a5e4a3f173818428b7e32f0bacfda035896b96fd13a25f0823d5ff5",
+    "SOLUSDT:2026-04": "2f466580c7e6d2e02a67a968428c0f9b987108cc1a3d2ba73061e329aacc208d",
+    "SOLUSDT:2026-05": "0d1aef19746005c140421825e55e482813330b19a82cbc24c792aaa0464778c2",
+    "SOLUSDT:2026-06": "5b6913a64843d8fbadeb1783a2ef064291355a33e6eee84f1a03c7e8786acfc8",
+    "SOLUSDT:2026-07": "4a88a47617d14ba94ae2154732ba724497a8cad66b1d7fd0dc4f88216101e0be",
+    "SOLUSDT:2026-08": "a25ab3dfcabcf739bd8bdd0aa9b1302865d5c571a5af1ffbb6e4a2b5c26ab833",
+    "SOLUSDT:2026-09": "e57f44b7df1f4269a06395c161d3618d9bc3d56e623825fc77c615d713a19263",
+    "SOLUSDT:2026-10": "01758aa27caa6379505f3a50c0c096a3002de3b2c1ecbb516c6f155c8d31196c"
+  },
+  "asOfExclusiveUTC": "2026-11-01T00:00:00Z",
+  "cannotCreditAnyPreFreezeTrade": true,
+  "neverRealOrders": true,
+  "noExistingV7V92AccountWrites": true,
+  "notRealtimeAlerts": true,
+  "periodPreviouslyBacktestedForTraining": true,
+  "reportedStreams": {
+    "BTC_V92_REFERENCE": {
+      "closedProspectiveTrades": [],
+      "disabledGates": [],
+      "isActualExecution": false,
+      "metrics25Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "metrics9Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "mode": "BASELINE",
+      "noBackfilledHistoricalTrades": true,
+      "openOrPendingAtLastClose": {
+        "pending": false,
+        "position": false
+      },
+      "symbol": "BTCUSDT",
+      "unresolvedNotCredited": true
+    },
+    "ETH_BOS_EMA_RELAX": {
+      "closedProspectiveTrades": [],
+      "disabledGates": [
+        "bos_break_atr",
+        "bos_ema_extension"
+      ],
+      "isActualExecution": false,
+      "metrics25Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "metrics9Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "mode": "PAIR_NO_BREAK_ATR_AND_EMA_EXT",
+      "noBackfilledHistoricalTrades": true,
+      "openOrPendingAtLastClose": {
+        "pending": false,
+        "position": false
+      },
+      "symbol": "ETHUSDT",
+      "unresolvedNotCredited": true
+    },
+    "ETH_BOS_RETEST6": {
+      "closedProspectiveTrades": [],
+      "disabledGates": [
+        "bos_break_atr",
+        "retest_window"
+      ],
+      "isActualExecution": false,
+      "metrics25Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "metrics9Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "mode": "PAIR__bos_break_atr__retest_window",
+      "noBackfilledHistoricalTrades": true,
+      "openOrPendingAtLastClose": {
+        "pending": false,
+        "position": false
+      },
+      "symbol": "ETHUSDT",
+      "unresolvedNotCredited": true
+    },
+    "ETH_V92_REFERENCE": {
+      "closedProspectiveTrades": [],
+      "disabledGates": [],
+      "isActualExecution": false,
+      "metrics25Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "metrics9Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "mode": "BASELINE",
+      "noBackfilledHistoricalTrades": true,
+      "openOrPendingAtLastClose": {
+        "pending": false,
+        "position": false
+      },
+      "symbol": "ETHUSDT",
+      "unresolvedNotCredited": true
+    },
+    "SOL_V92_REFERENCE": {
+      "closedProspectiveTrades": [],
+      "disabledGates": [],
+      "isActualExecution": false,
+      "metrics25Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "metrics9Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "mode": "BASELINE",
+      "noBackfilledHistoricalTrades": true,
+      "openOrPendingAtLastClose": {
+        "pending": false,
+        "position": false
+      },
+      "symbol": "SOLUSDT",
+      "unresolvedNotCredited": true
+    },
+    "SOL_VOLUME_RELAX": {
+      "closedProspectiveTrades": [],
+      "disabledGates": [
+        "volume_burst"
+      ],
+      "isActualExecution": false,
+      "metrics25Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "metrics9Bps": {
+        "maxDrawdownR": 0.0,
+        "netR": 0,
+        "profitFactor": null,
+        "trades": 0,
+        "winPct": null,
+        "wins": 0
+      },
+      "mode": "NO_1H_VOLUME_SURGE_20PCT",
+      "noBackfilledHistoricalTrades": true,
+      "openOrPendingAtLastClose": {
+        "pending": false,
+        "position": false
+      },
+      "symbol": "SOLUSDT",
+      "unresolvedNotCredited": true
+    }
+  },
+  "sourceHashSHA256": {
+    "backtest_retest_long_v4.py": "04d8142281fd58e3c8b8e635594ae442b750a0c4be35525c67dd815f552a7f79",
+    "market_structure.py": "d3b05a16544edc0b6f20f28675b535d9151b71959eff8856dce32b8c7d372d78",
+    "signal_quality_v7.py": "80cdaee3ba6b60405c4e3f19b0ad8ed2d98aef0b52796ec12a5cfdca3a87bbb4",
+    "v92_filter_ablation_20261113.py": "d1b48b99e18c87f7845a78103499bc5264e0d5b8b790d0848718e214d74a9f20",
+    "v92_four_candle_models_20261113.py": "6558b24f627d50128cb146151310f0769f019361240cb8f323c653daa0c7718d",
+    "v92_full_interactions_20261113.py": "01aa012d17efbad97bc78b99427a71fb327960a4c46484e36269048eed82403c",
+    "v92_selected_reversal_patterns.py": "51b4a50d2aec8b69d532558a3de710702fd77dba9a4b054888b74e2db0554fd0"
+  },
+  "startProspectiveUTC": "2026-11-14T00:00:00Z",
+  "status": "PREFREEZE_PIPELINE_SMOKE_TEST",
+  "verifiedArchives": 21
+}
