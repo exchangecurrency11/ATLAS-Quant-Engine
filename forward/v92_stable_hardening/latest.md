@@ -12,8 +12,8 @@
 
 | Source | Saved / expected | Missing UTC hours | Consecutive recent hours |
 |---|---:|---|---:|
-| BTC_SOL | 21/23 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z | 7 |
-| ETH | 19/22 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z | 18 |
+| BTC_SOL | 22/24 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z | 8 |
+| ETH | 19/23 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z, 2026-11-13T10:00:00Z | 0 |
 
 ## Backtest / forward snapshot parity
 
@@ -24,12 +24,9 @@
 - Stored BOS/retest state parity is checked, but when no real paper trades exist, trade-specific entry/stop/TP parity remains UNPROVEN outside synthetic unit tests.
 - Comparison is based on independently stored forward 1H snapshots and their prior V7/V9.1 reference records, not a claim of executable live fills.
 - Original V9.2 already replays the same closed OHLCV as of each hour; audit double-checks serialized strategy state, BOS/retest, stop/TP fields when open, and timeframe stamps.
-- Latest strict paper admission gate: **READY FOR REVIEW**.
+- Latest strict paper admission gate: **FAIL CLOSED**.
 
 ## New-entry review
 
-- BTCUSDT: NO_NEW_ENTRY_CANDIDATE.
-- ETHUSDT: NO_NEW_ENTRY_CANDIDATE.
-- SOLUSDT: NO_NEW_ENTRY_CANDIDATE.
 
 **Limits:** Data gaps are not backfilled; risk limits cannot prevent stop gaps, funding/variable spreads/slippage are not fully modeled; no strategy promotion.
