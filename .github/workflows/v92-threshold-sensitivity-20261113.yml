@@ -1,0 +1,128 @@
+name: V9.2 frozen 7-family threshold grid BTC ETH SOL (NO ORDERS)
+
+on:
+  push:
+    branches:
+      - research/v92-full-interaction-20261113
+    paths:
+      - .github/workflows/v92-threshold-sensitivity-20261113.yml
+      - v92_threshold_sensitivity_20261113.py
+      - tests/test_v92_threshold_sensitivity_20261113.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-frozen-threshold-research-20261113
+  cancel-in-progress: false
+
+jobs:
+  thresholds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout research-only branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-full-interaction-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and unit-test strict source guards (NO production mutations)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-full-interaction-20261113
+          python3 -m py_compile v92_threshold_sensitivity_20261113.py
+          python3 -m unittest discover -s tests -p 'test_v92_threshold_sensitivity_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_filter_ablation_20261113.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_four_candle_models_20261113.py' -q
+
+      - name: Run full fixed threshold grid across verified 159 official monthly archives
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -u v92_threshold_sensitivity_20261113.py \
+            --workers 6 --out forward/v92_threshold_sensitivity_20261113
+
+      - name: Validate six frozen baselines and 7 parameter families before publishing
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          d=json.loads(Path('forward/v92_threshold_sensitivity_20261113/historical.json').read_text())
+          assert d["status"]=="RESEARCH_ONLY_V92_PREDECLARED_THRESHOLD_SENSITIVITY"
+          assert d["noOrders"] and d["noLiveEdits"] and d["noForwardBookChanges"]
+          assert d["historicalPeriodsPreviouslyInspected"]
+          assert d["onlyOneParameterVariesPerReplay"]
+          assert len(d["fixedGrids"])==7 and d["scenarioCount"]==32
+          assert d["verifiedArchives"]==159
+          expect={
+            ("2022_2024","BTCUSDT"):(10,-4.265784,-7.701252),
+            ("2022_2024","ETHUSDT"):(10,-.9789,-4.496945),
+            ("2022_2024","SOLUSDT"):(12,4.6274,2.0039),
+            ("2024_2026","BTCUSDT"):(5,4.1010,2.8146),
+            ("2024_2026","ETHUSDT"):(6,-2.0083,-4.1088),
+            ("2024_2026","SOLUSDT"):(8,4.2607,2.4099),
+          }
+          for pname,p in d["periods"].items():
+            assert p["verifiedArchives"]==(87 if pname=="2022_2024" else 72)
+            for coin,a in p["assets"].items():
+              assert len(a["scenarios"])==32
+              b=a["scenarios"]["BASELINE"]
+              n,r,s=expect[(pname,coin)]
+              assert b["trades"]==n and abs(b["netR9Bps"]-r)<.00016 and abs(b["netR25Bps"]-s)<.00016
+              for name,v in a["scenarios"].items():
+                assert v["pairedVsBaseline"]["tradeKeyCollisionChecked"]
+                assert v["at25bps"]["trades"]==v["trades"]
+                assert len(v["tradeEvidence"])==v["trades"]
+                assert abs(v["netR25Bps"]-v["at25bps"]["netR"])<.00003
+          print("V92_FROZEN_7_THRESHOLD_FAMILIES_SIX_REFERENCE_PARITY_VERIFIED")
+          PY
+
+      - name: Store results ONLY on research branch, never update production
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-full-interaction-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_threshold_sensitivity_20261113/historical.json \
+                  forward/v92_threshold_sensitivity_20261113/historical.md
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Seal research-only V9.2 7-family threshold sensitivity histories"
+          for n in 1 2 3; do
+            git pull --rebase origin research/v92-full-interaction-20261113
+            if git push origin HEAD:research/v92-full-interaction-20261113; then
+              echo "THRESHOLD_RESEARCH_ONLY_RESULTS_COMMITTED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Show summary or explicit absence
+        if: always()
+        shell: bash
+        run: |
+          if test -s forward/v92_threshold_sensitivity_20261113/historical.md; then
+            cat forward/v92_threshold_sensitivity_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED THRESHOLD OUTCOMES" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Retain verified threshold sensitivity reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-threshold-research-only
+          path: |
+            forward/v92_threshold_sensitivity_20261113/historical.json
+            forward/v92_threshold_sensitivity_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 60
