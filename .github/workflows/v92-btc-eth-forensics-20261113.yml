@@ -1,0 +1,127 @@
+name: V9.2 BTC ETH stop ATR and trend regime forensic research (NO ORDERS)
+
+# Isolated two-year historical study only; V7/V9.1/V9.2 forward untouched.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-btc-eth-forensics-20261113.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-btc-eth-forensics-20261113-isolated
+  cancel-in-progress: false
+
+jobs:
+  historical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-btc-eth-forensics-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and test fixed closed-retest causal gates
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-btc-eth-forensics-20261113
+          python3 -m py_compile v92_btc_eth_forensics_20261113.py
+          python3 -m unittest discover -s tests -p 'test_v92_btc_eth_forensics_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_v92_eth_historical_backtest.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_higher_timeframe_context.py' -q
+          python3 -m unittest discover -s tests -p 'test_v92_divergence_historical_study.py' -q
+
+      - name: Download 48 official BTC ETH USD-M SHA256 monthly archives and replay historical modes
+        run: |
+          set -euo pipefail
+          python3 -u v92_btc_eth_forensics_20261113.py \
+            --out forward/v92_btc_eth_forensics_20261113 \
+            --workers 6
+
+      - name: Validate 48 SHA256 and exact original historical V7 V9.1 baseline parity
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("forward/v92_btc_eth_forensics_20261113/historical.json").read_text())
+          assert r["status"]=="V92_BTC_ETH_CHRONOLOGICAL_LOSS_AND_REGIME_FORENSICS_ONLY"
+          assert r["noBrokerOrders"] and r["noUserNotifications"] and r["productionV7V91V92Unchanged"]
+          assert r["closedRetestFiltersOnly"] and r["noRetrospectiveTradesAddedToForwardBook"]
+          assert r["sourceManifest"]["checksumsVerified"]==48
+          assert len(r["sourceManifest"]["inputFiles"])==48
+          assert all(len(z["sha256"])==64 for z in r["sourceManifest"]["inputFiles"])
+          assert set(r["assets"])=={"BTCUSDT","ETHUSDT"}
+          expect={
+            "BTCUSDT":{"BASELINE_4H":(5,4.101040,2.814628),
+                       "BASELINE_6H":(9,3.663602,1.328976)},
+            "ETHUSDT":{"BASELINE_4H":(6,-2.008289,-4.108804),
+                       "BASELINE_6H":(7,-2.447965,-4.737533)},
+          }
+          for sym,refs in expect.items():
+            asset=r["assets"][sym]
+            assert asset["verifiedCandles"]=={"1H":17520,"4H":4380,"1D":730}
+            for mode,(n,nR,stress) in refs.items():
+              x=asset["results"][mode]
+              assert x["trades"]==n,(sym,mode,"COUNT",x["trades"],n)
+              assert abs(x["netR9BpsPerSide"]-nR)<0.0001,(sym,mode,"NETR",x["netR9BpsPerSide"],nR)
+              assert abs(x["netR25BpsStress"]-stress)<0.0001,(sym,mode,"STRESS",x["netR25BpsStress"],stress)
+            assert len(asset["originalTrades"])==refs["BASELINE_4H"][0]
+            rounded=sum(z["netR"] for z in asset["directionTotals"].values())
+            total=sum(z["cost9BpsNetR"] for z in asset["originalTrades"])
+            assert abs(rounded-total)<0.00001,(sym,rounded,total)
+            for mode,x in asset["results"].items():
+              assert x["unresolvedOrPendingExcluded"] is False
+              assert x["trades"]>=0 and x["vetoedRetestCount"]>=0
+          print("V92_FORENSICS_48_SHA256_AND_FOUR_BASELINE_PARITIES_VERIFIED")
+          PY
+
+      - name: Seal historical research report on research branch ONLY
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-btc-eth-forensics-20261113
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add forward/v92_btc_eth_forensics_20261113/historical.json \
+                  forward/v92_btc_eth_forensics_20261113/historical.md
+          if git diff --cached --quiet; then
+            echo "V92_FORENSICS_ALREADY_SEALED" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "V9.2 BTC ETH official historical stop ATR and regime ablation"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-btc-eth-forensics-20261113
+            if git push origin HEAD:research/v92-btc-eth-forensics-20261113; then
+              echo "V92_FORENSICS_SAVED_RESEARCH_BRANCH_ONLY" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Report independently verified result only
+        if: always()
+        run: |
+          if test -s forward/v92_btc_eth_forensics_20261113/historical.md; then
+            cat forward/v92_btc_eth_forensics_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED HISTORICAL RESULT. Do not claim statistics." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "No actual orders, alerts, V7/V9.1/V9.2 strategy changes or forward trade backfills." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Archive historical report and proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-btc-eth-forensics-research
+          path: |
+            forward/v92_btc_eth_forensics_20261113/historical.json
+            forward/v92_btc_eth_forensics_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
