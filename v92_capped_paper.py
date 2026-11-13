@@ -126,6 +126,26 @@ def original_intents(t,core,eth):
             }
     return by
 
+def current_original_open_positions(core,eth):
+    """Original replay must STILL consider the precommitted V9.2 trade open."""
+    result={}
+    for sym in ASSETS:
+        events=(eth["selectedV92"] if sym=="ETHUSDT"
+                else core["assets"][sym]["selectedV92"])
+        result[sym]=events["currentPaperState"].get("openHypotheticalPosition")
+    return result
+
+def still_valid_original_position(intent, original):
+    if not isinstance(original,dict):
+        return False
+    for key in ("side","retestKnownUTC","watchKnownUTC"):
+        if original.get(key)!=intent.get(key):
+            return False
+    if not finite(original.get("stop")):
+        return False
+    return math.isclose(float(original["stop"]),float(intent["stop"]),
+                        rel_tol=1e-8,abs_tol=1e-7)
+
 def empty_account():
     return {"paperInitialUSDT":1000.0,
             "realizedPaperPnL9BpsUSDT":0.0,
@@ -144,6 +164,7 @@ def source_hash(core,eth,bar):
             "verifiedV7ClosedCandlesSha256":sha(bar)}
 
 def step(previous, t, candles, new_intents, *,
+         original_open_positions=None,
          prior_committed_before_this_close=False,
          verified=False, stable_ready=False, captured_at=None):
     """Pure deterministic forward paper transition; no lookahead, no APIs."""
@@ -151,6 +172,8 @@ def step(previous, t, candles, new_intents, *,
         raise ValueError("CAPPED_NOT_FORWARD_OR_HOUR_ALIGNED")
     if set(candles)!=set(ASSETS) or set(new_intents)-set(ASSETS):
         raise ValueError("CAPPED_MISSING_THREE_ASSET_CANDLES")
+    if original_open_positions is None or set(original_open_positions)!=set(ASSETS):
+        raise ValueError("CAPPED_ORIGINAL_MODEL_OPEN_STATE_UNAVAILABLE")
     for sym,bar in candles.items():
         if set(("o","h","l","c","v"))-set(bar):
             raise ValueError("CAPPED_CANDLE_FIELDS_MISSING_"+sym)
@@ -243,6 +266,10 @@ def step(previous, t, candles, new_intents, *,
             or not prior_committed_before_this_close):
             events.append({"type":"CAPPED_INTENT_REJECTED","symbol":sym,
                            "reason":"NO_PRIOR_COMMIT_BEFORE_FUTURE_CLOSE"})
+            continue
+        if not still_valid_original_position(intent,original_open_positions[sym]):
+            events.append({"type":"CAPPED_INTENT_REJECTED","symbol":sym,
+                           "reason":"ORIGINAL_V92_POSITION_ALREADY_EXITED_OR_CHANGED"})
             continue
         if sym in out["openPositions"]:
             events.append({"type":"CAPPED_INTENT_REJECTED","symbol":sym,
@@ -417,6 +444,7 @@ def main():
         prior_sealed=(commit is not None and commit<target
                       and seconds(previous["lastClosed1HUTC"])==target-HOUR)
     current=step(previous,target,bars,intents,
+                 original_open_positions=current_original_open_positions(core,eth),
                  prior_committed_before_this_close=prior_sealed,
                  verified=True,stable_ready=True,captured_at=now)
     current["sourceHashes"]=source_hash(core,eth,bars)
