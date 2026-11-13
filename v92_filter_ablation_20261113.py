@@ -123,6 +123,65 @@ def fork_source():
     return source
 
 
+def exact_streaming_indicator_cache(rows):
+    """O(N) chronological prefix reproduction of original.indicators.
+
+    Same arithmetic/initialization order as reference engine's full-prefix
+    EMA20/EMA50/MACD/RSI14. Produces values only for >=55 closed bars.
+    Independently checked against original.indicators on synthetic prefixes
+    and frozen six Binance historical backtests (fail closed).
+    """
+    if len(rows)<55:
+        raise ValueError("ABLATION_PREFIX_HISTORY_SHORTER_THAN_55")
+    start=rows[0]["t"]
+    seconds=rows[1]["t"]-start
+    if seconds not in (3600,14400,86400):
+        raise ValueError("ABLATION_STREAM_UNEXPECTED_TIMEFRAME")
+    k12,k26,k9=2/13,2/27,2/10
+    k20,k50=2/21,2/51
+    p0=rows[0]["c"]
+    e20=e50=f=s=p0
+    macdsig=0.0
+    avg_up=avg_down=None
+    first_gains=[];first_losses=[]
+    values={}
+    last=p0
+    for j,row in enumerate(rows):
+        c=row["c"]
+        if j:
+            e20=k20*c+(1-k20)*e20
+            e50=k50*c+(1-k50)*e50
+            f=k12*c+(1-k12)*f
+            s=k26*c+(1-k26)*s
+        macdline=f-s
+        if j:
+            macdsig=k9*macdline+(1-k9)*macdsig
+        if 1<=j<=14:
+            first_gains.append(max(c-last,0))
+            first_losses.append(max(last-c,0))
+            if j==14:
+                avg_up=sum(first_gains)/14
+                avg_down=sum(first_losses)/14
+        elif j>=15:
+            gain=max(c-last,0)
+            loss=max(last-c,0)
+            avg_up=(avg_up*13+gain)/14
+            avg_down=(avg_down*13+loss)/14
+        last=c
+        if j+1>=55:
+            if avg_up==avg_down==0:
+                rsi=50.0
+            elif avg_down==0:
+                rsi=100.0
+            else:
+                rsi=100-100/(1+avg_up/avg_down)
+            values[(start,seconds,j+1)]={
+                "EMA20":e20,"EMA50":e50,
+                "RSI14":rsi,"hist":macdline-macdsig,
+            }
+    return values
+
+
 def instrumentation(variant, *, symbol, four, cache):
     """Construct a fork with original state transitions unchanged.
     Only the chosen criterion's decision changes, via globals local
@@ -200,13 +259,27 @@ def instrumentation(variant, *, symbol, four, cache):
     def _indicators(bars):
         key=(bars[0]["t"],bars[1]["t"]-bars[0]["t"],len(bars))
         if key not in cache["indicators"]:
-            cache["indicators"][key]=original.indicators(bars)
+            raise ValueError("ABLATION_INDICATOR_PREFIX_NOT_PRECOMPUTED")
         return cache["indicators"][key]
 
     def _bias(bars):
         key=(bars[0]["t"],bars[1]["t"]-bars[0]["t"],len(bars))
         if key not in cache["bias"]:
-            cache["bias"][key]=original.bias(bars)
+            ind=_indicators(bars)
+            if ind is None:
+                value="insufficient"
+            else:
+                close=bars[-1]["c"]
+                votes=[
+                    1 if close>ind["EMA20"] else -1 if close<ind["EMA20"] else 0,
+                    1 if close>ind["EMA50"] else -1 if close<ind["EMA50"] else 0,
+                    1 if ind["hist"]>0 else -1 if ind["hist"]<0 else 0,
+                    1 if ind["RSI14"]>50 else -1 if ind["RSI14"]<50 else 0,
+                ]
+                vote=sum(votes)
+                value=("bullish" if vote>=3 else "bearish"
+                       if vote<=-3 else "mixed")
+            cache["bias"][key]=value
         return cache["bias"][key]
 
     def _analyze(window,interval,as_of):
@@ -333,7 +406,14 @@ def to_score(report,start,end):
 
 def evaluate(symbol,rows,start,end):
     four,daily=double_checked_candles(rows,end)
-    cache={"indicators":{},"bias":{},"structures":{}}
+    cache={
+        "indicators":{
+            **exact_streaming_indicator_cache(rows),
+            **exact_streaming_indicator_cache(four),
+            **exact_streaming_indicator_cache(daily),
+        },
+        "bias":{},"structures":{},
+    }
     all_scores={}
     raw={}
     for mode in ABLATIONS:
