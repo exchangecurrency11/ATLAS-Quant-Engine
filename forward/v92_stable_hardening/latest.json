@@ -19,29 +19,30 @@
   "noRetroactiveTradesOrRewrittenCandles": true,
   "coverage": {
     "BTC_SOL": {
-      "expected": 31,
-      "saved": 28,
+      "expected": 32,
+      "saved": 29,
       "missingHoursUTC": [
         "2026-11-12T14:00:00Z",
         "2026-11-13T02:00:00Z",
         "2026-11-13T14:00:00Z"
       ],
-      "latestUTC": "2026-11-13T17:00:00Z",
-      "consecutiveRecentHours": 3
+      "latestUTC": "2026-11-13T18:00:00Z",
+      "consecutiveRecentHours": 4
     },
     "ETH": {
-      "expected": 30,
+      "expected": 31,
       "saved": 27,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
         "2026-11-12T14:00:00Z",
-        "2026-11-12T15:00:00Z"
+        "2026-11-12T15:00:00Z",
+        "2026-11-13T18:00:00Z"
       ],
       "latestUTC": "2026-11-13T17:00:00Z",
-      "consecutiveRecentHours": 26
+      "consecutiveRecentHours": 0
     }
   },
-  "latestCommonHourUTC": "2026-11-13T17:00:00Z",
+  "latestCommonHourUTC": null,
   "matchedVerifiedHours": 25,
   "matchedAssetChecks": 75,
   "actualObservedOpenPositionSnapshots": 0,
@@ -58,26 +59,7 @@
   "missingHourNotBackfilled": true,
   "parityErrors": [],
   "newEntryAdmissionReadiness": false,
-  "latestShadowEntryDecisions": [
-    {
-      "symbol": "BTCUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "ETHUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "SOLUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    }
-  ],
+  "latestShadowEntryDecisions": [],
   "limitsCannotGuaranteeExecutionOrStopFill": true,
   "fundingVariableSlippageAndLiquidationNotFullyModeled": true
 }
