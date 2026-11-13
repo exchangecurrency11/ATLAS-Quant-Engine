@@ -182,7 +182,7 @@ jobs:
           exit 1
 
       - name: Persist coverage-only gaps without filling paper trades
-        if: always() && steps.gate.outcome == 'success'
+        if: success() && steps.gate.outcome == 'success'
         env:
           CAPPED_TARGET: ${{ steps.gate.outputs.target }}
         shell: bash
