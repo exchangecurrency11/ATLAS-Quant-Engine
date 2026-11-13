@@ -147,7 +147,7 @@ def new_gate(symbol,mode,four,audit):
             audit["observedSameDirectionRetests"]+=bool(same)
             for p in opp:audit["opp_"+p["family"]+"_"+p["tf"]]+=1
             for p in same:audit["same_"+p["family"]+"_"+p["tf"]]+=1
-            if len(audit["retetsEvidence"])<240:
+            if len(audit.setdefault("retetsEvidence",[]))<240:
                 audit["retetsEvidence"].append({
                     "retestUTC":stamp(at),"bosSide":bos_side,
                     "opposing":opp,"sameDirection":same,
@@ -164,7 +164,7 @@ def new_gate(symbol,mode,four,audit):
             if opp:
                 audit["additionalCContextVetoes"]+=1
                 for p in opp:audit["C_"+p["family"]+"_"+p["tf"]]+=1
-                if len(audit["additionalVetoExamples"])<50:
+                if len(audit.setdefault("additionalVetoExamples",[]))<50:
                     audit["additionalVetoExamples"].append({
                         "atUTC":stamp(at),"side":bos_side,"patterns":opp})
                 return {"passed":False,
@@ -249,11 +249,7 @@ def evaluate_symbol(symbol,hour,start,end):
         report=replay_pair(
             hour,four,daily,as_of=end,retest_hours=4,
             bos_quality_filter=evaluate_bos_quality,
-            retest_quality_filter=(
-                new_gate(symbol,mode,four,audit)
-                if symbol=="SOLUSDT" or mode!="A_BASELINE"
-                else new_gate(symbol,mode,four,audit)
-            ),
+            retest_quality_filter=new_gate(symbol,mode,four,audit),
         )
         score=metrics(report,start,end)
         trades=trades_within(report,start,end)
