@@ -11,17 +11,17 @@ Başlangıç UTC: 2026-11-12T08:44:55Z
 
 **Son giriş/sinyal durumları (BOS izleme, retest ve açık varsayımsal pozisyon eşiklerine göre):**
 
-- V7_ORIGINAL BTCUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-13T02:00:00Z.
-- V7_ORIGINAL SOLUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T02:00:00Z.
+- V7_ORIGINAL BTCUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-13T03:00:00Z.
+- V7_ORIGINAL SOLUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-13T03:00:00Z.
 - V7_ORIGINAL ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T02:00:00Z.
-- V91_RETEST_MAX4H BTCUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-13T02:00:00Z.
-- V91_RETEST_MAX4H SOLUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T02:00:00Z.
+- V91_RETEST_MAX4H BTCUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-13T03:00:00Z.
+- V91_RETEST_MAX4H SOLUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-13T03:00:00Z.
 - V91_RETEST_MAX4H ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T02:00:00Z.
 
 **Kaynak saat kapsama denetimi (eksikler doldurulmaz):**
 
-- BTC_SOL: 18/18 saat; eksik 0; son kayıt 2026-11-13T02:00:00Z; gecikme 0 saat.
-- ETH: 15/18 saat; eksik 3; son kayıt 2026-11-13T02:00:00Z; gecikme 0 saat.
+- BTC_SOL: 19/19 saat; eksik 0; son kayıt 2026-11-13T03:00:00Z; gecikme 0 saat.
+- ETH: 15/19 saat; eksik 4; son kayıt 2026-11-13T02:00:00Z; gecikme 1 saat.
 
 V9 önceden dondurulan 4H renk tahminleri ayrıca değerlendirilir, V9.1 işleme giriş sinyali sayılmaz.
 Önceki geceye sonradan emir yazılmaz; 1H eksikleri kapatılmaz.
