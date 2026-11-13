@@ -7,16 +7,9 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-13T00:00:00Z",
+      "lastCloseTimeUTC": "2026-11-13T01:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "CHoCH",
-          "direction": "bullish",
-          "at": 1793775600,
-          "brokenSwingAt": 1793739600,
-          "brokenLevel": 78039.4
-        },
         {
           "event": "CHoCH",
           "direction": "bearish",
@@ -93,6 +86,13 @@
           "at": 1794477600,
           "brokenSwingAt": 1794438000,
           "brokenLevel": 73444.5
+        },
+        {
+          "event": "BOS",
+          "direction": "bearish",
+          "at": 1794528000,
+          "brokenSwingAt": 1794495600,
+          "brokenLevel": 71218.1
         }
       ],
       "candidateOrderBlocks": [
@@ -322,6 +322,13 @@
       "liquidity": [
         {
           "kind": "equal_highs",
+          "level": 76366.15,
+          "firstPivotAt": 1793923200,
+          "secondPivotAt": 1793966400,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_highs",
           "level": 76154.25,
           "firstPivotAt": 1793984400,
           "secondPivotAt": 1794002400,
@@ -353,13 +360,6 @@
           "level": 74760.7,
           "firstPivotAt": 1794416400,
           "secondPivotAt": 1794430800,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_lows",
-          "level": 77364.6,
-          "firstPivotAt": 1793458800,
-          "secondPivotAt": 1793480400,
           "note": "Potential chart liquidity; not live order-book data"
         },
         {
@@ -408,14 +408,14 @@
       "counts": {
         "activeCandidateOB": 4,
         "openFVG": 8,
-        "structureEventsInLookback": 19
+        "structureEventsInLookback": 20
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-13T00:00:00Z",
+      "lastCloseTimeUTC": "2026-11-13T01:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
