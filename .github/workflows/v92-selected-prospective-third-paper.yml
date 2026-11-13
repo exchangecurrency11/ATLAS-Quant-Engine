@@ -7,7 +7,7 @@ on:
     paths: [.github/workflows/v92-selected-prospective-third-paper.yml]
   workflow_dispatch:
   schedule:
-    - cron: '39,48,54 * * * *'
+    - cron: '17,29,39,49,56 * * * *'
   workflow_run:
     workflows:
       - V9.1 hourly V7 vs max4h retest prospective paper shadow NO ALERTS
@@ -58,6 +58,27 @@ jobs:
           python3 -m unittest discover -s tests -p test_v92_multi_candle_invalidation.py -q
           python3 -m unittest discover -s tests -p test_v92_bull_bear_candle_invalidation.py -q
           python3 -m unittest discover -s tests -p test_v91_prospective_retest.py -q
+      - name: Retry late sealed V7 and V9.1 source (same UTC hour only)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          target="$(date -u +'%Y-%m-%dT%H-00Z')"
+          deadline=$(($(date -u +%s)+150))
+          while [[ "$(date -u +'%Y-%m-%dT%H-00Z')" == "$target" ]] && (( $(date -u +%s) < deadline )); do
+            if gh api "repos/$GITHUB_REPOSITORY/contents/forward/v91_prospective_retest/hourly/$target.json?ref=research/v9-prestart-live-data-compatibility-20261111" >/dev/null 2>&1 &&
+               gh api "repos/$GITHUB_REPOSITORY/contents/forward/snapshots/$target.json?ref=experiment/v7-signal-quality-20261103" >/dev/null 2>&1; then
+              git -C v91_evidence fetch --quiet --depth=1 origin research/v9-prestart-live-data-compatibility-20261111
+              git -C v91_evidence reset --hard --quiet FETCH_HEAD
+              git -C v7_evidence fetch --quiet --depth=1 origin experiment/v7-signal-quality-20261103
+              git -C v7_evidence reset --hard --quiet FETCH_HEAD
+              echo "V92_SAME_HOUR_LATE_SOURCE_REFRESH_OK_$target"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "V92_SAFE_SKIP_LATE_SOURCE_NOT_YET_SEALED_$target"
       - name: Gate current hour after 11 UTC and independent original V7 V9.1 source
         id: gate
         shell: bash
