@@ -1,0 +1,170 @@
+name: V9.2 capped 10-20 USDT independent forward paper (NO ORDERS NO ALERTS)
+
+# Only this scheduler lives on main. All code / records stay in the isolated
+# research branch. Original V7 V9.1 V9.2 books and alerts are unchanged.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/v92-capped-prospective-paper.yml]
+  schedule:
+    - cron: '37,47,56 * * * *'
+  workflow_run:
+    workflows:
+      - V9.2 selected SOL reversals independent forward paper 1000 USDT NO ALERTS
+      - V9.2 ETH sealed hourly selected-pattern watch third shared paper NO ALERTS
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-capped-ten-twenty-single-writer
+  cancel-in-progress: false
+
+jobs:
+  paper:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout only isolated capped paper code and new book
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-stable-hardening-20261112
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Read V9.2 verified sources without writing them
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          path: v92_evidence
+          persist-credentials: false
+
+      - name: Read immutable V9.1 original source records
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          path: v91_evidence
+          persist-credentials: false
+
+      - name: Read original V7 source records
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+
+      - name: Regress risk caps stop-first TP and no-backfill guards
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-stable-hardening-20261112
+          python3 -m py_compile v92_capped_paper.py v92_stable_hardening.py
+          python3 -m unittest discover -s tests -p test_v92_capped_paper.py -q
+          python3 -m unittest discover -s tests -p test_v92_stable_hardening.py -q
+
+      - name: Gate new post-request fresh 1H snapshot only
+        id: gate
+        run: |
+          set -euo pipefail
+          target="$(date -u +%Y-%m-%dT%H-00Z)"
+          minute="$(date -u +%M)"
+          echo "target=$target" >> "$GITHUB_OUTPUT"
+          if [[ "$target" < '2026-11-13T03-00Z' ]]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo 'CAPPED_SAFE_SKIP_BEFORE_POST_REQUEST_FIRST_HOUR' >> "$GITHUB_STEP_SUMMARY"
+          elif (( 10#$minute < 12 || 10#$minute > 58 )); then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo 'CAPPED_SAFE_SKIP_OUTSIDE_SEALED_HOUR_WINDOW' >> "$GITHUB_STEP_SUMMARY"
+          elif [ -f "forward/v92_capped_paper/hourly/$target.json" ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo 'CAPPED_SAFE_SKIP_ALREADY_SEALED' >> "$GITHUB_STEP_SUMMARY"
+          elif [ ! -f "v92_evidence/forward/v92_prospective_selected/hourly/$target.json" ] || \
+               [ ! -f "v92_evidence/forward/v92_prospective_eth/hourly/$target.json" ]; then
+            echo "capture=false" >> "$GITHUB_OUTPUT"
+            echo 'CAPPED_SAFE_SKIP_WAIT_MATCHED_V92_COINS' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "capture=true" >> "$GITHUB_OUTPUT"
+            echo "CAPPED_FRESH_SOURCE_AVAILABLE_$target" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Independently check all original V7 and V9.1 source candle parity
+        if: steps.gate.outputs.capture == 'true'
+        run: |
+          set -euo pipefail
+          python3 -u v92_stable_hardening.py \
+            --v92-btcsol v92_evidence/forward/v92_prospective_selected/hourly \
+            --v92-eth v92_evidence/forward/v92_prospective_eth/hourly \
+            --v91-root v91_evidence \
+            --v7-root v7_evidence \
+            --out /tmp/v92_capped_source_audit.json \
+            --md /tmp/v92_capped_source_audit.md
+
+      - name: Seal only new 10-20 USDT risk capped research paper hour
+        if: steps.gate.outputs.capture == 'true'
+        run: |
+          set -euo pipefail
+          python3 -u v92_capped_paper.py \
+            --v92-btcsol v92_evidence/forward/v92_prospective_selected/hourly \
+            --v92-eth v92_evidence/forward/v92_prospective_eth/hourly \
+            --v91-root v91_evidence \
+            --v7-root v7_evidence \
+            --audit /tmp/v92_capped_source_audit.json
+          target="${{ steps.gate.outputs.target }}"
+          file="forward/v92_capped_paper/hourly/$target.json"
+          if [ -f "$file" ]; then
+            python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_capped_paper/latest.json").read_text())
+          assert x["mode"]=="V92_INDEPENDENT_CAPPED_10_20_SHADOW_PAPER_FORWARD_ONLY"
+          assert x["riskPolicy"]["maxRiskUSDTPerPosition"]==10
+          assert x["riskPolicy"]["maxCombinedOpenRiskUSDT"]==20
+          assert x["openRiskReservationUSDT"]<=20
+          assert x["paperInitialUSDT"]==1000
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["noLegacyV7V91OrV92Modification"]
+          assert x["noHistoricalBackfill"]
+          assert x["entryPriceIsLaterObservedCloseNotExecutableFill"]
+          print("CAPPED_VALID_CURRENT_HOUR",x["lastClosed1HUTC"])
+          PY
+          else
+            echo 'CAPPED_SAFE_SKIP_NO_NEW_VERIFIED_HOUR' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Append only new immutable paper observations on research branch
+        if: steps.gate.outputs.capture == 'true'
+        run: |
+          set -euo pipefail
+          target="${{ steps.gate.outputs.target }}"
+          file="forward/v92_capped_paper/hourly/$target.json"
+          if [ ! -f "$file" ]; then exit 0; fi
+          test "$(git branch --show-current)" = research/v92-stable-hardening-20261112
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add "$file" forward/v92_capped_paper/latest.json forward/v92_capped_paper/latest.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9.2 independent 10-20 capped paper prospective $target"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v92-stable-hardening-20261112
+            if git push origin HEAD:research/v92-stable-hardening-20261112; then
+              echo 'CAPPED_NEW_HOUR_PERSISTED_ON_RESEARCH_ONLY' >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+
+      - name: Archive capped paper and source verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capped-ten-twenty-paper-
+          path: |
+            forward/v92_capped_paper/latest.json
+            forward/v92_capped_paper/latest.md
+            /tmp/v92_capped_source_audit.json
+          if-no-files-found: ignore
+          retention-days: 45
