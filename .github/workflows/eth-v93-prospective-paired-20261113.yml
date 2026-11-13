@@ -2,7 +2,10 @@ name: ETH V9.2 vs frozen BOS+EMA forward pair comparator (RESEARCH ONLY)
 
 # Runs on a research branch. NO cron: GitHub scheduled workflows require
 # default branch, which belongs to protected production V7/V9.2.
-# After November is complete, manually dispatch with refresh=true.
+# workflow_dispatch requires a workflow on the default branch and may not fire
+# for isolated research workflows. To refresh after month-end, change only
+# research/eth_v93_paired_refresh_marker.md on THIS branch; that push reruns
+# the verified monthly archives and frozen ETH comparison automatically.
 on:
   push:
     branches:
@@ -11,13 +14,8 @@ on:
       - eth_v93_prospective_paired_compare_20261113.py
       - tests/test_eth_v93_prospective_paired_compare_20261113.py
       - .github/workflows/eth-v93-prospective-paired-20261113.yml
+      - research/eth_v93_paired_refresh_marker.md
   workflow_dispatch:
-    inputs:
-      refresh_completed_month:
-        description: "Download complete Binance monthly archives for frozen six streams first (NO ORDERS)"
-        required: true
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -45,8 +43,7 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_eth_v93_prospective_paired_compare_20261113.py' -v
           python3 -m unittest discover -s tests -p 'test_v93_shadow_monthly_20261113.py' -q
 
-      - name: Optional completed-month official SHA256 snapshot refresh
-        if: github.event_name == 'workflow_dispatch' && inputs.refresh_completed_month == true
+      - name: Refresh only already-complete monthly official SHA256 archives
         run: |
           set -euo pipefail
           python3 -u v93_shadow_monthly_20261113.py --workers 6
