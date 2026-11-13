@@ -7,7 +7,7 @@ on:
     branches: [main]
     paths: [.github/workflows/v92-capped-prospective-paper.yml]
   schedule:
-    - cron: '37,47,56 * * * *'
+    - cron: '21,33,44,51,57 * * * *'
   workflow_run:
     workflows:
       - V9.2 selected SOL reversals independent forward paper 1000 USDT NO ALERTS
@@ -64,6 +64,30 @@ jobs:
           python3 -m py_compile v92_capped_paper.py v92_stable_hardening.py
           python3 -m unittest discover -s tests -p test_v92_capped_paper.py -q
           python3 -m unittest discover -s tests -p test_v92_stable_hardening.py -q
+
+      - name: Retry matched V9.2 sources and refresh immutable read-only evidence
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          target="$(date -u +'%Y-%m-%dT%H-00Z')"
+          deadline=$(($(date -u +%s)+150))
+          while [[ "$(date -u +'%Y-%m-%dT%H-00Z')" == "$target" ]] && (( $(date -u +%s) < deadline )); do
+            if gh api "repos/$GITHUB_REPOSITORY/contents/forward/v92_prospective_selected/hourly/$target.json?ref=research/v92-bull-bear-candle-invalidation-20261112" >/dev/null 2>&1 &&
+               gh api "repos/$GITHUB_REPOSITORY/contents/forward/v92_prospective_eth/hourly/$target.json?ref=research/v92-bull-bear-candle-invalidation-20261112" >/dev/null 2>&1; then
+              git -C v92_evidence fetch --quiet --depth=1 origin research/v92-bull-bear-candle-invalidation-20261112
+              git -C v92_evidence reset --hard --quiet FETCH_HEAD
+              git -C v91_evidence fetch --quiet --depth=1 origin research/v9-prestart-live-data-compatibility-20261111
+              git -C v91_evidence reset --hard --quiet FETCH_HEAD
+              git -C v7_evidence fetch --quiet --depth=1 origin experiment/v7-signal-quality-20261103
+              git -C v7_evidence reset --hard --quiet FETCH_HEAD
+              echo "CAPPED_SAME_HOUR_SOURCE_REFRESH_OK_$target"
+              exit 0
+            fi
+            sleep 12
+          done
+          echo "CAPPED_SAFE_SKIP_MATCHED_SOURCES_NOT_YET_SEALED_$target"
 
       - name: Gate new post-request fresh 1H snapshot only
         id: gate
@@ -157,6 +181,62 @@ jobs:
           done
           exit 1
 
+      - name: Persist coverage-only gaps without filling paper trades
+        if: always() && steps.gate.outcome == 'success'
+        env:
+          CAPPED_TARGET: ${{ steps.gate.outputs.target }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          from v92_capped_paper import missing_hour_coverage
+          target=os.environ["CAPPED_TARGET"]
+          data=missing_hour_coverage("forward/v92_capped_paper/hourly",
+                                     target.replace("-00Z",":00:00Z"))
+          folder=Path("forward/v92_capped_paper")
+          (folder/"coverage_latest.json").write_text(
+              json.dumps(data,indent=2,ensure_ascii=False)+"\n",encoding="utf-8")
+          report=[
+              "# V9.2 capped paper — saatlik kayıt kapsaması (işlem değil)",
+              "",
+              f"**Bitiş hariç UTC:** {data['upToExcludingUTC']}",
+              f"**Beklenen kapanmış saat:** {data['expectedClosedHours']}",
+              f"**Git'te doğrulanan paper saatleri:** {data['verifiedSealedPaperHours']}",
+              f"**Eksik kayıt:** {data['missingHourCount']}",
+              "",
+              "Eksik saat sıfır sinyal değildir, geçmişe dönük işlem ya da PnL üretilmez.",
+              "","## Eksik kapanışlar (UTC)",
+          ]
+          report.extend("- "+h for h in data["missingHoursUTC"])
+          (folder/"coverage_latest.md").write_text(
+              "\n".join(report)+"\n",encoding="utf-8")
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a",encoding="utf-8") as fp:
+              fp.write(f"\nCAPPED_COVERAGE_UTC_TO {target}: "
+                       f"{data['verifiedSealedPaperHours']}/{data['expectedClosedHours']} "
+                       f"hours, missing {data['missingHourCount']}; "
+                       "NO_BACKFILL_NO_FAKE_TRADES\n")
+          print("CAPPED_COVERAGE_REPORTED",json.dumps(
+              {"checkedBefore":target,"missing":data["missingHoursUTC"][-8:],
+               "sealed":data["verifiedSealedPaperHours"]}))
+          PY
+          test "$(git branch --show-current)" = research/v92-stable-hardening-20261112
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_capped_paper/coverage_latest.json forward/v92_capped_paper/coverage_latest.md
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "V9.2 capped paper forward hourly coverage-only missing-hour audit"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v92-stable-hardening-20261112
+            if git push origin HEAD:research/v92-stable-hardening-20261112; then
+              echo 'CAPPED_MISSING_HOURS_DIAGNOSTIC_PERSISTED_ONLY' >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
+
       - name: Archive capped paper and source verification evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -165,6 +245,8 @@ jobs:
           path: |
             forward/v92_capped_paper/latest.json
             forward/v92_capped_paper/latest.md
+            forward/v92_capped_paper/coverage_latest.json
+            forward/v92_capped_paper/coverage_latest.md
             /tmp/v92_capped_source_audit.json
           if-no-files-found: ignore
           retention-days: 45
