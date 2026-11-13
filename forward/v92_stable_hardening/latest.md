@@ -13,12 +13,12 @@
 | Source | Saved / expected | Missing UTC hours | Consecutive recent hours |
 |---|---:|---|---:|
 | BTC_SOL | 28/31 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z, 2026-11-13T14:00:00Z | 3 |
-| ETH | 26/30 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z, 2026-11-13T17:00:00Z | 0 |
+| ETH | 27/30 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z | 26 |
 
 ## Backtest / forward snapshot parity
 
-- Matched 1H source hours: **24**.
-- Coin-hour replay checks: **72**.
+- Matched 1H source hours: **25**.
+- Coin-hour replay checks: **75**.
 - Actually observed open-position snapshots: **0**; pending-retest snapshots: **0**; closed-exit events: **0**.
 - Older immutable hours with reduced direct-veto diagnostics: **1**; accepted only when unchanged V9.1/V9.2 parity and zero veto were independently confirmed.
 - Stored BOS/retest state parity is checked, but when no real paper trades exist, trade-specific entry/stop/TP parity remains UNPROVEN outside synthetic unit tests.
@@ -28,5 +28,8 @@
 
 ## New-entry review
 
+- BTCUSDT: NO_NEW_ENTRY_CANDIDATE.
+- ETHUSDT: NO_NEW_ENTRY_CANDIDATE.
+- SOLUSDT: NO_NEW_ENTRY_CANDIDATE.
 
 **Limits:** Data gaps are not backfilled; risk limits cannot prevent stop gaps, funding/variable spreads/slippage are not fully modeled; no strategy promotion.
