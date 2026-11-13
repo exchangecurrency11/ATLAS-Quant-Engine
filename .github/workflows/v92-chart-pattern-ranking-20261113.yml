@@ -1,0 +1,126 @@
+name: V9.2 4H chart patterns train rank later validation and BOS overlay (NO ALERTS)
+
+# Research-only on isolated branch, main and V7/V9.2 forward untouched.
+on:
+  push:
+    branches:
+      - research/v92-chart-pattern-ranking-20261113
+    paths:
+      - .github/workflows/v92-chart-pattern-ranking-20261113.yml
+      - v92_chart_pattern_rank_20261113.py
+      - tests/test_v92_chart_pattern_rank_20261113.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-chart-pattern-training-validation-only
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated experiment (never main)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-chart-pattern-ranking-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Syntax and causality tests before reading market outcomes
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-chart-pattern-ranking-20261113
+          python3 -m py_compile v92_chart_pattern_rank_20261113.py
+          python3 -m unittest discover -s tests -p test_v92_chart_pattern_rank_20261113.py -v
+          python3 -m unittest discover -s tests -p test_v92_four_candle_models_20261113.py -q
+          python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
+
+      - name: Verify original official 159 monthly SHA256 files then run causal chart detection and 6 original baselines
+        run: |
+          set -euo pipefail
+          python3 -u v92_chart_pattern_rank_20261113.py \
+            --workers 6 --out forward/v92_chart_patterns_20261113
+
+      - name: Verify locked early selection, later outcomes, and reference parity evidence
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          droot=Path("forward/v92_chart_patterns_20261113")
+          d=json.loads((droot/"historical.json").read_text())
+          assert d["status"]=="V92_CHART_PATTERNS_TRAIN_RANK_HOLDOUT_OVERLAY_HISTORICAL"
+          assert d["noProductionV7V92Changes"] and d["noPaperAccountBackfills"]
+          assert d["noOrdersAndNoAlerts"] and d["later2024_2026SelectionNotChangedByFutureOutcomes"]
+          assert d["pivotRightConfirmationBars4H"]==2
+          assert d["monthlySHA256Total"]==159
+          assert set(d["selectedBySymbol"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert len(d["chartFamilies"])==9
+          assert set(d["periods"])=={"2022_2024","2024_2026"}
+          for pname,p in d["periods"].items():
+            assert p["verifiedMonthlyArchives"]==(87 if pname=="2022_2024" else 72)
+            assert set(p["symbols"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+            for sym,v in p["symbols"].items():
+              assert set(v["standaloneByFamily"])==set(d["chartFamilies"])
+              assert set(v["rankedByStandaloneTargetHitPct"])==set(d["chartFamilies"])
+              assert v["trainingSelectedFamiliesUsedForOverlay"]==d["selectedBySymbol"][sym]["selectedExploratory"]
+              assert set(v["v92Overlay"])=={
+                "A_V92_BASELINE","B_SELECTED_SAME_SIDE_ONLY",
+                "C_SELECTED_OPPOSITE_VETO"}
+              for fam,z in v["standaloneByFamily"].items():
+                assert z["signalsWith24hOutcome"]>=z["targetFirst"]
+                assert z["signalsWith24hOutcome"]>=z["stopFirst"]+z["timeExit"]
+              for name,model in v["v92Overlay"].items():
+                assert model["trades"]>=model["wins"]>=0
+                assert len(model["tradeEvidence"])==model["trades"]
+          assert (droot/"historical.md").stat().st_size>1000
+          print("CHART_PATTERN_159_SHA256_AND_SIX_BASELINES_PARITY_VERIFIED")
+          PY
+
+      - name: Seal ONLY new historical research in isolated branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-chart-pattern-ranking-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_chart_patterns_20261113/historical.json \
+                  forward/v92_chart_patterns_20261113/historical.md
+          if git diff --cached --quiet; then
+            echo "NO_NEW_RESEARCH_RESULT" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Seal causal 4H chart success rankings and independent V9.2 comparison"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-chart-pattern-ranking-20261113
+            if git push origin HEAD:research/v92-chart-pattern-ranking-20261113; then
+              echo "CHART_FORMATION_RESEARCH_SEALED_NO_LIVE_EDITS" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Report verified results or explicit missing evidence
+        if: always()
+        run: |
+          if test -s forward/v92_chart_patterns_20261113/historical.md; then
+            cat forward/v92_chart_patterns_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED CHART PATTERN RESEARCH RESULT. Do not imply a win rate." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "No changes to V7, V9.2 capped account, live orders, or notifications." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep source SHA256 manifest and independent report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-chart-pattern-ranking-research-only
+          path: |
+            forward/v92_chart_patterns_20261113/historical.json
+            forward/v92_chart_patterns_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
