@@ -1,0 +1,94 @@
+name: ETH V9.2 price-path risk and stop/TP ambiguity audit (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/eth-v92-price-path-audit-20261113
+    paths:
+      - eth_v92_price_path_audit_20261113.py
+      - tests/test_eth_v92_price_path_audit_20261113.py
+      - .github/workflows/eth-v92-price-path-audit-20261113.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eth-v92-price-path-read-only-sha256-months
+  cancel-in-progress: false
+
+jobs:
+  retrospective-path:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - name: Checkout independent ETH forensics branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/eth-v92-price-path-audit-20261113
+          fetch-depth: 0
+
+      - name: Verify unchanged causal and cost tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v92-price-path-audit-20261113
+          python3 -m py_compile eth_v92_price_path_audit_20261113.py
+          python3 -m unittest discover -s tests -p 'test_eth_v92_loss_attribution_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_eth_v92_price_path_audit_20261113.py' -v
+
+      - name: Download only historical traded ETH official ZIPs and verify prior SHA256
+        run: |
+          set -euo pipefail
+          python3 -u eth_v92_price_path_audit_20261113.py --workers 6
+
+      - name: Fail closed on missing SHA256, incomplete tape or fabricated timing
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("forward/eth_v92_price_path_audit_20261113")
+          d=json.loads((p/"price_path.json").read_text())
+          assert d["status"]=="RESEARCH_ONLY_HISTORICAL_ETH_OHLCV_EXCURSION_AUDIT"
+          assert d["bothResearchPeriodsAlreadySeen"] and not d["outOfSampleValidation"]
+          assert d["noOrders"] and d["noNotifications"] and d["noProductionEdits"]
+          assert d["noForwardPaperAccountChanges"] and d["pricePathCannotDetermineIntrabarOrder"]
+          assert d["verifiedTouchedETHMonths"]==len(d["proofSHA256"])>0
+          assert all(len(h)==64 for h in d["proofSHA256"].values())
+          for period,strategies in d["periods"].items():
+            assert set(strategies)=={
+              "BASELINE","PAIR_NO_BREAK_ATR_AND_EMA_EXT",
+              "PAIR__bos_break_atr__retest_window"}
+            for name,report in strategies.items():
+              assert report["summary"]["trades"]==len(report["trades"])
+              for trade in report["trades"]:
+                assert 1<=trade["holdingHourlyBars"]<=24
+                assert trade["stopFirstPricePathIntraHourUnknown"]
+                assert trade["marketFutureUnknownAtTradeEntry"]
+            assert strategies["BASELINE"]["summary"]["trades"]==(
+              10 if period=="2022_2024" else 6)
+          assert (p/"price_path.md").stat().st_size>500
+          print("ETH_1H_PRIOR_SHA256_TRADE_PATH_FORENSIC_VERIFIED")
+          PY
+
+      - name: Store only additive research outputs
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v92-price-path-audit-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/eth_v92_price_path_audit_20261113/
+          if git diff --cached --quiet; then
+            echo "NO_NEW_1H_PATH_RESEARCH_DIFF" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Persist ETH archival SHA256 matched MFE MAE and stop target intrabar audits"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/eth-v92-price-path-audit-20261113
+            if git push origin HEAD:research/eth-v92-price-path-audit-20261113; then
+              echo "ETH_RESEARCH_ONLY_SHA256_PRICE_PATH_PERSISTED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
