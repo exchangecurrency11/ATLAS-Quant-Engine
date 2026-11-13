@@ -17,6 +17,42 @@ jobs:
       - uses: actions/checkout@v5
         with:
           ref: research/v92-stable-hardening-20261112
+      - name: Read prior immutable V9.2 selected paper evidence
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-bull-bear-candle-invalidation-20261112
+          path: v92_evidence
+          persist-credentials: false
+      - name: Read prior immutable V9.1 evidence
+        uses: actions/checkout@v5
+        with:
+          ref: research/v9-prestart-live-data-compatibility-20261111
+          path: v91_evidence
+          persist-credentials: false
+      - name: Read original V7 evidence
+        uses: actions/checkout@v5
+        with:
+          ref: experiment/v7-signal-quality-20261103
+          path: v7_evidence
+          persist-credentials: false
+      - name: Verify actual sealed BTC ETH SOL V7 V9.1 V9.2 source shape
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from v92_capped_paper import source_candles
+          from v92_stable_hardening import seconds,parity_one_hour
+          hour="2026-11-13T01-00Z.json"
+          t=seconds("2026-11-13T01:00:00Z")
+          core=json.loads((Path("v92_evidence/forward/v92_prospective_selected/hourly")/hour).read_text())
+          eth=json.loads((Path("v92_evidence/forward/v92_prospective_eth/hourly")/hour).read_text())
+          rows=parity_one_hour(t,core,eth,Path("v91_evidence"),Path("v7_evidence"))
+          assert len(rows)==3
+          candles=source_candles(t,core,eth,Path("v7_evidence"))
+          assert set(candles)=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert all(c["c"]>0 and c["h"]>=c["l"] for c in candles.values())
+          print("CAPPED_SEALED_THREE_ASSET_REAL_SOURCE_INTEGRATION_OK")
+          PY
       - name: Parse modules
         run: |
           python3 -m py_compile v92_capped_paper.py v92_stable_hardening.py
