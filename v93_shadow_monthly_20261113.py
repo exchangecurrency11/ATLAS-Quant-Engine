@@ -60,7 +60,7 @@ def download_hist(end_month,workers):
                 tasks[pool.submit(download_month,symbol,month)]=(symbol,month)
         for task in as_completed(tasks):
             sym,mon,rows,proof=task.result()
-            if (sym,mon)!=(symbol:=sym,month:=mon) or proof["bars"]!=len(rows):
+            if (sym,mon)!=(tasks[task]) or proof["bars"]!=len(rows):
                 raise ValueError("SHA256_ARCHIVE_DATA_MISMATCH")
             data[(sym,mon)]=rows
             source[f"{sym}:{mon}"]=proof["sha256"]
