@@ -38,6 +38,33 @@ def go(prev,t,b,si=None,commit=True,verified=True,ready=True,original_override=N
                 captured_at=t+1800)
 
 class CappedPaperTests(unittest.TestCase):
+    def test_verified_v92_pending_retest_goes_to_next_hour_paper_then_tp(self):
+        # End-to-end source-shape -> precommitted intent -> later observed
+        # close -> next-hour TP, with no same-bar exit or real order.
+        pending={"side":"bullish","stop":99.0,
+                 "watchKnownUTC":T-3600,"retestKnownUTC":T}
+        def state(p=None):
+            return {"currentPaperState":{"pendingNextOpenPaperEntry":p,
+                                          "openHypotheticalPosition":None}}
+        core={"assets":{"BTCUSDT":{"selectedV92":state(pending)},
+                        "SOLUSDT":{"selectedV92":state()}}}
+        eth={"selectedV92":state()}
+        intents=original_intents(T,core,eth)
+        self.assertEqual(set(intents),{"BTCUSDT"})
+        first=go(None,T,bars(),intents)
+        self.assertEqual(len(first["intentNextObservation"]),1)
+        self.assertEqual(first["paperEntriesEverRecorded"],0)
+        second=go(first,T+3600,bars())
+        self.assertEqual(set(second["openPositions"]),{"BTCUSDT"})
+        self.assertEqual(second["closedPaperTrades"],0)
+        self.assertLessEqual(second["openRiskReservationUSDT"],10)
+        third=go(second,T+7200,bars(high=103.2,low=99.4))
+        self.assertEqual(third["closedPaperTrades"],1)
+        self.assertEqual(third["openPositions"],{})
+        self.assertGreater(third["closedTrades"][0]["netPaperPnL9BpsUSDT"],0)
+        self.assertTrue(third["noBrokerOrders"])
+        self.assertTrue(third["noHistoricalBackfill"])
+
     def test_three_simultaneous_retsets_only_two_allowed_by_20_usdt(self):
         s0=go(None,T,bars(),{a:intent(a) for a in ASSETS})
         self.assertEqual(len(s0["intentNextObservation"]),3)
