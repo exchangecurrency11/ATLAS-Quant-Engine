@@ -1,0 +1,114 @@
+name: ETH V9.2 vs frozen BOS+EMA forward pair comparator (RESEARCH ONLY)
+
+# Runs on a research branch. NO cron: GitHub scheduled workflows require
+# default branch, which belongs to protected production V7/V9.2.
+# After November is complete, manually dispatch with refresh=true.
+on:
+  push:
+    branches:
+      - research/eth-v93-prospective-paired-20261113
+    paths:
+      - eth_v93_prospective_paired_compare_20261113.py
+      - tests/test_eth_v93_prospective_paired_compare_20261113.py
+      - .github/workflows/eth-v93-prospective-paired-20261113.yml
+  workflow_dispatch:
+    inputs:
+      refresh_completed_month:
+        description: "Download complete Binance monthly archives for frozen six streams first (NO ORDERS)"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eth-v93-read-only-frozen-prospective-paired-research
+  cancel-in-progress: false
+
+jobs:
+  eth-paired:
+    runs-on: ubuntu-latest
+    timeout-minutes: 95
+    steps:
+      - name: Checkout independent ETH research branch ONLY
+        uses: actions/checkout@v5
+        with:
+          ref: research/eth-v93-prospective-paired-20261113
+          fetch-depth: 0
+
+      - name: Frozen ETH candidate unchanged, no-lookahead tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v93-prospective-paired-20261113
+          python3 -m py_compile eth_v93_prospective_paired_compare_20261113.py
+          python3 -m unittest discover -s tests -p 'test_eth_v93_prospective_paired_compare_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_v93_shadow_monthly_20261113.py' -q
+
+      - name: Optional completed-month official SHA256 snapshot refresh
+        if: github.event_name == 'workflow_dispatch' && inputs.refresh_completed_month == true
+        run: |
+          set -euo pipefail
+          python3 -u v93_shadow_monthly_20261113.py --workers 6
+
+      - name: Compare ONLY frozen ETH baseline and ETH BOS + EMA prospective evidence
+        run: |
+          set -euo pipefail
+          python3 -u eth_v93_prospective_paired_compare_20261113.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/eth_v93_paired_prospective_20261113")
+          x=json.loads((p/"latest_status.json").read_text())
+          assert x["freezeUTC"]=="2026-11-14T00:00:00Z"
+          assert x["researchOnly"] and not x["realOrders"] and not x["notifications"]
+          assert not x["originalV7V92AccountsTouched"]
+          assert not x["historyCreditedToProspective"]
+          assert x["monthlyCompletedArchiveOnly"] and not x["noRealtimeTradingSignal"]==False
+          assert x["review"]["candidateApprovedForPromotion"]==False
+          assert x["comparison"]["paired"]["sharedIdenticalRAndExitVerified"]
+          if x["provenance"]=="PREFREEZE_NO_ELIGIBLE_TRADES":
+            assert x["comparison"]["deltaR25Bps"] is None
+            assert x["comparison"]["reference"]["metrics25Bps"]["trades"]==0
+            assert x["comparison"]["candidate"]["metrics25Bps"]["trades"]==0
+          else:
+            assert x["sourceMonth"] and x["verifiedOfficialMonthlyArchives"]>=24
+            assert (p/"snapshots"/(x["sourceMonth"]+".json")).exists()
+          assert (p/"comparison.md").stat().st_size>200
+          print("ETH_V92_VS_BOS_EMA_PROSPECTIVE_PAIRED_NO_PROMOTION_VALIDATED")
+          PY
+
+      - name: Save only independent paper research data without production edits
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v93-prospective-paired-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/eth_v93_paired_prospective_20261113/ forward/v93_shadow_prospective_20261113/
+          if git diff --cached --quiet; then
+            echo "ETH_NO_NEW_FORWARD_DATA_YET" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Seal frozen ETH reference-versus-BOS-EMA prospective comparison without live changes"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/eth-v93-prospective-paired-20261113
+            if git push origin HEAD:research/eth-v93-prospective-paired-20261113; then
+              echo "ETH_PAIRED_PROSPECTIVE_RESEARCH_ONLY_PERSISTED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Report source status
+        if: always()
+        run: |
+          if test -f forward/eth_v93_paired_prospective_20261113/latest_status.json; then
+            python3 - <<'PY'
+          import json
+          a=json.load(open("forward/eth_v93_paired_prospective_20261113/latest_status.json"))
+          print(a["status"],a["asOfExclusiveUTC"],
+                a["comparison"]["reference"]["metrics25Bps"]["trades"],
+                a["comparison"]["candidate"]["metrics25Bps"]["trades"])
+          PY
+          fi
