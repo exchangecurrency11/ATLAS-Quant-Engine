@@ -1,0 +1,124 @@
+name: V9.2 CVD RSI MACD historical divergence research (NO ORDERS NO ALERTS)
+
+# Independent research-only job; official Binance USD-M 1H SHA256 archives.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-divergence-historical.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-divergence-historical-research-only
+  cancel-in-progress: false
+
+jobs:
+  historical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout ONLY isolated V9.2 divergence research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-divergence-sandbox-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Validate chronological divergence and no future-data leakage
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-divergence-sandbox-20261113
+          python3 -m py_compile v92_divergence_historical_study.py
+          python3 -m unittest discover -s tests -p 'test_v92_divergence_historical_study.py' -v
+
+      - name: Download 72 official Binance 1H archives and run BTC ETH SOL 8-mode historical divergence study
+        run: |
+          set -euo pipefail
+          python3 -u v92_divergence_historical_study.py \
+            --output-dir forward/v92_divergence_historical \
+            --workers 6
+
+      - name: Confirm 72 SHA checksums and exact original BOS retest baseline parity
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path("forward/v92_divergence_historical/historical.json").read_text())
+          assert x["status"]=="V92_CVD_RSI_MACD_DIVERGENCE_HISTORICAL_RESEARCH_ONLY"
+          assert x["cvdIsHourlyProxyNotTickLevel"]
+          assert x["noBrokerOrders"] and x["noUserNotifications"]
+          assert x["originalV7V91V92Unchanged"]
+          assert x["allDecisionsAtCLOSEDRetestOnly"] and x["noLookaheadOrRetrospectiveTradeFills"]
+          assert x["sourceManifest"]["checksumsVerified"]==72
+          assert len(x["sourceManifest"]["inputFiles"])==72
+          assert all(len(m["sha256"])==64 for m in x["sourceManifest"]["inputFiles"])
+          assert set(x["assets"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          expected={
+            "BTCUSDT":(5,4.101040,5,4.101040),
+            "ETHUSDT":(6,-2.008289,6,-2.008289),
+            "SOLUSDT":(9,3.115948,8,4.260655),
+          }
+          for symbol,(baseline_n,baseline_r,selected_n,selected_r) in expected.items():
+            modes=x["assets"][symbol]["results"]
+            assert set(modes)==set(x["models"])
+            assert x["assets"][symbol]["verifiedCandles"]=={
+              "1H":17520,"4H":4380,"1D":730}
+            for key,n,r in [
+                ("V91_NO_CANDLE_VETO",baseline_n,baseline_r),
+                ("V92_SELECTED_BASELINE",selected_n,selected_r)]:
+              actual=modes[key]
+              assert actual["trades"]==n,(symbol,key,"trades",actual["trades"],n)
+              assert abs(actual["totalNetR9BpsPerSide"]-r)<0.0001,(symbol,key,"netR",actual["totalNetR9BpsPerSide"],r)
+            for key,m in modes.items():
+              assert m["trades"]>=0 and m["retestVetoes"]>=0
+              assert m["unresolvedExcluded"] is False
+          print("V92_DIVERGENCE_ORIGINAL_BASELINES_MATCHED_AND_NO_FUTURE_LEAK")
+          PY
+
+      - name: Commit only new divergence research evidence
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-divergence-sandbox-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_divergence_historical/historical.json \
+                  forward/v92_divergence_historical/historical.md
+          if git diff --cached --quiet; then
+            echo "V92_DIVERGENCE_RESEARCH_ALREADY_SEALED" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "V9.2 causal CVD RSI MACD historical divergence research backtest"
+          for i in 1 2 3; do
+            git pull --rebase origin research/v92-divergence-sandbox-20261113
+            if git push origin HEAD:research/v92-divergence-sandbox-20261113; then
+              echo "V92_DIVERGENCE_HISTORICAL_RESULTS_PERSISTED_RESEARCH_ONLY" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Summarize only verified stored research outputs
+        if: always()
+        run: |
+          if test -s forward/v92_divergence_historical/historical.md; then
+            cat forward/v92_divergence_historical/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED DIVERGENCE BACKTEST RESULT. Do not claim any statistics." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "Research only; no orders, alerts, V7 or V9.2 forward paper changes." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Archive research report and SHA256 proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-divergence-historical
+          path: |
+            forward/v92_divergence_historical/historical.json
+            forward/v92_divergence_historical/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
