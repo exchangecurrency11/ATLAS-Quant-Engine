@@ -51,7 +51,7 @@ class DivergenceNoLookaheadTests(unittest.TestCase):
 
     def test_zero_future_price_for_sweep_and_spike(self):
         rows=candles()
-        rows[110]["l"]=97.
+        rows[110]["l"]=93.
         rows[110]["c"]=99.
         rows[110]["v"]=180.
         self.assertTrue(sweep_at(rows,110,"bullish"))
