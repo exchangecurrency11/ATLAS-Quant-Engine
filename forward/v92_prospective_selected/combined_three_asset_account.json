@@ -12,7 +12,7 @@
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
   "sourceBTCandSOLVerifiedClosedHours": 33,
-  "sourceETHVerifiedClosedHours": 31,
+  "sourceETHVerifiedClosedHours": 32,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
@@ -28,15 +28,15 @@
       "firstExpectedHourUTC": "2026-11-12T12:00:00Z",
       "expectedThroughUTC": "2026-11-13T22:00:00Z",
       "expectedHours": 35,
-      "savedVerifiedHours": 31,
-      "missingHourCount": 4,
-      "lastVerifiedHourUTC": "2026-11-13T21:00:00Z",
-      "lagHours": 1,
+      "savedVerifiedHours": 32,
+      "missingHourCount": 3,
+      "lastVerifiedHourUTC": "2026-11-13T22:00:00Z",
+      "lagHours": 0,
       "noBackfill": true
     }
   },
   "lastCapturedBTCandSOLHourUTC": "2026-11-13T22:00:00Z",
-  "lastCapturedETHHourUTC": "2026-11-13T21:00:00Z",
+  "lastCapturedETHHourUTC": "2026-11-13T22:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1000.0,
   "virtualPaperPnLUSDT": 0.0,
@@ -127,14 +127,28 @@
     },
     "ETHUSDT": {
       "state": "FLAT",
-      "lastClosedUTC": "2026-11-13T21:00:00Z",
+      "lastClosedUTC": "2026-11-13T22:00:00Z",
       "retestPending": false,
       "openPaperPosition": false,
       "newBOSWatches": 0,
       "patternWarnings": {
         "1H": {
-          "lastCompletedCandleCloseUTC": "2026-11-13T21:00:00Z",
-          "confirmedReversalPatterns": [],
+          "lastCompletedCandleCloseUTC": "2026-11-13T22:00:00Z",
+          "confirmedReversalPatterns": [
+            {
+              "family": "HIKKAKE_CONFIRMED",
+              "name": "BEARISH_HIKKAKE_CONFIRMED",
+              "direction": "bearish",
+              "firstUTC": "2026-11-13T17:00:00Z",
+              "confirmedUTC": "2026-11-13T22:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": true,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            }
+          ],
           "ethObservationalOnlyNoAutoVeto": true
         },
         "4H": {
