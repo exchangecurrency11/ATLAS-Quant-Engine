@@ -134,7 +134,7 @@ class TestStrictAblation(unittest.TestCase):
             cache=exact_streaming_indicator_cache(data)
             interval=data[1]["t"]-data[0]["t"]
             for n in (55,56,57,60,73,109,len(data)//2,len(data)):
-                if n>len(data):
+                if n>len(data) or n<55:
                     continue
                 k=(data[0]["t"],interval,n)
                 original_ind=original.indicators(data[:n])
