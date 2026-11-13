@@ -13,15 +13,15 @@ Başlangıç UTC: 2026-11-12T08:44:55Z
 
 - V7_ORIGINAL BTCUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T13:00:00Z.
 - V7_ORIGINAL SOLUSDT: OPEN_PAPER_POSITION_NOT_PROVEN_EXECUTABLE — en son doğrulanmış 1H 2026-11-13T13:00:00Z.
-- V7_ORIGINAL ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T13:00:00Z.
+- V7_ORIGINAL ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T14:00:00Z.
 - V91_RETEST_MAX4H BTCUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T13:00:00Z.
 - V91_RETEST_MAX4H SOLUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T13:00:00Z.
-- V91_RETEST_MAX4H ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T13:00:00Z.
+- V91_RETEST_MAX4H ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-13T14:00:00Z.
 
 **Kaynak saat kapsama denetimi (eksikler doldurulmaz):**
 
-- BTC_SOL: 29/29 saat; eksik 0; son kayıt 2026-11-13T13:00:00Z; gecikme 0 saat.
-- ETH: 26/29 saat; eksik 3; son kayıt 2026-11-13T13:00:00Z; gecikme 0 saat.
+- BTC_SOL: 29/30 saat; eksik 1; son kayıt 2026-11-13T13:00:00Z; gecikme 1 saat.
+- ETH: 27/30 saat; eksik 3; son kayıt 2026-11-13T14:00:00Z; gecikme 0 saat.
 
 V9 önceden dondurulan 4H renk tahminleri ayrıca değerlendirilir, V9.1 işleme giriş sinyali sayılmaz.
 Önceki geceye sonradan emir yazılmaz; 1H eksikleri kapatılmaz.
