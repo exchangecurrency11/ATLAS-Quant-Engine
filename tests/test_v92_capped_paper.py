@@ -1,11 +1,15 @@
 """V9.2 independent capped paper ledger tests. Paper-only, no retrospective fill."""
 import copy
+import json
+from pathlib import Path
+import tempfile
 import unittest
 
 from v92_stable_hardening import seconds,stamp
 from v92_capped_paper import (
     FIRST,MODE,ASSETS,original_intents,pending_retest,step,
-    still_valid_original_position,BPS_BASE,BPS_STRESS,MAX_HOLD_BARS
+    still_valid_original_position,BPS_BASE,BPS_STRESS,MAX_HOLD_BARS,
+    missing_hour_coverage
 )
 
 T=seconds(FIRST)
@@ -64,6 +68,21 @@ class CappedPaperTests(unittest.TestCase):
         self.assertGreater(third["closedTrades"][0]["netPaperPnL9BpsUSDT"],0)
         self.assertTrue(third["noBrokerOrders"])
         self.assertTrue(third["noHistoricalBackfill"])
+
+    def test_coverage_records_missing_hours_without_false_trades(self):
+        with tempfile.TemporaryDirectory() as d:
+            p=Path(d)/"2026-11-13T04-00Z.json"
+            observation=go(None,T+3600,bars())
+            p.write_text(json.dumps(observation))
+            cov=missing_hour_coverage(d,stamp(T+10800))
+            self.assertEqual(cov["expectedClosedHours"],3)
+            self.assertEqual(cov["verifiedSealedPaperHours"],1)
+            self.assertEqual(cov["missingHourCount"],2)
+            self.assertEqual(cov["missingHoursUTC"],
+                             [stamp(T),stamp(T+7200)])
+            self.assertTrue(cov["noHistoricalBackfill"])
+            self.assertTrue(cov["missingIsNotZeroSignal"])
+            self.assertEqual(observation["closedPaperTrades"],0)
 
     def test_three_simultaneous_retsets_only_two_allowed_by_20_usdt(self):
         s0=go(None,T,bars(),{a:intent(a) for a in ASSETS})
