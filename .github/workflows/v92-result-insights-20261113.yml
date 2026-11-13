@@ -1,0 +1,79 @@
+name: V9.2 read-only research synthesis and cross-study parity (NO ORDERS)
+
+on:
+  push:
+    branches:
+      - research/v92-full-interaction-20261113
+    paths:
+      - v92_result_insights_20261113.py
+      - .github/workflows/v92-result-insights-20261113.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-read-only-research-synthesis-20261113
+  cancel-in-progress: false
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated research with completed reports
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-full-interaction-20261113
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Confirm branch and source reports
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-full-interaction-20261113
+          test -s forward/v92_full_interactions_20261113/historical.json
+          test -s forward/v92_threshold_sensitivity_20261113/historical.json
+          python3 -m py_compile v92_result_insights_20261113.py
+      - name: Derive conditional redundancy and regime/cost summaries (no exchange calls)
+        run: |
+          set -euo pipefail
+          python3 -u v92_result_insights_20261113.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/v92_research_synthesis_20261113")
+          d=json.loads((p/"metadata.json").read_text())
+          assert d["status"]=="CROSS_RESEARCH_BASELINE_PARITY_AND_REGIME_SYNTHESIS"
+          assert d["totalPairCount"]==91 and d["thresholdScenarios"]==32
+          assert d["archiveCount"]==159
+          assert d["noProductionChanges"] and d["noIndependentHoldoutClaim"]
+          assert (p/"diagnostics.md").stat().st_size>3000
+          print("RESEARCH_CROSS_STUDY_SYNTHESIS_VERIFIED")
+          PY
+      - name: Commit only new independent synthesis
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-full-interaction-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_research_synthesis_20261113/diagnostics.md \
+                  forward/v92_research_synthesis_20261113/metadata.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Document validated V9.2 filter redundancy and cross-period regime diagnostics"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-full-interaction-20261113
+            if git push origin HEAD:research/v92-full-interaction-20261113; then
+              echo "RESEARCH_DIAGNOSTICS_SEALED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+      - name: Show diagnostics or fail-closed warning
+        if: always()
+        run: |
+          if test -s forward/v92_research_synthesis_20261113/diagnostics.md; then
+            cat forward/v92_research_synthesis_20261113/diagnostics.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "NO VERIFIED DIAGNOSTICS YET" >> "$GITHUB_STEP_SUMMARY"
+          fi
