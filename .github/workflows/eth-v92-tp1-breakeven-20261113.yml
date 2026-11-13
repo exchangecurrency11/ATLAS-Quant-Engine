@@ -1,0 +1,92 @@
+name: ETH TP1 after close break-even vs V9.2 historical replay (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/eth-v92-conditional-breakeven-20261113
+    paths:
+      - eth_v92_tp1_breakeven_20261113.py
+      - tests/test_eth_v92_tp1_breakeven_20261113.py
+      - .github/workflows/eth-v92-tp1-breakeven-20261113.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eth-v92-tp1-be-frozen-read-only-research
+  cancel-in-progress: false
+
+jobs:
+  eth-sequential-breakeven:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - name: Checkout only ETH research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/eth-v92-conditional-breakeven-20261113
+          fetch-depth: 0
+
+      - name: Test gap-safe conditional stop and do not patch production
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v92-conditional-breakeven-20261113
+          python3 -m py_compile eth_v92_tp1_breakeven_20261113.py
+          python3 -m unittest discover -s tests -p 'test_eth_v92_tp1_breakeven_20261113.py' -v
+          python3 -m unittest discover -s tests -p 'test_eth_v92_price_path_audit_20261113.py' -v
+
+      - name: Replay 3 ETH configurations x two exit logics x two frozen periods
+        run: |
+          set -euo pipefail
+          python3 -u eth_v92_tp1_breakeven_20261113.py --workers 6
+
+      - name: Enforce six original exact historical trade tape parity and no paper/account edits
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path("forward/eth_v92_tp1_breakeven_20261113")
+          d=json.loads((p/"historical.json").read_text())
+          assert d["status"]=="ETH_V92_FROZEN_PREDECLARED_TP1_NEXT_BAR_BE_HISTORICAL_REPLAY"
+          assert d["archiveCountSHA256"]==53
+          assert len(d["manifest"])==53
+          assert all(len(h)==64 for h in d["manifest"].values())
+          assert not d["independentHoldout"]
+          assert d["noOrders"] and d["noNotifications"] and d["noProductionV7V92Changes"]
+          assert d["noLiveForwardPaperWrites"] and d["noAutomaticCandidatePromotion"]
+          assert d["unchangedEnginesParityCheckedAgainstAllSixFrozenETHTapes"]
+          assert d["protectionOnlyFromNextHourlyCandleAfterPriorTP1"]
+          assert d["stopFirstWithinSame1H"] and d["adverseGapOpenNotAssumedBreakEven"]
+          for period,variants in d["periods"].items():
+            assert len(variants)==3
+            for key,r in variants.items():
+              assert set(r["variants"])=={"ORIGINAL","TP1_NEXT_1H_BREAK_EVEN"}
+              for z in r["variants"].values():
+                assert z["metrics25Bps"]["trades"]==len(z["tradeEvidence"])
+                assert z["metrics9Bps"]["trades"]==len(z["tradeEvidence"])
+          print("ETH_12_FULL_REPLAY_FROZEN_TP1_BE_AND_ORIGINAL_CROSS_PARITY_VERIFIED")
+          PY
+
+      - name: Persist only new research findings in separate branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v92-conditional-breakeven-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/eth_v92_tp1_breakeven_20261113/
+          if git diff --cached --quiet; then
+            echo "NO_NEW_RESEARCH" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Seal ETH full chronological TP1 stop-to-entry experiment and 25bps scorecards"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/eth-v92-conditional-breakeven-20261113
+            if git push origin HEAD:research/eth-v92-conditional-breakeven-20261113; then
+              echo "ETH_NO_PRODUCTION_CHANGES_RESEARCH_PERSISTED" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
