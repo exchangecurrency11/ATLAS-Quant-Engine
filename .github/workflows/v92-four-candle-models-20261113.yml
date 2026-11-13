@@ -1,0 +1,132 @@
+name: V9.2 four confirmed-candle models BTC ETH SOL historical (NO ALERTS)
+
+# Runs on an isolated research branch ONLY. Never change main, V7,
+# capped V9.2 forward account, alert settings, or broker account.
+on:
+  push:
+    branches:
+      - research/v92-four-candle-models-20261113
+    paths:
+      - .github/workflows/v92-four-candle-models-20261113.yml
+      - v92_four_candle_models_20261113.py
+      - tests/test_v92_four_candle_models_20261113.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: v92-four-model-closed-candle-history-only
+  cancel-in-progress: false
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout isolated branch (not main or any production branch)
+        uses: actions/checkout@v5
+        with:
+          ref: research/v92-four-candle-models-20261113
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Compile and verify frozen pattern decisions
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-four-candle-models-20261113
+          python3 -m py_compile v92_four_candle_models_20261113.py
+          python3 -m unittest discover -s tests -p test_v92_four_candle_models_20261113.py -v
+          python3 -m unittest discover -s tests -p test_v92_multi_candle_invalidation.py -q
+          python3 -m unittest discover -s tests -p test_v92_selected_reversal_patterns.py -q
+
+      - name: Download and SHA256-verify exactly 159 Binance USD-M 1H monthly ZIPs
+        run: |
+          set -euo pipefail
+          python3 -u v92_four_candle_models_20261113.py \
+            --workers 6 --out forward/v92_four_candle_models_20261113
+
+      - name: Audit six unchanged baselines and each independent comparison
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          folder=Path("forward/v92_four_candle_models_20261113")
+          d=json.loads((folder/"historical.json").read_text())
+          assert d["status"]=="FOUR_MODEL_CLOSED_CANDLE_PATTERN_ABLATION_HISTORICAL_ONLY"
+          assert d["noProductionV7V92Edits"] and d["noOrdersOrUserAlerts"]
+          assert d["noPaperAccountEditsOrBackfills"] and d["BIdenticalTradesToA"]
+          assert d["historicalDataAlreadyResearchedNotIndependentProspectiveEvidence"]
+          assert sum(p["verifiedMonthlyArchives"] for p in d["periods"].values())==159
+          for pname,period in d["periods"].items():
+            expected=87 if pname=="2022_2024" else 72
+            assert period["verifiedMonthlyArchives"]==expected
+            assert len(period["sourceManifest"])==expected
+            assert len({(z["symbol"],z["month"]) for z in period["sourceManifest"]})==expected
+            assert all(len(z["sha256"])==64 for z in period["sourceManifest"])
+            assert set(period["symbols"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+            for sym,variants in period["symbols"].items():
+              assert set(variants)=={"A_BASELINE","B_OBSERVATION_ONLY",
+                  "C_OPPOSING_CONTEXT_VETO","D_SAME_DIRECTION_CONFIRM"}
+              a=variants["A_BASELINE"];b=variants["B_OBSERVATION_ONLY"]
+              assert b["trades"]==a["trades"]
+              assert b["wins"]==a["wins"]
+              assert b["fullTradeEvidence"]==a["fullTradeEvidence"]
+              assert b["totalNetR9BpsPerSide"]==a["totalNetR9BpsPerSide"]
+              assert b["totalNetR25BpsPerSideStress"]==a["totalNetR25BpsPerSideStress"]
+              assert b["audit"]["allSignalsIdenticalToA"] is True
+              for mode,score in variants.items():
+                assert len(score["fullTradeEvidence"])==score["trades"],(pname,sym,mode)
+                assert score["noForwardTradesCredited"]
+                assert score["trades"]>=score["wins"]
+                assert score["pairedVsA"]["baselineWinnersRemoved"]>=0
+                assert score["pairedVsA"]["baselineLosersRemoved"]>=0
+                assert all(t["stopDistancePercent"]>0 for t in score["fullTradeEvidence"])
+          assert (folder/"historical.md").stat().st_size>1000
+          print("FOUR_MODEL_159_ARCHIVES_SHA256_SIX_BASELINES_PARITY_AND_ABLATION_OK")
+          PY
+
+      - name: Commit only new sealed research reports to the isolated branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/v92-four-candle-models-20261113
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/v92_four_candle_models_20261113/historical.json \
+                  forward/v92_four_candle_models_20261113/historical.md
+          if git diff --cached --quiet; then
+            echo "NO_NEW_RESEARCH_REPORT_TO_COMMIT" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Verify A B C D candle experiment with six historical baseline parity guards"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/v92-four-candle-models-20261113
+            if git push origin HEAD:research/v92-four-candle-models-20261113; then
+              echo "RESEARCH_ABLATION_BRANCH_SEALED_NO_PRODUCTION_EDITS" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
+
+      - name: Print verified report or explicit failure
+        if: always()
+        run: |
+          if test -s forward/v92_four_candle_models_20261113/historical.md; then
+            cat forward/v92_four_candle_models_20261113/historical.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "UNVERIFIED FOUR-MODEL ABLATION: do not claim any trade or R result." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "V7/V9.2 untouched. Historical trades never count toward forward ledger." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Archive report and verified monthly SHA256 manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v92-four-candle-models-sealed-research
+          path: |
+            forward/v92_four_candle_models_20261113/historical.json
+            forward/v92_four_candle_models_20261113/historical.md
+          if-no-files-found: ignore
+          retention-days: 45
