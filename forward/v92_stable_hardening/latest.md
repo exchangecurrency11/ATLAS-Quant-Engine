@@ -12,19 +12,19 @@
 
 | Source | Saved / expected | Missing UTC hours | Consecutive recent hours |
 |---|---:|---|---:|
-| BTC_SOL | 17/19 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z | 3 |
-| ETH | 15/18 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z | 14 |
+| BTC_SOL | 18/20 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z | 4 |
+| ETH | 16/19 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z | 15 |
 
 ## Backtest / forward snapshot parity
 
-- Matched 1H source hours: **14**.
-- Coin-hour replay checks: **42**.
+- Matched 1H source hours: **15**.
+- Coin-hour replay checks: **45**.
 - Actually observed open-position snapshots: **0**; pending-retest snapshots: **0**; closed-exit events: **0**.
 - Older immutable hours with reduced direct-veto diagnostics: **1**; accepted only when unchanged V9.1/V9.2 parity and zero veto were independently confirmed.
 - Stored BOS/retest state parity is checked, but when no real paper trades exist, trade-specific entry/stop/TP parity remains UNPROVEN outside synthetic unit tests.
 - Comparison is based on independently stored forward 1H snapshots and their prior V7/V9.1 reference records, not a claim of executable live fills.
 - Original V9.2 already replays the same closed OHLCV as of each hour; audit double-checks serialized strategy state, BOS/retest, stop/TP fields when open, and timeframe stamps.
-- Latest strict paper admission gate: **FAIL CLOSED**.
+- Latest strict paper admission gate: **READY FOR REVIEW**.
 
 ## New-entry review
 
