@@ -11,7 +11,7 @@ from signal_quality_v7 import evaluate_bos_quality
 from v92_filter_ablation_20261113 import (
     ABLATIONS,ONE_BY_ONE,PAIRS,EXPECTED_PREVIOUS,CONTROL_REQUIREMENTS,
     fork_source,instrumentation,paired,valid_baseline_period,
-    followup_shortlist
+    followup_shortlist,exact_streaming_indicator_cache
 )
 
 def _trade(ts,r):
@@ -122,6 +122,27 @@ class TestStrictAblation(unittest.TestCase):
             "2022_2024","BTCUSDT",{
                 **score,"trades":9}))
 
+    def test_prefix_streaming_indicators_equal_exact_reference(self):
+        bars=[]
+        for i in range(1800):
+            p=100+.03*i+2.3*sin(i/17.)
+            bars.append({
+                "t":i*3600,"o":p-.2,"h":p+.8,
+                "l":p-1.1,"c":p+.3,"v":200.+i%17,
+            })
+        for data in (bars,aggregate(bars,14400),aggregate(bars,86400)):
+            cache=exact_streaming_indicator_cache(data)
+            interval=data[1]["t"]-data[0]["t"]
+            for n in (55,56,57,60,73,109,len(data)//2,len(data)):
+                if n>len(data):
+                    continue
+                k=(data[0]["t"],interval,n)
+                original_ind=original.indicators(data[:n])
+                for indicator in ("EMA20","EMA50","RSI14","hist"):
+                    self.assertAlmostEqual(
+                        cache[k][indicator],original_ind[indicator],
+                        places=11,msg=(interval,n,indicator))
+
     def test_fork_identical_reference_replay_on_synthetic_closed_bars(self):
         # Real time-aligned 1H, 4H, 1D series. Baseline synthetic parity
         # is checked BEFORE official six historical baseline checks.
@@ -138,7 +159,11 @@ class TestStrictAblation(unittest.TestCase):
         baseline=original.replay_pair(
             bars,four,daily,as_of=end,retest_hours=4,
             bos_quality_filter=evaluate_bos_quality)
-        cache={"indicators":{},"bias":{},"structures":{}}
+        cache={"indicators":{
+            **exact_streaming_indicator_cache(bars),
+            **exact_streaming_indicator_cache(four),
+            **exact_streaming_indicator_cache(daily),
+        },"bias":{},"structures":{}}
         engine,quality=instrumentation(
             "BASELINE",symbol="BTCUSDT",four=four,cache=cache)
         fork=engine(bars,four,daily,as_of=end,retest_hours=4,
