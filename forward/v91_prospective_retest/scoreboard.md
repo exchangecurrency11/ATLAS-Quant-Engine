@@ -3,7 +3,7 @@
 **Research paper-only. No trading orders or user notifications.**
 
 First captured hour: 2026-11-11T16:00:00Z
-Verified hours: 40
+Verified hours: 41
 
 | Symbol | System | Closed trades | Win % | Net R 9bp/side | Stress Net R 25bp/side |
 |---|---|---:|---:|---:|---:|
