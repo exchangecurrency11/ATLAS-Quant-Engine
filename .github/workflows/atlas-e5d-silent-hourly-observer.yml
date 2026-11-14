@@ -1,7 +1,7 @@
-name: ATLAS E5D silent hourly read-only paper journal
+name: ATLAS E5D separated read-only observer and journal-only writer
 
-# New default-branch schedule ONLY; all code and journal writes are isolated
-# to the existing E5D research branch. Existing systems stay untouched.
+# Two separate trust domains: the observation job cannot write the repo;
+# the writer only validates JSON and appends to the isolated research branch.
 on:
   push:
     branches: [main]
@@ -11,115 +11,243 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: atlas-e5d-immutable-hourly-research-journal
+  group: atlas-e5d-hourly-append-only-journal
   cancel-in-progress: false
 
 jobs:
-  silent-observation:
+  observe:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
-      - name: Checkout only research E5D source and journal
+      - name: Checkout audited research source without persisted credentials
         uses: actions/checkout@v5
         with:
-          ref: research/atlas-core-v8-hourly-journal-20261115
-          fetch-depth: 0
-          persist-credentials: true
-
-      - name: Verify pinned audited code and isolated branch
+          ref: research/atlas-core-v8b-journal-audit-20261115
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Prove exact approved source and E5D security tests
         run: |
           set -euo pipefail
-          test "$(git branch --show-current)" = research/atlas-core-v8-hourly-journal-20261115
-          test "$(git hash-object research/atlas_core_v8/hourly_journal_e5d.py)" = 8b6637e82295245e47df186f3bd08cb64b59b0fa
-          test "$(git hash-object research/atlas_core_v8/test_hourly_journal_e5d.py)" = cca3e1b58493877415d804faebf58d7dba00bbf7
+          test "$(git branch --show-current)" = research/atlas-core-v8b-journal-audit-20261115
+          test "$(git hash-object research/atlas_core_v8/hourly_journal_e5d.py)" = daa050e3f369976debe207da16cbbbd48edfd393
+          test "$(git hash-object research/atlas_core_v8/test_hourly_journal_e5d.py)" = 1049513820ec021b1eeed9deca3f57e3d7f81255
           test "$(git hash-object research/atlas_core_v7/hourly_cold_observer_e5c.py)" = 1e48bbe996f2b9361b723e3d4728d45f23bc3675
-          python3 -m py_compile research/atlas_core_v8/hourly_journal_e5d.py
-
-      - name: Run 37 E5D immutable source and false-live-signal tests
-        run: |
-          set -euo pipefail
+          test "$(git hash-object research/atlas_core_v5/shadow_decision_e5.py)" = ffd9233d728de8f2f06c52f1da8baf90eb95d998
           python3 -m unittest research.atlas_core_v8.test_hourly_journal_e5d -q
-
-      - name: Read source Git trees and append only E5D observations
+      - name: Read source Git-tree and produce local current-run checkpoint (READ permission)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           python3 -u -m research.atlas_core_v8.hourly_journal_e5d
-
-      - name: Verify no trade signals, existing changes or writes outside journal
+      - name: Pack ONLY this run's append-intent with SHA256
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import json
+          import hashlib,json,os
           from pathlib import Path
-          d=json.loads(Path("research/atlas_core_v8/output/e5d_report.json").read_text())
+          d=json.loads(Path("research/atlas_core_v8/output/e5d_report.json").read_bytes())
+          o=d["output"]
           assert d["mode"]=="ATLAS_CORE_E5D_APPEND_ONLY_POST_START_HOURLY_OBSERVATION_NO_LIVE_ENTRY"
-          assert d["readOnlyFrozenSource"] and d["newLiveSignalCount"]==0
-          assert not d["automaticOrdersOrAlertsSent"]
-          assert not d["originalCryptoAutomationsChanged"]
-          assert not d["paperAccountStateReadOrModified"]
-          assert not d["userPositionsAccessed"]
+          assert d["newLiveSignalCount"]==0
+          assert d["automaticOrdersOrAlertsSent"] is False
+          assert d["originalCryptoAutomationsChanged"] is False
+          assert d["paperAccountStateReadOrModified"] is False
+          assert d["userPositionsAccessed"] is False
           assert d["source"]["actualNewLiveOpportunityCount"]==0
           assert all(d["source"]["actionSafety"].values())
-          assert d["output"]["status"] in (
-            "SOURCE_HOURS_MISMATCH_FAIL_CLOSED",
-            "SOURCE_HOUR_PRE_FIRST_SEEN_ACTIVATION_NOT_CREDITED",
-            "SOURCE_HOUR_STALE_OVER_90MIN_NOT_CREDITED",
-            "NEW_POST_ACTIVATION_HOURLY_SOURCE_OBSERVED_NOT_ENTRY",
-            "EXISTING_IMMUTABLE_POST_ACTIVATION_OBSERVATION_NO_REWRITE")
-          a=Path(d["output"]["checkpointPath"])
-          assert a.exists() and str(a).startswith("forward/atlas_core_e5d_hourly/attempts/")
-          if d["output"]["observationPath"]:
-              o=Path(d["output"]["observationPath"])
-              assert o.exists() and str(o).startswith("forward/atlas_core_e5d_hourly/observations/")
-              x=json.loads(o.read_text())
-              assert x["stage"]=="RESEARCH_ONLY" and x["notAnExchangeFill"]
-              assert x["notAnEntryTimeTradeAlert"] and x["noBrokerOrders"]
-              assert x["noUserAlerts"] and x["userMustNotTradeFromThisRecord"]
-          print("ATLAS_E5D_NO_LIVE_TRADING_JOURNAL_ONLY_CHECK_PASS")
+          assert o["status"] in (
+              "SOURCE_HOURS_MISMATCH_FAIL_CLOSED",
+              "SOURCE_HOUR_PRE_FIRST_SEEN_ACTIVATION_NOT_CREDITED",
+              "SOURCE_HOUR_STALE_OVER_90MIN_NOT_CREDITED",
+              "NEW_POST_ACTIVATION_HOURLY_SOURCE_OBSERVED_NOT_ENTRY",
+              "EXISTING_IMMUTABLE_POST_ACTIVATION_OBSERVATION_NO_REWRITE")
+          stage=Path("e5d_payload")
+          stage.mkdir()
+          files=[("attempt.json",o["checkpointPath"])]
+          if o["newObservation"]:
+              files.append(("observation.json",o["observationPath"]))
+          receipt={"runId":os.environ["GITHUB_RUN_ID"],
+                   "runAttempt":os.environ["GITHUB_RUN_ATTEMPT"],
+                   "status":o["status"],
+                   "newObservation":o["newObservation"],
+                   "reusedObservation":o["reusedImmutableObservation"],
+                   "observationFile":o["observationPath"],
+                   "files":[]}
+          for item,path in files:
+              raw=Path(path).read_bytes()
+              assert 0<len(raw)<200000
+              x=json.loads(raw)
+              assert x["stage"]=="RESEARCH_ONLY"
+              (stage/item).write_bytes(raw)
+              receipt["files"].append({
+                  "name":item,"path":path,
+                  "sha256":hashlib.sha256(raw).hexdigest()})
+          (stage/"manifest.json").write_text(json.dumps(receipt,indent=2,sort_keys=True)+"\n")
+          print("ATLAS_E5D_ONLY_CURRENT_RUN_SOURCE_EVIDENCE_PACKAGED")
           PY
+      - name: Send only verified JSON intent to isolated writer job
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5d-intent-${{ github.run_id }}-${{ github.run_attempt }}
+          path: e5d_payload/
+          retention-days: 2
+          if-no-files-found: error
+      - name: Store temporary read-only evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5d-source-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: research/atlas_core_v8/output/
+          retention-days: 30
+          if-no-files-found: ignore
 
-      - name: Stage only new research journal JSON files, never production
+  append:
+    needs: observe
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout isolated research journal (no research code execution)
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v8b-journal-audit-20261115
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Download only same-run JSON evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: atlas-e5d-intent-${{ github.run_id }}-${{ github.run_attempt }}
+          path: e5d_payload/
+      - name: Strict validate signatures schema timestamps and append new JSON ONLY
         run: |
           set -euo pipefail
-          test "$(git branch --show-current)" = research/atlas-core-v8-hourly-journal-20261115
-          git add -A -- forward/atlas_core_e5d_hourly/
+          test "$(git branch --show-current)" = research/atlas-core-v8b-journal-audit-20261115
+          python3 - <<'PY'
+          import hashlib,json,os,re
+          from datetime import datetime
+          from pathlib import Path
+          pay=Path("e5d_payload")
+          m=json.loads((pay/"manifest.json").read_bytes())
+          run=os.environ["GITHUB_RUN_ID"];attempt=os.environ["GITHUB_RUN_ATTEMPT"]
+          assert m["runId"]==run and m["runAttempt"]==attempt
+          files=m["files"]
+          assert isinstance(files,list) and len(files) in (1,2)
+          kinds={f["name"] for f in files}
+          assert kinds==({"attempt.json","observation.json"} if m["newObservation"] else {"attempt.json"})
+          assert {p.name for p in pay.iterdir()}==kinds|{"manifest.json"}
+          assert all(x.is_file() and not x.is_symlink() for x in pay.iterdir())
+          recorded={x["name"]:x["path"] for x in files}
+          new=[]
+          for f in files:
+              name=f["name"];path=f["path"]
+              assert isinstance(path,str) and path.startswith("forward/atlas_core_e5d_hourly/")
+              if name=="attempt.json":
+                  match=re.fullmatch(
+                    r"forward/atlas_core_e5d_hourly/attempts/(20\d\d-\d\d-\d\d)/"
+                    r"(\d\d-\d\d-\d\d)_run(\d+)_try(\d+)\.json",path)
+                  assert match and match.group(3)==run and match.group(4)==attempt
+                  datetime.strptime(match.group(1)+"T"+match.group(2)+"Z","%Y-%m-%dT%H-%M-%SZ")
+              else:
+                  match=re.fullmatch(
+                    r"forward/atlas_core_e5d_hourly/observations/(20\d\d-\d\d-\d\d)/"
+                    r"(\d\d-00Z)\.json",path)
+                  assert match
+                  datetime.strptime(match.group(1)+"T"+match.group(2),"%Y-%m-%dT%H-00Z")
+              raw=(pay/name).read_bytes()
+              assert 0<len(raw)<200000
+              assert hashlib.sha256(raw).hexdigest()==f["sha256"]
+              obj=json.loads(raw)
+              assert obj["stage"]=="RESEARCH_ONLY"
+              if name=="attempt.json":
+                  assert obj["runId"]==run and obj["runAttempt"]==attempt
+                  assert obj["classification"]=="E5D_HOURLY_CHECKPOINT_ONLY"
+                  assert obj["admission"]==m["status"]
+                  assert obj["newObservationWritten"] is m["newObservation"]
+                  assert obj["existingObservationReused"] is m["reusedObservation"]
+                  assert obj["observationFile"]==m["observationFile"]
+                  assert obj["notARealTradingSignal"] and obj["noRealOrdersOrNotifications"]
+                  assert obj["noSourceDataBackfilled"]
+              else:
+                  assert obj["classification"]=="READ_ONLY_PAPER_OBSERVATION"
+                  assert obj["evidenceRunId"]==run and obj["evidenceRunAttempt"]==attempt
+                  assert obj["notAnExchangeFill"] and obj["notAnEntryTimeTradeAlert"]
+                  assert obj["noBrokerOrders"] and obj["noUserAlerts"]
+                  assert obj["userMustNotTradeFromThisRecord"]
+                  assert obj["notIndependentBinanceTruth"]
+                  assert obj["historical51NotForward"] and obj["noRealAccountExposure"]
+                  assert set(obj["sourceSHA256"])=={"BTC_SOL_V92","ETH_V92","V9_CONTEXT"}
+                  assert obj["sourceClosedHourUTC"]>="2026-11-14T22:00:00Z"
+                  assert obj["firstSeenUTC"]>=obj["sourceClosedHourUTC"]
+                  dt=datetime.strptime(obj["sourceClosedHourUTC"],"%Y-%m-%dT%H:%M:%SZ")
+                  assert dt.strftime("%Y-%m-%dT%H-00Z")==(
+                      match.group(1)+"T"+match.group(2))
+                  assert m["observationFile"]==path
+              target=Path(path)
+              target.parent.mkdir(parents=True,exist_ok=True)
+              try:
+                  with target.open("xb") as fd:
+                      fd.write(raw)
+                  new.append(path)
+              except FileExistsError:
+                  assert target.read_bytes()==raw,"EXISTING_E5D_JOURNAL_WOULD_CHANGE"
+          if m["reusedObservation"]:
+              previously=Path(m["observationFile"])
+              assert previously.is_file()
+              p=json.loads(previously.read_bytes())
+              assert p["classification"]=="READ_ONLY_PAPER_OBSERVATION"
+              assert p["notAnExchangeFill"] is True
+          Path("e5d_new_paths.txt").write_text("\n".join(new)+("\n" if new else ""))
+          print("ATLAS_E5D_CURRENT_RUN_NEW_RESEARCH_JSON",len(new))
+          PY
+      - name: Stage ONLY new research additions, never modifications or deletions
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-v8b-journal-audit-20261115
+          while IFS= read -r name; do
+            test -n "$name"
+            git add -- "$name"
+          done < e5d_new_paths.txt
           python3 - <<'PY'
           import subprocess
-          f=subprocess.check_output(["git","diff","--cached","--name-only"],text=True).splitlines()
-          assert 1<=len(f)<=2,f
-          assert all(x.startswith("forward/atlas_core_e5d_hourly/") and
-                     ("/attempts/" in x or "/observations/" in x) and
-                     x.endswith(".json") for x in f),f
-          print("ATLAS_E5D_ONLY_RESEARCH_JOURNAL_FILES",f)
+          b=subprocess.check_output(["git","diff","--cached","--name-status","-z"])
+          z=b.decode().split("\0")
+          if z[-1]=="":z.pop()
+          assert len(z)%2==0
+          changes=[(z[i],z[i+1]) for i in range(0,len(z),2)]
+          wanted=set(open("e5d_new_paths.txt").read().splitlines())
+          assert set(x[1] for x in changes)==wanted
+          assert all(status=="A" for status,path in changes),changes
+          assert all(path.startswith("forward/atlas_core_e5d_hourly/") and
+                     ("/attempts/" in path or "/observations/" in path) and
+                     path.endswith(".json") for status,path in changes)
+          assert len(changes)<=2
+          print("ATLAS_E5D_STAGED_ONLY_ADD_STATUS",len(changes))
           PY
-
-      - name: Persist immutable observations to E5D branch only
+      - name: Commit only isolated first-seen journal JSON to research branch
         run: |
           set -euo pipefail
-          test "$(git branch --show-current)" = research/atlas-core-v8-hourly-journal-20261115
+          test "$(git branch --show-current)" = research/atlas-core-v8b-journal-audit-20261115
+          if [[ ! -s e5d_new_paths.txt ]]; then
+              echo "ATLAS_E5D_REPEATED_IDENTICAL_JOURNAL_NO_COMMIT"
+              exit 0
+          fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m "ATLAS E5D silent hourly paper audit $GITHUB_RUN_ID"
+          git commit -m "ATLAS E5D research-only verified append $GITHUB_RUN_ID"
           for n in 1 2 3; do
-            git pull --rebase origin research/atlas-core-v8-hourly-journal-20261115
-            if git push origin HEAD:research/atlas-core-v8-hourly-journal-20261115; then
-              echo "ATLAS_E5D_RESEARCH_HOURLY_JOURNAL_PERSISTED"
+            git pull --rebase origin research/atlas-core-v8b-journal-audit-20261115
+            if git push origin HEAD:research/atlas-core-v8b-journal-audit-20261115; then
+              echo "ATLAS_E5D_JOURNAL_ADD_ONLY_SUCCESS"
               exit 0
             fi
             sleep 3
           done
+          echo "ATLAS_E5D_JOURNAL_GIT_PERSISTENCE_FAILED"
           exit 1
-
-      - name: Upload temporary evidence report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: atlas-e5d-paper-journal-${{ github.run_id }}
-          path: research/atlas_core_v8/output/
-          retention-days: 30
-          if-no-files-found: ignore
