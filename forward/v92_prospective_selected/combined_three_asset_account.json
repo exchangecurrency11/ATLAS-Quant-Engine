@@ -11,31 +11,31 @@
   "risk10PctVeryAggressiveNotAdvisedLive": true,
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
-  "sourceBTCandSOLVerifiedClosedHours": 33,
+  "sourceBTCandSOLVerifiedClosedHours": 35,
   "sourceETHVerifiedClosedHours": 33,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
-      "expectedThroughUTC": "2026-11-13T23:00:00Z",
-      "expectedHours": 37,
-      "savedVerifiedHours": 33,
-      "missingHourCount": 4,
-      "lastVerifiedHourUTC": "2026-11-13T22:00:00Z",
-      "lagHours": 1,
+      "expectedThroughUTC": "2026-11-14T00:00:00Z",
+      "expectedHours": 38,
+      "savedVerifiedHours": 35,
+      "missingHourCount": 3,
+      "lastVerifiedHourUTC": "2026-11-14T00:00:00Z",
+      "lagHours": 0,
       "noBackfill": true
     },
     "ETH": {
       "firstExpectedHourUTC": "2026-11-12T12:00:00Z",
-      "expectedThroughUTC": "2026-11-13T23:00:00Z",
-      "expectedHours": 36,
+      "expectedThroughUTC": "2026-11-14T00:00:00Z",
+      "expectedHours": 37,
       "savedVerifiedHours": 33,
-      "missingHourCount": 3,
+      "missingHourCount": 4,
       "lastVerifiedHourUTC": "2026-11-13T23:00:00Z",
-      "lagHours": 0,
+      "lagHours": 1,
       "noBackfill": true
     }
   },
-  "lastCapturedBTCandSOLHourUTC": "2026-11-13T22:00:00Z",
+  "lastCapturedBTCandSOLHourUTC": "2026-11-14T00:00:00Z",
   "lastCapturedETHHourUTC": "2026-11-13T23:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1000.0,
@@ -66,41 +66,27 @@
   "perAssetLatestState": {
     "BTCUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-13T22:00:00Z",
+      "lastClosedUTC": "2026-11-14T00:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-13T22:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [
-            {
-              "family": "HIKKAKE_CONFIRMED",
-              "name": "BEARISH_HIKKAKE_CONFIRMED",
-              "direction": "bearish",
-              "firstUTC": "2026-11-13T17:00:00Z",
-              "confirmedUTC": "2026-11-13T22:00:00Z",
-              "prior20LiquiditySweepAndReentry": false,
-              "internalHikkakeFalseBreakConfirmed": true,
-              "crypto24hNoGapRequirement": true,
-              "signalIsNotStandaloneTrade": true,
-              "onlyClosedCandlesUsed": true,
-              "tf": "1H"
-            }
-          ],
+          "lastClosedCandleUTC": "2026-11-14T00:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-13T20:00:00Z",
+          "lastClosedCandleUTC": "2026-11-14T00:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
-          "lastClosedCandleUTC": "2026-11-13T00:00:00Z",
+          "lastClosedCandleUTC": "2026-11-14T00:00:00Z",
           "closedCandlesAvailable": 259,
-          "close": 71423.3,
-          "EMA20": 76830.38912113,
-          "EMA50": 78574.85558362,
+          "close": 68279.8,
+          "EMA20": 76016.04730008,
+          "EMA50": 78171.12198281,
           "trendByCloseVsEMA20EMA50": "bearish",
           "observedReversalsAtLastCompletedCandle": [],
           "onlyFullyClosedCandlesUsed": true,
@@ -111,10 +97,10 @@
         },
         "3D": {
           "lastClosedCandleUTC": "2026-11-12T00:00:00Z",
-          "closedCandlesAvailable": 86,
+          "closedCandlesAvailable": 85,
           "close": 73980.0,
-          "EMA20": 78479.90596332,
-          "EMA50": 76230.98748351,
+          "EMA20": 78479.97173539,
+          "EMA50": 76278.3213261,
           "trendByCloseVsEMA20EMA50": "bearish",
           "observedReversalsAtLastCompletedCandle": [],
           "onlyFullyClosedCandlesUsed": true,
@@ -146,41 +132,27 @@
     },
     "SOLUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-13T22:00:00Z",
+      "lastClosedUTC": "2026-11-14T00:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-13T22:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [
-            {
-              "family": "HIKKAKE_CONFIRMED",
-              "name": "BEARISH_HIKKAKE_CONFIRMED",
-              "direction": "bearish",
-              "firstUTC": "2026-11-13T17:00:00Z",
-              "confirmedUTC": "2026-11-13T22:00:00Z",
-              "prior20LiquiditySweepAndReentry": false,
-              "internalHikkakeFalseBreakConfirmed": true,
-              "crypto24hNoGapRequirement": true,
-              "signalIsNotStandaloneTrade": true,
-              "onlyClosedCandlesUsed": true,
-              "tf": "1H"
-            }
-          ],
+          "lastClosedCandleUTC": "2026-11-14T00:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-13T20:00:00Z",
+          "lastClosedCandleUTC": "2026-11-14T00:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
-          "lastClosedCandleUTC": "2026-11-13T00:00:00Z",
+          "lastClosedCandleUTC": "2026-11-14T00:00:00Z",
           "closedCandlesAvailable": 259,
-          "close": 81.68,
-          "EMA20": 92.01257428,
-          "EMA50": 98.28814136,
+          "close": 78.17,
+          "EMA20": 90.69423387,
+          "EMA50": 97.4992116,
           "trendByCloseVsEMA20EMA50": "bearish",
           "observedReversalsAtLastCompletedCandle": [],
           "onlyFullyClosedCandlesUsed": true,
@@ -191,10 +163,10 @@
         },
         "3D": {
           "lastClosedCandleUTC": "2026-11-12T00:00:00Z",
-          "closedCandlesAvailable": 86,
+          "closedCandlesAvailable": 85,
           "close": 83.22,
-          "EMA20": 98.51119004,
-          "EMA50": 95.39378125,
+          "EMA20": 98.51151918,
+          "EMA50": 95.42035074,
           "trendByCloseVsEMA20EMA50": "bearish",
           "observedReversalsAtLastCompletedCandle": [],
           "onlyFullyClosedCandlesUsed": true,
