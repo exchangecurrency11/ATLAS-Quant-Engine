@@ -157,15 +157,21 @@ def require_research_json(path:Path):
     return obj
 
 def strictly_append(path:Path,content:dict):
-    """Never overwrite any existing journal file, including same-run retries."""
-    if path.exists():
+    """Create new evidence using exclusive open; never overwrite on retry.
+
+    'x' is atomic on the runner's local filesystem. GitHub's separate
+    serialized writer still enforces add-only git status before pushing.
+    """
+    path.parent.mkdir(parents=True,exist_ok=True)
+    try:
+        with path.open("x",encoding="utf-8") as out:
+            out.write(json.dumps(content,sort_keys=True,ensure_ascii=False,indent=2)+"\n")
+        return True
+    except FileExistsError:
         old=require_research_json(path)
         if old!=content:
             raise ValueError("E5D_IMMUTABLE_JOURNAL_ENTRY_DRIFT:"+str(path))
         return False
-    path.parent.mkdir(parents=True,exist_ok=True)
-    path.write_text(json.dumps(content,sort_keys=True,ensure_ascii=False,indent=2)+"\n")
-    return True
 
 def risk_and_credit_guards(source:dict):
     if source.get("mode")!=cold.MODE or source.get("actualNewLiveOpportunityCount")!=0:
@@ -311,6 +317,18 @@ def create_first_seen(source:dict, *,now_epoch:int,run_id:str,run_attempt:str,
                 or prior.get("noBrokerOrders") is not True
                 or prior.get("notAnEntryTimeTradeAlert") is not True):
                 raise ValueError("E5D_EXISTING_SOURCE_OBSERVATION_DRIFT")
+            # The source branch HEAD can advance for unrelated files, but
+            # the original target-hour contents MUST NOT silently mutate.
+            # Compare publisher file digests and source event payloads,
+            # not just the fact that an observation JSON already exists.
+            immutable_source_fields=(
+                "sourceSHA256","sourceCapturedAtUTC","assetObservations",
+                "newClosedBOSWatchReports","newSelectedRetestReports",
+                "pendingHypotheticalPaperEntryReports")
+            for field in immutable_source_fields:
+                if prior.get(field)!=obs[field]:
+                    raise ValueError(
+                        "E5D_PREVIOUSLY_RECORDED_SOURCE_HOUR_WAS_REVISED:"+field)
             duplicate=True
             stage_status="EXISTING_IMMUTABLE_POST_ACTIVATION_OBSERVATION_NO_REWRITE"
         else:
