@@ -142,15 +142,15 @@ class RemoteSourceReadContract(TestCase):
         def fake_urlopen(req,timeout):
             calls.append(req)
             return Response()
-        with patch.object(j,"urlopen",side_effect=fake_urlopen),patch.dict(j.os.environ,{"GITHUB_TOKEN":"ghs_researchsample123"}):
+        with patch.object(j,"urlopen",side_effect=fake_urlopen),patch.dict(j.os.environ,{"GITHUB_TOKEN":"ghs_research.sample+123"}):
             raw=j.secure_fetch(cold.API+"/branches/testing")
         self.assertEqual(raw,b'{"ok":true}')
         self.assertEqual(calls[0].get_method(),"GET")
-        self.assertNotIn("ghs_researchsample123",calls[0].full_url)
+        self.assertNotIn("ghs_research.sample+123",calls[0].full_url)
         self.assertEqual(calls[0].get_header("Authorization"),"Bearer ghs_researchsample123")
 
     def test_invalid_env_token_rejected(self):
-        with patch.dict(j.os.environ,{"GITHUB_TOKEN":"http://untrusted @foo"}):
+        with patch.dict(j.os.environ,{"GITHUB_TOKEN":"evil\r\nInjected: value"}):
             with self.assertRaisesRegex(ValueError,"E5D_UNSAFE_TOKEN_FORMAT"):
                 j.secure_fetch(cold.API+"/branches/testing")
 
