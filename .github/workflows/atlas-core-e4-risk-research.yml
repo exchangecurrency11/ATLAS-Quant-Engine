@@ -1,0 +1,97 @@
+name: ATLAS Core E4 modeled execution funding and shared BTC ETH SOL portfolio (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v3-execution-portfolio-20261114
+    paths:
+      - research/atlas_core_v3/**
+      - .github/workflows/atlas-core-e4-risk-research.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-core-e4-immutable-risk-research
+  cancel-in-progress: false
+
+jobs:
+  read-only-historical-risk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: Checkout only E4 research (never store credentials)
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v3-execution-portfolio-20261114
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Prove isolation and compile E4
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "research/atlas-core-v3-execution-portfolio-20261114"
+          python3 -m py_compile research/atlas_core_v3/atlas_core_e4.py
+          python3 -m py_compile research/atlas_core_v3/test_atlas_core_e4.py
+
+      - name: E1-E3 regression tests (non-network)
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -v
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -v
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -v
+
+      - name: E4 independent execution, gap/funding and shared portfolio risk controls
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v3.test_atlas_core_e4 -v
+
+      - name: Fresh 159 Binance official SHA256 ZIP and 51 original raw-trade execution / portfolio replays
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v3.atlas_core_e4 --workers 6
+
+      - name: Fail closed on missing files, imaginary prospective or omitted risk cautions
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("research/atlas_core_v3/output/e4_report.json")
+          d=json.loads(p.read_text())
+          assert d["status"]=="ATLAS_CORE_E4_MODELED_EXECUTION_AND_SHARED_PORTFOLIO_HISTORICAL_ONLY"
+          assert d["matchedRawDataArchiveSHA256Count"]==159
+          assert d["matchedTradeCount"]==d["expectedHistoricalTradeCount"]==51
+          assert d["independentZeroFeeNoGapGrossReplayAllMatched"]
+          assert d["independentOutOfSample"] is False
+          assert d["actualFundingRatesDownloaded"] is False
+          assert d["actualTickOrOrderbookFillsDownloaded"] is False
+          assert d["noProductionOrPaperOrTaskChanges"] and d["noAutomaticPromotion"]
+          assert d["noOrders"] and d["noAlerts"] and d["noLivePortfolioCreated"]
+          assert len(d["riskCautions"])>=5
+          assert set(d["scenarios"])=={
+            "9bps_per_side_plus_adverse_funding",
+            "25bps_per_side_plus_adverse_funding",
+            "50bps_per_side_plus_adverse_funding"}
+          for name,s in d["scenarios"].items():
+            p=s["sharedBudgetPortfolio"]
+            assert p["tradesAccepted"]+p["tradesRejectedByBudget"]==51
+            assert p["notActualExchangeAccount"]
+            assert not p["equityIncludesOpenPositionMarkToMarket"]
+            assert not p["liquidationAndCrossMarginModeled"]
+            assert s["assumptions"]["fundingObserved"] is False
+            assert s["assumptions"]["spreadObserved"] is False
+            assert p["startingCashUSDT"]==10000
+          assert (Path("research/atlas_core_v3/output/e4_report.md").stat().st_size>1000)
+          print("ATLAS_E4_HISTORICAL_ONLY_MODELED_RISK_AND_PORTFOLIO_GUARDS_PASS")
+          PY
+
+      - name: Upload temporary E4 evidence only (never git push)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-core-e4-model-risk-51-trades
+          path: research/atlas_core_v3/output/
+          retention-days: 30
+          if-no-files-found: ignore
