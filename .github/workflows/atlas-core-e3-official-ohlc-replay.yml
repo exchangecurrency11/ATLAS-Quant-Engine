@@ -1,0 +1,91 @@
+name: ATLAS Core E3 Binance SHA256 159 archive V9.2 full raw OHLC replay (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v2-raw-ohlc-parity-20261114
+    paths:
+      - research/atlas_core_v2/**
+      - .github/workflows/atlas-core-e3-official-ohlc-replay.yml
+  workflow_dispatch:
+
+# No schedule, no production token permission. No persistence of Git credentials.
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-core-e3-research-only-159-official-months
+  cancel-in-progress: false
+
+jobs:
+  evidence-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - name: Check out only isolated Core E3 research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v2-raw-ohlc-parity-20261114
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Prove branch and compile E1 E2 E3 research code
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "research/atlas-core-v2-raw-ohlc-parity-20261114"
+          test -f research/atlas_core_v2/atlas_core_e3.py
+          python3 -m py_compile research/atlas_core_v0/atlas_core_v0.py
+          python3 -m py_compile research/atlas_core_v1/atlas_core_e2.py
+          python3 -m py_compile research/atlas_core_v2/atlas_core_e3.py
+          test ! -d binance_history
+
+      - name: E1/E2 closed candle and sealed historical witness regression tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -v
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -v
+
+      - name: E3 negative controls for ZIP SHA256, manifests, source code and trade parity
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -v
+
+      - name: Official Binance 159 archive SHA256 and 6 full raw OHLC V9.2 replays
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v2.atlas_core_e3 --workers 6
+
+      - name: Assert zero new forward trades, no production writes, 51 exact historical matches
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("research/atlas_core_v2/output/e3_report.json")
+          d=json.loads(p.read_text())
+          assert d["status"]=="ATLAS_CORE_E3_OFFICIAL_RAW_OHLC_BASELINE_PARITY_HISTORICAL_ONLY"
+          assert d["historicArchivesDownloadedAndSHA256Verified"]==159
+          assert d["all51TradesMatched"] and d["matchedTradeCount"]==51
+          assert d["all6PartitionsMatched"]
+          assert d["replayedFromOfficialRaw1H"]
+          assert not d["wasOriginalUnmodifiedReplayExecuted"]
+          assert not d["realExecutionFillFundingProof"]
+          assert d["independentOutOfSample"] is False and d["newForwardTrades"]==0
+          assert d["futureFreezeBTC_SOL_UTC"]=="2026-11-15T00:00:00Z"
+          assert d["futureFreezeETH_UTC"]=="2026-11-14T00:00:00Z"
+          assert not d["realOrders"] and not d["notifications"]
+          assert not d["productionOrExistingPaperChanged"]
+          assert d["noAutomaticPromotion"]
+          assert set(d["symbols"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert all(set(v)=={"2022_2024","2024_2026"} for v in d["symbols"].values())
+          print("ATLAS_E3_159_ARCHIVES_51_HISTORICAL_OHLC_TRADE_PARITY_PASSED")
+          PY
+
+      - name: Archive research results without committing or pushing
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-core-e3-raw-ohlc-51-trade-parity
+          path: research/atlas_core_v2/output/
+          retention-days: 30
+          if-no-files-found: ignore
