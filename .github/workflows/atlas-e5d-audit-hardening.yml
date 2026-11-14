@@ -1,0 +1,81 @@
+name: ATLAS E5D audit hardening 215 tests (research-only dry-run)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v8b-journal-audit-20261115
+    paths:
+      - research/atlas_core_v8/**
+      - .github/workflows/atlas-e5d-audit-hardening.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audited-research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact audit hardening research branch with no credentials
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v8b-journal-audit-20261115
+          persist-credentials: false
+          fetch-depth: 1
+      - name: Static compile and previous E1 through E5C regression tests
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = research/atlas-core-v8b-journal-audit-20261115
+          python3 -m py_compile research/atlas_core_v8/hourly_journal_e5d.py
+          python3 -m py_compile research/atlas_core_v8/test_hourly_journal_e5d.py
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -q
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -q
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -q
+          python3 -m unittest research.atlas_core_v3.test_atlas_core_e4 -q
+          python3 -m unittest research.atlas_core_v4.test_atlas_core_e4b -q
+          python3 -m unittest research.atlas_core_v5.test_shadow_decision_e5 -q
+          python3 -m unittest research.atlas_core_v6.test_prospective_intake_e5b -q
+          python3 -m unittest research.atlas_core_v7.test_hourly_cold_observer_e5c -q
+      - name: E5D immutable journal and source revision negative controls
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v8.test_hourly_journal_e5d -v
+      - name: Source commit and SHA pinned real hourly feed smoke test (no writes)
+        env:
+          GITHUB_RUN_ATTEMPT: '1'
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v8.hourly_journal_e5d --no-write
+      - name: Validate no user alerts orders or historical recategorization
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("research/atlas_core_v8/output/e5d_report.json").read_text())
+          assert d["mode"]=="ATLAS_CORE_E5D_APPEND_ONLY_POST_START_HOURLY_OBSERVATION_NO_LIVE_ENTRY"
+          assert not d["automaticOrdersOrAlertsSent"]
+          assert d["newLiveSignalCount"]==0
+          assert not d["originalCryptoAutomationsChanged"]
+          assert not d["paperAccountStateReadOrModified"]
+          assert not d["userPositionsAccessed"]
+          assert d["source"]["actualNewLiveOpportunityCount"]==0
+          assert all(d["source"]["actionSafety"].values())
+          assert d["output"]["status"] in (
+              "SOURCE_HOURS_MISMATCH_FAIL_CLOSED",
+              "SOURCE_HOUR_PRE_FIRST_SEEN_ACTIVATION_NOT_CREDITED",
+              "SOURCE_HOUR_STALE_OVER_90MIN_NOT_CREDITED",
+              "NEW_POST_ACTIVATION_HOURLY_SOURCE_OBSERVED_NOT_ENTRY",
+              "EXISTING_IMMUTABLE_POST_ACTIVATION_OBSERVATION_NO_REWRITE")
+          assert Path("research/atlas_core_v8/output/e5d_report.md").stat().st_size>300
+          print("ATLAS_E5D_AUDIT_HARDENING_PREVENTS_HISTORY_OVERWRITE_PASS")
+          PY
+      - name: Archive independent dry-run audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5d-audit-immutable-hardening
+          path: research/atlas_core_v8/output/
+          retention-days: 30
+          if-no-files-found: ignore
