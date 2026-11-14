@@ -53,7 +53,7 @@ jobs:
           assert d["archiveCountSHA256VerifiedAgain"]==159
           assert d["futureCandidateEligibilityFromUTC"]=="2026-11-15T00:00:00Z"
           assert d["historicalStudiesPreviouslyInspected"] and d["noIndependentHoldout"]
-          assert not d["noRealOrders"]==False and d["noProductionChanges"]
+          assert d["noOrders"] and d["noProductionOrV7V92PaperChanges"]
           assert not d["noNotifications"]==False and d["noAutomaticCandidatePromotion"]
           assert d["costPerSideBps"]==[9,25,50]
           assert len(d["sourceSHA256"])==64 and d["eventWindowsNotTradingSignals"]
