@@ -279,7 +279,7 @@ class E5CCausalTimeliness(TestCase):
 
     def test_target_not_equal_hour_filename_rejected(self):
         b=btc_source(stamp="2026-11-14T20:00:00Z")
-        with self.assertRaisesRegex(ValueError,"E5C_FILENAME_TIMESTAMP_VS_SIGNED_CONTENT_DRIFT"):
+        with self.assertRaisesRegex(ValueError,"E5C_1H_CLOSE_NOT_TARGET"):
             c.audit(fetch=fake_fetcher(bts=b),now_utc=NOW)
 
     def test_pending_hypothetical_entry_is_never_a_real_signal(self):
