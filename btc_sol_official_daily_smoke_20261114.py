@@ -100,6 +100,20 @@ def frozen_guards():
             for p in j["manifests"][period]}
     if len(hashes)!=159:
         raise ValueError("FROZEN_159_SOURCE_MANIFEST_NOT_FOUND")
+    # October 2026 was AFTER the prior historical cut-off. It is locked
+    # independently in the official V9.3 shadow preflight proof (21 bundles).
+    pre=json.loads(Path("forward/v93_shadow_prospective_20261113/preflight.json").read_text())
+    if (pre["status"]!="PREFREEZE_PIPELINE_SMOKE_TEST"
+        or pre["verifiedArchives"]!=21):
+        raise ValueError("V93_ORIGINAL_OCTOBER_SHA256_PROOF_MISSING")
+    for sym in SYMBOLS:
+        for month in MONTHS:
+            ref=pre["archiveSHA256"].get(f"{sym}:{month}")
+            if ref is None or len(ref)!=64:
+                raise ValueError("V93_MISSING_FROZEN_MONTH_HASH")
+            if (sym,month) in hashes and hashes[(sym,month)]!=ref:
+                raise ValueError("V93_V92_OVERLAPPING_SOURCE_HASH_DRIFT")
+            hashes[(sym,month)]=ref
     return hashes
 
 def execute():
