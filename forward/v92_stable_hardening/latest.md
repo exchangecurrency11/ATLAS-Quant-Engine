@@ -12,13 +12,13 @@
 
 | Source | Saved / expected | Missing UTC hours | Consecutive recent hours |
 |---|---:|---|---:|
-| BTC_SOL | 42/45 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z, 2026-11-13T14:00:00Z | 17 |
-| ETH | 41/44 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z | 40 |
+| BTC_SOL | 43/46 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z, 2026-11-13T14:00:00Z | 18 |
+| ETH | 42/45 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z | 41 |
 
 ## Backtest / forward snapshot parity
 
-- Matched 1H source hours: **39**.
-- Coin-hour replay checks: **117**.
+- Matched 1H source hours: **40**.
+- Coin-hour replay checks: **120**.
 - Actually observed open-position snapshots: **0**; pending-retest snapshots: **0**; closed-exit events: **0**.
 - Older immutable hours with reduced direct-veto diagnostics: **1**; accepted only when unchanged V9.1/V9.2 parity and zero veto were independently confirmed.
 - Stored BOS/retest state parity is checked, but when no real paper trades exist, trade-specific entry/stop/TP parity remains UNPROVEN outside synthetic unit tests.
