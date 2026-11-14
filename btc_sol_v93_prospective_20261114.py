@@ -23,9 +23,22 @@ FROZEN_FILES=(
   "btc_sol_v93_causal_regime_20261114.py",
   "btc_sol_v93_prospective_20261114.py",
   "v93_shadow_monthly_20261113.py",
-  *e.SOURCE_FILES
+  "v92_filter_ablation_20261113.py",
+  "v92_full_interactions_20261113.py",
+  "backtest_retest_long_v4.py",
+  "signal_quality_v7.py",
+  "v92_selected_reversal_patterns.py",
+  "market_structure.py",
 )
 STREAMS={"BTCUSDT":"BTC_V92_REFERENCE","SOLUSDT":"SOL_V92_REFERENCE"}
+
+def write_immutable(path,object_):
+    text=json.dumps(object_,sort_keys=True,ensure_ascii=False,indent=2)+"\n"
+    if path.exists() and path.read_text()!=text:
+        raise ValueError("BTC_SOL_FROZEN_SPEC_OR_MONTHLY_SNAPSHOT_MUTATED")
+    path.parent.mkdir(parents=True,exist_ok=True)
+    if not path.exists():
+        path.write_text(text)
 
 def frozen_spec():
     return {
@@ -78,7 +91,7 @@ def report():
     old.fork_source()
     spec=frozen_spec()
     e_source=OUT/"frozen_spec.json"
-    e.write_immutable(e_source,spec)
+    write_immutable(e_source,spec)
     month=v93.previous_complete_month(datetime.now(timezone.utc))
     history,manifest,end=v93.download_hist(month,6)
     if end>old.epoch(datetime.now(timezone.utc).isoformat()):
@@ -136,11 +149,11 @@ def report():
         if any(x["versions"][m]["metric"]["25"]["trades"]>0
                for x in result["streams"].values() for m in x["versions"]):
             raise ValueError("PRE_FREEZE_FORWARD_DATA_FABRICATION")
-        e.write_immutable(OUT/"preflight.json",result)
+        write_immutable(OUT/"preflight.json",result)
     else:
         d=datetime.fromtimestamp(end,timezone.utc)
         y,m=(d.year-1,12) if d.month==1 else (d.year,d.month-1)
-        e.write_immutable(OUT/"snapshots"/f"{y:04d}-{m:02d}.json",result)
+        write_immutable(OUT/"snapshots"/f"{y:04d}-{m:02d}.json",result)
         (OUT/"latest.json").write_text(json.dumps(result,sort_keys=True,ensure_ascii=False,indent=2)+"\n")
     return result
 
