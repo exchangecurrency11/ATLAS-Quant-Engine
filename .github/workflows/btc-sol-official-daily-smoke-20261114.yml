@@ -1,0 +1,84 @@
+name: BTC SOL official daily prefreeze side-by-side smoke (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/btc-sol-live-shadow-smoke-20261114
+    paths:
+      - btc_sol_official_daily_smoke_20261114.py
+      - tests/test_btc_sol_official_daily_smoke_20261114.py
+      - .github/workflows/btc-sol-official-daily-smoke-20261114.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: btc-sol-official-prefreeze-static-nov14-2026
+  cancel-in-progress: false
+
+jobs:
+  no-trade-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout independent research only
+        uses: actions/checkout@v5
+        with:
+          ref: research/btc-sol-live-shadow-smoke-20261114
+          fetch-depth: 0
+      - name: Test vendor SHA256 and strict prefrozen source guard
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/btc-sol-live-shadow-smoke-20261114
+          python3 -m py_compile btc_sol_official_daily_smoke_20261114.py
+          python3 -m unittest discover -s tests -p 'test_btc_sol_official_daily_smoke_20261114.py' -v
+          python3 -m unittest discover -s tests -p 'test_btc_sol_v93_causal_regime_20261114.py' -q
+      - name: Verify official Binance BTC SOL monthly + daily ZIPs and replay both conditions
+        run: |
+          set -euo pipefail
+          python3 -u btc_sol_official_daily_smoke_20261114.py
+      - name: Ensure zero prospective trade claims and immutable frozen strategy
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/btc_sol_official_daily_smoke_20261114")
+          j=json.loads((p/"smoke.json").read_text())
+          assert j["status"]=="BTC_SOL_OFFICIAL_DAILY_PREFREEZE_SMOKE_NOT_FORWARD"
+          assert j["asOfExclusiveUTC"]=="2026-11-14T00:00:00Z"
+          assert j["prospectiveCandidateFreezeUTC"]=="2026-11-15T00:00:00Z"
+          assert j["monthlyBundlesVerified"]==6 and j["dailyBundlesVerified"]==26
+          assert j["newProspectiveTradesCredited"]==0 and j["notIndependentHoldout"]
+          assert j["noOrders"] and j["noSignalsSent"] and j["noExistingAccountWrites"]
+          assert j["usedSameFrozenOriginalEngine"]
+          assert set(j["latestChecks"])=={"BTCUSDT","SOLUSDT"}
+          for sym in ("BTCUSDT","SOLUSDT"):
+            x=j["latestChecks"][sym]
+            assert x["sourceCandleCount1H"]==2520
+            assert x["strictlyPrefreezeNotProspective"] and x["noUserTradingSignal"]
+            assert x["lastCompletedUTCdayVolatilityClass"] in ("high","low")
+            assert len(j["officialSHA256ByBundle"][sym])==16
+            assert all(len(q)==64 for q in j["officialSHA256ByBundle"][sym].values())
+          assert (p/"smoke.md").stat().st_size>400
+          print("BTC_SOL_OFFICIAL_DAILY_PAPER_PROVA_SHA256_NO_FORWARD_CREDIT_PASSED")
+          PY
+      - name: Commit only source-proven prefreeze smoke proof in research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/btc-sol-live-shadow-smoke-20261114
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/btc_sol_official_daily_smoke_20261114/
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Record official SHA256 BTC/SOL Nov13 daily smoke, not forward trades"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/btc-sol-live-shadow-smoke-20261114
+            if git push origin HEAD:research/btc-sol-live-shadow-smoke-20261114; then
+              echo "BTC_SOL_PAPER_PREFREEZE_PROVA_COMPLETE_NO_PRODUCTION_EDITS" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
