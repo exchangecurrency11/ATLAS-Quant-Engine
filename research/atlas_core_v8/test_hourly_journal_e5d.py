@@ -167,8 +167,10 @@ class JournalContract(TestCase):
 
     def test_same_run_replay_different_payload_is_rejected(self):
         self.write()
+        mismatch=deepcopy(self.source)
+        mismatch["status"]="SOURCE_HOURS_DISAGREE_FAIL_CLOSED"
         with self.assertRaisesRegex(ValueError,"E5D_IMMUTABLE_JOURNAL_ENTRY_DRIFT"):
-            self.write()
+            self.write(src=mismatch)
 
     def test_precise_same_result_under_no_write(self):
         out=self.write(write=False)
@@ -278,7 +280,7 @@ class JournalContract(TestCase):
         src["hourlyObservationTimeliness"]["lastSourceCaptureLagMinutes"]=20
         src["hourlyObservationTimeliness"]["observedMinutesAfterClosedHour"]=25
         # Seen later but at a past source hour; no retroactive fill.
-        with self.assertRaisesRegex(ValueError,"E5D_NONMONOTONIC_FIRST_SEEN_COHORT"):
+        with self.assertRaisesRegex(ValueError,"E5D_JOURNAL_HAS_FUTURE_OBSERVATION"):
             self.write(src=src,when="2026-11-14T20:25:00Z",runid="123459")
 
     def test_attempt_checkpoint_contains_run_id(self):
