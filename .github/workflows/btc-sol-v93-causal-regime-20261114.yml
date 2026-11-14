@@ -1,0 +1,96 @@
+name: BTC SOL causal high-vol 159 official archive full replay (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/btc-sol-event-regime-forward-20261114
+    paths:
+      - btc_sol_v93_causal_regime_20261114.py
+      - tests/test_btc_sol_v93_causal_regime_20261114.py
+      - .github/workflows/btc-sol-v93-causal-regime-20261114.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: btc-sol-159-official-historical-causal-regime-replay
+  cancel-in-progress: false
+
+jobs:
+  causal-history:
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    steps:
+      - name: Checkout research branch only
+        uses: actions/checkout@v5
+        with:
+          ref: research/btc-sol-event-regime-forward-20261114
+          fetch-depth: 0
+
+      - name: Causal-only daily-close signal and source guards
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/btc-sol-event-regime-forward-20261114
+          python3 -m py_compile btc_sol_v93_causal_regime_20261114.py
+          python3 -m unittest discover -s tests -p 'test_btc_sol_v93_causal_regime_20261114.py' -v
+          python3 -m unittest discover -s tests -p 'test_btc_sol_v92_robustness_20261114.py' -q
+
+      - name: Re-download 159 official monthly Binance archives and replay two period two-asset tests
+        run: |
+          set -euo pipefail
+          python3 -u btc_sol_v93_causal_regime_20261114.py
+
+      - name: Verify immutable historical control and candidate risk comparisons
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/btc_sol_v93_causal_regime_20261114")
+          d=json.loads((p/"historical.json").read_text())
+          assert d["status"]=="BTC_SOL_FULL_CHRONOLOGICAL_CAUSAL_REGIME_HISTORICAL_ONLY"
+          assert d["archiveCountSHA256VerifiedAgain"]==159
+          assert d["futureCandidateEligibilityFromUTC"]=="2026-11-15T00:00:00Z"
+          assert d["historicalStudiesPreviouslyInspected"] and d["noIndependentHoldout"]
+          assert not d["noRealOrders"]==False and d["noProductionChanges"]
+          assert not d["noNotifications"]==False and d["noAutomaticCandidatePromotion"]
+          assert d["costPerSideBps"]==[9,25,50]
+          assert len(d["sourceSHA256"])==64 and d["eventWindowsNotTradingSignals"]
+          assert set(d["periods"])=={"2022_2024","2024_2026"}
+          for period,scored in d["periods"].items():
+            assert set(scored)=={"BTCUSDT","SOLUSDT"}
+            for asset,v in scored.items():
+              assert v["baselineExactPreviousSourceParity"]
+              x=v["metrics"]
+              assert x["baseline"]["25"]["trades"]==(
+                {"BTCUSDT":10,"SOLUSDT":12}[asset] if period=="2022_2024"
+                else {"BTCUSDT":5,"SOLUSDT":8}[asset])
+              assert abs(v["deltaR25"]-(x["candidate"]["25"]["netR"]-
+                                        x["baseline"]["25"]["netR"]))<.00001
+              assert len(v["events"])==5
+          assert (p/"historical.md").stat().st_size>1000
+          print("BTC_SOL_159_ARCHIVES_CAUSAL_AND_PARITY_CHECKED")
+          PY
+
+      - name: Commit only historical research outputs in isolated branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/btc-sol-event-regime-forward-20261114
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/btc_sol_v93_causal_regime_20261114/
+          if git diff --cached --quiet; then
+            echo "NO_HISTORICAL_CHANGE" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Record frozen source-parity full chronological BTC SOL causal gate and historical event study"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/btc-sol-event-regime-forward-20261114
+            if git push origin HEAD:research/btc-sol-event-regime-forward-20261114; then
+              echo "BTC_SOL_CAUSAL_RESEARCH_PERSISTED_NO_LIVE_CHANGES" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
