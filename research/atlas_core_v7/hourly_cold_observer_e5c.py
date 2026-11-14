@@ -172,6 +172,42 @@ def latest_consecutive(maps, latest_epoch, count=REQUIRE_CONSECUTIVE):
         "matchedAcrossBothSources":all(relevant.values()),
     }
 
+def verify_content_backed_recent_hours(v92_sha, btc_meta, eth_meta, last_epoch,
+                                       now, fetch=_remote_bytes):
+    """Contents, not just filenames, of all four consecutive V92 hours.
+
+    Historical OHLCV cannot be independently confirmed from this compact
+    observational stream, but every saved file is checked against its
+    Git blob and its target/capture hour without a fabricated gap.
+    """
+    checked=[]
+    for n in range(REQUIRE_CONSECUTIVE):
+        t=last_epoch-n*3600
+        stamp=datetime.fromtimestamp(t,timezone.utc).strftime("%Y-%m-%dT%H-00Z")
+        for label,folder,lookup in (
+            ("BTC_SOL",BTC_SOL_DIR,btc_meta),("ETH",ETH_DIR,eth_meta)):
+            if stamp not in lookup:
+                raise ValueError("E5C_HISTORICAL_HOURLY_FILE_MISSING")
+            packet,digest=read_git_blob(v92_sha,folder,lookup[stamp],fetch=fetch)
+            ts,captured=basic_time_safety(packet,label,now)
+            if ts!=t:
+                raise ValueError("E5C_PRIOR_SOURCE_CONTENT_TIMESTAMP_MISMATCH")
+            if label=="BTC_SOL":
+                if (packet.get("sourceVerifiedSameHour") is not True
+                    or packet.get("sourceV7AndV91RecomputedExactMatch") is not True
+                    or packet.get("liveBinanceExchangeParityNotIndependentlyProven") is not True):
+                    raise ValueError("E5C_PRIOR_BTC_SOL_SOURCE_NOT_VALIDATED")
+            else:
+                if (packet.get("verifiedSourceAndExactV7AndV91Replay") is not True
+                    or packet.get("independentBinanceTruthNotEstablished") is not True):
+                    raise ValueError("E5C_PRIOR_ETH_SOURCE_NOT_VALIDATED")
+            checked.append({"source":label,"closedHourUTC":utc_stamp(t),
+                            "GitBlobSHA1":lookup[stamp]["gitBlobSHA1"],
+                            "SHA256":digest})
+    if len(checked)!=2*REQUIRE_CONSECUTIVE:
+        raise ValueError("E5C_FOUR_HOUR_SOURCE_EVIDENCE_INCOMPLETE")
+    return checked
+
 def basic_time_safety(packet,kind,now):
     if packet.get("mode")!=ALLOWED_V92_MODES[kind]:
         raise ValueError("E5C_UNKNOWN_V92_HOURLY_MODE")
@@ -449,6 +485,15 @@ def audit(*, fetch=_remote_bytes, now_utc=None):
     t=strict_utc(b["targetClosed1HUTC"])
     coverage=latest_consecutive(
         {"BTC_SOL":btc_meta,"ETH":eth_meta},t)
+    if coverage["matchedAcrossBothSources"]:
+        # No phony continuity from names alone. Audit all 8 file bytes.
+        proof=verify_content_backed_recent_hours(v92_sha,btc_meta,eth_meta,
+                                                 t,now_epoch,fetch=fetch)
+        coverage["verifiedContentsWithGitBlobSHA1"]=len(proof)
+        coverage["hourlySha256Evidence"]=proof
+    else:
+        coverage["verifiedContentsWithGitBlobSHA1"]=2
+        coverage["hourlySha256Evidence"]=[]
     classification=classify_observation(b,e,coverage,now_epoch)
     new_watches={**b["assets"],**e["assets"]}
     observations=[
