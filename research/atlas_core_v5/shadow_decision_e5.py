@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from datetime import datetime, timezone
+from functools import lru_cache
 from hashlib import sha1, sha256
 import json
 from math import isfinite
@@ -101,6 +102,7 @@ def froze_sources():
         "actualForwardTradesCredited":0,"noLiveSignalReady":True
     }
 
+@lru_cache(maxsize=1)
 def historical_rows():
     """Immutable historical oracle; exit/returns are NOT fed to decision."""
     p,hashp=e2.read_pinned(e2.SOURCE)
@@ -167,6 +169,10 @@ def validate_packet(pkt:dict):
         raise ValueError("E5A_BAD_PRICE_OR_STOP_PERCENTAGE")
     if not isinstance(pkt["immutableSourceSHA256"],str) or len(pkt["immutableSourceSHA256"])!=64:
         raise ValueError("E5A_BAD_SOURCE_DIGEST")
+    # Self-assertion of a historic label is NOT a verified signal.
+    # Every field must match a frozen, source-hashed historical record.
+    if not any(pkt==canonical for canonical in historical_rows()):
+        raise ValueError("E5A_FABRICATED_HISTORICAL_TRADE_NOT_IN_PINNED_TAPE")
     return entry,risk_pct/100
 
 def validate_positions(snapshot:dict|None, *, as_of:int):
