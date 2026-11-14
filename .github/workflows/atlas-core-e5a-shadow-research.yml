@@ -1,0 +1,96 @@
+name: ATLAS Core E5A shadow decision safety and read only public snapshot (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v5-shadow-decision-20261114
+    paths:
+      - research/atlas_core_v5/**
+      - .github/workflows/atlas-core-e5a-shadow-research.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-core-e5a-research-read-only
+  cancel-in-progress: false
+
+jobs:
+  read-only-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout isolated E5A branch with no credentials
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v5-shadow-decision-20261114
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Enforce E5A branch-only source isolation
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "research/atlas-core-v5-shadow-decision-20261114"
+          python3 -m py_compile research/atlas_core_v5/shadow_decision_e5.py
+          python3 -m py_compile research/atlas_core_v5/test_shadow_decision_e5.py
+          test ! -d research/atlas_core_v5/output
+
+      - name: E1 E2 E3 E4A E4B frozen research regression
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -q
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -q
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -q
+          python3 -m unittest research.atlas_core_v3.test_atlas_core_e4 -q
+          python3 -m unittest research.atlas_core_v4.test_atlas_core_e4b -q
+
+      - name: E5A no-fake-signal and risk decision unit tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v5.test_shadow_decision_e5 -v
+
+      - name: Produce 51 historical demonstration cards and read only public main market context
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v5.shadow_decision_e5 --fetch-public-main-context
+
+      - name: Fail closed if any historical demo becomes a fake live trade
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("research/atlas_core_v5/output/e5a_report.json").read_text())
+          assert d["status"]=="ATLAS_CORE_E5A_READ_ONLY_SHADOW_CONTRACT_HISTORICAL_DEMO_NO_LIVE_SIGNAL"
+          assert d["historical51InputsAudited"]==51
+          assert d["historicalAssetCounts"]=={"BTCUSDT":15,"ETHUSDT":16,"SOLUSDT":20}
+          assert sum(d["historicalDecisionTallies"].values())==51
+          assert len(d["historicalExampleCards"])==6
+          assert d["actualNewForwardSignalCount"]==0 and d["actualNewForwardSignalCards"]==[]
+          assert d["frozenProspectivePipeline"]["actualForwardTradesCredited"]==0
+          assert d["frozenProspectivePipeline"]["noLiveSignalReady"]
+          assert d["newTradeOrders"]==0 and d["newUserAlerts"]==0
+          assert d["newNotifications"]==0
+          assert d["existingPaperTradesWritten"]==0
+          assert d["existingAutomationsChanged"] is False
+          assert d["mainBranchChanged"] is False
+          assert d["candidatePromoted"] is False
+          assert d["allHistoricalCardsUntradeable"]
+          assert d["pastReturnsWereNotInputsToDecision"]
+          assert d["mainPublicContext"]["isVerifiedV92RetestEntry"] is False
+          assert d["mainPublicContext"]["liveTradeSignalProduced"] is False
+          assert all(x["realTradePermission"] is False and x["autoOrderAllowed"] is False
+                     and x["historicalReferenceOnly"] for x in d["historicalExampleCards"])
+          assert Path("research/atlas_core_v5/output/e5a_report.md").stat().st_size>1000
+          print("ATLAS_E5A_51_HISTORICAL_DEMOS_NO_FORWARD_SIGNAL_OR_LIVE_ACCOUNT_CHANGES")
+          PY
+
+      - name: Temporary research artifact only no writes to GitHub
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-core-e5a-shadow-decision-proof-no-live-51-demo
+          path: research/atlas_core_v5/output/
+          retention-days: 30
+          if-no-files-found: ignore
