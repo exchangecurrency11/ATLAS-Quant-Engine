@@ -81,8 +81,20 @@ class E3RawReplayContract(TestCase):
         primary=deepcopy(self.oracle["periods"][p]["assets"][coin]["variants"]["BASELINE"])
         score=deepcopy(primary)
         score["netR25Bps"]+=.1
+        witness=m.e2.witness_of(self.older,self.later,p,coin)
+        raw=[]
+        for a,b in zip(primary["tradeEvidence"],witness["tradeEntryExitEvidence"]):
+            raw.append({
+                "watchKnownUTC":m.v92.epoch(b["watchUTC"]),
+                "retestKnownUTC":m.v92.epoch(b["retestUTC"]),
+                "entryOpenUTC":m.v92.epoch(a["entryUTC"]),
+                "exitKnownUTC":m.v92.epoch(a["exitUTC"]),
+                "netRIllustrative":a["netR9Bps"],
+                "entry":a["entry"],
+                "risk":a["entry"]*a["riskPct"]/100,
+            })
         with self.assertRaisesRegex(ValueError,"E3_SOURCE_METRIC_DISAGREEMENT"):
-            m.compare_raw_to_oracle(coin,p,score,[{}]*primary["trades"],primary)
+            m.compare_raw_to_oracle(coin,p,score,raw,primary)
         
     def test_future_start_cutoffs_preserved(self):
         self.assertEqual(m.FREEZE_ETH,"2026-11-14T00:00:00Z")
