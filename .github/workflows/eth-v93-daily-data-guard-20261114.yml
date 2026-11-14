@@ -1,0 +1,97 @@
+name: ETH November daily Binance SHA256 continuity guard (RESEARCH ONLY)
+
+# Research branch only; GitHub Actions schedule/cron is not active here.
+# Daily checks are triggered via a protected marker push from the linked
+# ChatGPT automation (or explicit user-triggered research-only commit).
+on:
+  push:
+    branches:
+      - research/eth-v93-daily-data-guard-20261114
+    paths:
+      - eth_v93_daily_data_guard_20261114.py
+      - tests/test_eth_v93_daily_data_guard_20261114.py
+      - .github/workflows/eth-v93-daily-data-guard-20261114.yml
+      - research/eth_v93_daily_guard_trigger.md
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eth-daily-november-sha256-ledger-research
+  cancel-in-progress: false
+
+jobs:
+  eth-daily-source-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout isolated research branch without production edits
+        uses: actions/checkout@v5
+        with:
+          ref: research/eth-v93-daily-data-guard-20261114
+          fetch-depth: 0
+
+      - name: Test official checksum, 24 UTC hours, immutable ledger
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v93-daily-data-guard-20261114
+          python3 -m py_compile eth_v93_daily_data_guard_20261114.py
+          python3 -m unittest discover -s tests -p 'test_eth_v93_daily_data_guard_20261114.py' -v
+          python3 -m unittest discover -s tests -p 'test_v93_shadow_monthly_20261113.py' -q
+
+      - name: Audit only published daily ETH 1h archive with verified SHA256
+        run: |
+          set -euo pipefail
+          if [ "$(date -u +%Y-%m-%d)" = "2026-11-14" ]; then
+            # Before first complete post-freeze day; a source-only preflight.
+            python3 -u eth_v93_daily_data_guard_20261114.py --preflight
+          else
+            python3 -u eth_v93_daily_data_guard_20261114.py
+          fi
+
+      - name: Reject any unverifiable daily archives and future-paper claims
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/eth_v93_daily_data_guard_20261114")
+          status=json.loads((p/"coverage_status.json").read_text())
+          ledger=json.loads((p/"daily_ledger.json").read_text())
+          assert status["schema"]=="ETH_DAILY_V93_SOURCE_CHECKSUM_LEDGER"
+          assert status["freezeUTC"]=="2026-11-14T00:00:00Z"
+          assert status["symbol"]=="ETHUSDT"
+          assert status["monthlyStrategyReplayNotRun"]
+          assert status["noProspectiveTradesClaimed"]
+          assert status["noOrders"] and status["noNotifications"] and status["noProductionChanges"]
+          assert status["completeSinceFirstProspectiveUTC"]
+          for key,v in ledger["days"].items():
+            assert len(v["zipSHA256"])==64
+            assert v["dateUTC"]==key
+            assert v["hourlyClosedCandles"]==24
+            assert v["verifiedDirectWithOfficialChecksum"]
+          print("ETH_NOVEMBER_DAILY_ARCHIVE_CHECKSUM_AND_CONTIGUITY_PASS")
+          PY
+
+      - name: Persist only independent ETH daily integrity research ledger
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/eth-v93-daily-data-guard-20261114
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/eth_v93_daily_data_guard_20261114/
+          if git diff --cached --quiet; then
+            echo "ETH_DAILY_GUARD_RECHECK_NO_NEW_DATA" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Log immutable SHA256 confirmed ETH daily 1H archive coverage in research branch"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/eth-v93-daily-data-guard-20261114
+            if git push origin HEAD:research/eth-v93-daily-data-guard-20261114; then
+              echo "ETH_DAILY_SOURCE_GUARD_PERSISTED_NO_PRODUCTION_EDITS" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 4
+          done
+          exit 1
