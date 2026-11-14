@@ -19,6 +19,7 @@ import json
 import os
 from pathlib import Path
 import re
+from urllib.request import Request,urlopen
 from unittest.mock import patch
 
 from research.atlas_core_v7 import hourly_cold_observer_e5c as cold
@@ -47,6 +48,29 @@ def date_part(epoch:int):
 def hour_part(epoch:int):
     return datetime.fromtimestamp(epoch,timezone.utc).strftime("%H-00Z")
 
+def secure_fetch(url:str):
+    """Strict allowlisted GitHub URL and optionally runner-authenticated read.
+
+    Auth via ephemeral Actions GITHUB_TOKEN increases GitHub API headroom.
+    Never log or store it. No POST, no private API scope, no network
+    destination outside the original E5-C URL allowlist.
+    """
+    if not cold._url_allowed(url):
+        raise ValueError("E5D_UNAUTHORIZED_GITHUB_SOURCE_URL")
+    token=os.environ.get("GITHUB_TOKEN","")
+    if token and not re.fullmatch(r"[A-Za-z0-9_\\-]+",token):
+        raise ValueError("E5D_UNSAFE_TOKEN_FORMAT")
+    headers={"User-Agent":"ATLAS-E5D-ReadOnly-GitHub-Research/1.0",
+             "Accept":"application/vnd.github+json" if url.startswith(cold.API) else "application/json",
+             "X-GitHub-Api-Version":"2022-11-28"}
+    if token:
+        headers["Authorization"]="Bearer "+token
+    with urlopen(Request(url,headers=headers),timeout=25) as response:
+        data=response.read(cold.MAX_BYTES+1)
+        if not data or len(data)>cold.MAX_BYTES:
+            raise ValueError("E5D_EMPTY_OR_TOO_LARGE_REMOTE_SOURCE")
+        return data
+
 def validate_tree_entry(x):
     if not isinstance(x,dict):
         raise ValueError("E5D_GIT_TREE_NOT_AN_ENTRY")
@@ -56,7 +80,7 @@ def validate_tree_entry(x):
         raise ValueError("E5D_GIT_TREE_NO_PATH")
     return x
 
-def fetch_pinned_tree(ref_sha:str, folder:str, *, fetch=cold._remote_bytes)->dict:
+def fetch_pinned_tree(ref_sha:str, folder:str, *, fetch=secure_fetch)->dict:
     """Read each Git tree by SHA, never a truncated GitHub contents page.
 
     GitHub contents/ API silently caps directory listings at ~1,000
@@ -100,7 +124,7 @@ def fetch_pinned_tree(ref_sha:str, folder:str, *, fetch=cold._remote_bytes)->dic
         raise ValueError("E5D_EMPTY_HOURLY_GIT_TREE")
     return out
 
-def observed_hourly_audit(*,fetch=cold._remote_bytes, now_utc=None):
+def observed_hourly_audit(*,fetch=secure_fetch, now_utc=None):
     # Purely adapt the source-directory listing to a pinned Git Tree.
     # All E5-C trade source, time and candle validators run unchanged.
     def tree_provider(sha,folder,fetch=fetch):
@@ -326,7 +350,7 @@ def create_first_seen(source:dict, *,now_epoch:int,run_id:str,run_attempt:str,
             "reusedImmutableObservation":duplicate,
             "metadata":metadata}
 
-def produce(*,now_utc=None,run_id=None,run_attempt=None,root=ROOT,fetch=cold._remote_bytes,
+def produce(*,now_utc=None,run_id=None,run_attempt=None,root=ROOT,fetch=secure_fetch,
             write=True,activation_utc=ACTIVATION_UTC):
     current=norm_epoch(now_utc) if now_utc else int(datetime.now(timezone.utc).timestamp())
     run_id=run_id or os.environ.get("GITHUB_RUN_ID")
