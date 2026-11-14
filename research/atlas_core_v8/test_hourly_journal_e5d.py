@@ -128,6 +128,41 @@ class TreeSourceSafety(TestCase):
         with self.assertRaisesRegex(ValueError,"E5C_GIT_SOURCE_BLOB_SHA1_MISMATCH"):
             j.observed_hourly_audit(fetch=tamper,now_utc=NOW)
 
+class RemoteSourceReadContract(TestCase):
+    def test_disallow_untrusted_api_destinations_before_network(self):
+        with self.assertRaisesRegex(ValueError,"E5D_UNAUTHORIZED_GITHUB_SOURCE_URL"):
+            j.secure_fetch("https://evil.example/secrets")
+
+    def test_auth_read_has_no_write_or_url_token_leak(self):
+        class Response:
+            def __enter__(self):return self
+            def __exit__(self,*a):return False
+            def read(self,n):return b'{"ok":true}'
+        calls=[]
+        def fake_urlopen(req,timeout):
+            calls.append(req)
+            return Response()
+        with patch.object(j,"urlopen",side_effect=fake_urlopen),patch.dict(j.os.environ,{"GITHUB_TOKEN":"ghs_researchsample123"}):
+            raw=j.secure_fetch(cold.API+"/branches/testing")
+        self.assertEqual(raw,b'{"ok":true}')
+        self.assertEqual(calls[0].get_method(),"GET")
+        self.assertNotIn("ghs_researchsample123",calls[0].full_url)
+        self.assertEqual(calls[0].get_header("Authorization"),"Bearer ghs_researchsample123")
+
+    def test_invalid_env_token_rejected(self):
+        with patch.dict(j.os.environ,{"GITHUB_TOKEN":"http://untrusted @foo"}):
+            with self.assertRaisesRegex(ValueError,"E5D_UNSAFE_TOKEN_FORMAT"):
+                j.secure_fetch(cold.API+"/branches/testing")
+
+    def test_empty_remote_body_is_rejected(self):
+        class Response:
+            def __enter__(self):return self
+            def __exit__(self,*a):return False
+            def read(self,n):return b""
+        with patch.object(j,"urlopen",return_value=Response()),patch.dict(j.os.environ,{"GITHUB_TOKEN":""}):
+            with self.assertRaisesRegex(ValueError,"E5D_EMPTY_OR_TOO_LARGE_REMOTE_SOURCE"):
+                j.secure_fetch(cold.API+"/branches/testing")
+
 class JournalContract(TestCase):
     def setUp(self):
         self.tmp=TemporaryDirectory()
