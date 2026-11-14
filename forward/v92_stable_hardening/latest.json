@@ -1,5 +1,5 @@
 {
-  "status": "V92_STABLE_SHADOW_AUDIT_READY_FOR_NEW_ADMISSION_REVIEW",
+  "status": "V92_STABLE_SHADOW_AUDIT_FAIL_CLOSED",
   "mode": "V92_STABLE_SHADOW_HARDENING_ONLY",
   "sharedVirtualInitialUSDT": 1000,
   "policy": {
@@ -19,29 +19,30 @@
   "noRetroactiveTradesOrRewrittenCandles": true,
   "coverage": {
     "BTC_SOL": {
-      "expected": 42,
-      "saved": 39,
+      "expected": 43,
+      "saved": 40,
       "missingHoursUTC": [
         "2026-11-12T14:00:00Z",
         "2026-11-13T02:00:00Z",
         "2026-11-13T14:00:00Z"
       ],
-      "latestUTC": "2026-11-14T04:00:00Z",
-      "consecutiveRecentHours": 14
+      "latestUTC": "2026-11-14T05:00:00Z",
+      "consecutiveRecentHours": 15
     },
     "ETH": {
-      "expected": 41,
+      "expected": 42,
       "saved": 38,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
         "2026-11-12T14:00:00Z",
-        "2026-11-12T15:00:00Z"
+        "2026-11-12T15:00:00Z",
+        "2026-11-14T05:00:00Z"
       ],
       "latestUTC": "2026-11-14T04:00:00Z",
-      "consecutiveRecentHours": 37
+      "consecutiveRecentHours": 0
     }
   },
-  "latestCommonHourUTC": "2026-11-14T04:00:00Z",
+  "latestCommonHourUTC": null,
   "matchedVerifiedHours": 36,
   "matchedAssetChecks": 108,
   "actualObservedOpenPositionSnapshots": 0,
@@ -57,27 +58,8 @@
   "crossAssetLastClosed1H4HDailyAlignmentChecked": true,
   "missingHourNotBackfilled": true,
   "parityErrors": [],
-  "newEntryAdmissionReadiness": true,
-  "latestShadowEntryDecisions": [
-    {
-      "symbol": "BTCUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "ETHUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "SOLUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    }
-  ],
+  "newEntryAdmissionReadiness": false,
+  "latestShadowEntryDecisions": [],
   "limitsCannotGuaranteeExecutionOrStopFill": true,
   "fundingVariableSlippageAndLiquidationNotFullyModeled": true
 }
