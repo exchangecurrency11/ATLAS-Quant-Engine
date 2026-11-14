@@ -52,7 +52,7 @@ not re-download all Binance monthly archive bytes.
 
     python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -v
     python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -v
-    python3 research/atlas_core_v1/atlas_core_e2.py
+    python3 -m research.atlas_core_v1.atlas_core_e2
 
 All generated reports under research/atlas_core_v1/output/.
 No write privileges in CI; report is uploaded as temporary artifact.
