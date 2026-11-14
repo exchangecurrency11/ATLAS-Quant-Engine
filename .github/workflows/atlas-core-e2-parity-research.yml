@@ -49,7 +49,7 @@ jobs:
       - name: Generate E2 evidence summary and enforce no false forward
         run: |
           set -euo pipefail
-          python3 research/atlas_core_v1/atlas_core_e2.py
+          python3 -m research.atlas_core_v1.atlas_core_e2
           python3 - <<'PY'
           import json
           from pathlib import Path
