@@ -1,0 +1,97 @@
+name: BTC SOL V9.2 frozen-history regime and cost robustness (RESEARCH ONLY)
+
+# Only the isolated research branch is used. NO scheduling, orders or alerts.
+on:
+  push:
+    branches:
+      - research/btc-sol-v92-robustness-20261114
+    paths:
+      - btc_sol_v92_robustness_20261114.py
+      - tests/test_btc_sol_v92_robustness_20261114.py
+      - .github/workflows/btc-sol-v92-robustness-20261114.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: btc-sol-v92-159-frozen-archive-robustness
+  cancel-in-progress: false
+
+jobs:
+  btc-sol-frozen-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout ONLY BTC SOL research branch
+        uses: actions/checkout@v5
+        with:
+          ref: research/btc-sol-v92-robustness-20261114
+          fetch-depth: 0
+
+      - name: Static and synthetic risk/causality tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/btc-sol-v92-robustness-20261114
+          python3 -m py_compile btc_sol_v92_robustness_20261114.py
+          python3 -m unittest discover -s tests -p 'test_btc_sol_v92_robustness_20261114.py' -v
+          test -s forward/v92_full_interactions_20261113/historical.json
+
+      - name: Reconcile all archived BTC SOL trades, costs, volatility and robustness
+        run: |
+          set -euo pipefail
+          python3 -u btc_sol_v92_robustness_20261114.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("forward/btc_sol_v92_robustness_20261114")
+          d=json.loads((p/"robustness.json").read_text())
+          assert d["status"]=="BTC_SOL_FROZEN_HISTORICAL_ROBUSTNESS_RESEARCH_ONLY"
+          assert d["verifiedOfficialBinanceMonthlyArchives"]==159
+          assert d["allHistoryPreviouslySeen"] and not d["independentUnseenHoldout"]
+          assert d["newForwardTradesCredited"]==0 and not d["newPriceReplay"]
+          assert not d["tradingOrders"] and not d["userNotifications"]
+          assert not d["productionChanges"] and not d["existingPaperBooksChanged"]
+          assert not d["ETHDailyGuardChanged"]
+          assert d["costPerSideBps"]==[9,25,50]
+          assert len(d["sourceSHA256"])==64
+          assert set(d["assets"])=={"BTCUSDT","SOLUSDT"}
+          assert set(d["periods"])=={"2022_2024","2024_2026"}
+          for coin, n in [("BTCUSDT",15),("SOLUSDT",20)]:
+            s=d["assets"][coin]
+            assert s["stress"]["25"]["trades"]==n
+            assert not s["validatedForNewForwardTrading"]
+            assert len(s["wilson95WinPctDescriptive"])==2
+            assert set(s["regimes"])=={"direction","trend","volatility"}
+            for dim in s["regimes"].values():
+              assert sum(t["n"] for t in dim.values())==n
+              assert abs(sum(t["netR25"] for t in dim.values())-s["frozenNetR25Total"])<0.001
+            assert s["stress"]["50"]["netR"]<=s["stress"]["25"]["netR"]
+            assert s["historicalFilterFragility"]["notPromotedOrFittedHere"]
+          assert abs(d["assets"]["BTCUSDT"]["frozenNetR25Total"]+4.886652)<.001
+          assert abs(d["assets"]["SOLUSDT"]["frozenNetR25Total"]-4.4138)<.002
+          assert (p/"robustness.md").stat().st_size>1000
+          print("BTC_SOL_FROZEN_NO_PRODUCTION_ROBUSTNESS_PASSED")
+          PY
+
+      - name: Commit ONLY additive historical robustness output to research branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/btc-sol-v92-robustness-20261114
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add forward/btc_sol_v92_robustness_20261114/
+          if git diff --cached --quiet; then
+            echo "NO_NEW_HISTORICAL_AUDIT" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git commit -m "Record BTC SOL frozen historical direction, regime and cost fragility audit"
+          for attempt in 1 2 3; do
+            git pull --rebase origin research/btc-sol-v92-robustness-20261114
+            if git push origin HEAD:research/btc-sol-v92-robustness-20261114; then
+              echo "BTC_SOL_HISTORICAL_AUDIT_PERSISTED_NO_LIVE_CHANGES" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
