@@ -1,0 +1,125 @@
+name: ATLAS E5D silent hourly read-only paper journal
+
+# New default-branch schedule ONLY; all code and journal writes are isolated
+# to the existing E5D research branch. Existing systems stay untouched.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/atlas-e5d-silent-hourly-observer.yml]
+  schedule:
+    - cron: '43,56 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas-e5d-immutable-hourly-research-journal
+  cancel-in-progress: false
+
+jobs:
+  silent-observation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout only research E5D source and journal
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v8-hourly-journal-20261115
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify pinned audited code and isolated branch
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-v8-hourly-journal-20261115
+          test "$(git hash-object research/atlas_core_v8/hourly_journal_e5d.py)" = 1dcffe56e07390f734672a8bc35bd94607ff2ba0
+          test "$(git hash-object research/atlas_core_v8/test_hourly_journal_e5d.py)" = 596f462840e21ff34c524e294c23b20d87d0eed6
+          test "$(git hash-object research/atlas_core_v7/hourly_cold_observer_e5c.py)" = 1e48bbe996f2b9361b723e3d4728d45f23bc3675
+          python3 -m py_compile research/atlas_core_v8/hourly_journal_e5d.py
+
+      - name: Run 37 E5D immutable source and false-live-signal tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v8.test_hourly_journal_e5d -q
+
+      - name: Read source Git trees and append only E5D observations
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v8.hourly_journal_e5d
+
+      - name: Verify no trade signals, existing changes or writes outside journal
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("research/atlas_core_v8/output/e5d_report.json").read_text())
+          assert d["mode"]=="ATLAS_CORE_E5D_APPEND_ONLY_POST_START_HOURLY_OBSERVATION_NO_LIVE_ENTRY"
+          assert d["readOnlyFrozenSource"] and d["newLiveSignalCount"]==0
+          assert not d["automaticOrdersOrAlertsSent"]
+          assert not d["originalCryptoAutomationsChanged"]
+          assert not d["paperAccountStateReadOrModified"]
+          assert not d["userPositionsAccessed"]
+          assert d["source"]["actualNewLiveOpportunityCount"]==0
+          assert all(d["source"]["actionSafety"].values())
+          assert d["output"]["status"] in (
+            "SOURCE_HOURS_MISMATCH_FAIL_CLOSED",
+            "SOURCE_HOUR_PRE_FIRST_SEEN_ACTIVATION_NOT_CREDITED",
+            "SOURCE_HOUR_STALE_OVER_90MIN_NOT_CREDITED",
+            "NEW_POST_ACTIVATION_HOURLY_SOURCE_OBSERVED_NOT_ENTRY",
+            "EXISTING_IMMUTABLE_POST_ACTIVATION_OBSERVATION_NO_REWRITE")
+          a=Path(d["output"]["checkpointPath"])
+          assert a.exists() and str(a).startswith("forward/atlas_core_e5d_hourly/attempts/")
+          if d["output"]["observationPath"]:
+              o=Path(d["output"]["observationPath"])
+              assert o.exists() and str(o).startswith("forward/atlas_core_e5d_hourly/observations/")
+              x=json.loads(o.read_text())
+              assert x["stage"]=="RESEARCH_ONLY" and x["notAnExchangeFill"]
+              assert x["notAnEntryTimeTradeAlert"] and x["noBrokerOrders"]
+              assert x["noUserAlerts"] and x["userMustNotTradeFromThisRecord"]
+          print("ATLAS_E5D_NO_LIVE_TRADING_JOURNAL_ONLY_CHECK_PASS")
+          PY
+
+      - name: Stage only new research journal JSON files, never production
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-v8-hourly-journal-20261115
+          git add -A -- forward/atlas_core_e5d_hourly/
+          python3 - <<'PY'
+          import subprocess
+          f=subprocess.check_output(["git","diff","--cached","--name-only"],text=True).splitlines()
+          assert 1<=len(f)<=2,f
+          assert all(x.startswith("forward/atlas_core_e5d_hourly/") and
+                     ("/attempts/" in x or "/observations/" in x) and
+                     x.endswith(".json") for x in f),f
+          print("ATLAS_E5D_ONLY_RESEARCH_JOURNAL_FILES",f)
+          PY
+
+      - name: Persist immutable observations to E5D branch only
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-v8-hourly-journal-20261115
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "ATLAS E5D silent hourly paper audit $GITHUB_RUN_ID"
+          for n in 1 2 3; do
+            git pull --rebase origin research/atlas-core-v8-hourly-journal-20261115
+            if git push origin HEAD:research/atlas-core-v8-hourly-journal-20261115; then
+              echo "ATLAS_E5D_RESEARCH_HOURLY_JOURNAL_PERSISTED"
+              exit 0
+            fi
+            sleep 3
+          done
+          exit 1
+
+      - name: Upload temporary evidence report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5d-paper-journal-${{ github.run_id }}
+          path: research/atlas_core_v8/output/
+          retention-days: 30
+          if-no-files-found: ignore
