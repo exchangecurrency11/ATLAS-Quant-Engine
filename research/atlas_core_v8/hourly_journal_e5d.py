@@ -58,7 +58,11 @@ def secure_fetch(url:str):
     if not cold._url_allowed(url):
         raise ValueError("E5D_UNAUTHORIZED_GITHUB_SOURCE_URL")
     token=os.environ.get("GITHUB_TOKEN","")
-    if token and not re.fullmatch(r"[A-Za-z0-9_\\-]+",token):
+    # GitHub GITHUB_TOKEN is opaque (some valid formats contain dots).
+    # Reject only header-breaking bytes, whitespace and extreme length,
+    # never log or persist the token, and keep hosts allowlisted.
+    if token and (len(token)>4096 or
+                  not all(33<=ord(ch)<=126 for ch in token)):
         raise ValueError("E5D_UNSAFE_TOKEN_FORMAT")
     headers={"User-Agent":"ATLAS-E5D-ReadOnly-GitHub-Research/1.0",
              "Accept":"application/vnd.github+json" if url.startswith(cold.API) else "application/json",
