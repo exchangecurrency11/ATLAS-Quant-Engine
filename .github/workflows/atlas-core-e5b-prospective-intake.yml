@@ -1,0 +1,103 @@
+name: ATLAS Core E5B frozen ETH BTC SOL prospective read only intake (RESEARCH ONLY)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v6-forward-intake-20261114
+    paths:
+      - research/atlas_core_v6/**
+      - .github/workflows/atlas-core-e5b-prospective-intake.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-core-e5b-original-prospective-read-only
+  cancel-in-progress: false
+
+jobs:
+  frozen-source-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout E5B isolated research without persisted Git credentials
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v6-forward-intake-20261114
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify no production branch, compile and isolation
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "research/atlas-core-v6-forward-intake-20261114"
+          python3 -m py_compile research/atlas_core_v6/prospective_intake_e5b.py
+          python3 -m py_compile research/atlas_core_v6/test_prospective_intake_e5b.py
+          test ! -d research/atlas_core_v6/output
+
+      - name: E1 E2 E3 E4A E4B E5A regression (offline)
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -q
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -q
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -q
+          python3 -m unittest research.atlas_core_v3.test_atlas_core_e4 -q
+          python3 -m unittest research.atlas_core_v4.test_atlas_core_e4b -q
+          python3 -m unittest research.atlas_core_v5.test_shadow_decision_e5 -q
+
+      - name: E5B frozen prospective fail closed tests (synthetic fixtures NOT counted forward)
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v6.test_prospective_intake_e5b -v
+
+      - name: Read only ETH and BTC SOL original GitHub research source preflight or monthly snapshot
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v6.prospective_intake_e5b
+
+      - name: Assert 0 counterfeit live signals, no source writes and honest monthly timing
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("research/atlas_core_v6/output/e5b_report.json").read_text())
+          assert d["status"]=="ATLAS_CORE_E5B_FROZEN_MONTHLY_FORWARD_INTAKE_NON_ACTIONABLE"
+          assert set(d["channels"])=={"ETH_V93_SIX_STREAM","BTC_SOL_V93_HIGH_VOL"}
+          assert d["uniqueRealTimeEntryOpportunitiesValidated"]==0
+          assert d["liveOrContemporaneousEntryCards"]==[]
+          assert d["historical51TradesCreditedAsProspective"]==0
+          assert d["forwardProfitClaimMade"] is False
+          assert d["prospectiveClosedTapesAuditedNotPredictions"]
+          assert d["prospectiveSourceScriptsWereReexecuted"] is False
+          assert d["officialMonthlyZIPsRedownloadedByE5B"] is False
+          assert d["noOrders"] and d["noAlerts"] and d["noNotifications"]
+          assert d["noProductionOrMainOrPaperWrites"]
+          assert d["noAutomationChanges"] and d["noCandidatePromotion"]
+          assert d["noRealAccountPositionsAvailable"]
+          assert d["snapshotSourcePinVerified"] is True
+          assert len(d["limitations"])>=6
+          for c in d["channels"].values():
+              assert c["noTimelyOpportunityProof"]
+              assert c["reportedOfficialArchiveHashesAreNotIndependentlyRedownloaded"]
+              assert c["status"] in (
+                  "NO_COMPLETED_POSTFREEZE_MONTHLY_SNAPSHOT",
+                  "VERIFIED_SOURCE_MONTHLY_CLOSED_TRADE_TAPE_NOT_TIMELY_ENTRY")
+              if c["status"].startswith("VERIFIED"):
+                  assert c["immutableMonthlySnapshotExactMatch"]
+                  assert len(c["snapshotSHA256"])==64
+              else:
+                  assert c["closedTrades"]==0
+          assert Path("research/atlas_core_v6/output/e5b_report.md").stat().st_size>600
+          print("ATLAS_E5B_ORIGINAL_SOURCE_BRANCHES_VERIFIED_ZERO_FAKE_TRADE_NOTIFICATIONS")
+          PY
+
+      - name: Archive E5B evidence, never commit or push
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-core-e5b-prospective-monthly-source-audit
+          path: research/atlas_core_v6/output/
+          retention-days: 30
+          if-no-files-found: ignore
