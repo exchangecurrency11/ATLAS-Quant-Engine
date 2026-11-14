@@ -33,8 +33,8 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git branch --show-current)" = research/atlas-core-v8-hourly-journal-20261115
-          test "$(git hash-object research/atlas_core_v8/hourly_journal_e5d.py)" = 1dcffe56e07390f734672a8bc35bd94607ff2ba0
-          test "$(git hash-object research/atlas_core_v8/test_hourly_journal_e5d.py)" = 596f462840e21ff34c524e294c23b20d87d0eed6
+          test "$(git hash-object research/atlas_core_v8/hourly_journal_e5d.py)" = 8b6637e82295245e47df186f3bd08cb64b59b0fa
+          test "$(git hash-object research/atlas_core_v8/test_hourly_journal_e5d.py)" = cca3e1b58493877415d804faebf58d7dba00bbf7
           test "$(git hash-object research/atlas_core_v7/hourly_cold_observer_e5c.py)" = 1e48bbe996f2b9361b723e3d4728d45f23bc3675
           python3 -m py_compile research/atlas_core_v8/hourly_journal_e5d.py
 
