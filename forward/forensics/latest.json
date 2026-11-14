@@ -1,8 +1,8 @@
 {
   "mode": "V7_RETROSPECTIVE_REJECTED_BOS_PAPER_STUDY_NO_ORDERS",
-  "asOfClosed1HUTC": "2026-11-13T02:00:00Z",
-  "forwardSnapshotsVerified": 190,
-  "historicalRawCandlesSourceSHA256": "3c8869bb834843cf900c702ebdcac073d263f9518e7fcc0b222fcb34d4d2d5c3",
+  "asOfClosed1HUTC": "2026-11-14T02:00:00Z",
+  "forwardSnapshotsVerified": 214,
+  "historicalRawCandlesSourceSHA256": "c50962b5569e8d441a8db7392bbe1a99d821dae964107e1046b98741684f536b",
   "historicalRawSourceNote": "Current Coinalyze historical 1H feed, checked against original BOS OHLC values",
   "method": "Frozen forward-observed BOS and filters at original close; later fully closed 1H candles for 1..6h retest, next-open simulated entry, 24h maximum hold, stop-first collision, TP1/TP2/TP3 thirds, 6bps fees + 3bps slippage per side. Diagnostic independent counterfactuals (not mutually exclusive positions).",
   "limitations": [
@@ -16,9 +16,9 @@
     "No V7 threshold tuning on this inspected sample; tiny samples are not efficacy proof."
   ],
   "summary": {
-    "forwardObservedBOS": 8,
-    "v4AcceptedBOS": 3,
-    "v7AcceptedBOS": 2,
+    "forwardObservedBOS": 9,
+    "v4AcceptedBOS": 4,
+    "v7AcceptedBOS": 3,
     "v7RejectedBOS": 6,
     "incrementalV7VetoOfV4AcceptedBOS": 1,
     "incrementalV7AvoidedNegativePaper": 0,
@@ -50,8 +50,8 @@
         "notActionableOrUnresolved": 1
       },
       "SOLUSDT_PERP.A": {
-        "observedBOS": 3,
-        "acceptedByV7": 1,
+        "observedBOS": 4,
+        "acceptedByV7": 2,
         "rejectedBOS": 2,
         "rejectedWithClosedCounterfactualPaperTrade": 0,
         "avoidedNegativeOrFlatPaper": 0,
@@ -449,7 +449,63 @@
       },
       "sourceSnapshot": "2026-11-13T01-00Z.json",
       "counterfactual": {
-        "status": "PENDING_RETEST_UNCLOSED"
+        "status": "EXPIRED_WITHOUT_V4_RETEST",
+        "note": "No eligible entry; subsequent directional price move does NOT count as missed trade"
+      },
+      "classification": "ACCEPTED_BY_V7_NOT_A_REJECTED_SIGNAL"
+    },
+    {
+      "pair": "SOLUSDT_PERP.A",
+      "bosClosedUTC": "2026-11-13T03:00:00Z",
+      "bosCloseEpoch": 1794538800,
+      "side": "bearish",
+      "brokenLevel": 80.42,
+      "acceptedByV4": true,
+      "acceptedByV7": true,
+      "rejectionFactors": [],
+      "v7Quality": {
+        "passed": true,
+        "reasons": [],
+        "warnings": [
+          "RSI_EXTREME_NOT_A_HARD_REJECTION"
+        ],
+        "features": {
+          "breakATR": 0.269231,
+          "relativeVolume20": 2.790627,
+          "ema20ExtensionATR": 1.778234
+        }
+      },
+      "context": {
+        "higherTFaligned": true,
+        "momentumAligned": true,
+        "priorHourVolumeUp20Pct": true
+      },
+      "frozenBosCandle": {
+        "open": 81.26,
+        "high": 81.29,
+        "low": 79.55,
+        "close": 80.18
+      },
+      "sourceSnapshot": "2026-11-13T03-00Z.json",
+      "counterfactual": {
+        "status": "CLOSED_COUNTERFACTUAL_PAPER",
+        "retestClosedUTC": "2026-11-13T08:00:00Z",
+        "entryOpenUTC": "2026-11-13T08:00:00Z",
+        "entry": 79.69,
+        "stop": 81.38921429,
+        "targets": [
+          77.99078571,
+          76.29157143,
+          74.59235714
+        ],
+        "exitClosedUTC": "2026-11-13T14:00:00Z",
+        "exitReason": "STOP_FIRST_OR_AFTER_TP",
+        "targetCount": 0,
+        "grossR": -1.0,
+        "assumedNetR": -1.084417,
+        "perSideCostBps": 9,
+        "outcome": "PAPER_NEGATIVE_OR_FLAT",
+        "notExecuted": true
       },
       "classification": "ACCEPTED_BY_V7_NOT_A_REJECTED_SIGNAL"
     }
