@@ -207,6 +207,43 @@ class JournalContract(TestCase):
         with self.assertRaisesRegex(ValueError,"E5D_IMMUTABLE_JOURNAL_ENTRY_DRIFT"):
             self.write(src=mismatch)
 
+    def test_second_read_same_hour_mutated_source_SHA_rejected(self):
+        first=self.write()
+        old=Path(first["observationPath"]).read_bytes()
+        src=deepcopy(self.source)
+        src["sourceFileSHA256"]["BTC_SOL_V92"]="0"*64
+        with self.assertRaisesRegex(ValueError,
+                 "E5D_PREVIOUSLY_RECORDED_SOURCE_HOUR_WAS_REVISED:sourceSHA256"):
+            self.write(src=src,when="2026-11-14T21:40:00Z",runid="123467")
+        self.assertEqual(Path(first["observationPath"]).read_bytes(),old)
+
+    def test_second_read_same_hour_mutated_BOS_watch_rejected(self):
+        self.write()
+        src=deepcopy(self.source)
+        src["newBOSWatchReports"]=99
+        with self.assertRaisesRegex(ValueError,
+                 "E5D_PREVIOUSLY_RECORDED_SOURCE_HOUR_WAS_REVISED:newClosedBOSWatchReports"):
+            self.write(src=src,when="2026-11-14T21:40:00Z",runid="123468")
+
+    def test_second_read_same_hour_mutated_asset_paper_state_rejected(self):
+        self.write()
+        src=deepcopy(self.source)
+        src["sourceAssetPaperObservations"][0]["sourceAnalysis"]["hypotheticalPaperPositionOpen"]=True
+        with self.assertRaisesRegex(ValueError,
+                 "E5D_PREVIOUSLY_RECORDED_SOURCE_HOUR_WAS_REVISED:assetObservations"):
+            self.write(src=src,when="2026-11-14T21:40:00Z",runid="123469")
+
+    def test_exclusive_append_must_never_modify_prior_file(self):
+        dest=self.root/"attempts"/"unit"/"strict.json"
+        sample={"stage":j.STAGE,"value":1}
+        self.assertTrue(j.strictly_append(dest,sample))
+        before=dest.read_bytes()
+        self.assertFalse(j.strictly_append(dest,sample))
+        self.assertEqual(dest.read_bytes(),before)
+        with self.assertRaisesRegex(ValueError,"E5D_IMMUTABLE_JOURNAL_ENTRY_DRIFT"):
+            j.strictly_append(dest,{"stage":j.STAGE,"value":2})
+        self.assertEqual(dest.read_bytes(),before)
+
     def test_precise_same_result_under_no_write(self):
         out=self.write(write=False)
         self.assertTrue(out["newObservation"])
