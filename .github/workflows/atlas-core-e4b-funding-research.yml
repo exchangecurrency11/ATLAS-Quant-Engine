@@ -1,42 +1,105 @@
-name: ATLAS E4B real funding data source probe (research only)
+name: ATLAS Core E4B actual Binance funding archives vs modeled account funding (RESEARCH ONLY)
 
 on:
   push:
     branches:
       - research/atlas-core-v4-observed-funding-20261114
     paths:
+      - research/atlas_core_v4/**
       - .github/workflows/atlas-core-e4b-funding-research.yml
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: atlas-core-e4b-159-official-funding-historical
+  cancel-in-progress: false
+
 jobs:
-  funding-source-proof:
+  sha256-source-parity:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 100
     steps:
-      - name: Identify official funding data format and access (read only)
+      - name: Checkout isolated E4B research without persisted credentials
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v4-observed-funding-20261114
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Prove branch, Python compile, source isolation
         run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "research/atlas-core-v4-observed-funding-20261114"
+          python3 -m py_compile research/atlas_core_v4/atlas_core_e4b.py
+          python3 -m py_compile research/atlas_core_v4/test_atlas_core_e4b.py
+
+      - name: Previous E1 E2 E3 E4A regression and sealed-oracle tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -v
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -v
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -v
+          python3 -m unittest research.atlas_core_v3.test_atlas_core_e4 -v
+
+      - name: Funding rate provenance, SHA256 tampering, signed credit-debit and settlement checks
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v4.test_atlas_core_e4b -v
+
+      - name: Download 159 official OHLC ZIPs and 159 official fundingRate ZIPs, replay 51 trades and 3 shared portfolios
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v4.atlas_core_e4b --workers 6
+
+      - name: Assert complete funding rate audit, old E4A comparison and NO misleading venue/account claims
+        run: |
+          set -euo pipefail
           python3 - <<'PY'
-          import urllib.request,urllib.error,zipfile,io,csv,hashlib
-          base="https://data.binance.vision/data/futures/um/monthly/fundingRate/BTCUSDT/BTCUSDT-fundingRate-2024-01.zip"
-          for url in (base+".CHECKSUM",base,"https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&startTime=1704067200000&endTime=1704153600000&limit=10"):
-            try:
-              req=urllib.request.Request(url,headers={"User-Agent":"ATLAS-research-public-data/1"})
-              with urllib.request.urlopen(req,timeout=18) as resp:
-                raw=resp.read(500000)
-                print("SOURCE_PROBE",url,"STATUS",resp.status,"LEN",len(raw),"HASH",hashlib.sha256(raw).hexdigest(),flush=True)
-                if ".CHECKSUM" in url:
-                  print("CHECKSUM",raw[:150],flush=True)
-                elif url.endswith(".zip"):
-                  z=zipfile.ZipFile(io.BytesIO(raw))
-                  print("ZIP_FILES",z.namelist(),flush=True)
-                  for name in z.namelist():
-                    with z.open(name) as fp:
-                      print("FUNDING_CSV_LINES",fp.readline()[:300],fp.readline()[:300],fp.readline()[:300],flush=True)
-                else:
-                  print("API_FUNDING_EXAMPLE",raw[:600],flush=True)
-            except Exception as e:
-              print("SOURCE_PROBE_ERROR",url,type(e).__name__,str(e)[:300],flush=True)
+          import json
+          from pathlib import Path
+          p=Path("research/atlas_core_v4/output/e4b_report.json")
+          d=json.loads(p.read_text())
+          assert d["status"]=="ATLAS_CORE_E4B_OBSERVED_FUNDING_RATES_PROXY_SETTLEMENT_HISTORICAL_ONLY"
+          assert d["officialOHLCZipSHA256Verified"]==159
+          assert d["officialFundingZipSHA256Verified"]==159
+          assert d["matchedHistoricalTrades"]==51
+          assert d["observedFundingEventsInDataset"]>1000
+          assert d["observedFundingEventsWhilePositionOpen"]>0
+          assert d["actualFundingRatesObserved"] and d["actualFundingEventTimesObserved"]
+          assert d["actualFundingIntervalsObserved"] and d["fundingTimelineCoveredByDeclaredIntervals"]
+          assert d["actualVenueSettlementMarkPriceObserved"] is False
+          assert d["hourlyOHLCOpenUsedAsSettlementMarkProxy"] is True
+          assert d["actualAccountFundingPaymentsObserved"] is False
+          assert d["actualSpreadOrOrderbookOrFillObserved"] is False
+          assert d["independentOutOfSample"] is False and d["newForwardTrades"]==0
+          assert d["mainOrProductionOrPaperOrAutomationChanged"] is False
+          assert d["ordersPlaced"] is False and d["notificationsSent"] is False
+          assert d["tradingCandidateAutomaticallyPromoted"] is False
+          assert d["originalE4AOutputsExactReproduced"]
+          assert len(d["riskCautions"])>=9
+          assert set(d["scenarios"])=={
+              "9bps_per_side_plus_adverse_funding",
+              "25bps_per_side_plus_adverse_funding",
+              "50bps_per_side_plus_adverse_funding"}
+          for s in d["scenarios"].values():
+              prior=s["priorE4AAdverseAssumptionPortfolio"]
+              new=s["actualRateProxyMarkPortfolio"]
+              assert new["tradesAccepted"]+new["tradesRejectedByBudget"]==51
+              assert prior["tradesAccepted"]+prior["tradesRejectedByBudget"]==51
+              assert not new["equityIncludesOpenPositionMarkToMarket"]
+              assert not new["liquidationAndCrossMarginModeled"]
+              assert s["executionAssumptionsUnchanged"]["markPriceSource"]=="OHLC_1H_OPEN_PROXY_NOT_SETTLEMENT_MARK"
+          assert (Path("research/atlas_core_v4/output/e4b_report.md").stat().st_size>1000)
+          print("ATLAS_E4B_REAL_FUNDING_RATES_VERIFIED_MARK_PROXY_DISCLOSED_NO_LIVE_WRITES")
           PY
+
+      - name: Upload only temporary E4B evidence, no GitHub commits or pushes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-core-e4b-real-funding-rate-51-trade-evidence
+          path: research/atlas_core_v4/output/
+          retention-days: 30
+          if-no-files-found: ignore
