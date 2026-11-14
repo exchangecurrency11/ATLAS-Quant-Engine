@@ -1,0 +1,90 @@
+name: ATLAS E5D append-only hourly first-seen pilot (research dry run)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v8-hourly-journal-20261115
+    paths:
+      - research/atlas_core_v8/**
+      - .github/workflows/atlas-core-e5d-hourly-journal-validation.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-e5d-research-standalone-validation
+  cancel-in-progress: false
+
+jobs:
+  research-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout E5D separate research branch with no token persistence
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v8-hourly-journal-20261115
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Prove exact research branch and compile
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "research/atlas-core-v8-hourly-journal-20261115"
+          python3 -m py_compile research/atlas_core_v8/hourly_journal_e5d.py
+          python3 -m py_compile research/atlas_core_v8/test_hourly_journal_e5d.py
+          test ! -d research/atlas_core_v8/output
+      - name: Preserve all old E1 E2 E3 E4A E4B E5A E5B E5C regressions
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -q
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -q
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -q
+          python3 -m unittest research.atlas_core_v3.test_atlas_core_e4 -q
+          python3 -m unittest research.atlas_core_v4.test_atlas_core_e4b -q
+          python3 -m unittest research.atlas_core_v5.test_shadow_decision_e5 -q
+          python3 -m unittest research.atlas_core_v6.test_prospective_intake_e5b -q
+          python3 -m unittest research.atlas_core_v7.test_hourly_cold_observer_e5c -q
+      - name: E5D immutable timestamp and Git tree edge-case tests with synthetic fixtures
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v8.test_hourly_journal_e5d -v
+      - name: Read real original V92 and V9 source Git trees and simulate first-seen journal WITHOUT writing
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v8.hourly_journal_e5d --no-write
+      - name: No fake live signals or production modifications
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("research/atlas_core_v8/output/e5d_report.json")
+          d=json.loads(p.read_text())
+          assert d["mode"]=="ATLAS_CORE_E5D_APPEND_ONLY_POST_START_HOURLY_OBSERVATION_NO_LIVE_ENTRY"
+          assert d["readOnlyFrozenSource"] is True
+          assert d["newLiveSignalCount"]==0
+          assert d["automaticOrdersOrAlertsSent"] is False
+          assert d["originalCryptoAutomationsChanged"] is False
+          assert d["paperAccountStateReadOrModified"] is False
+          assert d["userPositionsAccessed"] is False
+          assert d["onlyResearchDataWritten"] is True
+          assert all(d["source"]["actionSafety"].values())
+          assert d["source"]["actualNewLiveOpportunityCount"]==0
+          assert d["output"]["status"] in (
+              "SOURCE_HOURS_MISMATCH_FAIL_CLOSED",
+              "SOURCE_HOUR_PRE_FIRST_SEEN_ACTIVATION_NOT_CREDITED",
+              "SOURCE_HOUR_STALE_OVER_90MIN_NOT_CREDITED",
+              "NEW_POST_ACTIVATION_HOURLY_SOURCE_OBSERVED_NOT_ENTRY")
+          assert not Path("forward/atlas_core_e5d_hourly").exists()
+          assert Path("research/atlas_core_v8/output/e5d_report.md").stat().st_size>350
+          print("ATLAS_E5D_REAL_SOURCE_PROOF_TEST_PASS_DRY_RUN_NO_WRITES")
+          PY
+      - name: Upload ephemeral read-only E5D pilot evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5d-dry-run-no-user-trade-alerts
+          path: research/atlas_core_v8/output/
+          retention-days: 30
+          if-no-files-found: ignore
