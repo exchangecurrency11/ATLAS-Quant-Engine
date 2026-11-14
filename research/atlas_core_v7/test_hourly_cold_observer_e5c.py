@@ -150,11 +150,15 @@ def fake_fetcher(*,continuous=True,bts=None,eth=None,v9=None,corrupt_sha=False,
         mapping=[]
         for key in manifest(continuous=continuous):
             item_path=folder+"/"+key+".json"
-            data=enc(doc)
+            source=deepcopy(doc)
+            close=datetime.strptime(key,"%Y-%m-%dT%H-00Z").replace(tzinfo=timezone.utc)
+            source["targetClosed1HUTC"]=close.strftime("%Y-%m-%dT%H:%M:%SZ")
             if key!=manifest()[0]:
-                # Prior snapshots are not read by E5-C. Their directory
-                # presence is checked for consecutive coverage only.
-                data=enc({"irrelevant_prior":"not_read"})
+                delta=22 if folder==c.ETH_DIR else 20
+                source["capturedAtUTC"]=datetime.fromtimestamp(
+                    int(close.timestamp())+delta*60,timezone.utc
+                ).strftime("%Y-%m-%dT%H:%M:%SZ")
+            data=enc(source)
             git=c.sha_git_blob(data)
             if corrupt_sha and folder==c.ETH_DIR and key==manifest()[0]:
                 git="0"*40
@@ -205,6 +209,17 @@ class E5CSourceOrigin(TestCase):
                 "file":c.BTC_SOL_DIR+"/../../secret.json",
                 "gitBlobSHA1":"a"*40},fetch=lambda _:b"{}")
 
+    def test_earlier_hour_file_tamper_rejected_not_merely_directory_present(self):
+        valid=fake_fetcher()
+        def changed(url):
+            data=valid(url)
+            if (url.endswith("/2026-11-14T20-00Z.json")
+                and c.BTC_SOL_DIR in url):
+                return data+b" "
+            return data
+        with self.assertRaisesRegex(ValueError,"E5C_GIT_SOURCE_BLOB_SHA1_MISMATCH"):
+            c.audit(fetch=changed,now_utc=NOW)
+
     def test_latest_source_hour_drift_fails_closed(self):
         out=c.audit(fetch=fake_fetcher(mismatched_latest_eth=True),now_utc=NOW)
         self.assertEqual(out["status"],"SOURCE_HOURS_DISAGREE_FAIL_CLOSED")
@@ -230,6 +245,8 @@ class E5CCausalTimeliness(TestCase):
     def test_full_four_hours_proves_only_coverage_not_trade(self):
         d=c.audit(fetch=fake_fetcher(continuous=True),now_utc=NOW)
         self.assertTrue(d["consecutiveHourCoverage"]["matchedAcrossBothSources"])
+        self.assertEqual(d["consecutiveHourCoverage"]["verifiedContentsWithGitBlobSHA1"],8)
+        self.assertEqual(len(d["consecutiveHourCoverage"]["hourlySha256Evidence"]),8)
         self.assertFalse(d["hourlyObservationTimeliness"]["liveEntryEligible"])
         self.assertFalse(d["full3AssetLiveSourcePriceStopAndNextOpenValidated"])
 
