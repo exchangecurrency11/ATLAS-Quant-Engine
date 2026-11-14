@@ -1,0 +1,576 @@
+{
+  "archiveCountSHA256VerifiedAgain": 159,
+  "costPerSideBps": [
+    9,
+    25,
+    50
+  ],
+  "eventWindowsNotTradingSignals": true,
+  "futureCandidateEligibilityFromUTC": "2026-11-15T00:00:00Z",
+  "historicalStudiesPreviouslyInspected": true,
+  "noAutomaticCandidatePromotion": true,
+  "noIndependentHoldout": true,
+  "noNotifications": true,
+  "noOrders": true,
+  "noProductionOrV7V92PaperChanges": true,
+  "periods": {
+    "2022_2024": {
+      "BTCUSDT": {
+        "baselineExactPreviousSourceParity": true,
+        "deltaR25": 2.749064,
+        "events": [
+          {
+            "endExclusiveUTC": "2022-11-22",
+            "entriesUTC": [],
+            "event": "FTX_2022",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/213/article-A001-en.xml",
+            "startUTC": "2022-11-07"
+          },
+          {
+            "endExclusiveUTC": "2023-03-23",
+            "entriesUTC": [
+              "2023-03-09T18:00:00Z"
+            ],
+            "event": "BANKING_2023",
+            "n": 1,
+            "netR25": 1.501983,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/214/article-A001-en.xml",
+            "startUTC": "2023-03-08"
+          },
+          {
+            "endExclusiveUTC": "2024-01-18",
+            "entriesUTC": [],
+            "event": "BTC_ETP_2024",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.sec.gov/newsroom/speeches-statements/gensler-statement-spot-bitcoin-011023",
+            "startUTC": "2024-01-03"
+          },
+          {
+            "endExclusiveUTC": "2024-02-11",
+            "entriesUTC": [
+              "2024-02-06T18:00:00Z"
+            ],
+            "event": "SOL_OUTAGE_2024",
+            "n": 1,
+            "netR25": -1.719952,
+            "onlyContextNotCausal": true,
+            "source": "https://solana.com/news/02-06-24-solana-mainnet-beta-outage-report",
+            "startUTC": "2024-02-05"
+          },
+          {
+            "endExclusiveUTC": "2025-10-16",
+            "entriesUTC": [],
+            "event": "BTC_VOL_SPIKE_2025",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.spglobal.com/en/research-insights/special-reports/bitcoin-volatility-trends-deep-dive",
+            "startUTC": "2025-10-08"
+          }
+        ],
+        "gateAudit": {
+          "BTCShortUnchanged": 6,
+          "regimeVeto": 7,
+          "regime_high": 1,
+          "regime_low": 7
+        },
+        "metrics": {
+          "baseline": {
+            "25": {
+              "maxDrawdownR": 7.701252,
+              "netR": -7.701252,
+              "profitFactor": 0.31704,
+              "trades": 10,
+              "winPct": 30.0,
+              "wins": 3
+            },
+            "50": {
+              "maxDrawdownR": 13.069171,
+              "netR": -13.069171,
+              "profitFactor": 0.167564,
+              "trades": 10,
+              "winPct": 20.0,
+              "wins": 2
+            },
+            "9": {
+              "maxDrawdownR": 5.088022,
+              "netR": -4.265784,
+              "profitFactor": 0.500462,
+              "trades": 10,
+              "winPct": 30.0,
+              "wins": 3
+            }
+          },
+          "candidate": {
+            "25": {
+              "maxDrawdownR": 4.952188,
+              "netR": -4.952188,
+              "profitFactor": 0.262391,
+              "trades": 6,
+              "winPct": 33.333,
+              "wins": 2
+            },
+            "50": {
+              "maxDrawdownR": 8.571042,
+              "netR": -8.571042,
+              "profitFactor": 0.104853,
+              "trades": 6,
+              "winPct": 16.667,
+              "wins": 1
+            },
+            "9": {
+              "maxDrawdownR": 3.458359,
+              "netR": -2.636121,
+              "profitFactor": 0.470337,
+              "trades": 6,
+              "winPct": 33.333,
+              "wins": 2
+            }
+          }
+        },
+        "paired": {
+          "addedEntryUTC": [],
+          "baselineLosersAvoided": 3,
+          "baselineLosersRAvoided": -3.562482,
+          "baselineTradesRetained": 6,
+          "baselineWinnersLost": 1,
+          "baselineWinnersRLost": 1.932818,
+          "droppedEntryUTC": [
+            "2023-10-23T19:00:00Z",
+            "2024-02-06T18:00:00Z",
+            "2024-02-15T04:00:00Z",
+            "2024-09-27T17:00:00Z"
+          ],
+          "newLosers": 0,
+          "newTrades": 0,
+          "newTradesNetR9Bps": 0,
+          "newWinners": 0,
+          "tradeKeyCollisionChecked": true
+        }
+      },
+      "SOLUSDT": {
+        "baselineExactPreviousSourceParity": true,
+        "deltaR25": 1.602239,
+        "events": [
+          {
+            "endExclusiveUTC": "2022-11-22",
+            "entriesUTC": [],
+            "event": "FTX_2022",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/213/article-A001-en.xml",
+            "startUTC": "2022-11-07"
+          },
+          {
+            "endExclusiveUTC": "2023-03-23",
+            "entriesUTC": [
+              "2023-03-09T02:00:00Z"
+            ],
+            "event": "BANKING_2023",
+            "n": 1,
+            "netR25": -1.299622,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/214/article-A001-en.xml",
+            "startUTC": "2023-03-08"
+          },
+          {
+            "endExclusiveUTC": "2024-01-18",
+            "entriesUTC": [],
+            "event": "BTC_ETP_2024",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.sec.gov/newsroom/speeches-statements/gensler-statement-spot-bitcoin-011023",
+            "startUTC": "2024-01-03"
+          },
+          {
+            "endExclusiveUTC": "2024-02-11",
+            "entriesUTC": [
+              "2024-02-09T06:00:00Z"
+            ],
+            "event": "SOL_OUTAGE_2024",
+            "n": 1,
+            "netR25": 1.625446,
+            "onlyContextNotCausal": true,
+            "source": "https://solana.com/news/02-06-24-solana-mainnet-beta-outage-report",
+            "startUTC": "2024-02-05"
+          },
+          {
+            "endExclusiveUTC": "2025-10-16",
+            "entriesUTC": [],
+            "event": "BTC_VOL_SPIKE_2025",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.spglobal.com/en/research-insights/special-reports/bitcoin-volatility-trends-deep-dive",
+            "startUTC": "2025-10-08"
+          }
+        ],
+        "gateAudit": {
+          "originalSOLReversalVeto": 1,
+          "regimeVeto": 12,
+          "regime_high": 2,
+          "regime_low": 12
+        },
+        "metrics": {
+          "baseline": {
+            "25": {
+              "maxDrawdownR": 3.054932,
+              "netR": 2.00394,
+              "profitFactor": 1.322837,
+              "trades": 12,
+              "winPct": 41.667,
+              "wins": 5
+            },
+            "50": {
+              "maxDrawdownR": 4.443197,
+              "netR": -2.095212,
+              "profitFactor": 0.754015,
+              "trades": 12,
+              "winPct": 41.667,
+              "wins": 5
+            },
+            "9": {
+              "maxDrawdownR": 2.166442,
+              "netR": 4.627398,
+              "profitFactor": 1.969914,
+              "trades": 12,
+              "winPct": 50.0,
+              "wins": 6
+            }
+          },
+          "candidate": {
+            "25": {
+              "maxDrawdownR": 0.0,
+              "netR": 3.606179,
+              "profitFactor": null,
+              "trades": 2,
+              "winPct": 100.0,
+              "wins": 2
+            },
+            "50": {
+              "maxDrawdownR": 0.0,
+              "netR": 3.212358,
+              "profitFactor": null,
+              "trades": 2,
+              "winPct": 100.0,
+              "wins": 2
+            },
+            "9": {
+              "maxDrawdownR": 0.0,
+              "netR": 3.858224,
+              "profitFactor": null,
+              "trades": 2,
+              "winPct": 100.0,
+              "wins": 2
+            }
+          }
+        },
+        "paired": {
+          "addedEntryUTC": [],
+          "baselineLosersAvoided": 6,
+          "baselineLosersRAvoided": -4.770937,
+          "baselineTradesRetained": 2,
+          "baselineWinnersLost": 4,
+          "baselineWinnersRLost": 5.54011,
+          "droppedEntryUTC": [
+            "2022-10-19T17:00:00Z",
+            "2022-10-21T15:00:00Z",
+            "2023-03-04T18:00:00Z",
+            "2023-03-09T02:00:00Z",
+            "2023-08-25T17:00:00Z",
+            "2023-12-15T09:00:00Z",
+            "2024-02-09T06:00:00Z",
+            "2024-05-18T04:00:00Z",
+            "2024-09-21T18:00:00Z",
+            "2024-09-27T17:00:00Z"
+          ],
+          "newLosers": 0,
+          "newTrades": 0,
+          "newTradesNetR9Bps": 0,
+          "newWinners": 0,
+          "tradeKeyCollisionChecked": true
+        }
+      }
+    },
+    "2024_2026": {
+      "BTCUSDT": {
+        "baselineExactPreviousSourceParity": true,
+        "deltaR25": 1.638678,
+        "events": [
+          {
+            "endExclusiveUTC": "2022-11-22",
+            "entriesUTC": [],
+            "event": "FTX_2022",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/213/article-A001-en.xml",
+            "startUTC": "2022-11-07"
+          },
+          {
+            "endExclusiveUTC": "2023-03-23",
+            "entriesUTC": [],
+            "event": "BANKING_2023",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/214/article-A001-en.xml",
+            "startUTC": "2023-03-08"
+          },
+          {
+            "endExclusiveUTC": "2024-01-18",
+            "entriesUTC": [],
+            "event": "BTC_ETP_2024",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.sec.gov/newsroom/speeches-statements/gensler-statement-spot-bitcoin-011023",
+            "startUTC": "2024-01-03"
+          },
+          {
+            "endExclusiveUTC": "2024-02-11",
+            "entriesUTC": [],
+            "event": "SOL_OUTAGE_2024",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://solana.com/news/02-06-24-solana-mainnet-beta-outage-report",
+            "startUTC": "2024-02-05"
+          },
+          {
+            "endExclusiveUTC": "2025-10-16",
+            "entriesUTC": [],
+            "event": "BTC_VOL_SPIKE_2025",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.spglobal.com/en/research-insights/special-reports/bitcoin-volatility-trends-deep-dive",
+            "startUTC": "2025-10-08"
+          }
+        ],
+        "gateAudit": {
+          "BTCShortUnchanged": 4,
+          "regimeVeto": 1,
+          "regime_low": 1
+        },
+        "metrics": {
+          "baseline": {
+            "25": {
+              "maxDrawdownR": 1.638679,
+              "netR": 2.814628,
+              "profitFactor": 2.433165,
+              "trades": 5,
+              "winPct": 60.0,
+              "wins": 3
+            },
+            "50": {
+              "maxDrawdownR": 2.277357,
+              "netR": 0.804608,
+              "profitFactor": 1.292319,
+              "trades": 5,
+              "winPct": 60.0,
+              "wins": 3
+            },
+            "9": {
+              "maxDrawdownR": 1.229924,
+              "netR": 4.10104,
+              "profitFactor": 3.810398,
+              "trades": 5,
+              "winPct": 60.0,
+              "wins": 3
+            }
+          },
+          "candidate": {
+            "25": {
+              "maxDrawdownR": 0.325246,
+              "netR": 4.453306,
+              "profitFactor": 14.692137,
+              "trades": 4,
+              "winPct": 75.0,
+              "wins": 3
+            },
+            "50": {
+              "maxDrawdownR": 0.475138,
+              "netR": 3.081965,
+              "profitFactor": 7.486456,
+              "trades": 4,
+              "winPct": 75.0,
+              "wins": 3
+            },
+            "9": {
+              "maxDrawdownR": 0.229314,
+              "netR": 5.330965,
+              "profitFactor": 24.247441,
+              "trades": 4,
+              "winPct": 75.0,
+              "wins": 3
+            }
+          }
+        },
+        "paired": {
+          "addedEntryUTC": [],
+          "baselineLosersAvoided": 1,
+          "baselineLosersRAvoided": -1.229924,
+          "baselineTradesRetained": 4,
+          "baselineWinnersLost": 0,
+          "baselineWinnersRLost": 0,
+          "droppedEntryUTC": [
+            "2025-05-02T18:00:00Z"
+          ],
+          "newLosers": 0,
+          "newTrades": 0,
+          "newTradesNetR9Bps": 0,
+          "newWinners": 0,
+          "tradeKeyCollisionChecked": true
+        }
+      },
+      "SOLUSDT": {
+        "baselineExactPreviousSourceParity": true,
+        "deltaR25": 1.216841,
+        "events": [
+          {
+            "endExclusiveUTC": "2022-11-22",
+            "entriesUTC": [],
+            "event": "FTX_2022",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/213/article-A001-en.xml",
+            "startUTC": "2022-11-07"
+          },
+          {
+            "endExclusiveUTC": "2023-03-23",
+            "entriesUTC": [],
+            "event": "BANKING_2023",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.elibrary.imf.org/view/journals/001/2023/214/article-A001-en.xml",
+            "startUTC": "2023-03-08"
+          },
+          {
+            "endExclusiveUTC": "2024-01-18",
+            "entriesUTC": [],
+            "event": "BTC_ETP_2024",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.sec.gov/newsroom/speeches-statements/gensler-statement-spot-bitcoin-011023",
+            "startUTC": "2024-01-03"
+          },
+          {
+            "endExclusiveUTC": "2024-02-11",
+            "entriesUTC": [],
+            "event": "SOL_OUTAGE_2024",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://solana.com/news/02-06-24-solana-mainnet-beta-outage-report",
+            "startUTC": "2024-02-05"
+          },
+          {
+            "endExclusiveUTC": "2025-10-16",
+            "entriesUTC": [],
+            "event": "BTC_VOL_SPIKE_2025",
+            "n": 0,
+            "netR25": 0,
+            "onlyContextNotCausal": true,
+            "source": "https://www.spglobal.com/en/research-insights/special-reports/bitcoin-volatility-trends-deep-dive",
+            "startUTC": "2025-10-08"
+          }
+        ],
+        "gateAudit": {
+          "originalSOLReversalVeto": 1,
+          "regimeVeto": 6,
+          "regime_high": 6,
+          "regime_low": 6
+        },
+        "metrics": {
+          "baseline": {
+            "25": {
+              "maxDrawdownR": 1.353158,
+              "netR": 2.409915,
+              "profitFactor": 1.627244,
+              "trades": 8,
+              "winPct": 62.5,
+              "wins": 5
+            },
+            "50": {
+              "maxDrawdownR": 2.044897,
+              "netR": -0.481867,
+              "profitFactor": 0.897128,
+              "trades": 8,
+              "winPct": 62.5,
+              "wins": 5
+            },
+            "9": {
+              "maxDrawdownR": 1.127137,
+              "netR": 4.260655,
+              "profitFactor": 2.289878,
+              "trades": 8,
+              "winPct": 62.5,
+              "wins": 5
+            }
+          },
+          "candidate": {
+            "25": {
+              "maxDrawdownR": 1.239496,
+              "netR": 3.626756,
+              "profitFactor": 3.925993,
+              "trades": 5,
+              "winPct": 80.0,
+              "wins": 4
+            },
+            "50": {
+              "maxDrawdownR": 1.478992,
+              "netR": 1.792806,
+              "profitFactor": 2.212181,
+              "trades": 5,
+              "winPct": 80.0,
+              "wins": 4
+            },
+            "9": {
+              "maxDrawdownR": 1.086219,
+              "netR": 4.800484,
+              "profitFactor": 5.419446,
+              "trades": 5,
+              "winPct": 80.0,
+              "wins": 4
+            }
+          }
+        },
+        "paired": {
+          "addedEntryUTC": [
+            "2026-06-04T00:00:00Z"
+          ],
+          "baselineLosersAvoided": 2,
+          "baselineLosersRAvoided": -2.216927,
+          "baselineTradesRetained": 4,
+          "baselineWinnersLost": 2,
+          "baselineWinnersRLost": 3.14729,
+          "droppedEntryUTC": [
+            "2025-06-05T07:00:00Z",
+            "2025-07-17T13:00:00Z",
+            "2026-06-02T12:00:00Z",
+            "2026-06-03T21:00:00Z"
+          ],
+          "newLosers": 0,
+          "newTrades": 1,
+          "newTradesNetR9Bps": 1.470192,
+          "newWinners": 1,
+          "tradeKeyCollisionChecked": true
+        }
+      }
+    }
+  },
+  "sourceSHA256": "9b15781c293eaf38abfd62ea6e087bc9ec35b0df48b8b78fc6f851d971e3d5ab",
+  "status": "BTC_SOL_FULL_CHRONOLOGICAL_CAUSAL_REGIME_HISTORICAL_ONLY"
+}
