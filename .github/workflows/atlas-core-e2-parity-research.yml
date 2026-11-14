@@ -1,0 +1,78 @@
+name: ATLAS Core E2 sealed BTC ETH SOL trade parity (READ-ONLY RESEARCH)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v1-three-asset-parity-20261114
+    paths:
+      - research/atlas_core_v1/**
+      - .github/workflows/atlas-core-e2-parity-research.yml
+  workflow_dispatch:
+
+# Deliberately no schedule. Cannot write any branch or make any broker orders.
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-core-e2-pinned-historical-parity
+  cancel-in-progress: false
+
+jobs:
+  sealed-ledger-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout only E2 sandbox branch without persisted credentials
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v1-three-asset-parity-20261114
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Verify branch and compile both research modules
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = "research/atlas-core-v1-three-asset-parity-20261114"
+          python3 -m py_compile research/atlas_core_v0/atlas_core_v0.py
+          python3 -m py_compile research/atlas_core_v1/atlas_core_e2.py
+
+      - name: E1 regression — closed bars, execution stress and source pinning
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -v
+
+      - name: E2 independent historical witness, chronology and mutation tests
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -v
+
+      - name: Generate E2 evidence summary and enforce no false forward
+        run: |
+          set -euo pipefail
+          python3 research/atlas_core_v1/atlas_core_e2.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("research/atlas_core_v1/output/e2_report.json")
+          d=json.loads(p.read_text())
+          assert d["status"]=="ATLAS_CORE_E2_THREE_ASSET_HISTORICAL_PARITY_ONLY"
+          assert d["totalWitnessTradesMatched"]==51
+          assert d["totalTapeTradesMatched"]==51
+          assert d["freshForwardClosedTradesClaimed"]==0
+          assert d["independentOutOfSample"] is False
+          assert d["verifiesHistoricalReportsNotRawOHLCReplays"] is True
+          assert d["portfolioPF"] is None and d["portfolioMaxDrawdown"] is None
+          assert not d["underlyingOfficialArchivesRedownloaded"]
+          assert d["noOrders"] and d["noNotifications"] and d["noProductionChanges"]
+          assert d["noStrategyOrParameterEdits"]
+          print("ATLAS_CORE_E2_ALL_51_PRIOR_HISTORY_WITNESSES_MATCH_NOT_PRODUCTION_READY")
+          PY
+
+      - name: Save evidence as ephemeral CI artifact (NO git push)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-core-e2-three-asset-parity-report
+          path: research/atlas_core_v1/output/
+          retention-days: 30
+          if-no-files-found: ignore
