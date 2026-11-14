@@ -49,7 +49,7 @@ class OfficialDataSmoketest(unittest.TestCase):
         self.assertEqual(m.SYMBOLS,("BTCUSDT","SOLUSDT"))
     def test_frozen_source_hashes_currently_unchanged(self):
         proofs=m.frozen_guards()
-        self.assertEqual(len(proofs),159)
+        self.assertEqual(len(proofs),161) # 159 sealed through Sep + independent V9.3 Oct BTC/SOL
     def test_prevent_name_mismatch(self):
         with self.assertRaisesRegex(ValueError,"CSV_NAME"):
             m.decode_one_day("BTCUSDT",self.d,fixture("SOLUSDT",self.d))
