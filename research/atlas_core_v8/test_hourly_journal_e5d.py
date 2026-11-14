@@ -147,7 +147,7 @@ class RemoteSourceReadContract(TestCase):
         self.assertEqual(raw,b'{"ok":true}')
         self.assertEqual(calls[0].get_method(),"GET")
         self.assertNotIn("ghs_research.sample+123",calls[0].full_url)
-        self.assertEqual(calls[0].get_header("Authorization"),"Bearer ghs_researchsample123")
+        self.assertEqual(calls[0].get_header("Authorization"),"Bearer ghs_research.sample+123")
 
     def test_invalid_env_token_rejected(self):
         with patch.dict(j.os.environ,{"GITHUB_TOKEN":"evil\r\nInjected: value"}):
