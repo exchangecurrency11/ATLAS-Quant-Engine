@@ -7,16 +7,9 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-14T14:00:00Z",
+      "lastCloseTimeUTC": "2026-11-14T15:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "CHoCH",
-          "direction": "bullish",
-          "at": 1794038400,
-          "brokenSwingAt": 1794020400,
-          "brokenLevel": 76068.9
-        },
         {
           "event": "CHoCH",
           "direction": "bearish",
@@ -93,6 +86,13 @@
           "at": 1794621600,
           "brokenSwingAt": 1794582000,
           "brokenLevel": 68073.5
+        },
+        {
+          "event": "BOS",
+          "direction": "bearish",
+          "at": 1794664800,
+          "brokenSwingAt": 1794628800,
+          "brokenLevel": 66427.5
         }
       ],
       "candidateOrderBlocks": [
@@ -201,6 +201,28 @@
           },
           "volumeRatio": 3.168,
           "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
+        },
+        {
+          "side": "bearish",
+          "event": "BOS",
+          "originAt": 1794646800,
+          "confirmedAt": 1794668400,
+          "breakAt": 1794664800,
+          "brokenLevel": 66427.5,
+          "body": {
+            "low": 66969.0,
+            "high": 67381.1
+          },
+          "wick": {
+            "low": 66953.6,
+            "high": 67499.0
+          },
+          "volumeRatio": 3.578,
+          "fvgConfluence": true,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "fresh",
           "retests": 0,
@@ -460,25 +482,18 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 5,
+        "activeCandidateOB": 6,
         "openFVG": 12,
-        "structureEventsInLookback": 18
+        "structureEventsInLookback": 19
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-14T14:00:00Z",
+      "lastCloseTimeUTC": "2026-11-14T15:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "CHoCH",
-          "direction": "bearish",
-          "at": 1794063600,
-          "brokenSwingAt": 1794020400,
-          "brokenLevel": 89.71
-        },
         {
           "event": "BOS",
           "direction": "bearish",
@@ -555,6 +570,13 @@
           "at": 1794603600,
           "brokenSwingAt": 1794582000,
           "brokenLevel": 78.87
+        },
+        {
+          "event": "BOS",
+          "direction": "bearish",
+          "at": 1794664800,
+          "brokenSwingAt": 1794628800,
+          "brokenLevel": 74.77
         }
       ],
       "candidateOrderBlocks": [
@@ -706,6 +728,28 @@
             "high": 80.34
           },
           "volumeRatio": 1.119,
+          "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
+        },
+        {
+          "side": "bearish",
+          "event": "BOS",
+          "originAt": 1794654000,
+          "confirmedAt": 1794668400,
+          "breakAt": 1794664800,
+          "brokenLevel": 74.77,
+          "body": {
+            "low": 75.67,
+            "high": 75.92
+          },
+          "wick": {
+            "low": 75.53,
+            "high": 76.01
+          },
+          "volumeRatio": 3.404,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "fresh",
@@ -966,9 +1010,9 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 7,
+        "activeCandidateOB": 8,
         "openFVG": 12,
-        "structureEventsInLookback": 16
+        "structureEventsInLookback": 17
       }
     },
     {
