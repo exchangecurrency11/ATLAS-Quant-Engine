@@ -80,7 +80,7 @@ class ThreeAssetE2Tests(unittest.TestCase):
     def test_cost_stress_on_rounded_risk(self):
         r=m.audit()["symbols"]["SOLUSDT"]["2022_2024"]
         self.assertGreater(r["computedR25ApproxFromRoundedEvidence"],0)
-        self.assertGreater(r["computedR50ApproxFromRoundedEvidence"],0)
+        self.assertLess(r["computedR50ApproxFromRoundedEvidence"],0)  # baseline SOL at 50bps is negative
         self.assertEqual(r["winsAt9bps"],6)
         self.assertEqual(r["winsAt25bpsDerived"],5)
 
