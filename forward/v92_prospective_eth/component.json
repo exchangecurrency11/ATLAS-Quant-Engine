@@ -3,8 +3,8 @@
   "asset": "ETHUSDT",
   "requestedAtUTC": "2026-11-12T11:01:54Z",
   "firstEligible1HCloseUTC": "2026-11-12T12:00:00Z",
-  "savedDistinctVerifiedETHHours": 33,
-  "lastVerifiedETHCloseUTC": "2026-11-13T23:00:00Z",
+  "savedDistinctVerifiedETHHours": 34,
+  "lastVerifiedETHCloseUTC": "2026-11-14T00:00:00Z",
   "ETHselectedPatternStatus": "OBSERVATION_ONLY_PENDING_INDEPENDENT_ETH_BACKTEST",
   "ETHretentionHours": 4,
   "ETHmax4hPaperEngineSameAsV91NoCandleVeto": true,
@@ -16,18 +16,32 @@
   "excludedUnsealedETHExits": [],
   "stateETH": {
     "state": "FLAT",
-    "lastClosedUTC": "2026-11-13T23:00:00Z",
+    "lastClosedUTC": "2026-11-14T00:00:00Z",
     "retestPending": false,
     "openPaperPosition": false,
     "newBOSWatches": 0,
     "patternWarnings": {
       "1H": {
-        "lastCompletedCandleCloseUTC": "2026-11-13T23:00:00Z",
-        "confirmedReversalPatterns": [],
+        "lastCompletedCandleCloseUTC": "2026-11-14T00:00:00Z",
+        "confirmedReversalPatterns": [
+          {
+            "family": "ENGULFING",
+            "name": "BULLISH_ENGULFING",
+            "direction": "bullish",
+            "firstUTC": "2026-11-13T22:00:00Z",
+            "confirmedUTC": "2026-11-14T00:00:00Z",
+            "prior20LiquiditySweepAndReentry": false,
+            "internalHikkakeFalseBreakConfirmed": false,
+            "crypto24hNoGapRequirement": true,
+            "signalIsNotStandaloneTrade": true,
+            "onlyClosedCandlesUsed": true,
+            "tf": "1H"
+          }
+        ],
         "ethObservationalOnlyNoAutoVeto": true
       },
       "4H": {
-        "lastCompletedCandleCloseUTC": "2026-11-13T20:00:00Z",
+        "lastCompletedCandleCloseUTC": "2026-11-14T00:00:00Z",
         "confirmedReversalPatterns": [],
         "ethObservationalOnlyNoAutoVeto": true
       }
