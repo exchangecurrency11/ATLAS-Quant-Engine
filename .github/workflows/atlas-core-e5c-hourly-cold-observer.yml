@@ -1,0 +1,105 @@
+name: ATLAS Core E5C actual V92 hourly cold observer and V9 source witness (READ ONLY)
+
+on:
+  push:
+    branches:
+      - research/atlas-core-v7-hourly-cold-observer-20261114
+    paths:
+      - research/atlas_core_v7/**
+      - .github/workflows/atlas-core-e5c-hourly-cold-observer.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-e5c-actual-v92-hourly-source-readonly
+  cancel-in-progress: false
+
+jobs:
+  cold-hourly-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout isolated E5C research code without persisted credentials
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-v7-hourly-cold-observer-20261114
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Gate E5C branch, compile and refuse in-checkout production outputs
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = research/atlas-core-v7-hourly-cold-observer-20261114
+          python3 -m py_compile research/atlas_core_v7/hourly_cold_observer_e5c.py
+          python3 -m py_compile research/atlas_core_v7/test_hourly_cold_observer_e5c.py
+          test ! -d research/atlas_core_v7/output
+
+      - name: Regression E1 through E5B; sealed historical and frozen forward source guard
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v0.test_atlas_core_v0 -q
+          python3 -m unittest research.atlas_core_v1.test_atlas_core_e2 -q
+          python3 -m unittest research.atlas_core_v2.test_atlas_core_e3 -q
+          python3 -m unittest research.atlas_core_v3.test_atlas_core_e4 -q
+          python3 -m unittest research.atlas_core_v4.test_atlas_core_e4b -q
+          python3 -m unittest research.atlas_core_v5.test_shadow_decision_e5 -q
+          python3 -m unittest research.atlas_core_v6.test_prospective_intake_e5b -q
+
+      - name: E5C negative controls on Git blob tampering, missing four-hour chain, capture lag, fake entries
+        run: |
+          set -euo pipefail
+          python3 -m unittest research.atlas_core_v7.test_hourly_cold_observer_e5c -v
+
+      - name: Real read-only intake from original V92 BTC SOL and ETH Git source commits, V9 cross-OHLCV
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v7.hourly_cold_observer_e5c
+
+      - name: Assert observed truth never implies executable source hour next-open trade
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("research/atlas_core_v7/output/e5c_report.json").read_text())
+          assert d["mode"]=="ATLAS_E5C_HOURLY_EXISTING_V92_COLD_OBSERVER_NOT_TRADING"
+          assert d["status"] in ("SOURCE_WITNESSES_CHECKED_OBSERVATION_ONLY",
+                                 "SOURCE_HOURS_DISAGREE_FAIL_CLOSED")
+          assert d["actualNewLiveOpportunityCount"]==0
+          assert all(d["actionSafety"].values())
+          assert d["sourceGitCommits"]["V92"] and d["sourceGitCommits"]["V9"]
+          if d["status"]=="SOURCE_WITNESSES_CHECKED_OBSERVATION_ONLY":
+              assert set(d["latestSourceHours"])=={"BTC_SOL","ETH","V9_CONTEXT"}
+              assert len(d["sourceFileSHA256"])==3
+              assert len(d["sourceAssetPaperObservations"])==3
+              assert d["sourceIntegrityChecks"]["BTC_SOL_1H_4H_Daily_OHLCVMatches"]
+              assert d["sourceIntegrityChecks"]["ETH_1D_CloseMatches"]
+              assert d["sourceIntegrityChecks"]["independentExchangeNativeTruthEstablished"] is False
+              assert d["hourlyObservationTimeliness"]["liveEntryEligible"] is False
+              assert d["hourlyObservationTimeliness"]["entryAtExactOpeningPriceVerified"] is False
+              assert d["hourlyObservationTimeliness"]["nextHourOpenAlreadyPassedByAnyPostCloseSnapshot"]
+              assert d["historical51TradesCreditedToForward"]==0
+              assert d["newForwardTradesAccrued"]==0
+              assert d["realAccountExposureAvailable"] is False
+              assert d["independentlyExchangeVerifiedSource"] is False
+              assert d["full3AssetLiveSourcePriceStopAndNextOpenValidated"] is False
+              assert d["separateFrozenForwardCandidateBranchesModified"] is False
+              assert all(x["noRealTradingPermission"] for x in d["sourceAssetPaperObservations"])
+              if d["consecutiveHourCoverage"]["matchedAcrossBothSources"]:
+                  assert d["consecutiveHourCoverage"]["verifiedContentsWithGitBlobSHA1"]==8
+          else:
+              assert d["nonActionableObservations"]==[]
+          assert Path("research/atlas_core_v7/output/e5c_report.md").stat().st_size>500
+          print("ATLAS_E5C_ORIGINAL_V92_HOURLY_PROVENANCE_NO_TIMELY_LIVE_TRADES_NO_EXISTING_AUTOMATION_CHANGES")
+          PY
+
+      - name: Upload isolated temporary E5C observational result no Git source writes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-core-e5c-original-v92-hourly-cold-observation-only
+          path: research/atlas_core_v7/output/
+          retention-days: 30
+          if-no-files-found: ignore
