@@ -161,8 +161,8 @@ def latest_consecutive(maps, latest_epoch, count=REQUIRE_CONSECUTIVE):
         raise ValueError("E5C_INVALID_CONSECUTIVE_REQUIREMENT")
     relevant={}
     for label,month in maps.items():
-        relevant[label]=[utc_stamp(latest_epoch-n*3600).replace(":00Z","-00Z")
-                         for n in range(count)]
+        relevant[label]=[datetime.fromtimestamp(latest_epoch-n*3600,timezone.utc)
+                         .strftime("%Y-%m-%dT%H-00Z") for n in range(count)]
         # Filename timezone format is 2026-..T21-00Z.
         # Ensure each consecutive clock-hour exists (not just last 4 stored).
         relevant[label]=all(x in month for x in relevant[label])
@@ -437,8 +437,8 @@ def audit(*, fetch=_remote_bytes, now_utc=None):
         }
     btc_data,btc_digest=read_git_blob(v92_sha,BTC_SOL_DIR,btc_meta[btc_latest],fetch=fetch)
     eth_data,eth_digest=read_git_blob(v92_sha,ETH_DIR,eth_meta[eth_latest],fetch=fetch)
-    if (btc_latest!=btc_data["targetClosed1HUTC"].replace(":00Z","-00Z")
-        or eth_latest!=eth_data["targetClosed1HUTC"].replace(":00Z","-00Z")):
+    if (btc_latest!=datetime.fromtimestamp(strict_utc(btc_data["targetClosed1HUTC"]),timezone.utc).strftime("%Y-%m-%dT%H-00Z")
+        or eth_latest!=datetime.fromtimestamp(strict_utc(eth_data["targetClosed1HUTC"]),timezone.utc).strftime("%Y-%m-%dT%H-00Z")):
         raise ValueError("E5C_FILENAME_TIMESTAMP_VS_SIGNED_CONTENT_DRIFT")
     b=validate_btc_sol(btc_data,now_epoch)
     e=validate_eth(eth_data,now_epoch)
