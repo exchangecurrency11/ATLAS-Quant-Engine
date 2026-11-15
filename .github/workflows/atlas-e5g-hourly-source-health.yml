@@ -1,0 +1,285 @@
+name: ATLAS E5G eight-stage hourly source-health journal (research only)
+
+# Does NOT notify users, modify paper/live accounts, change frozen candidate
+# rules, or treat GitHub success as actual immutable market-data capture.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/atlas-e5g-hourly-source-health.yml]
+  schedule:
+    # Independent clock checks; GitHub best-effort cron can miss slots.
+    - cron: '31,58 * * * *'
+  workflow_run:
+    workflows:
+      - Publish BTC SOL Market Data
+      - V9 Hourly BTC ETH SOL Market Context (paper only)
+      - V9.2 selected SOL reversals independent forward paper 1000 USDT NO ALERTS
+      - V9.2 ETH sealed hourly selected-pattern watch third shared paper NO ALERTS
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-e5g-single-immutable-health-check-per-utc-hour
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+    outputs:
+      needed: ${{ steps.check.outputs.needed }}
+    steps:
+      - name: Checkout isolated E5G health receipts read-only
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-e5g-hourly-health-20261115
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Suppress duplicate health report during same UTC hour
+        id: check
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          from datetime import datetime,timezone
+          from pathlib import Path
+          now=datetime.now(timezone.utc)
+          output=Path("forward/atlas_core_e5g_health/checks") / now.strftime("%Y-%m-%d") / now.strftime("%H-00Z.json")
+          print("needed="+str(not output.exists()).lower())
+          PY
+
+  observe:
+    needs: gate
+    if: ${{ needs.gate.outputs.needed == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Read-only isolated E5G source checkout (no persisted credentials)
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-e5g-hourly-health-20261115
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Pin the audited E5G Python and E5D safety source blobs, then run tests
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-e5g-hourly-health-20261115
+          test "$(git hash-object research/atlas_core_v9/hourly_health_e5g.py)" = 1cffadfda1dc4ed6be0c035165c14b66826d1259
+          test "$(git hash-object research/atlas_core_v9/test_hourly_health_e5g.py)" = 23f2e102ad1972b5dade417ba4eeee433f901e21
+          test "$(git hash-object research/atlas_core_v8/hourly_journal_e5d.py)" = daa050e3f369976debe207da16cbbbd48edfd393
+          test "$(git hash-object research/atlas_core_v7/hourly_cold_observer_e5c.py)" = 1e48bbe996f2b9361b723e3d4728d45f23bc3675
+          python3 -m unittest research.atlas_core_v9.test_hourly_health_e5g -q
+          python3 -m unittest research.atlas_core_v8.test_hourly_journal_e5d -q
+      - name: Audit eight stage commit-pinned source and workflow evidence READ ONLY
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v9.hourly_health_e5g --run-id "$GITHUB_RUN_ID"
+      - name: Verify the generated report is diagnostic-only and provide GitHub summary
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          d=json.loads(Path("e5g_payload/health.json").read_bytes())
+          assert d["githubRunId"]==os.environ["GITHUB_RUN_ID"]
+          assert d["mode"]=="ATLAS_E5G_SOURCE_HEALTH_GITHUB_METADATA_ONLY_RESEARCH"
+          assert d["stage"]=="RESEARCH_ONLY_NO_LIVE_OR_FORWARD_CREDIT"
+          assert len(d["hourlyMatrix"])==12 and d["graceMinutesAfterClose"]==75
+          assert set(d["sourceTreeSHA1"])=={
+              "V7_BTC_SOL","V7_ETH","V91_BTC_SOL","V91_ETH",
+              "V92_BTC_SOL","V92_ETH","V9_THREE_ASSET","E5D"}
+          assert not any(d[k] for k in (
+              "sourceFilePayloadContentValidated","independentlyExchangeVerifiedOHLCV",
+              "liveEntrySignalValid","prospectivePerformanceOrTradeCredited",
+              "historicalE5FRecoveryCountedAsTimely","realOrdersOrAlertsEmitted",
+              "existingProductionForwardSpecsOrAutomationsChanged"))
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as summary:
+              summary.write("## ATLAS E5G — research-only source health\n")
+              summary.write(f"* Evaluated UTC: {d['windowFirstClosedHourUTC']} to {d['windowLastClosedHourUTC']}\n")
+              summary.write(f"* 7 original source snapshots all present: {d['allSevenSourcesFilePresentHours']}/12\n")
+              summary.write(f"* E5D original journal hours present: {d['e5dJournalPresentHours']}/12\n")
+              summary.write(f"* Green workflow without same-hour snapshot: {d['greenWorkflowWithoutSourceFileCount']} stage-hour instances\n")
+              summary.write("* Source filenames alone are **not** exchange verification, a trade or an alert.\n")
+          print("ATLAS_E5G_DIAGNOSTIC_WITHOUT_TRADE_OR_NOTIFICATION_PASS")
+          PY
+      - name: Seal exact-run file SHA256 artifact for isolated write-only journal
+        run: |
+          set -euo pipefail
+          sha256sum e5g_payload/health.json > e5g_payload/SHA256SUMS
+          sha256sum --check e5g_payload/SHA256SUMS
+      - name: Upload current-run evidence only (no live-trading outputs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5g-health-${{ github.run_id }}-${{ github.run_attempt }}
+          path: e5g_payload/
+          retention-days: 21
+          if-no-files-found: error
+
+  append-research:
+    needs: [gate,observe]
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout E5G journal branch exclusively; no external or research code execution
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-e5g-hourly-health-20261115
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Download same-run diagnostics and SHA256 manifest
+        uses: actions/download-artifact@v4
+        with:
+          name: atlas-e5g-health-${{ github.run_id }}-${{ github.run_attempt }}
+          path: e5g_payload
+      - name: SHA256 and complete data safety schema, exclusive immutable research file
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-e5g-hourly-health-20261115
+          sha256sum --check e5g_payload/SHA256SUMS
+          python3 - <<'PY'
+          from collections import Counter
+          from datetime import datetime,timedelta,timezone
+          from pathlib import Path
+          import json,os,re
+          raw=Path("e5g_payload/health.json").read_bytes()
+          assert 700<len(raw)<1_800_000
+          d=json.loads(raw)
+          sha40=re.compile(r"^[0-9a-f]{40}$")
+          stages=("V7_BTC_SOL","V7_ETH","V91_BTC_SOL","V91_ETH",
+                  "V92_BTC_SOL","V92_ETH","V9_THREE_ASSET","E5D")
+          source=stages[:-1]
+          branches={
+            "experiment/v7-signal-quality-20261103",
+            "research/v9-prestart-live-data-compatibility-20261111",
+            "research/v92-bull-bear-candle-invalidation-20261112",
+            "research/atlas-core-v8b-journal-audit-20261115"}
+          allowed_status={
+            "SNAPSHOT_PRESENT_METADATA_ONLY",
+            "UPSTREAM_SAME_HOUR_SOURCE_ABSENT",
+            "WORKFLOW_HISTORY_UNAVAILABLE","NO_WORKFLOW_RUN_SEEN_IN_HOUR",
+            "RUN_NOT_FINISHED_NO_SNAPSHOT","GREEN_WORKFLOW_BUT_NO_SNAPSHOT",
+            "FAILED_WORKFLOW_NO_SNAPSHOT","SKIPPED_CANCELLED_OR_NON_SUCCESS_NO_SNAPSHOT"}
+          assert d["githubRunId"]==os.environ["GITHUB_RUN_ID"]
+          assert re.fullmatch(r"[1-9]\d{0,17}",d["githubRunId"])
+          assert d["mode"]=="ATLAS_E5G_SOURCE_HEALTH_GITHUB_METADATA_ONLY_RESEARCH"
+          assert d["stage"]=="RESEARCH_ONLY_NO_LIVE_OR_FORWARD_CREDIT"
+          assert d["status"] in ("ALL_12_SOURCE_HOURS_FILE_PRESENT_METADATA_ONLY",
+                                  "INCOMPLETE_12_HOUR_SOURCE_PRESENCE")
+          assert d["lookbackClosedHours"]==12 and d["graceMinutesAfterClose"]==75
+          assert set(d["sourceCommitPins"])==branches
+          assert all(sha40.fullmatch(x) for x in d["sourceCommitPins"].values())
+          assert set(d["sourceTreeSHA1"])==set(stages)
+          assert all(sha40.fullmatch(x) for x in d["sourceTreeSHA1"].values())
+          assert set(d["latestSourceClosedHourUTCByStage"])==set(stages)
+          assert set(d["missingSourceHoursByStage"])==set(stages)
+          assert set(d["sourceHealthStatusCounts"])==set(stages)
+          assert not any(d[k] for k in (
+            "sourceFilePayloadContentValidated","independentlyExchangeVerifiedOHLCV",
+            "liveEntrySignalValid","prospectivePerformanceOrTradeCredited",
+            "historicalE5FRecoveryCountedAsTimely","realOrdersOrAlertsEmitted",
+            "existingProductionForwardSpecsOrAutomationsChanged"))
+          assert len(d["hourlyMatrix"])==12
+          at=datetime.strptime(d["auditedAtUTC"],"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+          now=datetime.now(timezone.utc)
+          assert -90<=(now-at).total_seconds()<=2400
+          dates=[]
+          true_source=0
+          true_journal=0
+          green=0
+          counts={s:Counter() for s in stages}
+          for item in d["hourlyMatrix"]:
+            closed=datetime.strptime(item["closedHourUTC"],"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+            assert closed.minute==0 and closed.second==0
+            assert (at-closed).total_seconds()>=75*60
+            dates.append(closed)
+            assert set(item["statuses"])==set(stages)
+            assert set(item["sameHourWorkflowRuns"])==set(stages)
+            assert isinstance(item["missingDependencies"],dict)
+            exists={k:item["statuses"][k]=="SNAPSHOT_PRESENT_METADATA_ONLY" for k in stages}
+            assert item["allSevenSourceFilesPresent"]==all(exists[s] for s in source)
+            assert item["e5dJournalFilePresent"]==exists["E5D"]
+            true_source+=item["allSevenSourceFilesPresent"]
+            true_journal+=item["e5dJournalFilePresent"]
+            for s in stages:
+                x=item["statuses"][s]
+                assert x in allowed_status
+                counts[s][x]+=1
+                green+=(x=="GREEN_WORKFLOW_BUT_NO_SNAPSHOT")
+                runs=item["sameHourWorkflowRuns"][s]
+                assert isinstance(runs,list) and len(runs)<=8
+                for event in runs:
+                    assert type(event["id"]) is int and event["id"]>0
+                    created=datetime.strptime(event["createdAtUTC"],"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+                    assert created.replace(minute=0,second=0)==closed
+                    assert event["event"] in ("schedule","workflow_run","workflow_dispatch","push")
+                    assert event["status"] in ("queued","in_progress","completed","waiting","requested","pending")
+                    assert event["conclusion"] in (None,"success","failure","cancelled","skipped","timed_out",
+                                                   "action_required","neutral","stale","startup_failure")
+            for s,dependencies in item["missingDependencies"].items():
+                assert s in stages and not exists[s]
+                assert isinstance(dependencies,list) and len(dependencies)<=3
+                assert set(dependencies)<=set(stages)
+                assert all(not exists[d] for d in dependencies)
+          assert all(dates[i+1]-dates[i]==timedelta(hours=1) for i in range(11))
+          assert d["windowFirstClosedHourUTC"]==dates[0].strftime("%Y-%m-%dT%H:%M:%SZ")
+          assert d["windowLastClosedHourUTC"]==dates[-1].strftime("%Y-%m-%dT%H:%M:%SZ")
+          assert true_source==d["allSevenSourcesFilePresentHours"]
+          assert true_journal==d["e5dJournalPresentHours"]
+          assert green==d["greenWorkflowWithoutSourceFileCount"]
+          assert d["status"]==("ALL_12_SOURCE_HOURS_FILE_PRESENT_METADATA_ONLY"
+                              if true_source==12 else "INCOMPLETE_12_HOUR_SOURCE_PRESENCE")
+          assert all(d["missingSourceHoursByStage"][s]==12-counts[s]["SNAPSHOT_PRESENT_METADATA_ONLY"]
+                     and d["sourceHealthStatusCounts"][s]==dict(counts[s]) for s in stages)
+          path=Path("forward/atlas_core_e5g_health/checks")/at.strftime("%Y-%m-%d")/at.strftime("%H-00Z.json")
+          path.parent.mkdir(parents=True,exist_ok=True)
+          if path.exists():
+              Path("e5g_record_status.txt").write_text("EXISTS\n")
+              print("ATLAS_E5G_CHECK_ALREADY_RECORDED_THIS_HOUR_NO_REWRITE")
+          else:
+              with path.open("xb") as f:f.write(raw)
+              Path("e5g_record_status.txt").write_text(str(path)+"\n")
+              print("ATLAS_E5G_RESEARCH_ONLY_APPEND_CANDIDATE",path)
+          PY
+      - name: Strictly append only a new research health JSON; never change production
+        run: |
+          set -euo pipefail
+          target="$(cat e5g_record_status.txt)"
+          if [[ "$target" == "EXISTS" ]]; then
+            echo "ATLAS_E5G_DUPLICATE_HOUR_IGNORED_IMMUTABLE"
+            exit 0
+          fi
+          git add -- "$target"
+          python3 - <<'PY'
+          import subprocess,re
+          p=subprocess.check_output(["git","diff","--cached","--name-status","-z"]).decode().split("\0")
+          if p[-1]=="":p.pop()
+          assert len(p)==2 and p[0]=="A",p
+          assert re.fullmatch(r"forward/atlas_core_e5g_health/checks/20\d\d-\d\d-\d\d/\d\d-00Z\.json",p[1]),p
+          print("ATLAS_E5G_ADD_ONLY_ONE_ISOLATED_HEALTH_REPORT_PASS")
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "ATLAS E5G research-only GitHub source health audit run $GITHUB_RUN_ID"
+          for n in 1 2 3; do
+            git pull --rebase origin research/atlas-core-e5g-hourly-health-20261115
+            if git push origin HEAD:research/atlas-core-e5g-hourly-health-20261115; then
+              echo "ATLAS_E5G_NEW_IMMUTABLE_RESEARCH_HEALTH_COMMITTED"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "ATLAS_E5G_ISOLATED_HEALTH_APPEND_PERSISTENCE_FAILED"
+          exit 1
