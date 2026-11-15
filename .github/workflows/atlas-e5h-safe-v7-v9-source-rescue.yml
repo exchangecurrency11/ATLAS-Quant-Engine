@@ -68,6 +68,7 @@ jobs:
               raise ValueError("E5H_ACTIONS_TOKEN_MISSING_OR_UNSAFE")
           HEADERS={"Authorization":"Bearer "+TOKEN,
                    "Accept":"application/vnd.github+json",
+                   "Content-Type":"application/json",
                    "X-GitHub-Api-Version":"2022-11-28",
                    "User-Agent":"ATLAS-E5H-Silent-Source-Rescue/1.0"}
           def make_request(method,path,body=None,params=None):
