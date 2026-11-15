@@ -30,10 +30,12 @@ concurrency:
 
 jobs:
   observe:
-    # GitHub workflow_run may be triggered by upstream schedule/workflow_run.
-    # Only successful root-origin source jobs qualify; reject cascading
-    # workflow_run origins, cancelled/failed upstream runs, and stale branches.
-    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.event == 'schedule' || github.event.workflow_run.event == 'workflow_dispatch')) }}
+    # V9 is frequently launched by a SUCCESSFUL market-data workflow_run
+    # rather than its independent cron; rejecting those missed verified hours.
+    # Allow V9 two-hop chained wakeups (market data -> V9 -> observer) ONLY.
+    # Still reject failed/cancelled source runs and chains from other sources.
+    # No source code or archived snapshot is ever executed as a trade action.
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.event == 'schedule' || github.event.workflow_run.event == 'workflow_dispatch' || (github.event.workflow_run.event == 'workflow_run' && github.event.workflow_run.name == 'V9 Hourly BTC ETH SOL Market Context (paper only)'))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
