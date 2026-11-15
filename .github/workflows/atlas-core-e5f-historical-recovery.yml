@@ -1,0 +1,175 @@
+name: ATLAS E5F isolated official historical USD-M candle recovery
+
+on:
+  push:
+    branches: [research/atlas-core-e5f-binance-native-historical-recovery-20261115]
+    paths:
+      - research/atlas_core_v9/**
+      - .github/workflows/atlas-core-e5f-historical-recovery.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-e5f-historical-recovery-isolated
+  cancel-in-progress: false
+
+jobs:
+  verify-historical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout research source without token persistence
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-e5f-binance-native-historical-recovery-20261115
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Unit-test immutable historical-only guards (plus E5D regressions)
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-e5f-binance-native-historical-recovery-20261115
+          python3 -m py_compile research/atlas_core_v9/historical_recovery_e5f.py
+          python3 -m unittest research.atlas_core_v9.test_historical_recovery_e5f -v
+          python3 -m unittest research.atlas_core_v8.test_hourly_journal_e5d -q
+      - name: Read source commit-pinned Git trees and independent official Binance USD-M 1H
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v9.historical_recovery_e5f --run-id "$GITHUB_RUN_ID"
+      - name: No retroactive forward trade signal or order
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("e5f_payload/report.json").read_bytes())
+          assert d["stage"]=="RESEARCH_ONLY"
+          assert d["classification"]=="BINANCE_USDM_HISTORICAL_RECOVERY_NOT_LIVE"
+          assert d["sourceMissingAtLeastOneCount"]>0
+          assert d["cohortClosedHourCount"]==21
+          assert d["historicalRecoveryNotProspectiveEvidence"]
+          assert d["rawApiSHA256IsNotAnExchangeSignedChecksum"]
+          assert not any(d[x] for x in ("historicalTradeFillsInvented",
+             "pastRealTimeSignalRecreated","originalPaperAndForwardJournalsModified",
+             "ordersSubmitted","notificationsSent"))
+          print("ATLAS_E5F_RESEARCH_EVIDENCE_NOT_LIVE_OR_TRADABLE_PASS")
+          PY
+      - name: Upload only research historical evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5f-historical-${{ github.run_id }}-${{ github.run_attempt }}
+          path: e5f_payload/report.json
+          retention-days: 14
+          if-no-files-found: error
+
+  persist-only-research:
+    needs: verify-historical
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout only E5F research target (no market code execution)
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-e5f-binance-native-historical-recovery-20261115
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Download exact same-run validated historical artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: atlas-e5f-historical-${{ github.run_id }}-${{ github.run_attempt }}
+          path: e5f_payload
+      - name: Inspect historical rows and create ONLY new research JSON
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-e5f-binance-native-historical-recovery-20261115
+          python3 - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          from datetime import datetime,timedelta
+          from decimal import Decimal
+          raw=Path("e5f_payload/report.json").read_bytes()
+          assert 300<len(raw)<2_000_000
+          d=json.loads(raw)
+          rid=os.environ["GITHUB_RUN_ID"]
+          assert d["runId"]==rid and re.fullmatch(r"[1-9]\d{0,17}",rid)
+          assert d["stage"]=="RESEARCH_ONLY"
+          assert d["classification"]=="BINANCE_USDM_HISTORICAL_RECOVERY_NOT_LIVE"
+          assert d["status"] in (
+            "HISTORICAL_REPAIR_ALL_REQUESTED_HOURS_RETRIEVED",
+            "PARTIAL_REPAIR_OFFICIAL_EXCHANGE_UNAVAILABLE_OR_NOT_PUBLISHED")
+          assert d["requestedFirstClosedHourUTC"]=="2026-11-14T22:00:00Z"
+          assert d["requestedLastClosedHourUTC"]=="2026-11-15T18:00:00Z"
+          assert d["cohortClosedHourCount"]==21
+          assert 0<d["sourceMissingAtLeastOneCount"]<=21
+          assert len(d["sourceMissingClosedHours"])==7
+          assert len(d["sourceGitTrees"])==7
+          assert len(d["sourceCommitPins"])==3
+          assert set(d["recoveryByAsset"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert set(d["recoveryCounts"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert set(d["officialSourceAcquisition"])=={"BTCUSDT","ETHUSDT","SOLUSDT"}
+          assert d["rawApiSHA256IsNotAnExchangeSignedChecksum"]
+          assert d["historicalRecoveryNotProspectiveEvidence"]
+          assert d["archiveChecksumVerifiedOnlyWhenPublished"]
+          assert not any(d[x] for x in ("historicalTradeFillsInvented",
+            "pastRealTimeSignalRecreated","originalPaperAndForwardJournalsModified",
+            "ordersSubmitted","notificationsSent"))
+          for symbol,items in d["recoveryByAsset"].items():
+            assert isinstance(items,dict)
+            counts=d["recoveryCounts"][symbol]
+            assert 0<=counts["recoveredHours"]<=counts["requiredMissingClosedHours"]
+            assert len(items)==counts["recoveredHours"]
+            allowed=set(d["sourceMissingClosedHours"]["V9_THREE_ASSET"])
+            allowed.update(d["sourceMissingClosedHours"]["V92_ETH" if symbol=="ETHUSDT" else "V92_BTC_SOL"])
+            assert set(items)<=allowed
+            for at,row in items.items():
+              t=datetime.strptime(at,"%Y-%m-%dT%H:%M:%SZ")
+              assert datetime(2026,11,14,22)<=t<=datetime(2026,11,15,18)
+              assert row["candleCloseUTC"]==at
+              opening=datetime.strptime(row["candleOpenUTC"],"%Y-%m-%dT%H:%M:%SZ")
+              assert opening==t-timedelta(hours=1)
+              o,h,l,c=(Decimal(row[k]) for k in ("open","high","low","close"))
+              assert o>0 and c>0 and l>0 and l<=min(o,c)<=max(o,c)<=h
+              assert Decimal(row["volume"])>=0
+              assert type(row["numberOfTrades"]) is int and row["numberOfTrades"]>=0
+          if d["status"]=="HISTORICAL_REPAIR_ALL_REQUESTED_HOURS_RETRIEVED":
+            assert all(v["recoveredHours"]==v["requiredMissingClosedHours"]
+                       for v in d["recoveryCounts"].values())
+          target=Path("forward/atlas_core_e5f_historical/recoveries/2026-11-15")/("run"+rid+".json")
+          target.parent.mkdir(parents=True,exist_ok=True)
+          with target.open("xb") as f:f.write(raw)
+          Path("e5f_new_path.txt").write_text(str(target)+"\n")
+          print("ATLAS_E5F_RESEARCH_ONLY_HISTORICAL_JSON_PREPARED",target)
+          PY
+      - name: Stage and push only new add-status E5F historical report
+        run: |
+          set -euo pipefail
+          target="$(cat e5f_new_path.txt)"
+          git add -- "$target"
+          python3 - <<'PY'
+          import subprocess
+          v=subprocess.check_output(["git","diff","--cached","--name-status","-z"]).decode().split("\0")
+          if v[-1]=="":v.pop()
+          assert len(v)==2 and v[0]=="A",v
+          assert v[1].startswith("forward/atlas_core_e5f_historical/recoveries/2026-11-15/run")
+          assert v[1].endswith(".json")
+          print("ATLAS_E5F_APPEND_ONLY_NEW_JSON_PASS")
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "ATLAS E5F original-source-gap independent historical OHLCV receipt $GITHUB_RUN_ID"
+          for n in 1 2 3; do
+            git pull --rebase origin research/atlas-core-e5f-binance-native-historical-recovery-20261115
+            if git push origin HEAD:research/atlas-core-e5f-binance-native-historical-recovery-20261115; then
+              echo "ATLAS_E5F_HISTORICAL_APPEND_ONLY_COMMITTED_NO_FORWARD"
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
