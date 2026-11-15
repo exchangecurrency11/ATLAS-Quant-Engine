@@ -29,7 +29,7 @@ class TestE5F(unittest.TestCase):
 
     def test_no_future_or_pre_activation_backfill(self):
         with self.assertRaisesRegex(ValueError,"E5F_UNCLOSED"):
-            r.hours("2026-11-15T19:00:00Z","2026-11-15T19:00:00Z",NOW)
+            r.hours("2026-11-15T20:00:00Z","2026-11-15T20:00:00Z",NOW)
         with self.assertRaisesRegex(ValueError,"E5F_INVALID"):
             r.hours("2026-11-14T21:00:00Z",r.END,NOW)
 
