@@ -2,8 +2,8 @@
 
 **Prospective paper only. No orders, alerts, or live strategy changes.**
 First eligible close: 2026-11-12T11:00:00Z
-Latest verified close: 2026-11-14T22:00:00Z
-Saved hours: 54; sealed: 54
+Latest verified close: 2026-11-15T01:00:00Z
+Saved hours: 55; sealed: 54
 
 | Arm | Closed trades | Win % | Net R (9bp/side) | Stress R (25bp/side) | Max DD R |
 |---|---:|---:|---:|---:|---:|
@@ -23,5 +23,5 @@ Missing hourly captures are listed, never backfilled. Only exits with a matching
 The assumed next-hour-open fill is not proven executable; fees use 9 bp/side base and 25 bp/side stress. Funding, variable spread, market impact, and liquidation are not fully modeled.
 A positive paper result is not live approval.
 
-Missing hours not backfilled: 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z, 2026-11-13T14:00:00Z, 2026-11-14T18:00:00Z, 2026-11-14T19:00:00Z, 2026-11-14T20:00:00Z
+Missing hours not backfilled: 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z, 2026-11-13T14:00:00Z, 2026-11-14T18:00:00Z, 2026-11-14T19:00:00Z, 2026-11-14T20:00:00Z, 2026-11-14T23:00:00Z, 2026-11-15T00:00:00Z
 
