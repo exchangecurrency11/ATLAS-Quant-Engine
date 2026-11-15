@@ -19,7 +19,7 @@
   "noRetroactiveTradesOrRewrittenCandles": true,
   "coverage": {
     "BTC_SOL": {
-      "expected": 64,
+      "expected": 69,
       "saved": 56,
       "missingHoursUTC": [
         "2026-11-12T14:00:00Z",
@@ -29,14 +29,19 @@
         "2026-11-14T19:00:00Z",
         "2026-11-14T20:00:00Z",
         "2026-11-14T23:00:00Z",
-        "2026-11-15T00:00:00Z"
+        "2026-11-15T00:00:00Z",
+        "2026-11-15T03:00:00Z",
+        "2026-11-15T04:00:00Z",
+        "2026-11-15T05:00:00Z",
+        "2026-11-15T06:00:00Z",
+        "2026-11-15T07:00:00Z"
       ],
       "latestUTC": "2026-11-15T02:00:00Z",
-      "consecutiveRecentHours": 2
+      "consecutiveRecentHours": 0
     },
     "ETH": {
-      "expected": 63,
-      "saved": 56,
+      "expected": 68,
+      "saved": 57,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
         "2026-11-12T14:00:00Z",
@@ -44,13 +49,17 @@
         "2026-11-14T19:00:00Z",
         "2026-11-14T20:00:00Z",
         "2026-11-14T23:00:00Z",
-        "2026-11-15T00:00:00Z"
+        "2026-11-15T00:00:00Z",
+        "2026-11-15T03:00:00Z",
+        "2026-11-15T04:00:00Z",
+        "2026-11-15T05:00:00Z",
+        "2026-11-15T06:00:00Z"
       ],
-      "latestUTC": "2026-11-15T02:00:00Z",
-      "consecutiveRecentHours": 2
+      "latestUTC": "2026-11-15T07:00:00Z",
+      "consecutiveRecentHours": 1
     }
   },
-  "latestCommonHourUTC": "2026-11-15T02:00:00Z",
+  "latestCommonHourUTC": null,
   "matchedVerifiedHours": 53,
   "matchedAssetChecks": 159,
   "actualObservedOpenPositionSnapshots": 0,
@@ -67,26 +76,7 @@
   "missingHourNotBackfilled": true,
   "parityErrors": [],
   "newEntryAdmissionReadiness": false,
-  "latestShadowEntryDecisions": [
-    {
-      "symbol": "BTCUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "ETHUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "SOLUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    }
-  ],
+  "latestShadowEntryDecisions": [],
   "limitsCannotGuaranteeExecutionOrStopFill": true,
   "fundingVariableSlippageAndLiquidationNotFullyModeled": true
 }
