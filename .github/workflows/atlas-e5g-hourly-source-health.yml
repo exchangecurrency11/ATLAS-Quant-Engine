@@ -50,8 +50,15 @@ jobs:
           from datetime import datetime,timezone
           from pathlib import Path
           now=datetime.now(timezone.utc)
+          # The E5G source window uses a 75-minute grace after candle
+          # close. An early :04 workflow_run used to consume this hour
+          # with an older report; never claim the mature-hour slot early.
+          # Preserve all previous add-only health reports as evidence.
+          eligible=now.minute>=15
           output=Path("forward/atlas_core_e5g_health/checks") / now.strftime("%Y-%m-%d") / now.strftime("%H-00Z.json")
-          print("needed="+str(not output.exists()).lower())
+          print("needed="+str(eligible and not output.exists()).lower())
+          if not eligible:
+              print("E5G_EARLY_TRIGGER_SAFE_SKIP_UNTIL_15_MINUTES",file=__import__("sys").stderr)
           PY
 
   observe:
