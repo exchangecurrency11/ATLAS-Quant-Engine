@@ -137,7 +137,7 @@ jobs:
                   # Early manual triggers cannot have captured same-hour candles.
                   if created.minute>=12:count+=1
               return count
-          def dispatch(now,stage):
+          def dispatch(now,stage,clock=None):
               tag,workflow,branch,folder=stage
               if not eligible(now):
                   return tag+" SKIP_OUTSIDE_ORIGINAL_SOURCE_WINDOW"
@@ -146,7 +146,8 @@ jobs:
               count=previous_dispatch_count(now,stage)
               if count>=MAX_DISPATCHES_PER_STAGE_HOUR:
                   return tag+" MAX_TWO_BACKUPS_ALREADY_SENT_THIS_HOUR"
-              if not eligible(datetime.now(timezone.utc)):
+              current=clock() if clock is not None else datetime.now(timezone.utc)
+              if not eligible(current) or current.strftime("%Y-%m-%dT%H")!=now.strftime("%Y-%m-%dT%H"):
                   return tag+" CLOCK_MOVED_OUTSIDE_WINDOW_NO_DISPATCH"
               code,raw=make_request("POST","/actions/workflows/"+workflow+"/dispatches",
                                     body={"ref":"main"})
@@ -163,6 +164,29 @@ jobs:
           assert {x[1] for x in TASKS}=={
               "v7-hourly-trigger.yml","v9-hourly-three-asset-context.yml"}
           assert all(x[2].startswith(("experiment/","research/")) for x in TASKS)
+          # Deterministic in-window mock test with NO external HTTP dispatch.
+          saved_request=make_request
+          mock_calls=[]
+          def mock_request(method,path,body=None,params=None):
+              mock_calls.append((method,path,body,params))
+              if method=="GET" and path.startswith("/contents/"):return 404,b""
+              if method=="GET" and path.startswith("/actions/workflows/"):
+                  return 200,b'{"total_count":0,"workflow_runs":[]}'
+              if method=="POST" and path=="/actions/workflows/v9-hourly-three-asset-context.yml/dispatches":
+                  assert body=={"ref":"main"} and params is None
+                  return 204,b""
+              raise ValueError("E5H_TEST_UNAPPROVED_REMOTE_REQUEST")
+          try:
+              make_request=mock_request
+              assert not original_snapshot_exists(t,TASKS[0])
+              assert previous_dispatch_count(t,TASKS[0])==0
+              assert dispatch(t,TASKS[0],clock=lambda:t)=="V9 DISPATCH_API_ACCEPTED_NOT_A_SNAPSHOT_OR_TRADE"
+              assert sum(x[0]=="POST" for x in mock_calls)==1
+              assert dispatch(t,TASKS[0],clock=lambda:t.replace(minute=51))=="V9 CLOCK_MOVED_OUTSIDE_WINDOW_NO_DISPATCH"
+              assert sum(x[0]=="POST" for x in mock_calls)==1
+          finally:
+              make_request=saved_request
+          print("ATLAS_E5H_MOCKED_CURRENT_HOUR_DISPATCH_CONTRACT_TEST_PASS",flush=True)
           now=datetime.now(timezone.utc)
           summary=[]
           if not eligible(now):
