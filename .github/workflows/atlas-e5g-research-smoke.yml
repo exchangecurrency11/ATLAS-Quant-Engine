@@ -1,0 +1,75 @@
+name: ATLAS E5G isolated eight-stage health research smoke tests (NO ORDERS)
+
+on:
+  push:
+    branches: [research/atlas-core-e5g-hourly-health-20261115]
+    paths:
+      - research/atlas_core_v9/hourly_health_e5g.py
+      - research/atlas_core_v9/test_hourly_health_e5g.py
+      - .github/workflows/atlas-e5g-research-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  test-and-read:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Checkout E5G isolated research without writing credentials
+        uses: actions/checkout@v5
+        with:
+          ref: research/atlas-core-e5g-hourly-health-20261115
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Assert no source guard drift and run all regression checks
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = research/atlas-core-e5g-hourly-health-20261115
+          test "$(git hash-object research/atlas_core_v8/hourly_journal_e5d.py)" = daa050e3f369976debe207da16cbbbd48edfd393
+          test "$(git hash-object research/atlas_core_v7/hourly_cold_observer_e5c.py)" = 1e48bbe996f2b9361b723e3d4728d45f23bc3675
+          python3 -m py_compile research/atlas_core_v9/hourly_health_e5g.py research/atlas_core_v9/test_hourly_health_e5g.py
+          python3 -m unittest research.atlas_core_v9.test_hourly_health_e5g -v
+          python3 -m unittest research.atlas_core_v8.test_hourly_journal_e5d -q
+      - name: Read live GitHub source inventories and workflow run history
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 -u -m research.atlas_core_v9.hourly_health_e5g --run-id "$GITHUB_RUN_ID"
+      - name: Assert health evidence only and no forward signal or paper rewrite
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("e5g_payload/health.json").read_bytes())
+          assert d["mode"]=="ATLAS_E5G_SOURCE_HEALTH_GITHUB_METADATA_ONLY_RESEARCH"
+          assert d["stage"]=="RESEARCH_ONLY_NO_LIVE_OR_FORWARD_CREDIT"
+          assert len(d["hourlyMatrix"])==12
+          assert d["lookbackClosedHours"]==12
+          assert set(d["sourceTreeSHA1"])=={
+              "V7_BTC_SOL","V7_ETH","V91_BTC_SOL","V91_ETH",
+              "V92_BTC_SOL","V92_ETH","V9_THREE_ASSET","E5D"}
+          assert not any(d[k] for k in (
+              "sourceFilePayloadContentValidated",
+              "independentlyExchangeVerifiedOHLCV",
+              "liveEntrySignalValid",
+              "prospectivePerformanceOrTradeCredited",
+              "historicalE5FRecoveryCountedAsTimely",
+              "realOrdersOrAlertsEmitted",
+              "existingProductionForwardSpecsOrAutomationsChanged"))
+          print("ATLAS_E5G_DIAGNOSTIC_ONLY_NOT_LIVE_OR_FORWARD_PASS")
+          PY
+      - name: Upload read-only health audit preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: atlas-e5g-smoke-${{ github.run_id }}
+          path: e5g_payload/health.json
+          retention-days: 7
+          if-no-files-found: error
