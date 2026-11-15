@@ -1,0 +1,181 @@
+name: ATLAS E5H safe V7 V9 source-hour rescue (NO NEW STRATEGY NO ORDERS)
+
+# Additional in-window *dispatch opportunities*, not historical catch-up.
+# Original V7/V9 immutable source logic owns all market-data validation.
+# Absolutely no execution of research code with this actions:write token.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/atlas-e5h-safe-v7-v9-source-rescue.yml]
+  schedule:
+    # GitHub cron is best-effort. Independent non-round-minute retry slots.
+    - cron: '26,38,49 * * * *'
+  workflow_run:
+    workflows:
+      - Publish BTC SOL Market Data
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-e5h-isolated-safe-original-source-dispatch
+  cancel-in-progress: false
+
+jobs:
+  source-rescue:
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Check original same-hour source snapshots and bounded workflow_dispatch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # No checkout, no downloaded artifact, no secret printing, no paper writes.
+          # All network calls constrained to GitHub API, exact source file GETs,
+          # exact workflow run-list GETs, and 2 approved workflow dispatch POSTs.
+          python3 - <<'PY'
+          import json,os,re,sys
+          from datetime import datetime,timedelta,timezone
+          from urllib.error import HTTPError
+          from urllib.parse import quote,urlencode
+          from urllib.request import Request,urlopen
+
+          REPO="exchangecurrency11/ATLAS-Quant-Engine"
+          API="https://api.github.com/repos/"+REPO
+          TASKS=(
+            ("V9","v9-hourly-three-asset-context.yml",
+             "research/v9-prestart-live-data-compatibility-20261111",
+             "forward/v9_next_4h_color/hourly/snapshots"),
+            ("V7_BTC_SOL","v7-hourly-trigger.yml",
+             "experiment/v7-signal-quality-20261103","forward/snapshots"),
+          )
+          # Both originals enforce >=12m and <=58m since source-hour close.
+          # This backup adds queue slack and NEVER replays a past source hour.
+          MINUTE_FIRST=15
+          MINUTE_LAST=50
+          MAX_DISPATCHES_PER_STAGE_HOUR=2
+          TOKEN=os.environ.get("GH_TOKEN","")
+          if not TOKEN or len(TOKEN)>4096 or not all(33<=ord(x)<=126 for x in TOKEN):
+              raise ValueError("E5H_ACTIONS_TOKEN_MISSING_OR_UNSAFE")
+          HEADERS={"Authorization":"Bearer "+TOKEN,
+                   "Accept":"application/vnd.github+json",
+                   "X-GitHub-Api-Version":"2022-11-28",
+                   "User-Agent":"ATLAS-E5H-Silent-Source-Rescue/1.0"}
+          def make_request(method,path,body=None,params=None):
+              if method not in ("GET","POST") or not path.startswith("/"):
+                  raise ValueError("E5H_UNAPPROVED_REQUEST")
+              if body is not None and method!="POST":
+                  raise ValueError("E5H_NO_GET_BODY")
+              url=API+path
+              if params:url+="?"+urlencode(params)
+              request=Request(url,headers=HEADERS,
+                              data=(json.dumps(body).encode() if body is not None else None),
+                              method=method)
+              try:
+                  with urlopen(request,timeout=23) as resp:
+                      raw=resp.read(1_000_001)
+                      if len(raw)>1_000_000:raise ValueError("E5H_OVERSIZED_GITHUB_API")
+                      return resp.status,raw
+              except HTTPError as exc:
+                  if method=="GET" and exc.code==404:
+                      return 404,b""
+                  raise
+          def filename(now):
+              if now.tzinfo is None or now.utcoffset()!=timedelta(0):
+                  raise ValueError("E5H_REQUIRE_UTC")
+              return now.strftime("%Y-%m-%dT%H-00Z")+".json"
+          def eligible(now):
+              if now.tzinfo is None or now.utcoffset()!=timedelta(0):
+                  raise ValueError("E5H_REQUIRE_UTC")
+              return MINUTE_FIRST<=now.minute<=MINUTE_LAST
+          def original_snapshot_exists(now,stage):
+              tag,workflow,branch,folder=stage
+              path="/contents/"+folder+"/"+filename(now)
+              if not re.fullmatch(r"[a-zA-Z0-9_./-]+",path):
+                  raise ValueError("E5H_SOURCE_PATH_NOT_ALLOWLISTED")
+              code,raw=make_request("GET",path,params={"ref":branch})
+              if code==404:return False
+              if code!=200:raise ValueError("E5H_BAD_SNAPSHOT_HTTP")
+              doc=json.loads(raw)
+              if (doc.get("type")!="file"
+                  or not re.fullmatch(r"[a-f0-9]{40}",str(doc.get("sha","")))
+                  or doc.get("path")!=folder+"/"+filename(now)):
+                  raise ValueError("E5H_SOURCE_FILE_METADATA_NOT_VERIFIED")
+              return True
+          def previous_dispatch_count(now,stage):
+              workflow=stage[1]
+              start=now.replace(minute=0,second=0,microsecond=0)
+              end=start+timedelta(hours=1)
+              query={"event":"workflow_dispatch","branch":"main",
+                     "created":start.strftime("%Y-%m-%dT%H:%M:%SZ")+
+                               ".."+end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                     "per_page":50}
+              code,raw=make_request("GET","/actions/workflows/"+workflow+"/runs",params=query)
+              if code!=200:raise ValueError("E5H_WORKFLOW_HISTORY_UNAVAILABLE")
+              doc=json.loads(raw)
+              if (not isinstance(doc.get("total_count"),int)
+                  or doc["total_count"]>50 or not isinstance(doc.get("workflow_runs"),list)
+                  or len(doc["workflow_runs"])!=doc["total_count"]):
+                  raise ValueError("E5H_DISPATCH_HISTORY_TRUNCATED_FAIL_CLOSED")
+              count=0
+              for item in doc["workflow_runs"]:
+                  created=datetime.fromisoformat(item["created_at"].replace("Z","+00:00"))
+                  if item["event"]!="workflow_dispatch" or item["head_branch"]!="main":
+                      raise ValueError("E5H_MISLABELED_PRIOR_DISPATCH")
+                  if created.replace(minute=0,second=0,microsecond=0)!=start:
+                      raise ValueError("E5H_DISPATCH_HISTORY_TIME_DRIFT")
+                  # Early manual triggers cannot have captured same-hour candles.
+                  if created.minute>=12:count+=1
+              return count
+          def dispatch(now,stage):
+              tag,workflow,branch,folder=stage
+              if not eligible(now):
+                  return tag+" SKIP_OUTSIDE_ORIGINAL_SOURCE_WINDOW"
+              if original_snapshot_exists(now,stage):
+                  return tag+" EXISTING_IMMUTABLE_HOUR_NO_DISPATCH"
+              count=previous_dispatch_count(now,stage)
+              if count>=MAX_DISPATCHES_PER_STAGE_HOUR:
+                  return tag+" MAX_TWO_BACKUPS_ALREADY_SENT_THIS_HOUR"
+              if not eligible(datetime.now(timezone.utc)):
+                  return tag+" CLOCK_MOVED_OUTSIDE_WINDOW_NO_DISPATCH"
+              code,raw=make_request("POST","/actions/workflows/"+workflow+"/dispatches",
+                                    body={"ref":"main"})
+              if code!=204:
+                  raise ValueError("E5H_GITHUB_DISPATCH_NOT_ACCEPTED_"+tag)
+              return tag+" DISPATCH_API_ACCEPTED_NOT_A_SNAPSHOT_OR_TRADE"
+          # Self-test only pure target, bounds, and sensitive workflow allowlist.
+          t=datetime(2026,11,15,20,25,tzinfo=timezone.utc)
+          assert filename(t)=="2026-11-15T20-00Z.json"
+          assert eligible(t) and eligible(t.replace(minute=50))
+          assert not eligible(t.replace(minute=14))
+          assert not eligible(t.replace(minute=51))
+          assert len(TASKS)==2
+          assert {x[1] for x in TASKS}=={
+              "v7-hourly-trigger.yml","v9-hourly-three-asset-context.yml"}
+          assert all(x[2].startswith(("experiment/","research/")) for x in TASKS)
+          now=datetime.now(timezone.utc)
+          summary=[]
+          if not eligible(now):
+              summary.append("E5H_SAFE_SKIP_OUTSIDE_15_TO_50_UTC_MINUTE_NOT_A_FAILURE")
+          else:
+              # No retroactive hours, no live alerts, no frozen specs, no
+              # mutation beyond dispatching these two EXISTING workflows.
+              for stage in TASKS:
+                  summary.append(dispatch(now,stage))
+          for msg in summary:print("ATLAS_E5H_ORIGINAL_SOURCE_RESCUE",msg,flush=True)
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as f:
+              f.write("## ATLAS E5H original source retry (NO TRADING)\n\n")
+              f.write(f"UTC checked: {now.strftime('%Y-%m-%dT%H:%M:%SZ')}\n\n")
+              for msg in summary:f.write("* "+msg+"\n")
+              f.write("\nAccepted dispatch is NOT proof of a snapshot, live signal, or order.\n")
+          print("ATLAS_E5H_NO_HISTORIC_BACKFILL_NO_ORDERS_NO_NEW_ALERTS")
+          PY
