@@ -1,8 +1,8 @@
 # V7 — Engellenen BOS sinyalleri karşıolgusal inceleme
 
-**Analiz kapanış sınırı:** 2026-11-15T02:00:00Z (UTC)
+**Analiz kapanış sınırı:** 2026-11-16T08:00:00Z (UTC)
 **Sistem:** PAPER ONLY; canlı emir ve gerçek getiri yok
-**Orijinal doğrulanmış V7 gözlemi:** 232
+**Orijinal doğrulanmış V7 gözlemi:** 246
 
 | Ölçüm | Sonuç |
 |---|---:|
@@ -50,7 +50,7 @@
 - **2026-11-14T03:00:00Z BTCUSDT_PERP.A bearish**, seviye 68073.5; V7 RED; neden: 1H_RSI_MACD_MOMENTUM_VETO; sonuç: EXPIRED_WITHOUT_V4_RETEST; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
 - **2026-11-14T15:00:00Z BTCUSDT_PERP.A bearish**, seviye 66427.5; V7 RED; neden: V7_QUALITY_EMA20_OVEREXTENDED; sonuç: EXPIRED_WITHOUT_V4_RETEST; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
 - **2026-11-14T15:00:00Z SOLUSDT_PERP.A bearish**, seviye 74.77; V7 RED; neden: V7_QUALITY_EMA20_OVEREXTENDED; sonuç: EXPIRED_WITHOUT_V4_RETEST; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
-- **2026-11-14T21:00:00Z BTCUSDT_PERP.A bearish**, seviye 64969.0; V7 RED; neden: V7_QUALITY_EMA20_OVEREXTENDED; sonuç: PENDING_RETEST_UNCLOSED; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
+- **2026-11-14T21:00:00Z BTCUSDT_PERP.A bearish**, seviye 64969.0; V7 RED; neden: V7_QUALITY_EMA20_OVEREXTENDED; sonuç: EXPIRED_WITHOUT_V4_RETEST; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
 
 ## Yorum ve sınırlamalar
 
