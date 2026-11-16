@@ -1,7 +1,7 @@
-name: ATLAS E5H safe V7 V9 source-hour rescue (NO NEW STRATEGY NO ORDERS)
+name: ATLAS E5H safe V7 BTC SOL ETH V9 source-hour rescue (NO NEW STRATEGY NO ORDERS)
 
-# Additional in-window *dispatch opportunities*, not historical catch-up.
-# Original V7/V9 immutable source logic owns all market-data validation.
+# Additional same-hour dispatch opportunities, not historical catch-up.
+# Original V7/ETH/V9 immutable source logic owns all market-data validation.
 # Absolutely no execution of research code with this actions:write token.
 on:
   push:
@@ -28,7 +28,7 @@ jobs:
   source-rescue:
     if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 22
     permissions:
       contents: read
       actions: write
@@ -41,9 +41,9 @@ jobs:
           set -euo pipefail
           # No checkout, no downloaded artifact, no secret printing, no paper writes.
           # All network calls constrained to GitHub API, exact source file GETs,
-          # exact workflow run-list GETs, and 2 approved workflow dispatch POSTs.
+          # exact workflow run-list GETs, and 3 approved workflow dispatch POSTs.
           python3 - <<'PY'
-          import json,os,re,sys
+          import json,os,re,sys,time
           from datetime import datetime,timedelta,timezone
           from urllib.error import HTTPError
           from urllib.parse import quote,urlencode
@@ -57,6 +57,8 @@ jobs:
              "forward/v9_next_4h_color/hourly/snapshots"),
             ("V7_BTC_SOL","v7-hourly-trigger.yml",
              "experiment/v7-signal-quality-20261103","forward/snapshots"),
+            ("V7_ETH","eth-v7-hourly-trigger.yml",
+             "experiment/v7-signal-quality-20261103","forward/eth/snapshots"),
           )
           # Both originals enforce >=12m and <=58m since source-hour close.
           # This backup adds queue slack and NEVER replays a past source hour.
@@ -112,10 +114,10 @@ jobs:
                   or doc.get("path")!=folder+"/"+filename(now)):
                   raise ValueError("E5H_SOURCE_FILE_METADATA_NOT_VERIFIED")
               return True
-          def previous_dispatch_count(now,stage):
+          def previous_dispatch_state(now,stage):
               workflow=stage[1]
               start=now.replace(minute=0,second=0,microsecond=0)
-              end=start+timedelta(hours=1)
+              end=start+timedelta(hours=1)-timedelta(seconds=1)
               query={"event":"workflow_dispatch","branch":"main",
                      "created":start.strftime("%Y-%m-%dT%H:%M:%SZ")+
                                ".."+end.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -128,22 +130,36 @@ jobs:
                   or len(doc["workflow_runs"])!=doc["total_count"]):
                   raise ValueError("E5H_DISPATCH_HISTORY_TRUNCATED_FAIL_CLOSED")
               count=0
+              active=False
+              allowed_status=("queued","in_progress","completed","waiting","requested","pending")
               for item in doc["workflow_runs"]:
                   created=datetime.fromisoformat(item["created_at"].replace("Z","+00:00"))
                   if item["event"]!="workflow_dispatch" or item["head_branch"]!="main":
                       raise ValueError("E5H_MISLABELED_PRIOR_DISPATCH")
                   if created.replace(minute=0,second=0,microsecond=0)!=start:
                       raise ValueError("E5H_DISPATCH_HISTORY_TIME_DRIFT")
+                  if item.get("status") not in allowed_status:
+                      raise ValueError("E5H_UNEXPECTED_PRIOR_DISPATCH_STATUS")
                   # Early manual triggers cannot have captured same-hour candles.
-                  if created.minute>=12:count+=1
-              return count
+                  if created.minute>=12:
+                      count+=1
+                      active=active or item["status"]!="completed"
+              return count,active
+          def wake_time(now):
+              if now.tzinfo is None or now.utcoffset()!=timedelta(0):
+                  raise ValueError("E5H_REQUIRE_UTC")
+              if now.minute<MINUTE_FIRST:
+                  return now.replace(minute=MINUTE_FIRST,second=0,microsecond=0)
+              return None
           def dispatch(now,stage,clock=None):
               tag,workflow,branch,folder=stage
               if not eligible(now):
                   return tag+" SKIP_OUTSIDE_ORIGINAL_SOURCE_WINDOW"
               if original_snapshot_exists(now,stage):
                   return tag+" EXISTING_IMMUTABLE_HOUR_NO_DISPATCH"
-              count=previous_dispatch_count(now,stage)
+              count,active=previous_dispatch_state(now,stage)
+              if active:
+                  return tag+" SAME_HOUR_DISPATCH_STILL_RUNNING_NO_DUPLICATE"
               if count>=MAX_DISPATCHES_PER_STAGE_HOUR:
                   return tag+" MAX_TWO_BACKUPS_ALREADY_SENT_THIS_HOUR"
               current=clock() if clock is not None else datetime.now(timezone.utc)
@@ -154,46 +170,83 @@ jobs:
               if code!=204:
                   raise ValueError("E5H_GITHUB_DISPATCH_NOT_ACCEPTED_"+tag)
               return tag+" DISPATCH_API_ACCEPTED_NOT_A_SNAPSHOT_OR_TRADE"
-          # Self-test only pure target, bounds, and sensitive workflow allowlist.
+          # Self-test only pure target, bounds, wait window and sensitive workflow allowlist.
           t=datetime(2026,11,15,20,25,tzinfo=timezone.utc)
+          early=datetime(2026,11,15,20,4,tzinfo=timezone.utc)
           assert filename(t)=="2026-11-15T20-00Z.json"
           assert eligible(t) and eligible(t.replace(minute=50))
           assert not eligible(t.replace(minute=14))
           assert not eligible(t.replace(minute=51))
-          assert len(TASKS)==2
+          assert wake_time(early)==datetime(2026,11,15,20,15,tzinfo=timezone.utc)
+          assert wake_time(t) is None and wake_time(t.replace(minute=51)) is None
+          assert len(TASKS)==3
           assert {x[1] for x in TASKS}=={
-              "v7-hourly-trigger.yml","v9-hourly-three-asset-context.yml"}
+              "v7-hourly-trigger.yml","eth-v7-hourly-trigger.yml",
+              "v9-hourly-three-asset-context.yml"}
           assert all(x[2].startswith(("experiment/","research/")) for x in TASKS)
           # Deterministic in-window mock test with NO external HTTP dispatch.
           saved_request=make_request
           mock_calls=[]
+          allowed_posts={
+              "/actions/workflows/v7-hourly-trigger.yml/dispatches",
+              "/actions/workflows/eth-v7-hourly-trigger.yml/dispatches",
+              "/actions/workflows/v9-hourly-three-asset-context.yml/dispatches"}
           def mock_request(method,path,body=None,params=None):
               mock_calls.append((method,path,body,params))
               if method=="GET" and path.startswith("/contents/"):return 404,b""
               if method=="GET" and path.startswith("/actions/workflows/"):
                   return 200,b'{"total_count":0,"workflow_runs":[]}'
-              if method=="POST" and path=="/actions/workflows/v9-hourly-three-asset-context.yml/dispatches":
+              if method=="POST" and path in allowed_posts:
                   assert body=={"ref":"main"} and params is None
                   return 204,b""
               raise ValueError("E5H_TEST_UNAPPROVED_REMOTE_REQUEST")
           try:
               make_request=mock_request
-              assert not original_snapshot_exists(t,TASKS[0])
-              assert previous_dispatch_count(t,TASKS[0])==0
-              assert dispatch(t,TASKS[0],clock=lambda:t)=="V9 DISPATCH_API_ACCEPTED_NOT_A_SNAPSHOT_OR_TRADE"
-              assert sum(x[0]=="POST" for x in mock_calls)==1
+              for stage in TASKS:
+                  assert not original_snapshot_exists(t,stage)
+                  assert previous_dispatch_state(t,stage)==(0,False)
+                  assert dispatch(t,stage,clock=lambda:t)==(
+                      stage[0]+" DISPATCH_API_ACCEPTED_NOT_A_SNAPSHOT_OR_TRADE")
+              assert sum(x[0]=="POST" for x in mock_calls)==len(TASKS)
               assert dispatch(t,TASKS[0],clock=lambda:t.replace(minute=51))=="V9 CLOCK_MOVED_OUTSIDE_WINDOW_NO_DISPATCH"
-              assert sum(x[0]=="POST" for x in mock_calls)==1
+              assert sum(x[0]=="POST" for x in mock_calls)==len(TASKS)
           finally:
               make_request=saved_request
-          print("ATLAS_E5H_MOCKED_CURRENT_HOUR_DISPATCH_CONTRACT_TEST_PASS",flush=True)
-          now=datetime.now(timezone.utc)
+          # A queued/in-progress dispatch blocks a duplicate same-hour request.
+          def active_request(method,path,body=None,params=None):
+              if method=="GET" and path.startswith("/contents/"):return 404,b""
+              if method=="GET" and path.startswith("/actions/workflows/"):
+                  return 200,json.dumps({"total_count":1,"workflow_runs":[{
+                      "id":123,"created_at":"2026-11-15T20:20:00Z",
+                      "event":"workflow_dispatch","head_branch":"main",
+                      "status":"in_progress"}]}).encode()
+              raise ValueError("E5H_ACTIVE_TEST_UNAPPROVED_REQUEST")
+          try:
+              make_request=active_request
+              assert dispatch(t,TASKS[0],clock=lambda:t)==(
+                  "V9 SAME_HOUR_DISPATCH_STILL_RUNNING_NO_DUPLICATE")
+          finally:
+              make_request=saved_request
+          print("ATLAS_E5H_MOCKED_THREE_SOURCE_DISPATCH_AND_DEDUP_TEST_PASS",flush=True)
+          started=datetime.now(timezone.utc)
+          now=started
+          wake=wake_time(started)
+          if wake is not None:
+              delay=(wake-started).total_seconds()
+              if delay>0:
+                  print("ATLAS_E5H_WAITING_FOR_SAME_HOUR_SOURCE_WINDOW",
+                        started.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                        wake.strftime("%Y-%m-%dT%H:%M:%SZ"),flush=True)
+                  time.sleep(delay)
+              now=datetime.now(timezone.utc)
           summary=[]
-          if not eligible(now):
+          if now.strftime("%Y-%m-%dT%H")!=started.strftime("%Y-%m-%dT%H"):
+              summary.append("E5H_SAFE_SKIP_CLOCK_ROLLED_TO_NEXT_HOUR_NO_DISPATCH")
+          elif not eligible(now):
               summary.append("E5H_SAFE_SKIP_OUTSIDE_15_TO_50_UTC_MINUTE_NOT_A_FAILURE")
           else:
               # No retroactive hours, no live alerts, no frozen specs, no
-              # mutation beyond dispatching these two EXISTING workflows.
+              # mutation beyond dispatching these three EXISTING workflows.
               for stage in TASKS:
                   summary.append(dispatch(now,stage))
           for msg in summary:print("ATLAS_E5H_ORIGINAL_SOURCE_RESCUE",msg,flush=True)
