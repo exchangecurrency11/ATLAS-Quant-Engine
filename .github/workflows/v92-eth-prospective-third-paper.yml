@@ -11,11 +11,8 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '18,30,40,50,57 * * * *'
-  workflow_run:
-    workflows:
-      - V9.1 ETH original V7 vs max4h prospective paper shadow NO ALERTS
-    types: [completed]
-    branches: [main]
+  # V9.1 ETH explicitly dispatches this workflow only after a new
+  # verified same-hour ETH V9.1 snapshot is sealed. Cron remains the fallback.
 
 permissions:
   actions: write
@@ -28,7 +25,6 @@ concurrency:
 
 jobs:
   eth-closed-hour:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
