@@ -12,31 +12,31 @@
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
   "sourceBTCandSOLVerifiedClosedHours": 67,
-  "sourceETHVerifiedClosedHours": 69,
+  "sourceETHVerifiedClosedHours": 70,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
-      "expectedThroughUTC": "2026-11-16T11:00:00Z",
-      "expectedHours": 97,
+      "expectedThroughUTC": "2026-11-16T16:00:00Z",
+      "expectedHours": 102,
       "savedVerifiedHours": 67,
-      "missingHourCount": 30,
+      "missingHourCount": 35,
       "lastVerifiedHourUTC": "2026-11-16T11:00:00Z",
-      "lagHours": 0,
+      "lagHours": 5,
       "noBackfill": true
     },
     "ETH": {
       "firstExpectedHourUTC": "2026-11-12T12:00:00Z",
-      "expectedThroughUTC": "2026-11-16T11:00:00Z",
-      "expectedHours": 96,
-      "savedVerifiedHours": 69,
-      "missingHourCount": 27,
-      "lastVerifiedHourUTC": "2026-11-16T11:00:00Z",
+      "expectedThroughUTC": "2026-11-16T16:00:00Z",
+      "expectedHours": 101,
+      "savedVerifiedHours": 70,
+      "missingHourCount": 31,
+      "lastVerifiedHourUTC": "2026-11-16T16:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     }
   },
   "lastCapturedBTCandSOLHourUTC": "2026-11-16T11:00:00Z",
-  "lastCapturedETHHourUTC": "2026-11-16T11:00:00Z",
+  "lastCapturedETHHourUTC": "2026-11-16T16:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1000.0,
   "virtualPaperPnLUSDT": 0.0,
@@ -113,32 +113,18 @@
     },
     "ETHUSDT": {
       "state": "FLAT",
-      "lastClosedUTC": "2026-11-16T11:00:00Z",
+      "lastClosedUTC": "2026-11-16T16:00:00Z",
       "retestPending": false,
       "openPaperPosition": false,
       "newBOSWatches": 0,
       "patternWarnings": {
         "1H": {
-          "lastCompletedCandleCloseUTC": "2026-11-16T11:00:00Z",
-          "confirmedReversalPatterns": [
-            {
-              "family": "ENGULFING",
-              "name": "BULLISH_ENGULFING",
-              "direction": "bullish",
-              "firstUTC": "2026-11-16T09:00:00Z",
-              "confirmedUTC": "2026-11-16T11:00:00Z",
-              "prior20LiquiditySweepAndReentry": true,
-              "internalHikkakeFalseBreakConfirmed": false,
-              "crypto24hNoGapRequirement": true,
-              "signalIsNotStandaloneTrade": true,
-              "onlyClosedCandlesUsed": true,
-              "tf": "1H"
-            }
-          ],
+          "lastCompletedCandleCloseUTC": "2026-11-16T16:00:00Z",
+          "confirmedReversalPatterns": [],
           "ethObservationalOnlyNoAutoVeto": true
         },
         "4H": {
-          "lastCompletedCandleCloseUTC": "2026-11-16T08:00:00Z",
+          "lastCompletedCandleCloseUTC": "2026-11-16T16:00:00Z",
           "confirmedReversalPatterns": [],
           "ethObservationalOnlyNoAutoVeto": true
         }
