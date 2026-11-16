@@ -233,6 +233,17 @@ class JournalContract(TestCase):
                  "E5D_PREVIOUSLY_RECORDED_SOURCE_HOUR_WAS_REVISED:assetObservations"):
             self.write(src=src,when="2026-11-14T21:40:00Z",runid="123469")
 
+    def test_second_read_same_hour_observer_read_time_is_not_source_revision(self):
+        first=self.write()
+        original=Path(first["observationPath"]).read_bytes()
+        src=deepcopy(self.source)
+        for item in src["sourceAssetPaperObservations"]:
+            item["observerReadUTC"]="2026-11-14T21:40:00Z"
+        newer=self.write(src=src,when="2026-11-14T21:40:00Z",runid="123470")
+        self.assertFalse(newer["newObservation"])
+        self.assertTrue(newer["reusedImmutableObservation"])
+        self.assertEqual(Path(first["observationPath"]).read_bytes(),original)
+
     def test_exclusive_append_must_never_modify_prior_file(self):
         dest=self.root/"attempts"/"unit"/"strict.json"
         sample={"stage":j.STAGE,"value":1}
