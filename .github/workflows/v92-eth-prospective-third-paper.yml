@@ -18,6 +18,7 @@ on:
     branches: [main]
 
 permissions:
+  actions: write
   contents: write
 
 # Same concurrency key as V9.2 BTC/SOL account: no race to combined report.
@@ -186,6 +187,16 @@ jobs:
             sleep 4
           done
           exit 1
+      - name: Dispatch E5D after verified V9.2 ETH source commit
+        if: steps.gate.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh api --method POST \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/atlas-e5d-silent-hourly-observer.yml/dispatches" \
+            -f ref=main
+          echo "V92_ETH_SOURCE_COMMIT_E5D_WORKFLOW_DISPATCH_ACCEPTED"
       - name: Report no-data skip separately from verified closed hour
         if: always()
         env:
