@@ -9,16 +9,8 @@ on:
   schedule:
     # Backup clock ticks: GitHub schedules may be delayed or dropped.
     - cron: '43,56 * * * *'
-  # Independent source-completion wake-ups; no upstream strategy edits.
-  # Important: only successful DIRECT schedule/dispatch source jobs pass the
-  # observe job gate below. Never chain a workflow_run cascade.
-  workflow_run:
-    workflows:
-      - V9 Hourly BTC ETH SOL Market Context (paper only)
-      - V9.2 selected SOL reversals independent forward paper 1000 USDT NO ALERTS
-      - V9.2 ETH sealed hourly selected-pattern watch third shared paper NO ALERTS
-    types: [completed]
-    branches: [main]
+  # Source workflows explicitly dispatch this journal only after a
+  # verified immutable source-hour commit. The cron remains the fallback.
   workflow_dispatch:
 
 permissions:
@@ -30,12 +22,9 @@ concurrency:
 
 jobs:
   observe:
-    # V9 is frequently launched by a SUCCESSFUL market-data workflow_run
-    # rather than its independent cron; rejecting those missed verified hours.
-    # Allow V9 two-hop chained wakeups (market data -> V9 -> observer) ONLY.
-    # Still reject failed/cancelled source runs and chains from other sources.
-    # No source code or archived snapshot is ever executed as a trade action.
-    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.event == 'schedule' || github.event.workflow_run.event == 'workflow_dispatch' || (github.event.workflow_run.event == 'workflow_run' && github.event.workflow_run.name == 'V9 Hourly BTC ETH SOL Market Context (paper only)'))) }}
+    # Source workflows call this observer only after a verified source-hour
+    # commit. The observer independently rechecks freshness, alignment and hashes.
+    # Cron/manual dispatch remain recovery paths; no source code is executed as a trade action.
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:

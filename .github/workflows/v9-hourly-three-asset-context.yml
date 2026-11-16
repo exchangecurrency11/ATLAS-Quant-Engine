@@ -25,6 +25,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -145,6 +146,17 @@ jobs:
             sleep 5
           done
           exit 1
+
+      - name: Dispatch E5D after verified V9 source commit
+        if: steps.gate.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh api --method POST \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/atlas-e5d-silent-hourly-observer.yml/dispatches" \
+            -f ref=main
+          echo "V9_SOURCE_COMMIT_E5D_WORKFLOW_DISPATCH_ACCEPTED"
 
       - name: Preserve audit artifacts
         if: always()
