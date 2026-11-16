@@ -326,7 +326,25 @@ def create_first_seen(source:dict, *,now_epoch:int,run_id:str,run_attempt:str,
                 "newClosedBOSWatchReports","newSelectedRetestReports",
                 "pendingHypotheticalPaperEntryReports")
             for field in immutable_source_fields:
-                if prior.get(field)!=obs[field]:
+                prior_value=prior.get(field)
+                current_value=obs[field]
+                if field=="assetObservations":
+                    # E5C.observerReadUTC is the time of this audit execution,
+                    # not a field in the immutable source-hour payload. Preserve
+                    # the first-seen timestamp in the journal, but do not treat
+                    # a later read time as a revision of the underlying source.
+                    def source_payload(items):
+                        if not isinstance(items,list):
+                            return items
+                        return [
+                            {key:value for key,value in item.items()
+                             if key!="observerReadUTC"}
+                            if isinstance(item,dict) else item
+                            for item in items
+                        ]
+                    prior_value=source_payload(prior_value)
+                    current_value=source_payload(current_value)
+                if prior_value!=current_value:
                     raise ValueError(
                         "E5D_PREVIOUSLY_RECORDED_SOURCE_HOUR_WAS_REVISED:"+field)
             duplicate=True
