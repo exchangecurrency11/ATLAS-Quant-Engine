@@ -13,12 +13,12 @@
 | Source | Saved / expected | Missing UTC hours | Consecutive recent hours |
 |---|---:|---|---:|
 | BTC_SOL | 64/88 | 2026-11-12T14:00:00Z, 2026-11-13T02:00:00Z, 2026-11-13T14:00:00Z, 2026-11-14T18:00:00Z, 2026-11-14T19:00:00Z, 2026-11-14T20:00:00Z, 2026-11-14T23:00:00Z, 2026-11-15T00:00:00Z, 2026-11-15T03:00:00Z, 2026-11-15T04:00:00Z, 2026-11-15T05:00:00Z, 2026-11-15T06:00:00Z, 2026-11-15T07:00:00Z, 2026-11-15T10:00:00Z, 2026-11-15T12:00:00Z, 2026-11-15T13:00:00Z, 2026-11-15T14:00:00Z, 2026-11-15T16:00:00Z, 2026-11-15T18:00:00Z, 2026-11-15T19:00:00Z, 2026-11-15T20:00:00Z, 2026-11-15T22:00:00Z, 2026-11-15T23:00:00Z, 2026-11-16T00:00:00Z | 2 |
-| ETH | 65/87 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z, 2026-11-14T19:00:00Z, 2026-11-14T20:00:00Z, 2026-11-14T23:00:00Z, 2026-11-15T00:00:00Z, 2026-11-15T03:00:00Z, 2026-11-15T04:00:00Z, 2026-11-15T05:00:00Z, 2026-11-15T06:00:00Z, 2026-11-15T10:00:00Z, 2026-11-15T12:00:00Z, 2026-11-15T13:00:00Z, 2026-11-15T14:00:00Z, 2026-11-15T18:00:00Z, 2026-11-15T19:00:00Z, 2026-11-15T20:00:00Z, 2026-11-15T22:00:00Z, 2026-11-15T23:00:00Z, 2026-11-16T00:00:00Z, 2026-11-16T02:00:00Z | 0 |
+| ETH | 66/87 | 2026-11-12T13:00:00Z, 2026-11-12T14:00:00Z, 2026-11-12T15:00:00Z, 2026-11-14T19:00:00Z, 2026-11-14T20:00:00Z, 2026-11-14T23:00:00Z, 2026-11-15T00:00:00Z, 2026-11-15T03:00:00Z, 2026-11-15T04:00:00Z, 2026-11-15T05:00:00Z, 2026-11-15T06:00:00Z, 2026-11-15T10:00:00Z, 2026-11-15T12:00:00Z, 2026-11-15T13:00:00Z, 2026-11-15T14:00:00Z, 2026-11-15T18:00:00Z, 2026-11-15T19:00:00Z, 2026-11-15T20:00:00Z, 2026-11-15T22:00:00Z, 2026-11-15T23:00:00Z, 2026-11-16T00:00:00Z | 2 |
 
 ## Backtest / forward snapshot parity
 
-- Matched 1H source hours: **60**.
-- Coin-hour replay checks: **180**.
+- Matched 1H source hours: **61**.
+- Coin-hour replay checks: **183**.
 - Actually observed open-position snapshots: **0**; pending-retest snapshots: **0**; closed-exit events: **0**.
 - Older immutable hours with reduced direct-veto diagnostics: **1**; accepted only when unchanged V9.1/V9.2 parity and zero veto were independently confirmed.
 - Stored BOS/retest state parity is checked, but when no real paper trades exist, trade-specific entry/stop/TP parity remains UNPROVEN outside synthetic unit tests.
@@ -28,5 +28,8 @@
 
 ## New-entry review
 
+- BTCUSDT: NO_NEW_ENTRY_CANDIDATE.
+- ETHUSDT: NO_NEW_ENTRY_CANDIDATE.
+- SOLUSDT: NO_NEW_ENTRY_CANDIDATE.
 
 **Limits:** Data gaps are not backfilled; risk limits cannot prevent stop gaps, funding/variable spreads/slippage are not fully modeled; no strategy promotion.
