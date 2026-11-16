@@ -22,11 +22,9 @@ concurrency:
 
 jobs:
   observe:
-    # V9 is frequently launched by a SUCCESSFUL market-data workflow_run
-    # rather than its independent cron; rejecting those missed verified hours.
-    # Allow V9 two-hop chained wakeups (market data -> V9 -> observer) ONLY.
-    # Still reject failed/cancelled source runs and chains from other sources.
-    # No source code or archived snapshot is ever executed as a trade action.
+    # Source workflows call this observer only after a verified source-hour
+    # commit. The observer independently rechecks freshness, alignment and hashes.
+    # Cron/manual dispatch remain recovery paths; no source code is executed as a trade action.
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
