@@ -19,8 +19,8 @@
   "noRetroactiveTradesOrRewrittenCandles": true,
   "coverage": {
     "BTC_SOL": {
-      "expected": 113,
-      "saved": 72,
+      "expected": 114,
+      "saved": 73,
       "missingHoursUTC": [
         "2026-11-12T14:00:00Z",
         "2026-11-13T02:00:00Z",
@@ -64,12 +64,12 @@
         "2026-11-17T00:00:00Z",
         "2026-11-17T01:00:00Z"
       ],
-      "latestUTC": "2026-11-17T03:00:00Z",
-      "consecutiveRecentHours": 2
+      "latestUTC": "2026-11-17T04:00:00Z",
+      "consecutiveRecentHours": 3
     },
     "ETH": {
-      "expected": 112,
-      "saved": 74,
+      "expected": 113,
+      "saved": 75,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
         "2026-11-12T14:00:00Z",
@@ -110,13 +110,13 @@
         "2026-11-17T02:00:00Z",
         "2026-11-17T03:00:00Z"
       ],
-      "latestUTC": "2026-11-17T00:00:00Z",
-      "consecutiveRecentHours": 0
+      "latestUTC": "2026-11-17T04:00:00Z",
+      "consecutiveRecentHours": 1
     }
   },
-  "latestCommonHourUTC": null,
-  "matchedVerifiedHours": 67,
-  "matchedAssetChecks": 201,
+  "latestCommonHourUTC": "2026-11-17T04:00:00Z",
+  "matchedVerifiedHours": 68,
+  "matchedAssetChecks": 204,
   "actualObservedOpenPositionSnapshots": 0,
   "actualObservedRetestPendingSnapshots": 0,
   "actualObservedExitEvents": 0,
@@ -131,7 +131,26 @@
   "missingHourNotBackfilled": true,
   "parityErrors": [],
   "newEntryAdmissionReadiness": false,
-  "latestShadowEntryDecisions": [],
+  "latestShadowEntryDecisions": [
+    {
+      "symbol": "BTCUSDT",
+      "status": "NO_NEW_ENTRY_CANDIDATE",
+      "allowed": false,
+      "legacyUnchanged": true
+    },
+    {
+      "symbol": "ETHUSDT",
+      "status": "NO_NEW_ENTRY_CANDIDATE",
+      "allowed": false,
+      "legacyUnchanged": true
+    },
+    {
+      "symbol": "SOLUSDT",
+      "status": "NO_NEW_ENTRY_CANDIDATE",
+      "allowed": false,
+      "legacyUnchanged": true
+    }
+  ],
   "limitsCannotGuaranteeExecutionOrStopFill": true,
   "fundingVariableSlippageAndLiquidationNotFullyModeled": true
 }
