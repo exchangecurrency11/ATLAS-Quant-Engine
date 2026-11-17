@@ -1,0 +1,228 @@
+name: ATLAS E5I bounded V9.1 V9.2 source-chain rescue (NO ORDERS NO ALERTS)
+
+# Independent same-UTC-hour recovery for missing research source seals.
+# Does not execute checked-out code, write paper records or change any
+# V7/V9 strategy, alerts, orders, or trading accounts.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/atlas-e5i-v91-v92-source-chain-rescue.yml]
+  schedule:
+    - cron: '23,37,48 * * * *'
+  workflow_run:
+    workflows:
+      - V7 Hourly Paper Forward Runner
+      - ETH V7 Independent Hourly Paper Forward (no orders)
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atlas-e5i-bounded-chain-rescue
+  cancel-in-progress: false
+
+jobs:
+  source-chain-rescue:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Check exact-hour GitHub source seals and dispatch only missing research stages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # No checkout, external market-data API, third-party dependencies,
+          # downloaded artifacts, secrets output or research code execution.
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from datetime import datetime, timedelta, timezone
+          from urllib.error import HTTPError
+          from urllib.parse import quote, urlencode
+          from urllib.request import Request, urlopen
+
+          REPO = "exchangecurrency11/ATLAS-Quant-Engine"
+          assert os.environ["GITHUB_REPOSITORY"] == REPO
+          API = "https://api.github.com/repos/" + REPO
+          V7 = "experiment/v7-signal-quality-20261103"
+          V91 = "research/v9-prestart-live-data-compatibility-20261111"
+          V92 = "research/v92-bull-bear-candle-invalidation-20261112"
+          TASKS = (
+              ("V91_BTC_SOL", "v91-prospective-hourly-shadow.yml", V91,
+               "forward/v91_prospective_retest/hourly",
+               ((V7, "forward/snapshots"),)),
+              ("V91_ETH", "v91-eth-prospective-hourly-shadow.yml", V91,
+               "forward/v91_eth_prospective_retest/hourly",
+               ((V7, "forward/eth/snapshots"),)),
+              ("V92_BTC_SOL", "v92-selected-prospective-third-paper.yml", V92,
+               "forward/v92_prospective_selected/hourly",
+               ((V7, "forward/snapshots"),
+                (V91, "forward/v91_prospective_retest/hourly"))),
+              ("V92_ETH", "v92-eth-prospective-third-paper.yml", V92,
+               "forward/v92_prospective_eth/hourly",
+               ((V7, "forward/eth/snapshots"),
+                (V91, "forward/v91_eth_prospective_retest/hourly"))),
+          )
+          FIRST_MINUTE = 16
+          LAST_MINUTE = 49
+          MAX_DISPATCHES_PER_STAGE_HOUR = 2
+          token = os.environ.get("GH_TOKEN", "")
+          if not token or len(token) > 4096 or not all(33 <= ord(c) <= 126 for c in token):
+              raise ValueError("E5I_ACTIONS_TOKEN_MISSING_OR_UNSAFE")
+          headers = {
+              "Authorization": "Bearer " + token,
+              "Accept": "application/vnd.github+json",
+              "Content-Type": "application/json",
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "ATLAS-E5I-Silent-Chain-Rescue/1.0",
+          }
+
+          def utc_hour(now):
+              assert now.tzinfo is not None and now.utcoffset() == timedelta(0)
+              return now.replace(minute=0, second=0, microsecond=0)
+
+          def eligible(now):
+              return FIRST_MINUTE <= now.minute <= LAST_MINUTE
+
+          def snapshot_name(now):
+              return utc_hour(now).strftime("%Y-%m-%dT%H-00Z.json")
+
+          def request(method, path, *, params=None, body=None):
+              if method not in ("GET", "POST") or not path.startswith("/"):
+                  raise ValueError("E5I_UNAPPROVED_REQUEST")
+              url = API + path
+              if params:
+                  url += "?" + urlencode(params)
+              data = json.dumps(body).encode() if body is not None else None
+              with_body = method == "POST" and data is not None
+              if method == "POST" and not with_body:
+                  raise ValueError("E5I_POST_BODY_REQUIRED")
+              req = Request(url, headers=headers, data=data, method=method)
+              try:
+                  with urlopen(req, timeout=20) as response:
+                      raw = response.read(1_000_001)
+                      if len(raw) > 1_000_000:
+                          raise ValueError("E5I_API_RESPONSE_TOO_LARGE")
+                      return response.status, raw
+              except HTTPError as exc:
+                  if method == "GET" and exc.code == 404:
+                      return 404, b""
+                  raise
+
+          def has_source(now, branch, folder):
+              name = snapshot_name(now)
+              path = folder + "/" + name
+              if not re.fullmatch(r"[A-Za-z0-9_./-]+", path):
+                  raise ValueError("E5I_SOURCE_PATH_INVALID")
+              status, raw = request(
+                  "GET", "/contents/" + quote(path, safe="/"),
+                  params={"ref": branch})
+              if status == 404:
+                  return False
+              if status != 200:
+                  raise ValueError("E5I_SOURCE_READ_FAILED")
+              info = json.loads(raw)
+              if not (info.get("type") == "file"
+                      and info.get("path") == path
+                      and re.fullmatch(r"[a-f0-9]{40}", str(info.get("sha", "")))
+                      and isinstance(info.get("size"), int)
+                      and 100 <= info["size"] <= 2_000_000):
+                  raise ValueError("E5I_SOURCE_METADATA_INVALID")
+              return True
+
+          def prior_runs(now, workflow):
+              start = utc_hour(now)
+              end = start + timedelta(hours=1) - timedelta(seconds=1)
+              params = {
+                  "branch": "main",
+                  "created": start.strftime("%Y-%m-%dT%H:%M:%SZ") + ".."
+                             + end.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                  "per_page": 100,
+              }
+              code, raw = request("GET", "/actions/workflows/" + workflow + "/runs",
+                                  params=params)
+              if code != 200:
+                  raise ValueError("E5I_RUN_HISTORY_UNAVAILABLE")
+              response = json.loads(raw)
+              runs = response.get("workflow_runs")
+              total = response.get("total_count")
+              if (not isinstance(total, int) or total > 100
+                      or not isinstance(runs, list) or len(runs) != total):
+                  raise ValueError("E5I_RUN_HISTORY_INCOMPLETE")
+              count = 0
+              active = False
+              for item in runs:
+                  created = datetime.fromisoformat(item["created_at"].replace("Z", "+00:00"))
+                  if utc_hour(created) != start or item["head_branch"] != "main":
+                      raise ValueError("E5I_RUN_HISTORY_MISMATCH")
+                  status = item.get("status")
+                  if status not in ("queued", "in_progress", "completed", "waiting",
+                                    "requested", "pending"):
+                      raise ValueError("E5I_UNEXPECTED_RUN_STATUS")
+                  if item.get("event") == "workflow_dispatch" and created.minute >= 12:
+                      count += 1
+                  if status != "completed":
+                      active = True
+              return count, active
+
+          # Pure invariants: exact-hour only, workflow allowlist, no past-hour replay.
+          fixed = datetime(2026, 11, 17, 4, 23, tzinfo=timezone.utc)
+          assert snapshot_name(fixed) == "2026-11-17T04-00Z.json"
+          assert eligible(fixed) and not eligible(fixed.replace(minute=15))
+          assert eligible(fixed.replace(minute=49))
+          assert not eligible(fixed.replace(minute=50))
+          assert len(TASKS) == 4
+          assert {task[1] for task in TASKS} == {
+              "v91-prospective-hourly-shadow.yml",
+              "v91-eth-prospective-hourly-shadow.yml",
+              "v92-selected-prospective-third-paper.yml",
+              "v92-eth-prospective-third-paper.yml"}
+
+          start_now = datetime.now(timezone.utc)
+          summary = ["## ATLAS E5I — same-hour research-source recovery",
+                     "", "No paper trades, live signals, orders, user alerts, or backfill."]
+          if not eligible(start_now):
+              summary.append("SAFE_SKIP_OUTSIDE_16_TO_49_MINUTE_WINDOW")
+          else:
+              for tag, workflow, branch, folder, dependencies in TASKS:
+                  now = datetime.now(timezone.utc)
+                  if not eligible(now) or utc_hour(now) != utc_hour(start_now):
+                      summary.append(tag + ": SAFE_SKIP_CLOCK_ROLLOVER")
+                      break
+                  if has_source(now, branch, folder):
+                      summary.append(tag + ": EXISTING_HOUR_ALREADY_SEALED")
+                      continue
+                  if not all(has_source(now, dep_branch, dep_folder)
+                             for dep_branch, dep_folder in dependencies):
+                      summary.append(tag + ": MISSING_EXACT_HOUR_UPSTREAM_SOURCE")
+                      continue
+                  count, active = prior_runs(now, workflow)
+                  if active:
+                      summary.append(tag + ": UPSTREAM_WORKFLOW_STILL_RUNNING")
+                      continue
+                  if count >= MAX_DISPATCHES_PER_STAGE_HOUR:
+                      summary.append(tag + ": MAX_TWO_DISPATCH_ATTEMPTS_PER_HOUR")
+                      continue
+                  before_post = datetime.now(timezone.utc)
+                  if not eligible(before_post) or utc_hour(before_post) != utc_hour(now):
+                      summary.append(tag + ": SAFE_SKIP_LATE_CLOCK")
+                      break
+                  code, _ = request("POST", "/actions/workflows/" + workflow + "/dispatches",
+                                    body={"ref": "main"})
+                  if code != 204:
+                      raise ValueError("E5I_DISPATCH_NOT_ACCEPTED_" + tag)
+                  summary.append(tag + ": DISPATCH_ACCEPTED_NOT_A_SOURCE_SEAL")
+          text = "\n".join(summary) + "\n"
+          print(text)
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
+              f.write(text)
+          PY
