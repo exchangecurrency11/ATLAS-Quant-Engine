@@ -19,7 +19,7 @@
   "noRetroactiveTradesOrRewrittenCandles": true,
   "coverage": {
     "BTC_SOL": {
-      "expected": 124,
+      "expected": 127,
       "saved": 76,
       "missingHoursUTC": [
         "2026-11-12T14:00:00Z",
@@ -69,14 +69,17 @@
         "2026-11-17T08:00:00Z",
         "2026-11-17T09:00:00Z",
         "2026-11-17T10:00:00Z",
-        "2026-11-17T12:00:00Z"
+        "2026-11-17T12:00:00Z",
+        "2026-11-17T15:00:00Z",
+        "2026-11-17T16:00:00Z",
+        "2026-11-17T17:00:00Z"
       ],
       "latestUTC": "2026-11-17T14:00:00Z",
-      "consecutiveRecentHours": 2
+      "consecutiveRecentHours": 0
     },
     "ETH": {
-      "expected": 123,
-      "saved": 80,
+      "expected": 126,
+      "saved": 81,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
         "2026-11-12T14:00:00Z",
@@ -120,13 +123,15 @@
         "2026-11-17T06:00:00Z",
         "2026-11-17T07:00:00Z",
         "2026-11-17T09:00:00Z",
-        "2026-11-17T12:00:00Z"
+        "2026-11-17T12:00:00Z",
+        "2026-11-17T15:00:00Z",
+        "2026-11-17T16:00:00Z"
       ],
-      "latestUTC": "2026-11-17T14:00:00Z",
-      "consecutiveRecentHours": 2
+      "latestUTC": "2026-11-17T17:00:00Z",
+      "consecutiveRecentHours": 1
     }
   },
-  "latestCommonHourUTC": "2026-11-17T14:00:00Z",
+  "latestCommonHourUTC": null,
   "matchedVerifiedHours": 71,
   "matchedAssetChecks": 213,
   "actualObservedOpenPositionSnapshots": 0,
@@ -143,26 +148,7 @@
   "missingHourNotBackfilled": true,
   "parityErrors": [],
   "newEntryAdmissionReadiness": false,
-  "latestShadowEntryDecisions": [
-    {
-      "symbol": "BTCUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "ETHUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "SOLUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    }
-  ],
+  "latestShadowEntryDecisions": [],
   "limitsCannotGuaranteeExecutionOrStopFill": true,
   "fundingVariableSlippageAndLiquidationNotFullyModeled": true
 }
