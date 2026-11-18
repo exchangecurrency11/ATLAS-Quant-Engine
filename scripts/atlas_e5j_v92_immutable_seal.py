@@ -77,6 +77,10 @@ def _safe_snapshot(raw, asset, target):
         raise SealError("E5J_SOURCE_PARITY_UNVERIFIED")
     if obj.get("noBrokerOrders") is not True or obj.get("noUserNotifications") is not True:
         raise SealError("E5J_ORDERS_OR_ALERTS_NOT_PROVEN_DISABLED")
+    if asset == "btc-sol" and (obj.get("sourceVerifiedSameHour") is not True or obj.get("noPastHourBackfill") is not True):
+        raise SealError("E5J_BTC_SOL_SOURCE_PROOF_REJECTED")
+    if asset == "eth" and not (obj.get("ethPatternObservationsOnly") is True and obj.get("ethV92RetestVetoEnabled") is False and obj.get("noRetroactiveBackfill") is True):
+        raise SealError("E5J_ETH_WATCH_ONLY_PROOF_REJECTED")
     return obj
 
 
@@ -116,6 +120,7 @@ def seal(repo, asset, target, *, now=None, output=None):
         and shared_obj.get("assets") == ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
         and shared_obj.get("virtualInitialUSDT") == 1000
         and shared_obj.get("sharedSingleVirtualPortfolioNotThreeTimes1000") is True
+        and shared_obj.get("noHistorical836USDBackfilledIntoThisAccount") is True
         and shared_obj.get("noBrokerOrders") is True
         and shared_obj.get("noUserNotifications") is True
     ):
