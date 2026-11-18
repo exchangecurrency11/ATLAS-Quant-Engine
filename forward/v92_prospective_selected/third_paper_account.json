@@ -2,8 +2,8 @@
   "mode": "V92_INDEPENDENT_1000USDT_100USDT_RISK_PAPER_ACCOUNT",
   "requestedAtUTC": "2026-11-12T10:43:17Z",
   "firstEligible1HCloseUTC": "2026-11-12T11:00:00Z",
-  "lastDistinctVerifiedClosed1HUTC": "2026-11-17T22:00:00Z",
-  "savedDistinctVerifiedHours": 79,
+  "lastDistinctVerifiedClosed1HUTC": "2026-11-18T01:00:00Z",
+  "savedDistinctVerifiedHours": 80,
   "accountName": "V92_SELECTED_SOL_STRICT_CANDLES_BTC_WATCH",
   "virtualInitialUSDT": 1000.0,
   "targetVirtualRiskUSDTPerTrade": 100.0,
@@ -20,27 +20,41 @@
   "stateBySymbol": {
     "BTCUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-17T22:00:00Z",
+      "lastClosedUTC": "2026-11-18T01:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-17T22:00:00Z",
+          "lastClosedCandleUTC": "2026-11-18T01:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-17T20:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-18T00:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "ENGULFING",
+              "name": "BULLISH_ENGULFING",
+              "direction": "bullish",
+              "firstUTC": "2026-11-17T16:00:00Z",
+              "confirmedUTC": "2026-11-18T00:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "4H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
-          "lastClosedCandleUTC": "2026-11-17T00:00:00Z",
+          "lastClosedCandleUTC": "2026-11-18T00:00:00Z",
           "closedCandlesAvailable": 259,
-          "close": 64856.0,
-          "EMA20": 73104.03863853,
-          "EMA50": 76656.07828649,
+          "close": 64921.0,
+          "EMA20": 72324.70162534,
+          "EMA50": 76195.85680497,
           "trendByCloseVsEMA20EMA50": "bearish",
           "observedReversalsAtLastCompletedCandle": [],
           "onlyFullyClosedCandlesUsed": true,
@@ -50,11 +64,11 @@
           "exchangeNative3DParityNotProven": false
         },
         "3D": {
-          "lastClosedCandleUTC": "2026-11-15T00:00:00Z",
-          "closedCandlesAvailable": 85,
-          "close": 64130.5,
-          "EMA20": 77112.83065917,
-          "EMA50": 75820.46898373,
+          "lastClosedCandleUTC": "2026-11-18T00:00:00Z",
+          "closedCandlesAvailable": 86,
+          "close": 64921.0,
+          "EMA20": 75951.70392973,
+          "EMA50": 75393.0388275,
           "trendByCloseVsEMA20EMA50": "bearish",
           "observedReversalsAtLastCompletedCandle": [],
           "onlyFullyClosedCandlesUsed": true,
@@ -67,29 +81,43 @@
     },
     "SOLUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-17T22:00:00Z",
+      "lastClosedUTC": "2026-11-18T01:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-17T22:00:00Z",
+          "lastClosedCandleUTC": "2026-11-18T01:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-17T20:00:00Z",
+          "lastClosedCandleUTC": "2026-11-18T00:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
-          "lastClosedCandleUTC": "2026-11-17T00:00:00Z",
+          "lastClosedCandleUTC": "2026-11-18T00:00:00Z",
           "closedCandlesAvailable": 259,
-          "close": 71.52,
-          "EMA20": 85.72303532,
-          "EMA50": 94.55928885,
+          "close": 75.15,
+          "EMA20": 84.71607958,
+          "EMA50": 93.79813089,
           "trendByCloseVsEMA20EMA50": "bearish",
-          "observedReversalsAtLastCompletedCandle": [],
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "ENGULFING",
+              "name": "BULLISH_ENGULFING",
+              "direction": "bullish",
+              "firstUTC": "2026-11-16T00:00:00Z",
+              "confirmedUTC": "2026-11-18T00:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1D"
+            }
+          ],
           "onlyFullyClosedCandlesUsed": true,
           "informationOnlyNotAutomaticNewTrade": true,
           "notVetoOrEntryFilter": true,
@@ -97,11 +125,11 @@
           "exchangeNative3DParityNotProven": false
         },
         "3D": {
-          "lastClosedCandleUTC": "2026-11-15T00:00:00Z",
-          "closedCandlesAvailable": 85,
-          "close": 70.23,
-          "EMA20": 95.81776699,
-          "EMA50": 94.42954393,
+          "lastClosedCandleUTC": "2026-11-18T00:00:00Z",
+          "closedCandlesAvailable": 86,
+          "close": 75.15,
+          "EMA20": 93.84940823,
+          "EMA50": 93.67348339,
           "trendByCloseVsEMA20EMA50": "bearish",
           "observedReversalsAtLastCompletedCandle": [],
           "onlyFullyClosedCandlesUsed": true,
