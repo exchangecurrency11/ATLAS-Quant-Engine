@@ -1,0 +1,51 @@
+name: ATLAS E5J immutable V9.2 source-seal regression tests (NO ORDERS)
+
+# Read-only PR validation. Does not touch paper accounts, source research
+# branches, notifications, providers, or any real broker API.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-selected-prospective-third-paper.yml
+      - .github/workflows/v92-eth-prospective-third-paper.yml
+      - .github/workflows/atlas-e5j-v92-immutable-seal-tests.yml
+      - scripts/atlas_e5j_v92_immutable_seal.py
+      - tests/test_atlas_e5j_v92_immutable_seal.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-first-writer-wins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout PR code only; no research source writes
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Check E5J helper syntax and simulate isolated Git races
+        run: |
+          set -euo pipefail
+          python3 -m py_compile scripts/atlas_e5j_v92_immutable_seal.py
+          python3 -m unittest discover -s tests -p test_atlas_e5j_v92_immutable_seal.py -v
+      - name: Assert only V9.2 writing protocols changed and no unsafe Git merge
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          for name, asset in (
+              ("v92-selected-prospective-third-paper.yml", "btc-sol"),
+              ("v92-eth-prospective-third-paper.yml", "eth"),
+          ):
+              s = (Path(".github/workflows") / name).read_text()
+              assert "id: seal" in s
+              assert "e5j_guard/scripts/atlas_e5j_v92_immutable_seal.py" in s
+              assert "--asset " + asset in s
+              assert "steps.seal.outputs.committed == 'true'" in s
+              assert "git pull --rebase" not in s
+              assert "git push --force" not in s
+              assert "no orders" in s.lower() or "NO ORDERS" in s
+          print("E5J_V92_WRITE_PROTOCOL_STATIC_SAFETY_OK")
+          PY
