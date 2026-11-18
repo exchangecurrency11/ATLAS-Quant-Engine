@@ -47,6 +47,12 @@ jobs:
           ref: experiment/v7-signal-quality-20261103
           path: v7_evidence
           persist-credentials: false
+      - name: Checkout audited E5J immutable-seal helper from main (read-only)
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: e5j_guard
+          persist-credentials: false
       - name: Validate ETH symmetric candles exact source and one shared paper capital
         run: |
           set -euo pipefail
@@ -161,30 +167,18 @@ jobs:
           print("ETH_V92_THIRD_ACCOUNT_ONE_SHARED_1000_USDT_READY",
                 merged["sourceETHVerifiedClosedHours"],merged["closedEligiblePaperTrades"])
           PY
-      - name: Git seal contemporaneous ETH hour and recomputed combined three coin report
+      - name: E5J first-writer-wins sealed ETH hour (no rebase or overwrite)
+        id: seal
         if: steps.gate.outputs.run == 'true'
+        shell: bash
         run: |
           set -euo pipefail
-          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "forward/v92_prospective_eth/hourly/${{ steps.gate.outputs.target }}.json" \
-            forward/v92_prospective_eth/component.json \
-            forward/v92_prospective_eth/component.md \
-            forward/v92_prospective_selected/combined_three_asset_account.json \
-            forward/v92_prospective_selected/combined_three_asset_account.md
-          git commit -m "V9.2 sealed independent ETH 1H 4H reversal watch and single 1k BTC ETH SOL paper score NO ORDERS"
-          for attempt in 1 2 3; do
-            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
-            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
-              echo "ETH_V92_MATCHED_HOUR_GIT_SEALED_NO_REAL_ORDERS"
-              exit 0
-            fi
-            sleep 4
-          done
-          exit 1
+          python3 -u e5j_guard/scripts/atlas_e5j_v92_immutable_seal.py \
+            --asset eth \
+            --target "${{ steps.gate.outputs.target }}" \
+            --github-output "$GITHUB_OUTPUT"
       - name: Dispatch E5D after verified V9.2 ETH source commit
-        if: steps.gate.outputs.run == 'true'
+        if: steps.gate.outputs.run == 'true' && steps.seal.outputs.committed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -197,13 +191,15 @@ jobs:
         if: always()
         env:
           DID_RUN: ${{ steps.gate.outputs.run }}
+          DID_SEAL: ${{ steps.seal.outputs.committed }}
         run: |
           if [ "${DID_RUN:-false}" != true ]; then
             echo "ETH V9.2 SAFE SKIP, no verified new sealed 1H / V7 / V9.1 evidence. Green is NOT capture." >> "$GITHUB_STEP_SUMMARY"
-          elif test -s forward/v92_prospective_selected/combined_three_asset_account.md; then
+          elif [ "${DID_SEAL:-false}" = true ] && test -s forward/v92_prospective_selected/combined_three_asset_account.md; then
             cat forward/v92_prospective_selected/combined_three_asset_account.md >> "$GITHUB_STEP_SUMMARY"
+            echo "E5J NEW ETH source committed, no real orders." >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "ETH V9.2 source failure; NO new paper result." >> "$GITHUB_STEP_SUMMARY"
+            echo "E5J existing identical ETH hour or source seal FAILED; no new paper capture credited." >> "$GITHUB_STEP_SUMMARY"
           fi
           echo "No orders, no user alerts, no retroactive ETH PnL." >> "$GITHUB_STEP_SUMMARY"
       - name: Save only audited ETH third paper artifacts
