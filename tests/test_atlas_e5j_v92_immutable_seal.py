@@ -5,6 +5,9 @@ import tempfile
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
+from unittest.mock import patch
+
+import scripts.atlas_e5j_v92_immutable_seal as seal_module
 
 from scripts.atlas_e5j_v92_immutable_seal import BRANCH, CONFIG, SHARED, SealError, seal
 
@@ -127,6 +130,46 @@ class ImmutableSealRaceTests(unittest.TestCase):
         eth_path = self.prepare(fresh, "eth")
         self.assertTrue(seal(fresh, "eth", self.target, now=self.now))
         self.assertTrue(self.remote_snapshot(eth_path)["noUserNotifications"])
+
+
+    def test_push_time_duplicate_race_is_safe_noop(self):
+        path = self.prepare(self.left, "btc-sol", timestamp="2026-11-18T13:20:00Z")
+        self.prepare(self.right, "btc-sol", timestamp="2026-11-18T13:20:01Z")
+        original_git = seal_module.git
+        collided = [False]
+
+        def intercept(repo, *args, **kw):
+            if Path(repo).resolve() == self.left.resolve() and args[0] == "push" and not collided[0]:
+                collided[0] = True
+                self.assertTrue(seal(self.right, "btc-sol", self.target, now=self.now))
+            return original_git(repo, *args, **kw)
+
+        output = self.base / "post_push_duplicate.txt"
+        with patch.object(seal_module, "git", side_effect=intercept):
+            self.assertFalse(seal(self.left, "btc-sol", self.target,
+                                  now=self.now, output=output))
+        self.assertTrue(collided[0])
+        self.assertEqual(output.read_text(), "committed=false\n")
+        self.assertEqual(self.remote_snapshot(path)["capturedAtUTC"],
+                         "2026-11-18T13:20:01Z")
+
+    def test_push_time_conflicting_payload_fails_closed(self):
+        path = self.prepare(self.left, "btc-sol", price=100)
+        self.prepare(self.right, "btc-sol", price=999)
+        original_git = seal_module.git
+        collided = [False]
+
+        def intercept(repo, *args, **kw):
+            if Path(repo).resolve() == self.left.resolve() and args[0] == "push" and not collided[0]:
+                collided[0] = True
+                self.assertTrue(seal(self.right, "btc-sol", self.target, now=self.now))
+            return original_git(repo, *args, **kw)
+
+        with patch.object(seal_module, "git", side_effect=intercept):
+            with self.assertRaisesRegex(SealError, "CONTENT_CONFLICT"):
+                seal(self.left, "btc-sol", self.target, now=self.now)
+        self.assertTrue(collided[0])
+        self.assertEqual(self.remote_snapshot(path)["assets"]["BTCUSDT"]["close"], 999)
 
     def test_expired_hour_cannot_be_backfilled(self):
         self.prepare(self.left, "btc-sol")
