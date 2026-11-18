@@ -2,8 +2,8 @@
 
 **GERÇEK EMİR, GERÇEK UYGULANABİLİR GİRİŞ VE KULLANICI BİLDİRİMİ YOK.**
 İleri paper başlangıç: 2026-11-12T11:00:00Z
-En son doğrulanmış kapanış: 2026-11-18T14:00:00Z
-Doğrulanan saat: 88
+En son doğrulanmış kapanış: 2026-11-18T18:00:00Z
+Doğrulanan saat: 89
 
 | Hesap | İşlem | Kazanç | Net R | Sanal PnL | Sanal bakiye |
 |---|---:|---:|---:|---:|---:|
