@@ -96,6 +96,7 @@ def seal(repo, asset, target, *, now=None, output=None):
     repo = Path(repo).resolve()
     if asset not in CONFIG or not re.fullmatch(r"20\d{2}-\d\d-\d\dT\d\d-00Z", target):
         raise SealError("E5J_ASSET_OR_TARGET_REJECTED")
+    injected_clock = now is not None
     now = now or datetime.now(timezone.utc)
     if now.tzinfo is None or now.utcoffset().total_seconds() != 0:
         raise SealError("E5J_TIME_MUST_BE_UTC")
@@ -154,7 +155,7 @@ def seal(repo, asset, target, *, now=None, output=None):
         raise SealError("E5J_UNEXPECTED_STAGED_PATHS")
     git(repo, "commit", "-m",
         "E5J first-writer-wins immutable V9.2 " + asset + " source NO ORDERS")
-    if target != datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-00Z") and now is None:
+    if not injected_clock and target != datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-00Z"):
         raise SealError("E5J_HOUR_ROLLOVER_BEFORE_PUSH")
     result = git(repo, "push", "origin", "HEAD:" + BRANCH, check=False)
     if result.returncode == 0:
