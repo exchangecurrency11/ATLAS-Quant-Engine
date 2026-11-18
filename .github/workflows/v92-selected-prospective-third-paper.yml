@@ -47,6 +47,12 @@ jobs:
           ref: experiment/v7-signal-quality-20261103
           path: v7_evidence
           persist-credentials: false
+      - name: Checkout audited E5J immutable-seal helper from main (read-only)
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: e5j_guard
+          persist-credentials: false
       - name: Validate risk controls source parity bullish bearish and new hour integrity
         run: |
           set -euo pipefail
@@ -171,31 +177,18 @@ jobs:
           print("V92_THIRD_1K_USDT_PAPER_ACCOUNT_PREPARED",b["lastDistinctVerifiedClosed1HUTC"],
                 "trades",b["closedEligiblePaperTrades"],"equity",b["virtualEquityUSDT"])
           PY
-      - name: Git commit the exact new V9.2 hour BEFORE any future exit may be counted
+      - name: E5J first-writer-wins sealed BTC SOL hour (no rebase or overwrite)
+        id: seal
         if: steps.gate.outputs.capture == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add "forward/v92_prospective_selected/hourly/${{ steps.gate.outputs.target }}.json" \
-            forward/v92_prospective_selected/third_paper_account.json \
-            forward/v92_prospective_selected/third_paper_account.md \
-            forward/v92_prospective_selected/combined_three_asset_account.json \
-            forward/v92_prospective_selected/combined_three_asset_account.md
-          git commit -m "V9.2 independently sealed same-hour selected SOL candle paper third account NO ORDERS"
-          for attempt in 1 2 3; do
-            git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
-            if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
-              echo "V92_THIRD_PAPER_HOUR_COMMITTED_PRE_FUTURE_EXIT"
-              exit 0
-            fi
-            sleep 4
-          done
-          exit 1
+          python3 -u e5j_guard/scripts/atlas_e5j_v92_immutable_seal.py \
+            --asset btc-sol \
+            --target "${{ steps.gate.outputs.target }}" \
+            --github-output "$GITHUB_OUTPUT"
       - name: Dispatch E5D after verified V9.2 BTC SOL source commit
-        if: steps.gate.outputs.capture == 'true'
+        if: steps.gate.outputs.capture == 'true' && steps.seal.outputs.committed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -208,17 +201,18 @@ jobs:
         if: always()
         env:
           DID_CAPTURE: ${{ steps.gate.outputs.capture }}
+          DID_SEAL: ${{ steps.seal.outputs.committed }}
           TARGET: ${{ steps.gate.outputs.target }}
         run: |
           echo "### V9.2 third paper only (no orders, no alerts)" >> "$GITHUB_STEP_SUMMARY"
           echo "UTC hour: ${TARGET:-none}" >> "$GITHUB_STEP_SUMMARY"
           if [ "${DID_CAPTURE:-false}" != "true" ]; then
             echo "**SAFE SKIP** — no new qualified matching sealed hour; green workflow is not an observation." >> "$GITHUB_STEP_SUMMARY"
-          elif test -s forward/v92_prospective_selected/combined_three_asset_account.md; then
+          elif [ "${DID_SEAL:-false}" = true ] && test -s forward/v92_prospective_selected/combined_three_asset_account.md; then
             cat forward/v92_prospective_selected/combined_three_asset_account.md >> "$GITHUB_STEP_SUMMARY"
-            echo "Git commit/push success must be checked before trusting any new hour." >> "$GITHUB_STEP_SUMMARY"
+            echo "E5J NEW immutable source committed; no orders or alerts." >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "SOURCE REJECTED — no successful paper observation." >> "$GITHUB_STEP_SUMMARY"
+            echo "E5J existing identical hour or source seal FAILED; no new paper capture credited." >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Retain independent research audit
         if: always()
