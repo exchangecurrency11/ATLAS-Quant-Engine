@@ -174,7 +174,7 @@ class E5LSealedWakeTests(unittest.TestCase):
 
     def test_early_late_and_wrong_hour_no_api_access(self):
         for now in (
-            self.now.replace(minute=15),
+            self.now.replace(minute=11),
             self.now.replace(minute=50),
             self.now.replace(hour=8),
         ):
@@ -182,6 +182,12 @@ class E5LSealedWakeTests(unittest.TestCase):
                 self.api.calls.clear()
                 self.assertEqual(self.wake(now), "E5L_CLOCK_OUTSIDE_CURRENT_VERIFIED_SOURCE_WINDOW_SAFE_SKIP")
                 self.assertEqual(self.api.calls, [])
+
+    def test_source_sealed_in_15th_minute_dispatches_current_hour(self):
+        now = self.now.replace(minute=15)
+        self.api.bad_source["capturedAtUTC"] = "2026-11-19T07:15:01Z"
+        self.assertEqual(self.wake(now), "E5L_V92_DISPATCH_ACCEPTED_NOT_A_VERIFIED_SOURCE_SEAL")
+        self.assertEqual(len(self.api.posts()), 1)
 
     def test_clock_rollover_between_validation_and_dispatch(self):
         later = self.now.replace(hour=8, minute=0)
