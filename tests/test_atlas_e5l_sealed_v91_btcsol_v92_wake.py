@@ -217,7 +217,7 @@ class E5LSealedWakeTests(unittest.TestCase):
         assert "git push" not in wake
         assert "actions/checkout" not in wake
         assert "test -s" not in wake
-        assert "broker" not in wake.lower()
+        assert "binance" not in wake.lower()
         assert wake.count(V92_WAKE) == 1
         assert "workflow_dispatch:" in main
         assert "echo \"committed=true\"" in main
