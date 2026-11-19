@@ -1,0 +1,29 @@
+name: ATLAS E5N V9.2 shared max queue safety regression (NO ORDERS)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-selected-prospective-third-paper.yml
+      - .github/workflows/v92-eth-prospective-third-paper.yml
+      - .github/workflows/atlas-e5i-v91-v92-source-chain-rescue.yml
+      - .github/workflows/atlas-e5n-v92-queue-tests.yml
+      - tests/test_atlas_e5n_v92_shared_queue.py
+
+permissions:
+  contents: read
+
+jobs:
+  v92-shared-source-queue-read-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout PR without persisted write credentials
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Assert source serial queue and recovery safety without network calls
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p test_atlas_e5n_v92_shared_queue.py -v
