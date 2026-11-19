@@ -44,47 +44,47 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_v92_multi_candle_invalidation.py' -q
           python3 -m unittest discover -s tests -p 'test_v91_prospective_retest.py' -q
 
-      - name: Fetch full-history V9.1 and V7 sealed source branches
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Read ONLY pre-existing E5J-owned Git-sealed source hour
+        id: sealed
+        shell: bash
         run: |
           set -euo pipefail
-          git clone --single-branch --branch research/v9-prestart-live-data-compatibility-20261111 \
-            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" v91_evidence
-          git clone --single-branch --branch experiment/v7-signal-quality-20261103 \
-            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" v7_evidence
-          test -d v91_evidence/.git
-          test -d v7_evidence/.git
-
-      - name: Fetch same-hour public market snapshot and closed 1H 4H daily history
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          mkdir -p forward/tmp/v92_history
-          gh api "repos/${GITHUB_REPOSITORY}/contents/market_data.json?ref=main" \
-            --jq '.content' | base64 --decode > forward/tmp/v92_main_market.json
-          test -s forward/tmp/v92_main_market.json
-          for tf in 1hour 4hour daily; do
-            curl --fail --location --silent --show-error \
-              --retry 2 --retry-delay 2 --max-time 80 \
-              -H 'Cache-Control: no-cache' \
-              "https://btc-sol-futures-test.exchange-currency-1111.workers.dev/history?interval=${tf}" \
-              -o "forward/tmp/v92_history/history_${tf}.json"
-            test -s "forward/tmp/v92_history/history_${tf}.json"
-          done
-
-      - name: Capture only current eligible UTC close; missing or stale sources safely skip
-        run: |
-          set -euo pipefail
-          mkdir -p forward/v92_prospective_selected/hourly
-          python3 -u v92_prospective_selected.py \
-            --source-dir v91_evidence \
-            --v7-dir v7_evidence/forward/snapshots \
-            --market forward/tmp/v92_main_market.json \
-            --history forward/tmp/v92_history
+          test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
+          git pull --ff-only origin research/v92-bull-bear-candle-invalidation-20261112
+          target="$(date -u +%Y-%m-%dT%H-00Z)"
+          source="forward/v92_prospective_selected/hourly/$target.json"
+          if [ ! -s "$source" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "V92_SOL_PAIRED_SOURCE_NOT_YET_SEALED_SAFE_SKIP"
+            exit 0
+          fi
+          python3 - "$source" "$target" <<'PY'
+          import datetime,json,subprocess,sys
+          from pathlib import Path
+          file=Path(sys.argv[1]); target=sys.argv[2]
+          j=json.loads(file.read_text(encoding="utf-8"))
+          expected=target.replace("-00Z",":00:00Z")
+          assert j.get("mode")=="V92_SELECTED_CANDLE_IMMUTABLE_HOURLY_FORWARD_PAPER_ONLY"
+          assert j.get("targetClosed1HUTC")==expected
+          assert j.get("sourceVerifiedSameHour") is True
+          assert j.get("sourceV7AndV91RecomputedExactMatch") is True
+          assert j.get("noPastHourBackfill") is True
+          assert j.get("noBrokerOrders") is True and j.get("noUserNotifications") is True
+          assert set(j.get("assets",{}))=={"BTCUSDT","SOLUSDT"}
+          observed=datetime.datetime.fromisoformat(j["capturedAtUTC"].replace("Z","+00:00"))
+          now=datetime.datetime.now(datetime.timezone.utc)
+          closed=datetime.datetime.fromisoformat(expected.replace("Z","+00:00"))
+          assert closed<=observed<=now and now-closed<datetime.timedelta(hours=1)
+          tracked=subprocess.check_output(["git","ls-files","-s","--",str(file)],text=True).strip().split()
+          assert len(tracked)==4 and tracked[0]=="100644" and tracked[2]=="0" and tracked[3]==str(file)
+          blob=subprocess.check_output(["git","hash-object",str(file)],text=True).strip()
+          assert blob==tracked[1]
+          print("V92_SOL_PAIRED_CONSUME_EXISTING_GIT_SEALED_HOUR_ONLY",target)
+          PY
+          echo "ready=true" >> "$GITHUB_OUTPUT"
 
       - name: Recompute paired V9.1 control and V9.2 filtered SOL accounts
+        if: steps.sealed.outputs.ready == 'true'
         run: |
           set -euo pipefail
           python3 -u v92_sol_paired_prospective.py \
@@ -111,22 +111,27 @@ jobs:
             "decision":x["researchDecision"]}))
           PY
 
-      - name: Commit append-only V9.2 hourly evidence and paired report to research branch
+      - name: Commit ONLY paired SOL comparison report, never shared hourly sources
+        if: steps.sealed.outputs.ready == 'true'
         run: |
           set -euo pipefail
           test "$(git branch --show-current)" = research/v92-bull-bear-candle-invalidation-20261112
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add forward/v92_prospective_selected/hourly \
-                  forward/v92_prospective_selected/third_paper_account.json \
-                  forward/v92_prospective_selected/third_paper_account.md \
-                  forward/v92_prospective_selected/paired_sol_account.json \
+          # A secondary study cannot create or change the official V9.2 source.
+          test -z "$(git status --porcelain -- forward/v92_prospective_selected/hourly)"
+          test -z "$(git status --porcelain -- forward/v92_prospective_selected/third_paper_account.json forward/v92_prospective_selected/third_paper_account.md)"
+          git add forward/v92_prospective_selected/paired_sol_account.json \
                   forward/v92_prospective_selected/paired_sol_account.md
+          if git diff --cached --name-only | grep -Ev '^forward/v92_prospective_selected/paired_sol_account\.(json|md)$'; then
+            echo "V92_SOL_PAIRED_UNAUTHORIZED_STAGE"
+            exit 1
+          fi
           if git diff --cached --quiet; then
-            echo "No new sealed hourly evidence or report changes; no commit."
+            echo "No new paired comparison report changes; no commit."
             exit 0
           fi
-          git commit -m "V9.2 SOL paired prospective paper observation"
+          git commit -m "V9.2 SOL paired comparison report ONLY (no hourly source writes)"
           for attempt in 1 2 3; do
             git pull --rebase origin research/v92-bull-bear-candle-invalidation-20261112
             if git push origin HEAD:research/v92-bull-bear-candle-invalidation-20261112; then
@@ -143,9 +148,6 @@ jobs:
         with:
           name: v92-sol-paired-prospective-${{ github.run_id }}
           path: |
-            forward/tmp/v92_main_market.json
-            forward/tmp/v92_history/history_*.json
-            forward/v92_prospective_selected/third_paper_account.json
             forward/v92_prospective_selected/paired_sol_account.json
             forward/v92_prospective_selected/paired_sol_account.md
           if-no-files-found: ignore
@@ -159,4 +161,5 @@ jobs:
           else
             echo "No new paired result was produced. Missing/stale data is never backfilled." >> "$GITHUB_STEP_SUMMARY"
           fi
+          echo "E5M paired research consumes only existing V9.2 Git-sealed hours, never produces them." >> "$GITHUB_STEP_SUMMARY"
           echo "No broker orders, user alerts, V7/V9.1 edits, or production changes." >> "$GITHUB_STEP_SUMMARY"
