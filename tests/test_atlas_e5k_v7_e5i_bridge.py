@@ -178,7 +178,7 @@ class BridgeTests(unittest.TestCase):
         # stopping BEFORE clock-based live dispatch can start.
         body = WORKFLOW.read_text(encoding="utf-8")
         source = textwrap.dedent(
-            body.split("          python3 - <<'PY'\\n", 1)[1]
+            body.split("          python3 - <<'PY'\n", 1)[1]
                 .split("          started=datetime.now(timezone.utc)", 1)[0])
         with patch.dict(os.environ, {"GH_TOKEN": "X" * 40}):
             ns = {}
