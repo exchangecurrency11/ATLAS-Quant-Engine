@@ -297,7 +297,7 @@ jobs:
               if not re.fullmatch(r"20\d{2}-\d{2}-\d{2}T\d{2}-00Z", target):
                   raise ValueError("E5L_TARGET_NOT_EXACT_UTC_HOUR")
               # Only an actually current 1H source may wake V9.2. Never replay an old hour.
-              if target != now.strftime("%Y-%m-%dT%H-00Z") or not 16 <= now.minute <= 49:
+              if target != now.strftime("%Y-%m-%dT%H-00Z") or not 12 <= now.minute <= 49:
                   return "E5L_CLOCK_OUTSIDE_CURRENT_VERIFIED_SOURCE_WINDOW_SAFE_SKIP"
               filename = target + ".json"
               v91_path = "forward/v91_prospective_retest/hourly/" + filename
@@ -342,7 +342,7 @@ jobs:
                   raise ValueError("E5L_V92_LOOKUP_UNCERTAIN_FAIL_CLOSED")
               # Prevent rollover between source verification and the actual dispatch.
               current = clock()
-              if current.strftime("%Y-%m-%dT%H-00Z") != target or not 16 <= current.minute <= 49:
+              if current.strftime("%Y-%m-%dT%H-00Z") != target or not 12 <= current.minute <= 49:
                   return "E5L_CLOCK_ROLLOVER_NO_DISPATCH"
               code, _ = api("POST", V92_WAKE, {"ref": "main"})
               if code != 204:
