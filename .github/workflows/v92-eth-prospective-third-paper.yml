@@ -21,6 +21,7 @@ permissions:
 # Same concurrency key as V9.2 BTC/SOL account: no race to combined report.
 concurrency:
   group: v92-selected-third-paper-no-orders
+  queue: max
   cancel-in-progress: false
 
 jobs:
