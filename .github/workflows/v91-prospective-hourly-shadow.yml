@@ -217,7 +217,7 @@ jobs:
   v92-btc-sol-wake:
     name: Wake V9.2 BTC SOL only after committed sealed V9.1 paper hour
     needs: hourly-paper
-    if: ${{ needs.hourly-paper.result == 'success' && needs.hourly-paper.outputs.new_source_sealed == 'true' }}
+    if: ${{ needs['hourly-paper'].result == 'success' && needs['hourly-paper'].outputs.new_source_sealed == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 3
     permissions:
@@ -228,7 +228,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          V91_SEALED_TARGET: ${{ needs.hourly-paper.outputs.source_hour }}
+          V91_SEALED_TARGET: ${{ needs['hourly-paper'].outputs.source_hour }}
         run: |
           set -euo pipefail
           # Privileged job has NO checkout, untrusted research execution or source writes.
