@@ -173,6 +173,18 @@ class BridgeTests(unittest.TestCase):
             "E5K_WAITING_FOR_BOTH_VERIFIED_ORIGINAL_V7_SOURCES_TIMEOUT_NO_FAKE_SOURCE")
         self.assertEqual(self.api.posts(), [])
 
+    def test_full_inline_mock_self_tests_run_without_remote_calls(self):
+        # Execute the same in-run mock suite that E5H executes with actions:write,
+        # stopping BEFORE clock-based live dispatch can start.
+        body = WORKFLOW.read_text(encoding="utf-8")
+        source = textwrap.dedent(
+            body.split("          python3 - <<'PY'\\n", 1)[1]
+                .split("          started=datetime.now(timezone.utc)", 1)[0])
+        with patch.dict(os.environ, {"GH_TOKEN": "X" * 40}):
+            ns = {}
+            exec(compile(source, str(WORKFLOW), "exec"), ns)
+        self.assertIn("e5k_follow_up", ns)
+
     def test_static_never_write_sources_or_place_orders(self):
         content = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("ATLAS_E5K_MOCKED_V7_TO_E5I_BRIDGE_SAFE", content)
