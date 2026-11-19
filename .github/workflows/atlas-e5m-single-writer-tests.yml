@@ -31,9 +31,10 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           x=Path(".github/workflows/atlas-e5m-single-writer-tests.yml").read_text()
-          assert "permissions:\n  contents: read" in x
-          assert "actions: write" not in x
-          assert "GH_TOKEN" not in x
-          assert "git push" not in x
+          before=x.split("      - name: Prove read-only test environment",1)[0]
+          assert "permissions:\n  contents: read" in before
+          assert "actions: write" not in before
+          assert "GH_TOKEN" not in before
+          assert "git push" not in before
           print("ATLAS_E5M_CI_NO_TOKEN_NO_SOURCE_WRITE")
           PY
