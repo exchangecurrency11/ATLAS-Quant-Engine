@@ -286,8 +286,10 @@ jobs:
                   raise
           
           
-          def e5l_wake(now=None, api=None):
-              now = now or datetime.now(timezone.utc)
+          def e5l_wake(now=None, api=None, clock=None):
+              clock = clock or (lambda: datetime.now(timezone.utc))
+              if now is None:
+                  now = clock()
               if now.tzinfo is None or now.utcoffset().total_seconds() != 0:
                   raise ValueError("E5L_CLOCK_NOT_UTC")
               api = api or e5l_http
@@ -339,7 +341,7 @@ jobs:
               if code != 404:
                   raise ValueError("E5L_V92_LOOKUP_UNCERTAIN_FAIL_CLOSED")
               # Prevent rollover between source verification and the actual dispatch.
-              current = datetime.now(timezone.utc) if now is None else now
+              current = clock()
               if current.strftime("%Y-%m-%dT%H-00Z") != target or not 16 <= current.minute <= 49:
                   return "E5L_CLOCK_ROLLOVER_NO_DISPATCH"
               code, _ = api("POST", V92_WAKE, {"ref": "main"})
