@@ -28,10 +28,11 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           f=Path('.github/workflows/atlas-e5k-bridge-tests.yml').read_text()
-          assert "contents: read" in f
-          assert "actions: write" not in f
-          assert "GITHUB_TOKEN" not in f
-          assert "gh api" not in f
-          assert "git push" not in f
+          ci=f.split("      - name: Prove test workflow",1)[0]
+          assert "contents: read" in ci
+          assert "actions: write" not in ci
+          assert "GITHUB_TOKEN" not in ci
+          assert "gh api" not in ci
+          assert "git push" not in ci
           print("ATLAS_E5K_READONLY_CI_GUARDS_OK")
           PY
