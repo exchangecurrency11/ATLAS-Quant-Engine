@@ -1,0 +1,37 @@
+name: ATLAS E5K verified V7 to E5I source-bridge regression (NO ORDERS)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/atlas-e5h-safe-v7-v9-source-rescue.yml
+      - .github/workflows/atlas-e5k-bridge-tests.yml
+      - tests/test_atlas_e5k_v7_e5i_bridge.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verified-v7-to-e5i-bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout only this PR's files without persisted credentials
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Compile audited inline Python and run isolated fake GitHub API regression
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p test_atlas_e5k_v7_e5i_bridge.py -v
+      - name: Prove test workflow cannot dispatch, trade, or write to repository
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          f=Path('.github/workflows/atlas-e5k-bridge-tests.yml').read_text()
+          assert "contents: read" in f
+          assert "actions: write" not in f
+          assert "GITHUB_TOKEN" not in f
+          assert "gh api" not in f
+          assert "git push" not in f
+          print("ATLAS_E5K_READONLY_CI_GUARDS_OK")
+          PY
