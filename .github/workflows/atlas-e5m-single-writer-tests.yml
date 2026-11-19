@@ -1,0 +1,40 @@
+name: ATLAS E5M V9.2 BTC SOL single source writer safety regression (NO ORDERS)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/v92-sol-paired-prospective-paper.yml
+      - .github/workflows/atlas-e5m-single-writer-tests.yml
+      - tests/test_atlas_e5m_single_v92_source_writer.py
+
+permissions:
+  contents: read
+
+jobs:
+  paired-consumer-only-git-seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout only PR code without persisted credentials
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Run local Git-seal and secondary-writer security tests without any network token
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p test_atlas_e5m_single_v92_source_writer.py -v
+      - name: Prove read-only test environment
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          x=Path(".github/workflows/atlas-e5m-single-writer-tests.yml").read_text()
+          before=x.split("      - name: Prove read-only test environment",1)[0]
+          assert "permissions:\n  contents: read" in before
+          assert "actions: write" not in before
+          assert "GH_TOKEN" not in before
+          assert "git push" not in before
+          print("ATLAS_E5M_CI_NO_TOKEN_NO_SOURCE_WRITE")
+          PY
