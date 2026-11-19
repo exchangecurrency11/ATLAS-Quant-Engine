@@ -40,10 +40,10 @@ jobs:
         run: |
           set -euo pipefail
           # No checkout, no downloaded artifact, no secret printing, no paper writes.
-          # All network calls constrained to GitHub API, exact source file GETs,
-          # exact workflow run-list GETs, and 3 approved workflow dispatch POSTs.
+          # All network calls constrained to GitHub API and approved source/workflow endpoints.
+          # E5K may dispatch only E5I after both genuine same-hour V7 seals.
           python3 - <<'PY'
-          import json,os,re,sys,time
+          import base64,json,os,re,sys,time
           from datetime import datetime,timedelta,timezone
           from urllib.error import HTTPError
           from urllib.parse import quote,urlencode
@@ -65,6 +65,21 @@ jobs:
           MINUTE_FIRST=15
           MINUTE_LAST=50
           MAX_DISPATCHES_PER_STAGE_HOUR=2
+          E5K_BRIDGE=("E5I_CHAIN","atlas-e5i-v91-v92-source-chain-rescue.yml",
+                      "main","")
+          E5K_STAGES=(
+            ("V91_BTC_SOL", "research/v9-prestart-live-data-compatibility-20261111",
+             "forward/v91_prospective_retest/hourly"),
+            ("V91_ETH", "research/v9-prestart-live-data-compatibility-20261111",
+             "forward/v91_eth_prospective_retest/hourly"),
+            ("V92_BTC_SOL", "research/v92-bull-bear-candle-invalidation-20261112",
+             "forward/v92_prospective_selected/hourly"),
+            ("V92_ETH", "research/v92-bull-bear-candle-invalidation-20261112",
+             "forward/v92_prospective_eth/hourly"),
+          )
+          E5K_BRIDGE_FIRST=16
+          E5K_BRIDGE_LAST=49
+          E5K_MAX_WAIT_SECONDS=150
           TOKEN=os.environ.get("GH_TOKEN","")
           if not TOKEN or len(TOKEN)>4096 or not all(33<=ord(x)<=126 for x in TOKEN):
               raise ValueError("E5H_ACTIONS_TOKEN_MISSING_OR_UNSAFE")
@@ -170,6 +185,82 @@ jobs:
               if code!=204:
                   raise ValueError("E5H_GITHUB_DISPATCH_NOT_ACCEPTED_"+tag)
               return tag+" DISPATCH_API_ACCEPTED_NOT_A_SNAPSHOT_OR_TRADE"
+          def e5k_verified_original(now,stage):
+              # Real JSON payload and exact same UTC hour, not just a green run
+              # or a GitHub path. No external market endpoint is queried here.
+              tag,workflow,branch,folder=stage
+              path=folder+"/"+filename(now)
+              code,raw=make_request("GET","/contents/"+path,params={"ref":branch})
+              if code==404:return False
+              if code!=200:raise ValueError("E5K_V7_SOURCE_READ_NOT_OK_"+tag)
+              doc=json.loads(raw)
+              if not (doc.get("type")=="file" and doc.get("path")==path
+                      and re.fullmatch(r"[a-f0-9]{40}",str(doc.get("sha","")))
+                      and isinstance(doc.get("size"),int)
+                      and 100<=doc["size"]<=2_000_000
+                      and doc.get("encoding")=="base64"):
+                  raise ValueError("E5K_ORIGINAL_SOURCE_METADATA_INVALID_"+tag)
+              try:
+                  source=json.loads(base64.b64decode(doc["content"],validate=False))
+              except (ValueError,TypeError,KeyError) as exc:
+                  raise ValueError("E5K_ORIGINAL_SOURCE_PAYLOAD_INVALID_"+tag) from exc
+              expected=now.strftime("%Y-%m-%dT%H:00:00Z")
+              if not (isinstance(source,dict)
+                      and source.get("targetClosed1HUTC")==expected
+                      and source.get("status")=="VERIFIED_PAPER_OBSERVATION"
+                      and source.get("brokerOrders") is False
+                      and source.get("productionSystemModified") is False):
+                  raise ValueError("E5K_ORIGINAL_SOURCE_NOT_VERIFIED_"+tag)
+              return True
+
+          def e5k_bridge(now,clock=None):
+              # Only bridge verified ORIGINAL V7 sources to the existing E5I.
+              # E5I retains its own allowlist, two-attempt limit and guards.
+              if not E5K_BRIDGE_FIRST<=now.minute<=E5K_BRIDGE_LAST:
+                  return "E5K_OUTSIDE_E5I_SAFE_DISPATCH_WINDOW"
+              if not all(e5k_verified_original(now,stage) for stage in TASKS[1:]):
+                  return "E5K_WAITING_FOR_BOTH_VERIFIED_ORIGINAL_V7_SOURCES"
+              all_stages_present=all(
+                  original_snapshot_exists(now,(tag,"",branch,folder))
+                  for tag,branch,folder in E5K_STAGES)
+              if all_stages_present:
+                  return "E5K_ALL_FOUR_DOWNSTREAM_SOURCE_FILES_ALREADY_SEALED"
+              count,active=previous_dispatch_state(now,E5K_BRIDGE)
+              if active:
+                  return "E5K_E5I_DISPATCH_ALREADY_RUNNING"
+              if count>=MAX_DISPATCHES_PER_STAGE_HOUR:
+                  return "E5K_MAX_TWO_E5I_DISPATCHES_THIS_HOUR"
+              current=clock() if clock is not None else datetime.now(timezone.utc)
+              if (current.strftime("%Y-%m-%dT%H")!=now.strftime("%Y-%m-%dT%H")
+                      or not E5K_BRIDGE_FIRST<=current.minute<=E5K_BRIDGE_LAST):
+                  return "E5K_CLOCK_ROLLOVER_OR_WINDOW_CLOSED_NO_DISPATCH"
+              path="/actions/workflows/"+E5K_BRIDGE[1]+"/dispatches"
+              code,raw=make_request("POST",path,body={"ref":"main"})
+              if code!=204:
+                  raise ValueError("E5K_E5I_DISPATCH_NOT_ACCEPTED")
+              return "E5K_E5I_DISPATCH_ACCEPTED_NOT_PROOF_OF_SOURCE_CAPTURE"
+
+          def e5k_follow_up(first_now,clock=None,sleep=None):
+              # Bounded source observation after E5H's original dispatch.
+              # No history/backfill, no source writes and no unbounded polling.
+              clock=clock or (lambda:datetime.now(timezone.utc))
+              sleep=sleep or time.sleep
+              deadline=min(first_now+timedelta(seconds=E5K_MAX_WAIT_SECONDS),
+                           first_now.replace(minute=49,second=49,microsecond=0))
+              while True:
+                  current=clock()
+                  if current.strftime("%Y-%m-%dT%H")!=first_now.strftime("%Y-%m-%dT%H"):
+                      return "E5K_HOUR_ROLLED_SAFE_SKIP"
+                  if current.minute>49:
+                      return "E5K_OUTSIDE_E5I_SAFE_DISPATCH_WINDOW"
+                  result=e5k_bridge(current,clock=clock)
+                  if result not in ("E5K_WAITING_FOR_BOTH_VERIFIED_ORIGINAL_V7_SOURCES",
+                                    "E5K_OUTSIDE_E5I_SAFE_DISPATCH_WINDOW"):
+                      return result
+                  if current>=deadline:
+                      return result+"_TIMEOUT_NO_FAKE_SOURCE"
+                  sleep(min(10,max(0,(deadline-current).total_seconds())))
+
           # Self-test only pure target, bounds, wait window and sensitive workflow allowlist.
           t=datetime(2026,11,15,20,25,tzinfo=timezone.utc)
           early=datetime(2026,11,15,20,4,tzinfo=timezone.utc)
@@ -227,6 +318,39 @@ jobs:
                   "V9 SAME_HOUR_DISPATCH_STILL_RUNNING_NO_DUPLICATE")
           finally:
               make_request=saved_request
+          # E5K in-run isolated mocked contract tests: no real API requests.
+          def e5k_mock(method,path,body=None,params=None):
+              if method=="GET" and path.startswith("/contents/"):
+                  if any(path.endswith(stage[3]+"/"+filename(t)) for stage in TASKS[1:]):
+                      payload={"targetClosed1HUTC":t.strftime("%Y-%m-%dT%H:00:00Z"),
+                               "status":"VERIFIED_PAPER_OBSERVATION","brokerOrders":False,
+                               "productionSystemModified":False}
+                      encoded=base64.b64encode(json.dumps(payload).encode()).decode()
+                      doc={"type":"file","path":path.removeprefix("/contents/"),
+                           "sha":"a"*40,"size":len(json.dumps(payload)),
+                           "encoding":"base64","content":encoded}
+                      return 200,json.dumps(doc).encode()
+                  return 404,b""
+              if method=="GET" and path.startswith("/actions/workflows/"):
+                  return 200,b'{"total_count":0,"workflow_runs":[]}'
+              if (method=="POST" and path==
+                  "/actions/workflows/atlas-e5i-v91-v92-source-chain-rescue.yml/dispatches"):
+                  assert body=={"ref":"main"} and params is None
+                  return 204,b""
+              raise ValueError("E5K_MOCK_UNAUTHORIZED_API_REQUEST")
+          try:
+              make_request=e5k_mock
+              assert e5k_bridge(t,clock=lambda:t)==(
+                  "E5K_E5I_DISPATCH_ACCEPTED_NOT_PROOF_OF_SOURCE_CAPTURE")
+              assert e5k_bridge(t,clock=lambda:t.replace(minute=50))==(
+                  "E5K_CLOCK_ROLLOVER_OR_WINDOW_CLOSED_NO_DISPATCH")
+              assert e5k_bridge(t.replace(minute=15),clock=lambda:t)==(
+                  "E5K_OUTSIDE_E5I_SAFE_DISPATCH_WINDOW")
+              assert e5k_follow_up(t,clock=lambda:t,sleep=lambda x:None)==(
+                  "E5K_E5I_DISPATCH_ACCEPTED_NOT_PROOF_OF_SOURCE_CAPTURE")
+          finally:
+              make_request=saved_request
+          print("ATLAS_E5K_MOCKED_V7_TO_E5I_BRIDGE_SAFE",flush=True)
           print("ATLAS_E5H_MOCKED_THREE_SOURCE_DISPATCH_AND_DEDUP_TEST_PASS",flush=True)
           started=datetime.now(timezone.utc)
           now=started
@@ -246,10 +370,12 @@ jobs:
               summary.append("E5H_SAFE_SKIP_OUTSIDE_15_TO_50_UTC_MINUTE_NOT_A_FAILURE")
           else:
               # No retroactive hours, no live alerts, no frozen specs, no
-              # mutation beyond dispatching these three EXISTING workflows.
+              # original source dispatch plus bounded E5K E5I bridge only.
               for stage in TASKS:
                   summary.append(dispatch(now,stage))
+              summary.append(e5k_follow_up(now))
           for msg in summary:print("ATLAS_E5H_ORIGINAL_SOURCE_RESCUE",msg,flush=True)
+          # All E5K outcomes are explicitly stage-qualified in the workflow log.
           with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as f:
               f.write("## ATLAS E5H original source retry (NO TRADING)\n\n")
               f.write(f"UTC checked: {now.strftime('%Y-%m-%dT%H:%M:%SZ')}\n\n")
