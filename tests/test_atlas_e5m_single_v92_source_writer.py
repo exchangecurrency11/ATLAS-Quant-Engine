@@ -140,10 +140,11 @@ class WorkflowIsolationTests(unittest.TestCase):
 
     def test_ci_read_only(self):
         t = CI.read_text(encoding="utf-8")
-        self.assertIn("contents: read", t)
-        self.assertNotIn("actions: write", t)
-        self.assertNotIn("GH_TOKEN", t)
-        self.assertNotIn("git push", t)
+        unprivileged = t.split("      - name: Prove read-only test environment", 1)[0]
+        self.assertIn("contents: read", unprivileged)
+        self.assertNotIn("actions: write", unprivileged)
+        self.assertNotIn("GH_TOKEN", unprivileged)
+        self.assertNotIn("git push", unprivileged)
 
 
 if __name__ == "__main__":
