@@ -11,17 +11,17 @@
   "risk10PctVeryAggressiveNotAdvisedLive": true,
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
-  "sourceBTCandSOLVerifiedClosedHours": 104,
+  "sourceBTCandSOLVerifiedClosedHours": 105,
   "sourceETHVerifiedClosedHours": 111,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
       "expectedThroughUTC": "2026-11-19T16:00:00Z",
       "expectedHours": 174,
-      "savedVerifiedHours": 104,
-      "missingHourCount": 70,
-      "lastVerifiedHourUTC": "2026-11-19T15:00:00Z",
-      "lagHours": 1,
+      "savedVerifiedHours": 105,
+      "missingHourCount": 69,
+      "lastVerifiedHourUTC": "2026-11-19T16:00:00Z",
+      "lagHours": 0,
       "noBackfill": true
     },
     "ETH": {
@@ -35,7 +35,7 @@
       "noBackfill": true
     }
   },
-  "lastCapturedBTCandSOLHourUTC": "2026-11-19T15:00:00Z",
+  "lastCapturedBTCandSOLHourUTC": "2026-11-19T16:00:00Z",
   "lastCapturedETHHourUTC": "2026-11-19T16:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1000.0,
@@ -66,33 +66,33 @@
   "perAssetLatestState": {
     "BTCUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-19T15:00:00Z",
+      "lastClosedUTC": "2026-11-19T16:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-19T15:00:00Z",
+          "lastClosedCandleUTC": "2026-11-19T16:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [],
+          "informationOnlyNotAutomaticNewTrade": true
+        },
+        "4H": {
+          "lastClosedCandleUTC": "2026-11-19T16:00:00Z",
           "observedReversalsAtLastCompletedCandle": [
             {
               "family": "ENGULFING",
               "name": "BEARISH_ENGULFING",
               "direction": "bearish",
-              "firstUTC": "2026-11-19T13:00:00Z",
-              "confirmedUTC": "2026-11-19T15:00:00Z",
+              "firstUTC": "2026-11-19T08:00:00Z",
+              "confirmedUTC": "2026-11-19T16:00:00Z",
               "prior20LiquiditySweepAndReentry": false,
               "internalHikkakeFalseBreakConfirmed": false,
               "crypto24hNoGapRequirement": true,
               "signalIsNotStandaloneTrade": true,
               "onlyClosedCandlesUsed": true,
-              "tf": "1H"
+              "tf": "4H"
             }
           ],
-          "informationOnlyNotAutomaticNewTrade": true
-        },
-        "4H": {
-          "lastClosedCandleUTC": "2026-11-19T12:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
@@ -160,19 +160,33 @@
     },
     "SOLUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-19T15:00:00Z",
+      "lastClosedUTC": "2026-11-19T16:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-19T15:00:00Z",
+          "lastClosedCandleUTC": "2026-11-19T16:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-19T12:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-19T16:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "STAR",
+              "name": "EVENING_STAR",
+              "direction": "bearish",
+              "firstUTC": "2026-11-19T04:00:00Z",
+              "confirmedUTC": "2026-11-19T16:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "4H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
