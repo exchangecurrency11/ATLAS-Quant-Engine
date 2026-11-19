@@ -19,6 +19,11 @@ concurrency:
   cancel-in-progress: false
 jobs:
   hourly-paper:
+    permissions:
+      contents: write
+    outputs:
+      new_source_sealed: ${{ steps.persist.outputs.committed }}
+      source_hour: ${{ steps.gate.outputs.target }}
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 19
@@ -153,6 +158,7 @@ jobs:
           print('V91_PROSPECTIVE_VERIFIED_PAPER_SCOREBOARD_SILENT',x["savedDistinctVerifiedHours"])
           PY
       - name: Commit only append-only V9 research observation and scorecard
+        id: persist
         if: steps.gate.outputs.capture == 'true'
         run: |
           set -euo pipefail
@@ -162,12 +168,16 @@ jobs:
           git add "forward/v91_prospective_retest/hourly/${{ steps.gate.outputs.target }}.json" \
                   forward/v91_prospective_retest/scoreboard.json \
                   forward/v91_prospective_retest/scoreboard.md
-          if git diff --cached --quiet; then exit 0; fi
+          if git diff --cached --quiet; then
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git commit -m "V9.1 sealed prospective hourly original V7 vs 4h retest PAPER ONLY"
           for attempt in 1 2 3; do
             git pull --rebase origin research/v9-prestart-live-data-compatibility-20261111
             if git push origin HEAD:research/v9-prestart-live-data-compatibility-20261111; then
               echo "V91_SEALED_CURRENT_HOUR_RESEARCH_ONLY_NO_USER_ALERTS"
+              echo "committed=true" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             sleep 4
@@ -203,3 +213,143 @@ jobs:
             forward/v91_prospective_retest/hourly/${{ steps.gate.outputs.target }}.json
           if-no-files-found: ignore
           retention-days: 14
+
+  v92-btc-sol-wake:
+    name: Wake V9.2 BTC SOL only after committed sealed V9.1 paper hour
+    needs: hourly-paper
+    if: ${{ needs['hourly-paper'].result == 'success' && needs['hourly-paper'].outputs.new_source_sealed == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: E5L verify real Git blob and dispatch only bounded current-hour V9.2 (NO ORDERS)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          V91_SEALED_TARGET: ${{ needs['hourly-paper'].outputs.source_hour }}
+        run: |
+          set -euo pipefail
+          # Privileged job has NO checkout, untrusted research execution or source writes.
+          # A green V9.1 run alone never satisfies the commit-only job output.
+          python3 - <<'PY'
+          import base64
+          import hashlib
+          import json
+          import os
+          import re
+          from datetime import datetime, timezone
+          from urllib.error import HTTPError
+          from urllib.request import Request, urlopen
+          
+          V91_BRANCH = "research/v9-prestart-live-data-compatibility-20261111"
+          V92_BRANCH = "research/v92-bull-bear-candle-invalidation-20261112"
+          V92_WAKE = "/actions/workflows/v92-selected-prospective-third-paper.yml/dispatches"
+          
+          
+          def e5l_http(method, path, body=None):
+              repo = os.environ.get("GITHUB_REPOSITORY", "")
+              token = os.environ.get("GH_TOKEN", "")
+              if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repo):
+                  raise ValueError("E5L_BAD_REPOSITORY")
+              if len(token) < 10:
+                  raise ValueError("E5L_MISSING_ACTIONS_TOKEN")
+              allowed_get = (
+                  path.startswith("/contents/forward/v91_prospective_retest/hourly/")
+                  and path.endswith("?ref=" + V91_BRANCH)
+              ) or (
+                  path.startswith("/contents/forward/v92_prospective_selected/hourly/")
+                  and path.endswith("?ref=" + V92_BRANCH)
+              )
+              if not ((method == "GET" and body is None and allowed_get)
+                      or (method == "POST" and path == V92_WAKE and body == {"ref": "main"})):
+                  raise ValueError("E5L_UNAPPROVED_GITHUB_API_REQUEST")
+              data = None if body is None else json.dumps(body).encode("utf-8")
+              req = Request(
+                  "https://api.github.com/repos/" + repo + path,
+                  data=data, method=method,
+                  headers={
+                      "Authorization": "Bearer " + token,
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                  })
+              try:
+                  with urlopen(req, timeout=15) as response:
+                      raw = response.read(200001)
+                      if len(raw) > 200000:
+                          raise ValueError("E5L_OVERSIZED_GITHUB_RESPONSE")
+                      return response.status, raw
+              except HTTPError as exc:
+                  if method == "GET" and exc.code == 404:
+                      return 404, b""
+                  raise
+          
+          
+          def e5l_wake(now=None, api=None, clock=None):
+              clock = clock or (lambda: datetime.now(timezone.utc))
+              if now is None:
+                  now = clock()
+              if now.tzinfo is None or now.utcoffset().total_seconds() != 0:
+                  raise ValueError("E5L_CLOCK_NOT_UTC")
+              api = api or e5l_http
+              target = os.environ.get("V91_SEALED_TARGET", "")
+              if not re.fullmatch(r"20\d{2}-\d{2}-\d{2}T\d{2}-00Z", target):
+                  raise ValueError("E5L_TARGET_NOT_EXACT_UTC_HOUR")
+              # Only an actually current 1H source may wake V9.2. Never replay an old hour.
+              if target != now.strftime("%Y-%m-%dT%H-00Z") or not 12 <= now.minute <= 49:
+                  return "E5L_CLOCK_OUTSIDE_CURRENT_VERIFIED_SOURCE_WINDOW_SAFE_SKIP"
+              filename = target + ".json"
+              v91_path = "forward/v91_prospective_retest/hourly/" + filename
+              v92_path = "forward/v92_prospective_selected/hourly/" + filename
+              code, raw = api("GET", "/contents/" + v91_path + "?ref=" + V91_BRANCH)
+              if code == 404:
+                  raise ValueError("E5L_GIT_SEALED_V91_SOURCE_ABSENT")
+              if code != 200:
+                  raise ValueError("E5L_V91_SOURCE_READ_FAILED")
+              metadata = json.loads(raw)
+              if not (isinstance(metadata, dict) and metadata.get("type") == "file"
+                      and metadata.get("path") == v91_path
+                      and metadata.get("encoding") == "base64"
+                      and re.fullmatch(r"[0-9a-f]{40}", str(metadata.get("sha", "")))):
+                  raise ValueError("E5L_V91_BLOB_METADATA_INVALID")
+              blob = base64.b64decode("".join(metadata["content"].split()), validate=True)
+              blob_hash = hashlib.sha1(b"blob " + str(len(blob)).encode() + b"\0" + blob).hexdigest()
+              if (len(blob) > 200000 or metadata.get("size") != len(blob)
+                      or blob_hash != metadata["sha"]):
+                  raise ValueError("E5L_V91_SOURCE_BLOB_MISMATCH")
+              source = json.loads(blob)
+              expected_close = now.strftime("%Y-%m-%dT%H:00:00Z")
+              if not (source.get("mode") == "V91_PROSPECTIVE_4H_RETEST_IMMUTABLE_PAPER_SHADOW"
+                      and source.get("targetClosed1HUTC") == expected_close
+                      and source.get("sourceVerifiedSameHour") is True
+                      and source.get("V7SnapshotAndIndependentRecomputeExactMatch") is True
+                      and source.get("retrospectiveSnapshotBackfillForbidden") is True
+                      and source.get("noBrokerOrders") is True
+                      and source.get("noNotifications") is True
+                      and source.get("noV7ProductionOrNotificationChanges") is True
+                      and set(source.get("assets", {})) == {"BTCUSDT", "SOLUSDT"}):
+                  raise ValueError("E5L_V91_SOURCE_NOT_VERIFIED_PAPER_ONLY")
+              captured = datetime.strptime(source["capturedAtUTC"], "%Y-%m-%dT%H:%M:%SZ")
+              captured = captured.replace(tzinfo=timezone.utc)
+              if not (now.replace(minute=0, second=0, microsecond=0) <= captured <= now):
+                  raise ValueError("E5L_V91_CAPTURE_TIMESTAMP_INVALID")
+              # A positive V9.2 file lookup means no new wake; only a 404 permits one.
+              code, _ = api("GET", "/contents/" + v92_path + "?ref=" + V92_BRANCH)
+              if code == 200:
+                  return "E5L_V92_EXISTING_SOURCE_FILE_NO_DISPATCH_NOT_A_NEW_CAPTURE"
+              if code != 404:
+                  raise ValueError("E5L_V92_LOOKUP_UNCERTAIN_FAIL_CLOSED")
+              # Prevent rollover between source verification and the actual dispatch.
+              current = clock()
+              if current.strftime("%Y-%m-%dT%H-00Z") != target or not 12 <= current.minute <= 49:
+                  return "E5L_CLOCK_ROLLOVER_NO_DISPATCH"
+              code, _ = api("POST", V92_WAKE, {"ref": "main"})
+              if code != 204:
+                  raise ValueError("E5L_V92_DISPATCH_NOT_ACCEPTED")
+              return "E5L_V92_DISPATCH_ACCEPTED_NOT_A_VERIFIED_SOURCE_SEAL"
+          
+          
+          if __name__ == "__main__":
+              print(e5l_wake(), flush=True)
+          PY

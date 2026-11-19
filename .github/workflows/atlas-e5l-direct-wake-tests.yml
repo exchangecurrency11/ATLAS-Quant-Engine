@@ -1,0 +1,42 @@
+name: ATLAS E5L verified V9.1 BTC SOL to V9.2 direct wake regression (NO ORDERS)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/v91-prospective-hourly-shadow.yml
+      - .github/workflows/atlas-e5l-direct-wake-tests.yml
+      - tests/test_atlas_e5l_sealed_v91_btcsol_v92_wake.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verified-v91-to-v92-btc-sol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout PR files without persisted GitHub credentials
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Execute actual inline E5L production Python against fake API only
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p test_atlas_e5l_sealed_v91_btcsol_v92_wake.py -v
+      - name: Prove CI has no dispatch permissions or production tokens
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path(".github/workflows/atlas-e5l-direct-wake-tests.yml").read_text()
+          unprivileged=p.split("      - name: Prove CI", 1)[0]
+          assert "contents: read" in unprivileged
+          assert "actions: write" not in unprivileged
+          assert "gh api" not in unprivileged
+          assert "GH_TOKEN" not in unprivileged
+          assert "git push" not in unprivileged
+          print("ATLAS_E5L_CI_READ_ONLY_GUARDS_PASS")
+          PY
