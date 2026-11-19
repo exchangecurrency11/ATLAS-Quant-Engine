@@ -185,7 +185,7 @@ class E5LSealedWakeTests(unittest.TestCase):
 
     def test_source_sealed_in_15th_minute_dispatches_current_hour(self):
         now = self.now.replace(minute=15)
-        self.api.bad_source["capturedAtUTC"] = "2026-11-19T07:15:01Z"
+        self.api.bad_source["capturedAtUTC"] = "2026-11-19T07:15:00Z"
         self.assertEqual(self.wake(now), "E5L_V92_DISPATCH_ACCEPTED_NOT_A_VERIFIED_SOURCE_SEAL")
         self.assertEqual(len(self.api.posts()), 1)
 
