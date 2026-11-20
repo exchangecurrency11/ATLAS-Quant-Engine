@@ -1,0 +1,694 @@
+{
+  "schemaVersion": 1,
+  "method": "independent replay from Git-committed OHLC and V0 as-of eligibility; ATR14 simple mean of 14 TR; delayed 1h entry, 1 ATR stop, 2 ATR baseline, 12h horizon, stop-first, 0.12% roundtrip",
+  "part": 2,
+  "records": [
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-14T15:00:00.000Z",
+      "signalClose": 65889.7,
+      "marketSource": "22991a816461cab90ac579e187275de7804bd694",
+      "structureSource": "e0730e3c95f995a060fc645375b332005ddb2d36",
+      "structurePublishedUTC": "2026-11-14T15:04:36Z",
+      "marketPublishedUTC": "2026-11-14T15:04:25Z",
+      "asOfMatches": true,
+      "atr14": 584.5928571428564,
+      "rawCandidates": 6,
+      "firstZone": {
+        "kind": "FVG",
+        "interval": "daily",
+        "low": 63370,
+        "high": 63979.2,
+        "distance": 1910.5,
+        "knownAtUTC": "2026-08-19T00:00:00.000Z",
+        "state": "open"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 7,
+      "reactionNext3Close": false,
+      "closedBeyondFarEdge": true,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "TP",
+        "netR": 2.840161147563016
+      },
+      "fixed2ATRTrade": {
+        "status": "TP",
+        "netR": 1.865099138594624
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-14T15:00:00.000Z",
+      "signalClose": 74.05,
+      "marketSource": "22991a816461cab90ac579e187275de7804bd694",
+      "structureSource": "e0730e3c95f995a060fc645375b332005ddb2d36",
+      "structurePublishedUTC": "2026-11-14T15:04:36Z",
+      "marketPublishedUTC": "2026-11-14T15:04:25Z",
+      "asOfMatches": true,
+      "atr14": 0.9478571428571446,
+      "rawCandidates": 2,
+      "firstZone": {
+        "kind": "LIQ",
+        "interval": "daily",
+        "low": 73.34,
+        "high": 73.34,
+        "distance": 0.7099999999999937,
+        "knownAtUTC": "2026-07-28T00:00:00.000Z",
+        "state": "chart"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 1,
+      "reactionNext3Close": false,
+      "closedBeyondFarEdge": true,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "SKIP_WAITING_TOUCH",
+        "netR": 0
+      },
+      "fixed2ATRTrade": {
+        "status": "TP",
+        "netR": 1.9065175584024139
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-14T21:00:00.000Z",
+      "signalClose": 64738,
+      "marketSource": "81c18a112d785f837ccccb34520e83c7b5276871",
+      "structureSource": "085c7d70147a0493bffc8a53de6109e08907101e",
+      "structurePublishedUTC": "2026-11-14T21:04:36Z",
+      "marketPublishedUTC": "2026-11-14T21:04:23Z",
+      "asOfMatches": true,
+      "atr14": 663.8428571428564,
+      "rawCandidates": 6,
+      "firstZone": {
+        "kind": "FVG",
+        "interval": "daily",
+        "low": 63370,
+        "high": 63979.2,
+        "distance": 758.8000000000029,
+        "knownAtUTC": "2026-08-19T00:00:00.000Z",
+        "state": "open"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 1,
+      "reactionNext3Close": false,
+      "closedBeyondFarEdge": true,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "SKIP_WAITING_TOUCH",
+        "netR": 0
+      },
+      "fixed2ATRTrade": {
+        "status": "TP",
+        "netR": 1.8835393660289637
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "CHoCH",
+      "side": "LONG",
+      "closeUTC": "2026-11-15T11:00:00.000Z",
+      "signalClose": 72.11,
+      "marketSource": "c4c99eace0f0815f0629a2f5823b3d46fc2e28e5",
+      "structureSource": "63518559a0447de53483c1c19907d007d3812a10",
+      "structurePublishedUTC": "2026-11-15T11:04:37Z",
+      "marketPublishedUTC": "2026-11-15T11:04:24Z",
+      "asOfMatches": true,
+      "atr14": 1.4571428571428595,
+      "rawCandidates": 49,
+      "firstZone": {
+        "kind": "FVG",
+        "interval": "4hour",
+        "low": 72.48,
+        "high": 73.11,
+        "distance": 0.37000000000000455,
+        "knownAtUTC": "2026-11-15T00:00:00.000Z",
+        "state": "open"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 1,
+      "reactionNext3Close": true,
+      "closedBeyondFarEdge": false,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "SKIP_WAITING_TOUCH",
+        "netR": 0
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.0594999999999999
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-16T06:00:00.000Z",
+      "signalClose": 64444.7,
+      "marketSource": "bd1a5a4e2c3e860683dba9e05ba1c88591426011",
+      "structureSource": "61f86fd093273f1dacbcd5db2c5bbabbd00ffbad",
+      "structurePublishedUTC": "2026-11-16T06:04:50Z",
+      "marketPublishedUTC": "2026-11-16T06:04:29Z",
+      "asOfMatches": true,
+      "atr14": 532.5785714285713,
+      "rawCandidates": 5,
+      "firstZone": {
+        "kind": "OB",
+        "interval": "daily",
+        "low": 62307,
+        "high": 63749.9,
+        "distance": 694.7999999999956,
+        "knownAtUTC": "2026-07-15T00:00:00.000Z",
+        "state": "retested"
+      },
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "STOP",
+        "netR": -1.1457398479097651
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.1457398479097651
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "CHoCH",
+      "side": "SHORT",
+      "closeUTC": "2026-11-16T09:00:00.000Z",
+      "signalClose": 70.82,
+      "marketSource": "8d4b94c7a93408b2a1c07da79e54e03fb14b4b50",
+      "structureSource": "6f6617958358d283bf52d7b229d7b0f0a204036f",
+      "structurePublishedUTC": "2026-11-16T09:04:39Z",
+      "marketPublishedUTC": "2026-11-16T09:04:24Z",
+      "asOfMatches": true,
+      "atr14": 0.9064285714285722,
+      "rawCandidates": 0,
+      "firstZone": null,
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "NO_ZONE",
+        "netR": 0
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.0937702127659574
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "CHoCH",
+      "side": "LONG",
+      "closeUTC": "2026-11-17T04:00:00.000Z",
+      "signalClose": 72.78,
+      "marketSource": "fa1a915eaa77cb8a77655af80f65400cd4593c8f",
+      "structureSource": "4575ffec93f0c07aa1a74773a2f7c41a69ad8804",
+      "structurePublishedUTC": "2026-11-17T04:04:47Z",
+      "marketPublishedUTC": "2026-11-17T04:04:32Z",
+      "asOfMatches": true,
+      "atr14": 0.9299999999999977,
+      "rawCandidates": 50,
+      "firstZone": {
+        "kind": "LIQ",
+        "interval": "1hour",
+        "low": 72.905,
+        "high": 72.905,
+        "distance": 0.125,
+        "knownAtUTC": "2026-11-16T18:00:00.000Z",
+        "state": "chart"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 1,
+      "reactionNext3Close": false,
+      "closedBeyondFarEdge": true,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "SKIP_WAITING_TOUCH",
+        "netR": 0
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.0941548387096776
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-17T09:00:00.000Z",
+      "signalClose": 64304.6,
+      "marketSource": "eab5107b48c873489d99d810a46ae7d7dac1a32a",
+      "structureSource": "59ca156c1347395fd4fc107c25580927d3409d1f",
+      "structurePublishedUTC": "2026-11-17T09:04:38Z",
+      "marketPublishedUTC": "2026-11-17T09:04:22Z",
+      "asOfMatches": true,
+      "atr14": 407.64999999999935,
+      "rawCandidates": 5,
+      "firstZone": {
+        "kind": "OB",
+        "interval": "daily",
+        "low": 62307,
+        "high": 63749.9,
+        "distance": 554.6999999999971,
+        "knownAtUTC": "2026-07-15T00:00:00.000Z",
+        "state": "retested"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 7,
+      "reactionNext3Close": false,
+      "closedBeyondFarEdge": false,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "STOP",
+        "netR": -1.189381577333497
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.189381577333497
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "LONG",
+      "closeUTC": "2026-11-17T12:00:00.000Z",
+      "signalClose": 73.46,
+      "marketSource": "99fc1d46a11eedac9a38fd7cefc9da6de78f7e36",
+      "structureSource": "c5adb9f00d2fde3318b5776c2e3029f6d89ff25c",
+      "structurePublishedUTC": "2026-11-17T12:04:39Z",
+      "marketPublishedUTC": "2026-11-17T12:04:24Z",
+      "asOfMatches": true,
+      "atr14": 0.7321428571428551,
+      "rawCandidates": 47,
+      "firstZone": {
+        "kind": "FVG",
+        "interval": "4hour",
+        "low": 73.91,
+        "high": 75.02,
+        "distance": 0.45000000000000284,
+        "knownAtUTC": "2026-11-14T20:00:00.000Z",
+        "state": "open"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 2,
+      "reactionNext3Close": true,
+      "closedBeyondFarEdge": true,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "TP",
+        "netR": 0.24808273170731238
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.1206977560975613
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-17T17:00:00.000Z",
+      "signalClose": 63714.9,
+      "marketSource": "30a5d1f58c6f1722d43fb1d385206768ea88b943",
+      "structureSource": "8fb567d40567403d25d616dc1634ce170210b87a",
+      "structurePublishedUTC": "2026-11-17T17:04:48Z",
+      "marketPublishedUTC": "2026-11-17T17:04:26Z",
+      "asOfMatches": true,
+      "atr14": 584.9142857142854,
+      "rawCandidates": 4,
+      "firstZone": {
+        "kind": "OB",
+        "interval": "daily",
+        "low": 62876,
+        "high": 63053.9,
+        "distance": 661,
+        "knownAtUTC": "2026-08-20T00:00:00.000Z",
+        "state": "retested"
+      },
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "STOP",
+        "netR": -1.130888716295428
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.130888716295428
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "LONG",
+      "closeUTC": "2026-11-18T00:00:00.000Z",
+      "signalClose": 75.15,
+      "marketSource": "2215d81cf52678558662cb476c01e241d54aff57",
+      "structureSource": "b4b04ac93d2cbb0214324c5390748ad74a9a4be5",
+      "structurePublishedUTC": "2026-11-18T00:04:34Z",
+      "marketPublishedUTC": "2026-11-18T00:04:23Z",
+      "asOfMatches": true,
+      "atr14": 1.163571428571428,
+      "rawCandidates": 42,
+      "firstZone": {
+        "kind": "FVG",
+        "interval": "4hour",
+        "low": 76.1,
+        "high": 77.13,
+        "distance": 0.9499999999999886,
+        "knownAtUTC": "2026-11-14T08:00:00.000Z",
+        "state": "open"
+      },
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "TIME_EXIT",
+        "netR": -0.5413848987108711
+      },
+      "fixed2ATRTrade": {
+        "status": "TIME_EXIT",
+        "netR": -0.5413848987108711
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-18T13:00:00.000Z",
+      "signalClose": 64056.3,
+      "marketSource": "a7c86c030d8fe2e40b7d79e3aeeb35540e37bd6d",
+      "structureSource": "8764641de3e5344b36908fafaef143b7b4715b96",
+      "structurePublishedUTC": "2026-11-18T13:04:37Z",
+      "marketPublishedUTC": "2026-11-18T13:04:24Z",
+      "asOfMatches": true,
+      "atr14": 392.13571428571385,
+      "rawCandidates": 5,
+      "firstZone": {
+        "kind": "OB",
+        "interval": "daily",
+        "low": 62307,
+        "high": 63749.9,
+        "distance": 306.40000000000146,
+        "knownAtUTC": "2026-07-15T00:00:00.000Z",
+        "state": "retested"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 2,
+      "reactionNext3Close": false,
+      "closedBeyondFarEdge": true,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "TP",
+        "netR": 0.2160130712763478
+      },
+      "fixed2ATRTrade": {
+        "status": "TP",
+        "netR": 1.8044208746971633
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-18T23:00:00.000Z",
+      "signalClose": 62220,
+      "marketSource": "36b9213734dafc3a87c69bd448d6490baa6ea6b6",
+      "structureSource": "a8bf376c0c510e6729c3062740215fac1233a134",
+      "structurePublishedUTC": "2026-11-18T23:04:40Z",
+      "marketPublishedUTC": "2026-11-18T23:04:25Z",
+      "asOfMatches": true,
+      "atr14": 536.999999999999,
+      "rawCandidates": 2,
+      "firstZone": {
+        "kind": "LIQ",
+        "interval": "daily",
+        "low": 62017.4,
+        "high": 62017.4,
+        "distance": 202.59999999999854,
+        "knownAtUTC": "2026-08-05T00:00:00.000Z",
+        "state": "chart"
+      },
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "STOP",
+        "netR": -1.1408645810055869
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.1408645810055869
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "LONG",
+      "closeUTC": "2026-11-19T04:00:00.000Z",
+      "signalClose": 74.2,
+      "marketSource": "188eff80ff7ae05f4dd547ed1039f0411ddc6a1f",
+      "structureSource": "e22efd7913930b110e06c4c84d7ff35fa1eb686c",
+      "structurePublishedUTC": "2026-11-19T04:04:38Z",
+      "marketPublishedUTC": "2026-11-19T04:04:25Z",
+      "asOfMatches": true,
+      "atr14": 0.9892857142857139,
+      "rawCandidates": 43,
+      "firstZone": {
+        "kind": "OB",
+        "interval": "1hour",
+        "low": 75.67,
+        "high": 75.92,
+        "distance": 1.4699999999999989,
+        "knownAtUTC": "2026-11-14T15:00:00.000Z",
+        "state": "retested"
+      },
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "STOP",
+        "netR": -1.090453140794224
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.090453140794224
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "CHoCH",
+      "side": "LONG",
+      "closeUTC": "2026-11-19T05:00:00.000Z",
+      "signalClose": 63555.1,
+      "marketSource": "63a07b59f91b0a1c07637c2a1b0f1f9950c3e87d",
+      "structureSource": "09848997541767068740973b8cf8b119a96ebbbd",
+      "structurePublishedUTC": "2026-11-19T05:04:37Z",
+      "marketPublishedUTC": "2026-11-19T05:04:24Z",
+      "asOfMatches": true,
+      "atr14": 657.5428571428575,
+      "rawCandidates": 58,
+      "firstZone": {
+        "kind": "FVG",
+        "interval": "1hour",
+        "low": 64340,
+        "high": 64530.3,
+        "distance": 784.9000000000015,
+        "knownAtUTC": "2026-11-18T12:00:00.000Z",
+        "state": "open"
+      },
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "STOP",
+        "netR": -1.1155885113409227
+      },
+      "fixed2ATRTrade": {
+        "status": "STOP",
+        "netR": -1.1155885113409227
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "CHoCH",
+      "side": "SHORT",
+      "closeUTC": "2026-11-19T20:00:00.000Z",
+      "signalClose": 62341,
+      "marketSource": "520ebb67a7856d565938a86e0b434cc3d90a7494",
+      "structureSource": "945270e1d0d4c4306faaf365bcb0fe52afb61867",
+      "structurePublishedUTC": "2026-11-19T20:04:47Z",
+      "marketPublishedUTC": "2026-11-19T20:04:24Z",
+      "asOfMatches": true,
+      "atr14": 546.8500000000006,
+      "rawCandidates": 2,
+      "firstZone": {
+        "kind": "LIQ",
+        "interval": "daily",
+        "low": 62017.4,
+        "high": 62017.4,
+        "distance": 323.59999999999854,
+        "knownAtUTC": "2026-08-05T00:00:00.000Z",
+        "state": "chart"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 1,
+      "reactionNext3Close": false,
+      "closedBeyondFarEdge": true,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "SKIP_WAITING_TOUCH",
+        "netR": 0
+      },
+      "fixed2ATRTrade": {
+        "status": "TIME_EXIT",
+        "netR": 0.37118083569534566
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "CHoCH",
+      "side": "SHORT",
+      "closeUTC": "2026-11-19T22:00:00.000Z",
+      "signalClose": 72.2,
+      "marketSource": "01d90c742420a4933ed9697f7057d05503e3ffc2",
+      "structureSource": "a8d69aac373565fbe18f93dc8a68f432fc27a74b",
+      "structurePublishedUTC": "2026-11-19T22:04:38Z",
+      "marketPublishedUTC": "2026-11-19T22:04:25Z",
+      "asOfMatches": true,
+      "atr14": 0.9299999999999977,
+      "rawCandidates": 3,
+      "firstZone": {
+        "kind": "OB",
+        "interval": "daily",
+        "low": 70.47,
+        "high": 71.88,
+        "distance": 0.3200000000000074,
+        "knownAtUTC": "2026-06-30T00:00:00.000Z",
+        "state": "retested"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 4,
+      "reactionNext3Close": true,
+      "closedBeyondFarEdge": false,
+      "observedHours": 12,
+      "full12h": true,
+      "zoneTrade": {
+        "status": "TP",
+        "netR": 1.3356430107526895
+      },
+      "fixed2ATRTrade": {
+        "status": "TIME_EXIT",
+        "netR": 1.2173634408602168
+      }
+    },
+    {
+      "symbol": "SOLUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-20T13:00:00.000Z",
+      "signalClose": 71.06,
+      "marketSource": "6fca77eff6ba3442faed1c4e61c02e6aea2b0e43",
+      "structureSource": "35a1b15e4bd5de2b63677da57b1f9836103c057c",
+      "structurePublishedUTC": "2026-11-20T13:04:39Z",
+      "marketPublishedUTC": "2026-11-20T13:04:23Z",
+      "asOfMatches": true,
+      "atr14": 0.8885714285714315,
+      "rawCandidates": 0,
+      "firstZone": null,
+      "zoneVisited12h": false,
+      "firstTouchHour": null,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 7,
+      "full12h": false,
+      "zoneTrade": {
+        "status": "CENSORED",
+        "netR": null
+      },
+      "fixed2ATRTrade": {
+        "status": "CENSORED",
+        "netR": null
+      }
+    },
+    {
+      "symbol": "BTCUSDT_PERP.A",
+      "kind": "BOS",
+      "side": "SHORT",
+      "closeUTC": "2026-11-20T16:00:00.000Z",
+      "signalClose": 59445.1,
+      "marketSource": "67e5ae6a9b2412d89dfac8bc42a074e138b68dd3",
+      "structureSource": "2215f9141976e80468ab86a31a9f39eb5d7078b3",
+      "structurePublishedUTC": "2026-11-20T16:04:37Z",
+      "marketPublishedUTC": "2026-11-20T16:04:24Z",
+      "asOfMatches": true,
+      "atr14": 750.3500000000001,
+      "rawCandidates": 1,
+      "firstZone": {
+        "kind": "LIQ",
+        "interval": "daily",
+        "low": 57894.3,
+        "high": 57894.3,
+        "distance": 1550.7999999999956,
+        "knownAtUTC": "2026-07-05T00:00:00.000Z",
+        "state": "chart"
+      },
+      "zoneVisited12h": true,
+      "firstTouchHour": 4,
+      "reactionNext3Close": null,
+      "closedBeyondFarEdge": null,
+      "observedHours": 4,
+      "full12h": false,
+      "zoneTrade": {
+        "status": "CENSORED",
+        "netR": null
+      },
+      "fixed2ATRTrade": {
+        "status": "CENSORED",
+        "netR": null
+      }
+    }
+  ]
+}
