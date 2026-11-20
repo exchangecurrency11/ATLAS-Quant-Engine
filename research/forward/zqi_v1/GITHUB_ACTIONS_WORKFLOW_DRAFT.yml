@@ -1,0 +1,33 @@
+# DRAFT ONLY — deliberately stored outside .github/workflows/ on a nondefault
+# research branch. NOT ACTIVE. Requires separate, explicit approval to install
+# this tiny scheduler on main; all Python source and data remain research-only.
+name: "ATLAS ZQI V1 — GitHub-only prospective research"
+on:
+  schedule:
+    - cron: "12 * * * *" # UTC; +12 minutes after each 1H candle closes
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atlas-zqi-v1-forward-github-only
+  cancel-in-progress: false
+
+jobs:
+  github-only-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: "Checkout isolated research branch (never main code)"
+        uses: actions/checkout@v4
+        with:
+          ref: research/atlas-zone-quality-v1-forward-20261121
+          persist-credentials: false
+      - name: "Run append-only observer, no messages or trade execution"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYTHONDONTWRITEBYTECODE: "1"
+        working-directory: research
+        run: |
+          python3 atlas_zqi_v1_github_observer.py
