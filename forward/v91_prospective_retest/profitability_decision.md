@@ -14,12 +14,12 @@
 
 ## Gerçek zamanda kaydedilmiş sessiz paper
 
-Gerçekten saklanmış karşılaştırılabilir saat: **155**
+Gerçekten saklanmış karşılaştırılabilir saat: **159**
 
 | Coin | V7 kapanmış paper | V9.1 kapanmış paper |
 |---|---:|---:|
 | BTCUSDT | 0 | 0 |
-| SOLUSDT | 0 | 0 |
+| SOLUSDT | 1 | 1 |
 
 Gerçek icra fiyatı doğrulanmış işlem: **0**.
 Retest kapanışı anındaki geçmiş mum açılışı, GitHub'a sinyal yazıldığında çoğu zaman geçmiştedir.
