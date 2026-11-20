@@ -1,0 +1,2391 @@
+{
+  "allSevenSourcesFilePresentHours": 11,
+  "auditedAtUTC": "2026-11-20T00:21:08Z",
+  "e5dJournalPresentHours": 11,
+  "existingProductionForwardSpecsOrAutomationsChanged": false,
+  "githubRunId": "44645131784",
+  "graceMinutesAfterClose": 75,
+  "greenWorkflowWithoutSourceFileCount": 0,
+  "historicalE5FRecoveryCountedAsTimely": false,
+  "hourlyMatrix": [
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T12:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:16:56Z",
+            "event": "workflow_dispatch",
+            "id": 44522424378,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:16:39Z",
+            "event": "workflow_dispatch",
+            "id": 44522381901,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T12:15:13Z",
+            "event": "workflow_dispatch",
+            "id": 44522151783,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44522124784,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:04:49Z",
+            "event": "workflow_run",
+            "id": 44520538856,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:00:29Z",
+            "event": "workflow_run",
+            "id": 44519868116,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:15:05Z",
+            "event": "workflow_dispatch",
+            "id": 44522129866,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:05:03Z",
+            "event": "workflow_run",
+            "id": 44520573444,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:00:37Z",
+            "event": "workflow_run",
+            "id": 44519889558,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:16:14Z",
+            "event": "workflow_dispatch",
+            "id": 44522315666,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:05:02Z",
+            "event": "workflow_run",
+            "id": 44520573327,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:00:37Z",
+            "event": "workflow_run",
+            "id": 44519889658,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:16:16Z",
+            "event": "workflow_dispatch",
+            "id": 44522321572,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:00:47Z",
+            "event": "workflow_run",
+            "id": 44519915131,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:16:34Z",
+            "event": "workflow_dispatch",
+            "id": 44522368890,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:00:53Z",
+            "event": "workflow_run",
+            "id": 44519933295,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:16:26Z",
+            "event": "workflow_dispatch",
+            "id": 44522348556,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44522119508,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:04:31Z",
+            "event": "workflow_run",
+            "id": 44520494002,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T12:00:17Z",
+            "event": "schedule",
+            "id": 44519835465,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": false,
+      "closedHourUTC": "2026-11-19T13:00:00Z",
+      "e5dJournalFilePresent": false,
+      "missingDependencies": {
+        "E5D": [
+          "V92_ETH"
+        ],
+        "V92_ETH": []
+      },
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:41Z",
+            "event": "workflow_dispatch",
+            "id": 44531866618,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T13:15:14Z",
+            "event": "workflow_dispatch",
+            "id": 44531620340,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:48:18Z",
+            "event": "schedule",
+            "id": 44537100220,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:41:14Z",
+            "event": "schedule",
+            "id": 44535928499,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:35:01Z",
+            "event": "workflow_run",
+            "id": 44534894730,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:18:59Z",
+            "event": "workflow_run",
+            "id": 44532234849,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:03Z",
+            "event": "schedule",
+            "id": 44531762554,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:15:02Z",
+            "event": "workflow_dispatch",
+            "id": 44531587597,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:04:50Z",
+            "event": "workflow_run",
+            "id": 44529910037,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:48:30Z",
+            "event": "workflow_run",
+            "id": 44537135256,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:41:25Z",
+            "event": "workflow_run",
+            "id": 44535955221,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:35:15Z",
+            "event": "workflow_run",
+            "id": 44534935115,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:19:10Z",
+            "event": "workflow_run",
+            "id": 44532264499,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:14Z",
+            "event": "workflow_run",
+            "id": 44531794874,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:15:04Z",
+            "event": "workflow_dispatch",
+            "id": 44531592823,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:04:58Z",
+            "event": "workflow_run",
+            "id": 44529932756,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:48:31Z",
+            "event": "workflow_run",
+            "id": 44537136139,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:41:25Z",
+            "event": "workflow_run",
+            "id": 44535955263,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:35:15Z",
+            "event": "workflow_run",
+            "id": 44534935264,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:19:10Z",
+            "event": "workflow_run",
+            "id": 44532264577,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:14Z",
+            "event": "workflow_dispatch",
+            "id": 44531795455,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:14Z",
+            "event": "workflow_run",
+            "id": 44531794626,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:04:58Z",
+            "event": "workflow_run",
+            "id": 44529932637,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:48:45Z",
+            "event": "workflow_run",
+            "id": 44537174326,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:41:38Z",
+            "event": "workflow_run",
+            "id": 44535990123,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:35:32Z",
+            "event": "workflow_run",
+            "id": 44534982075,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:27:55Z",
+            "event": "schedule",
+            "id": 44533700991,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:19:25Z",
+            "event": "workflow_run",
+            "id": 44532303693,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:29Z",
+            "event": "workflow_run",
+            "id": 44531835949,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:17Z",
+            "event": "workflow_dispatch",
+            "id": 44531802703,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:48:45Z",
+            "event": "workflow_run",
+            "id": 44537174975,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:41:40Z",
+            "event": "workflow_run",
+            "id": 44535994009,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:35:33Z",
+            "event": "workflow_run",
+            "id": 44534987393,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:19:28Z",
+            "event": "workflow_run",
+            "id": 44532313165,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:39Z",
+            "event": "schedule",
+            "id": 44531862357,
+            "status": "completed"
+          },
+          {
+            "conclusion": "cancelled",
+            "createdAtUTC": "2026-11-19T13:16:37Z",
+            "event": "workflow_run",
+            "id": 44531856684,
+            "status": "completed"
+          },
+          {
+            "conclusion": "cancelled",
+            "createdAtUTC": "2026-11-19T13:16:33Z",
+            "event": "workflow_dispatch",
+            "id": 44531844910,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:16:26Z",
+            "event": "workflow_dispatch",
+            "id": 44531828391,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "cancelled",
+            "createdAtUTC": "2026-11-19T13:16:28Z",
+            "event": "workflow_dispatch",
+            "id": 44531832023,
+            "status": "completed"
+          },
+          {
+            "conclusion": "cancelled",
+            "createdAtUTC": "2026-11-19T13:16:28Z",
+            "event": "workflow_dispatch",
+            "id": 44531833540,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:34:50Z",
+            "event": "schedule",
+            "id": 44534860892,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:18:46Z",
+            "event": "schedule",
+            "id": 44532200568,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44531581632,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T13:04:35Z",
+            "event": "workflow_run",
+            "id": 44529869548,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "UPSTREAM_SAME_HOUR_SOURCE_ABSENT",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SKIPPED_CANCELLED_OR_NON_SUCCESS_NO_SNAPSHOT",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T14:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:17:05Z",
+            "event": "workflow_dispatch",
+            "id": 44542065839,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:16:43Z",
+            "event": "workflow_dispatch",
+            "id": 44542003231,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:15:13Z",
+            "event": "workflow_dispatch",
+            "id": 44541732697,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44541700606,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:04:43Z",
+            "event": "workflow_run",
+            "id": 44539872049,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:15:05Z",
+            "event": "workflow_dispatch",
+            "id": 44541706969,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:04:51Z",
+            "event": "workflow_run",
+            "id": 44539894574,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:16:14Z",
+            "event": "workflow_dispatch",
+            "id": 44541917190,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:04:51Z",
+            "event": "workflow_run",
+            "id": 44539894807,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:16:16Z",
+            "event": "workflow_dispatch",
+            "id": 44541924313,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:16:34Z",
+            "event": "workflow_dispatch",
+            "id": 44541977202,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:16:29Z",
+            "event": "workflow_dispatch",
+            "id": 44541961723,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44541694688,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T14:04:31Z",
+            "event": "workflow_run",
+            "id": 44539838955,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T15:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:17:05Z",
+            "event": "workflow_dispatch",
+            "id": 44553041051,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:16:45Z",
+            "event": "workflow_dispatch",
+            "id": 44552979667,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T15:15:19Z",
+            "event": "workflow_dispatch",
+            "id": 44552704172,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44552651609,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:04:48Z",
+            "event": "workflow_run",
+            "id": 44550730487,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:15:05Z",
+            "event": "workflow_dispatch",
+            "id": 44552657370,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:04:57Z",
+            "event": "workflow_run",
+            "id": 44550760038,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:16:14Z",
+            "event": "workflow_dispatch",
+            "id": 44552882489,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:04:57Z",
+            "event": "workflow_run",
+            "id": 44550759828,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:16:16Z",
+            "event": "workflow_dispatch",
+            "id": 44552889707,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:16:32Z",
+            "event": "workflow_dispatch",
+            "id": 44552938276,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:16:30Z",
+            "event": "workflow_dispatch",
+            "id": 44552929802,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44552646383,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T15:04:33Z",
+            "event": "workflow_run",
+            "id": 44550684784,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T16:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:17:19Z",
+            "event": "workflow_dispatch",
+            "id": 44564377391,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:16:44Z",
+            "event": "workflow_dispatch",
+            "id": 44564267586,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T16:15:16Z",
+            "event": "workflow_dispatch",
+            "id": 44563980583,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44563935261,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:04:52Z",
+            "event": "workflow_run",
+            "id": 44562024653,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:58:49Z",
+            "event": "schedule",
+            "id": 44572116398,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:15:04Z",
+            "event": "workflow_dispatch",
+            "id": 44563941324,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:05:03Z",
+            "event": "workflow_run",
+            "id": 44562058664,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:16:14Z",
+            "event": "workflow_dispatch",
+            "id": 44564173457,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:05:03Z",
+            "event": "workflow_run",
+            "id": 44562058793,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:59:11Z",
+            "event": "workflow_run",
+            "id": 44572178784,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:16:16Z",
+            "event": "workflow_dispatch",
+            "id": 44564180271,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:16:31Z",
+            "event": "workflow_dispatch",
+            "id": 44564227899,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:16:30Z",
+            "event": "workflow_dispatch",
+            "id": 44564222954,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44563929754,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T16:04:40Z",
+            "event": "workflow_run",
+            "id": 44561988474,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T17:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:17:07Z",
+            "event": "workflow_dispatch",
+            "id": 44575501270,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:16:45Z",
+            "event": "workflow_dispatch",
+            "id": 44575436401,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T17:15:22Z",
+            "event": "workflow_dispatch",
+            "id": 44575183616,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:59:19Z",
+            "event": "workflow_run",
+            "id": 44582985944,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:15:04Z",
+            "event": "workflow_dispatch",
+            "id": 44575126474,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:04:45Z",
+            "event": "workflow_run",
+            "id": 44573214518,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:59:29Z",
+            "event": "workflow_run",
+            "id": 44583014191,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:15:06Z",
+            "event": "workflow_dispatch",
+            "id": 44575133537,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:04:54Z",
+            "event": "workflow_run",
+            "id": 44573244457,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:59:29Z",
+            "event": "workflow_run",
+            "id": 44583014137,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:16:16Z",
+            "event": "workflow_dispatch",
+            "id": 44575350425,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:04:54Z",
+            "event": "workflow_run",
+            "id": 44573244496,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:16:18Z",
+            "event": "workflow_dispatch",
+            "id": 44575357377,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:16:39Z",
+            "event": "workflow_dispatch",
+            "id": 44575419463,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:16:29Z",
+            "event": "workflow_dispatch",
+            "id": 44575391042,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:59:08Z",
+            "event": "workflow_run",
+            "id": 44582954234,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:15:02Z",
+            "event": "workflow_dispatch",
+            "id": 44575116703,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T17:04:33Z",
+            "event": "workflow_run",
+            "id": 44573176294,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T18:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:17:30Z",
+            "event": "workflow_dispatch",
+            "id": 44586232481,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:16:55Z",
+            "event": "workflow_dispatch",
+            "id": 44586129521,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T18:15:27Z",
+            "event": "workflow_dispatch",
+            "id": 44585865034,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:41:54Z",
+            "event": "workflow_run",
+            "id": 44590546453,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:41:30Z",
+            "event": "schedule",
+            "id": 44590477120,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:10Z",
+            "event": "workflow_run",
+            "id": 44590244303,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:39:45Z",
+            "event": "schedule",
+            "id": 44590173477,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44585790334,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:04:48Z",
+            "event": "workflow_run",
+            "id": 44583961429,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:42:06Z",
+            "event": "workflow_run",
+            "id": 44590581602,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:41:40Z",
+            "event": "workflow_run",
+            "id": 44590506276,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:30Z",
+            "event": "workflow_run",
+            "id": 44590306370,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:03Z",
+            "event": "workflow_run",
+            "id": 44590226311,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:15:05Z",
+            "event": "workflow_dispatch",
+            "id": 44585796422,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:04:58Z",
+            "event": "workflow_run",
+            "id": 44583988873,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:42:06Z",
+            "event": "workflow_run",
+            "id": 44590581503,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:41:40Z",
+            "event": "workflow_run",
+            "id": 44590506223,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:30Z",
+            "event": "workflow_run",
+            "id": 44590306175,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:03Z",
+            "event": "workflow_run",
+            "id": 44590226307,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:16:15Z",
+            "event": "workflow_dispatch",
+            "id": 44586013525,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:04:58Z",
+            "event": "workflow_run",
+            "id": 44583989071,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:42:19Z",
+            "event": "workflow_run",
+            "id": 44590616567,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:41:54Z",
+            "event": "workflow_run",
+            "id": 44590546109,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:46Z",
+            "event": "workflow_run",
+            "id": 44590349430,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:19Z",
+            "event": "workflow_run",
+            "id": 44590272763,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:16:18Z",
+            "event": "workflow_dispatch",
+            "id": 44586021284,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:42:21Z",
+            "event": "workflow_run",
+            "id": 44590621473,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:41:57Z",
+            "event": "workflow_run",
+            "id": 44590553682,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:48Z",
+            "event": "workflow_run",
+            "id": 44590356160,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:40:20Z",
+            "event": "workflow_run",
+            "id": 44590274707,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:16:52Z",
+            "event": "workflow_dispatch",
+            "id": 44586120606,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:16:38Z",
+            "event": "workflow_dispatch",
+            "id": 44586079146,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:41:38Z",
+            "event": "schedule",
+            "id": 44590499527,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:39:57Z",
+            "event": "schedule",
+            "id": 44590207731,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44585784410,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T18:04:33Z",
+            "event": "workflow_run",
+            "id": 44583917647,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T19:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:19:44Z",
+            "event": "schedule",
+            "id": 44597160448,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:17:05Z",
+            "event": "workflow_dispatch",
+            "id": 44596708296,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:16:43Z",
+            "event": "workflow_dispatch",
+            "id": 44596648964,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T19:15:15Z",
+            "event": "workflow_dispatch",
+            "id": 44596390045,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44596351557,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:04:43Z",
+            "event": "workflow_run",
+            "id": 44594524993,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:15:04Z",
+            "event": "workflow_dispatch",
+            "id": 44596358523,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:04:53Z",
+            "event": "workflow_run",
+            "id": 44594554543,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:16:15Z",
+            "event": "workflow_dispatch",
+            "id": 44596567071,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:09:29Z",
+            "event": "schedule",
+            "id": 44595374430,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:04:52Z",
+            "event": "workflow_run",
+            "id": 44594554280,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:16:17Z",
+            "event": "workflow_dispatch",
+            "id": 44596572502,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:16:49Z",
+            "event": "workflow_dispatch",
+            "id": 44596663197,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:09:42Z",
+            "event": "workflow_run",
+            "id": 44595412623,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:16:29Z",
+            "event": "workflow_dispatch",
+            "id": 44596610068,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:10:34Z",
+            "event": "schedule",
+            "id": 44595570269,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44596345775,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T19:04:32Z",
+            "event": "workflow_run",
+            "id": 44594490747,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T20:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:17:13Z",
+            "event": "workflow_dispatch",
+            "id": 44607098696,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:16:49Z",
+            "event": "workflow_dispatch",
+            "id": 44607029069,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T20:15:12Z",
+            "event": "workflow_dispatch",
+            "id": 44606740873,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:54:15Z",
+            "event": "workflow_run",
+            "id": 44613360917,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44606711954,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:04:51Z",
+            "event": "workflow_run",
+            "id": 44604938859,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:54:28Z",
+            "event": "workflow_run",
+            "id": 44613395699,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:15:05Z",
+            "event": "workflow_dispatch",
+            "id": 44606715073,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:05:05Z",
+            "event": "workflow_run",
+            "id": 44604977830,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:54:28Z",
+            "event": "workflow_run",
+            "id": 44613395606,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:16:13Z",
+            "event": "workflow_dispatch",
+            "id": 44606925823,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:05:05Z",
+            "event": "workflow_run",
+            "id": 44604977027,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:54:42Z",
+            "event": "workflow_run",
+            "id": 44613435138,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:16:14Z",
+            "event": "workflow_dispatch",
+            "id": 44606930009,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:54:41Z",
+            "event": "workflow_run",
+            "id": 44613432932,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:27:31Z",
+            "event": "push",
+            "id": 44608877502,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:16:37Z",
+            "event": "workflow_dispatch",
+            "id": 44606994411,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:27:31Z",
+            "event": "push",
+            "id": 44608877529,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:16:33Z",
+            "event": "workflow_dispatch",
+            "id": 44606983799,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:54:04Z",
+            "event": "schedule",
+            "id": 44613328091,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44606708134,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T20:04:33Z",
+            "event": "workflow_run",
+            "id": 44604886299,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T21:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:17:10Z",
+            "event": "workflow_dispatch",
+            "id": 44617215500,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:16:46Z",
+            "event": "workflow_dispatch",
+            "id": 44617149297,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T21:15:16Z",
+            "event": "workflow_dispatch",
+            "id": 44616894785,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:40:22Z",
+            "event": "schedule",
+            "id": 44621109551,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44616855602,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:04:43Z",
+            "event": "workflow_run",
+            "id": 44615103365,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:40:33Z",
+            "event": "workflow_run",
+            "id": 44621140635,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:15:04Z",
+            "event": "workflow_dispatch",
+            "id": 44616859552,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:04:56Z",
+            "event": "workflow_run",
+            "id": 44615137262,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:40:33Z",
+            "event": "workflow_run",
+            "id": 44621140691,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:16:13Z",
+            "event": "workflow_dispatch",
+            "id": 44617058697,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:04:56Z",
+            "event": "workflow_run",
+            "id": 44615137095,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:46:12Z",
+            "event": "schedule",
+            "id": 44622079812,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:40:45Z",
+            "event": "workflow_run",
+            "id": 44621175802,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:16:16Z",
+            "event": "workflow_dispatch",
+            "id": 44617064518,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:40:50Z",
+            "event": "workflow_run",
+            "id": 44621191103,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:40:02Z",
+            "event": "schedule",
+            "id": 44621052906,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:16:30Z",
+            "event": "workflow_dispatch",
+            "id": 44617108471,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:16:28Z",
+            "event": "workflow_dispatch",
+            "id": 44617100162,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44616849639,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T21:04:31Z",
+            "event": "workflow_run",
+            "id": 44615070155,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T22:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:13:49Z",
+            "event": "workflow_dispatch",
+            "id": 44626591196,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:13:25Z",
+            "event": "workflow_dispatch",
+            "id": 44626522305,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T22:12:16Z",
+            "event": "workflow_dispatch",
+            "id": 44626331657,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:23:44Z",
+            "event": "schedule",
+            "id": 44628209450,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:21:16Z",
+            "event": "schedule",
+            "id": 44627815290,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:19:17Z",
+            "event": "workflow_run",
+            "id": 44627487765,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:12:25Z",
+            "event": "workflow_run",
+            "id": 44626355757,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:04:43Z",
+            "event": "workflow_run",
+            "id": 44625085462,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:23:54Z",
+            "event": "workflow_run",
+            "id": 44628237168,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:21:26Z",
+            "event": "workflow_run",
+            "id": 44627841568,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:19:31Z",
+            "event": "workflow_run",
+            "id": 44627522765,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:12:43Z",
+            "event": "workflow_run",
+            "id": 44626404226,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:04:54Z",
+            "event": "workflow_run",
+            "id": 44625113902,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:23:54Z",
+            "event": "workflow_run",
+            "id": 44628237356,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:21:26Z",
+            "event": "workflow_run",
+            "id": 44627841677,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:19:31Z",
+            "event": "workflow_run",
+            "id": 44627522677,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:12:43Z",
+            "event": "workflow_run",
+            "id": 44626404344,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:04:54Z",
+            "event": "workflow_run",
+            "id": 44625114119,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:24:10Z",
+            "event": "workflow_run",
+            "id": 44628277289,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:21:42Z",
+            "event": "workflow_run",
+            "id": 44627887565,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:19:56Z",
+            "event": "workflow_run",
+            "id": 44627589164,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:12:57Z",
+            "event": "workflow_run",
+            "id": 44626443772,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:24:10Z",
+            "event": "workflow_run",
+            "id": 44628277981,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:21:41Z",
+            "event": "workflow_run",
+            "id": 44627883228,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:19:44Z",
+            "event": "workflow_run",
+            "id": 44627559234,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:13:16Z",
+            "event": "workflow_run",
+            "id": 44626498511,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:13:09Z",
+            "event": "workflow_dispatch",
+            "id": 44626477254,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:13:07Z",
+            "event": "workflow_dispatch",
+            "id": 44626471617,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:19:06Z",
+            "event": "schedule",
+            "id": 44627458336,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:12:05Z",
+            "event": "schedule",
+            "id": 44626299046,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T22:04:31Z",
+            "event": "workflow_run",
+            "id": 44625051373,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    },
+    {
+      "allSevenSourceFilesPresent": true,
+      "closedHourUTC": "2026-11-19T23:00:00Z",
+      "e5dJournalFilePresent": true,
+      "missingDependencies": {},
+      "sameHourWorkflowRuns": {
+        "E5D": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:17:06Z",
+            "event": "workflow_dispatch",
+            "id": 44636314882,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:16:50Z",
+            "event": "workflow_dispatch",
+            "id": 44636276470,
+            "status": "completed"
+          },
+          {
+            "conclusion": "failure",
+            "createdAtUTC": "2026-11-19T23:15:13Z",
+            "event": "workflow_dispatch",
+            "id": 44636044681,
+            "status": "completed"
+          }
+        ],
+        "V7_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:15:03Z",
+            "event": "workflow_dispatch",
+            "id": 44636019380,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:04:43Z",
+            "event": "workflow_run",
+            "id": 44634454800,
+            "status": "completed"
+          }
+        ],
+        "V7_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:33:21Z",
+            "event": "schedule",
+            "id": 44638636069,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:15:06Z",
+            "event": "workflow_dispatch",
+            "id": 44636024924,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:04:53Z",
+            "event": "workflow_run",
+            "id": 44634481326,
+            "status": "completed"
+          }
+        ],
+        "V91_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:16:16Z",
+            "event": "workflow_dispatch",
+            "id": 44636199168,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:04:53Z",
+            "event": "workflow_run",
+            "id": 44634481098,
+            "status": "completed"
+          }
+        ],
+        "V91_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:33:40Z",
+            "event": "workflow_run",
+            "id": 44638680223,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:16:19Z",
+            "event": "workflow_dispatch",
+            "id": 44636204753,
+            "status": "completed"
+          }
+        ],
+        "V92_BTC_SOL": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:16:43Z",
+            "event": "workflow_dispatch",
+            "id": 44636260703,
+            "status": "completed"
+          }
+        ],
+        "V92_ETH": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:16:29Z",
+            "event": "workflow_dispatch",
+            "id": 44636229759,
+            "status": "completed"
+          }
+        ],
+        "V9_THREE_ASSET": [
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:15:01Z",
+            "event": "workflow_dispatch",
+            "id": 44636013544,
+            "status": "completed"
+          },
+          {
+            "conclusion": "success",
+            "createdAtUTC": "2026-11-19T23:04:31Z",
+            "event": "workflow_run",
+            "id": 44634425194,
+            "status": "completed"
+          }
+        ]
+      },
+      "statuses": {
+        "E5D": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V7_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V91_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_BTC_SOL": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V92_ETH": "SNAPSHOT_PRESENT_METADATA_ONLY",
+        "V9_THREE_ASSET": "SNAPSHOT_PRESENT_METADATA_ONLY"
+      }
+    }
+  ],
+  "independentlyExchangeVerifiedOHLCV": false,
+  "interpretation": "GitHub immutable tree file-presence + workflow metadata only; a successful Actions run may skip source capture. Missing runs are not proof Github scheduled a trigger then dropped it.",
+  "latestSourceClosedHourUTCByStage": {
+    "E5D": "2026-11-19T23:00:00Z",
+    "V7_BTC_SOL": "2026-11-20T00:00:00Z",
+    "V7_ETH": "2026-11-20T00:00:00Z",
+    "V91_BTC_SOL": "2026-11-20T00:00:00Z",
+    "V91_ETH": "2026-11-20T00:00:00Z",
+    "V92_BTC_SOL": "2026-11-20T00:00:00Z",
+    "V92_ETH": "2026-11-20T00:00:00Z",
+    "V9_THREE_ASSET": "2026-11-20T00:00:00Z"
+  },
+  "liveEntrySignalValid": false,
+  "lookbackClosedHours": 12,
+  "missingSourceHoursByStage": {
+    "E5D": 1,
+    "V7_BTC_SOL": 0,
+    "V7_ETH": 0,
+    "V91_BTC_SOL": 0,
+    "V91_ETH": 0,
+    "V92_BTC_SOL": 0,
+    "V92_ETH": 1,
+    "V9_THREE_ASSET": 0
+  },
+  "mode": "ATLAS_E5G_SOURCE_HEALTH_GITHUB_METADATA_ONLY_RESEARCH",
+  "prospectivePerformanceOrTradeCredited": false,
+  "realOrdersOrAlertsEmitted": false,
+  "sourceCommitPins": {
+    "experiment/v7-signal-quality-20261103": "5b46bdc770c4035fb22f3fc894a7a60282e854f6",
+    "research/atlas-core-v8b-journal-audit-20261115": "16b170681eec2ff6f3436680b58b301d42cb21c8",
+    "research/v9-prestart-live-data-compatibility-20261111": "58252660427455e027574125569dee2805e4d338",
+    "research/v92-bull-bear-candle-invalidation-20261112": "f2f16fd21cd6a1dfaaba1e48e53ada5c4985c737"
+  },
+  "sourceFilePayloadContentValidated": false,
+  "sourceHealthStatusCounts": {
+    "E5D": {
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 11,
+      "UPSTREAM_SAME_HOUR_SOURCE_ABSENT": 1
+    },
+    "V7_BTC_SOL": {
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 12
+    },
+    "V7_ETH": {
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 12
+    },
+    "V91_BTC_SOL": {
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 12
+    },
+    "V91_ETH": {
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 12
+    },
+    "V92_BTC_SOL": {
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 12
+    },
+    "V92_ETH": {
+      "SKIPPED_CANCELLED_OR_NON_SUCCESS_NO_SNAPSHOT": 1,
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 11
+    },
+    "V9_THREE_ASSET": {
+      "SNAPSHOT_PRESENT_METADATA_ONLY": 12
+    }
+  },
+  "sourceTreeSHA1": {
+    "E5D": "85a7901d25751fba1d0185bbfa6eeb30a66216e1",
+    "V7_BTC_SOL": "cf75ca17d66742561408e1b26a6ab642ab1dc6c4",
+    "V7_ETH": "1799b307cb9c74188eb03b2a74cbb4bdc16fbc53",
+    "V91_BTC_SOL": "ab3618d8cccd54461122a284d56c7549c54b3eaf",
+    "V91_ETH": "3a104d03b189da195a9eec340f1dd6643e3eb6da",
+    "V92_BTC_SOL": "121dd2af5786ccc8c9e68dbc335564600fee94f9",
+    "V92_ETH": "bb7a59ed0f513e02c18cf9c23810714edeef63d5",
+    "V9_THREE_ASSET": "5f707e6282ff8cef23c77f651122385f6d885f41"
+  },
+  "stage": "RESEARCH_ONLY_NO_LIVE_OR_FORWARD_CREDIT",
+  "status": "INCOMPLETE_12_HOUR_SOURCE_PRESENCE",
+  "windowFirstClosedHourUTC": "2026-11-19T12:00:00Z",
+  "windowLastClosedHourUTC": "2026-11-19T23:00:00Z"
+}
