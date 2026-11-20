@@ -162,12 +162,25 @@ class LongZoneTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'LOOKAHEAD'):
             evaluate(f, **self.args)
 
-    def test_sol_long_supported(self):
-        a = dict(self.args, symbol='SOLUSDT_PERP.A')
-        result = evaluate(long_fixture('SOLUSDT_PERP.A'), **a)
+    def test_sol_long_supported_at_sol_price_scale(self):
+        a = dict(self.args, symbol='SOLUSDT_PERP.A', signal_price=72.0)
+        f = long_fixture('SOLUSDT_PERP.A')
+        # Synthetic SOL-like price scale, not a real SOL market backtest.
+        factor = 900.0
+        entry = f['results'][0]
+        for ob in entry['candidateOrderBlocks']:
+            ob['body']['low'] /= factor
+            ob['body']['high'] /= factor
+        for gap in entry['openFVG']:
+            gap['low'] /= factor
+            gap['high'] /= factor
+        for level in entry['liquidity']:
+            level['level'] /= factor
+        result = evaluate(f, **a)
         self.assertEqual(result['signal']['symbol'], 'SOLUSDT_PERP.A')
         self.assertEqual(result['signal']['side'], 'LONG')
         self.assertEqual(len(result['candidates']), 4)
+        self.assertTrue(all(z['low'] > 72.0 for z in result['candidates']))
 
     def test_long_rejects_overlapping_zone_as_forward_target(self):
         levels = [z['low'] for z in evaluate(long_fixture(), **self.args)['candidates']]
