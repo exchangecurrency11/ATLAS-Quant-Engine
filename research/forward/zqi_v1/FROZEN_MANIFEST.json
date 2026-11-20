@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "ATLAS-ZQI-V1-FORWARD-20261121",
+  "mode": "PROSPECTIVE_RESEARCH_SHADOW_NO_ORDERS",
+  "symbolUniverse": [
+    "BTCUSDT_PERP.A",
+    "SOLUSDT_PERP.A"
+  ],
+  "eventTypes": [
+    "BOS",
+    "CHoCH"
+  ],
+  "sides": [
+    "LONG",
+    "SHORT"
+  ],
+  "timeframe": "1hour",
+  "scoreVersion": "ZQI-V1-PRECALIBRATION-20261120",
+  "freezeUTC": "2026-11-20T21:08:00Z",
+  "firstEligibleEventCloseUTC": "2026-11-20T22:00:00Z",
+  "firstScheduledCheckLocal": "2026-11-21T01:12:00+03:00",
+  "timezone": "Europe/Istanbul",
+  "sourceRepository": "exchangecurrency11/ATLAS-Quant-Engine",
+  "readSourceBranch": "main",
+  "writeResultsOnlyToBranch": "research/atlas-zone-quality-v1-forward-20261121",
+  "frozenCode": {
+    "v0BlobSha": "841036d9e7cbaf1000bba19338a1efb12c30278c",
+    "v1BlobSha": "6d6ff00db75e106f5aeaaaf983d8a61e13a5e4e3",
+    "forwardHarnessBlobSha": "b7e5bf03bf7c319d16b8823c2ca1eed99a44df9c"
+  },
+  "observerPolicy": {
+    "eventCutoff": "one hourly candle close plus 5 minutes UTC",
+    "checks": "hourly minute 12 Istanbul local time",
+    "requireObserveBeforeNextClose": true,
+    "allowBackfillForPrimaryStatistics": false,
+    "requirePublishedSourceAtCutoff": true,
+    "unknownSource": "SOURCE_GAP_NOT_NO_EVENT",
+    "recordNoSignalHours": true,
+    "appendOnly": true,
+    "neverOverwriteHistoricalPrediction": true
+  },
+  "outcomePolicy": {
+    "horizonClosed1H": 12,
+    "minOpposingReversalATR": 0.5,
+    "postTouchNextClosed1HCandles": 3,
+    "farEdgeBreach": "close beyond far edge within same 12h event window",
+    "gradeAllZones": true,
+    "primaryQuality": "highest raw score, distance tiebreak",
+    "referenceDistance": "nearest eligible candidate grouping",
+    "noZonePolicy": "NO_ZONE",
+    "censorOnMissingHour": true,
+    "sameBarAmbiguity": "do not infer intrabar sequence",
+    "noRealOrders": true,
+    "noPaperBalancesChanged": true
+  },
+  "evaluationPlan": {
+    "firstReviewMaturedEvents": 30,
+    "firstReviewMinCalendarDays": 30,
+    "compareQualityBands": [
+      0,
+      40,
+      60,
+      80,
+      101
+    ],
+    "stratify": [
+      "BTC LONG",
+      "BTC SHORT",
+      "SOL LONG",
+      "SOL SHORT",
+      "BOS",
+      "CHoCH"
+    ],
+    "reports": "visit, reversal conditional on visit, break after visit, time to touch, zone distance ATR, source gaps",
+    "disclaimer": "Score is uncalibrated evidence index, not reversal probability. Overlapping signals dependent."
+  },
+  "protected": [
+    "main",
+    "V7",
+    "V9",
+    "current paper portfolios",
+    "existing notification automations",
+    "existing GitHub Actions workflows",
+    "live orders"
+  ]
+}
