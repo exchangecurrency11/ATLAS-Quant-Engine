@@ -1,15 +1,15 @@
 # V9 SAATLİK BTC → ETH → SOL (paper gözlem)
 
-**Doğrulanmış 1H kapanışı:** 2026-11-20 18:00 TSİ. Her satır gerçek tamamlanmış mumdur. **Resmî V9 4H tahmini yalnız mum açılmadan kaydedilmişse geçerlidir.**
+**Doğrulanmış 1H kapanışı:** 2026-11-20 19:00 TSİ. Her satır gerçek tamamlanmış mumdur. **Resmî V9 4H tahmini yalnız mum açılmadan kaydedilmişse geçerlidir.**
 
 | Varlık | 1H kapanış | 1H rengi | 1H RSI | 4H yön bağlamı | Daily yön bağlamı |
 |---|---:|---|---:|---|---|
-| BTCUSDT | 61,744.0000 | RED | 43.80 | BEARISH | BEARISH |
-| ETHUSDT | 1,742.6100 | RED | 44.08 | BEARISH | BEARISH |
-| SOLUSDT | 71.0100 | RED | 36.01 | BEARISH | BEARISH |
+| BTCUSDT | 59,445.1000 | RED | 26.90 | BEARISH | BEARISH |
+| ETHUSDT | 1,654.3300 | RED | 25.71 | BEARISH | BEARISH |
+| SOLUSDT | 68.3000 | RED | 24.41 | BEARISH | BEARISH |
 
 ## Önceden kaydedilmiş 4H yön tahmini
-- **Aktif 4H** (2026-11-20T12:00:00Z): **ÖNCEDEN KAYIT YOK — sinyal yok.**
-- **Sonraki 4H** (2026-11-20T16:00:00Z): **ÖNCEDEN KAYIT YOK — sinyal yok.**
+- **Aktif 4H** (2026-11-20T16:00:00Z): **ÖNCEDEN KAYIT YOK — sinyal yok.**
+- **Sonraki 4H** (2026-11-20T20:00:00Z): **ÖNCEDEN KAYIT YOK — sinyal yok.**
 
 **Uyarı:** Saatlik EMA/RSI/MACD, CVD vekili ve Daily/4H trend bağlamı bir sonraki 4H rengini kanıtlamaz. Yeşil/kırmızı doğruluk yalnız ayrı önceden kilitlenmiş 4H tahmin dosyaları için sayılır. İşlem yok.
