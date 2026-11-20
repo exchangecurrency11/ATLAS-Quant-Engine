@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "project": "ATLAS Quant Engine",
+  "component": "ZQI V1 prospective shadow",
+  "saveDestination": "GitHub only",
+  "targetBranch": "research/atlas-zone-quality-v1-forward-20261121",
+  "codePath": "research/atlas_zqi_v1_github_observer.py",
+  "workflowDraft": "research/forward/zqi_v1/GITHUB_ACTIONS_WORKFLOW_DRAFT.yml",
+  "protocol": "research/forward/zqi_v1/PROTOCOL.md",
+  "configuration": {
+    "notifications": false,
+    "pushNotifications": false,
+    "email": false,
+    "telegram": false,
+    "chatgptAutomation": false,
+    "liveOrders": false,
+    "paperPortfolioModifications": false,
+    "mainModified": false
+  },
+  "activationStatus": "SCHEDULER_NOT_INSTALLED_ON_DEFAULT_BRANCH",
+  "requiresExplicitMainChangeApproval": true,
+  "technicalNote": "GitHub Actions schedule events trigger only workflows present on the repository default branch. A workflow draft on a research branch is inert. An approved new, isolated default-branch scheduler can checkout the existing research branch and write data only there.",
+  "evidence": "Prepared source and policy committed; no user-facing notification automation and no successful prospective capture claimed.",
+  "noHistoricBackfillIntoProspectiveDataset": true
+}
