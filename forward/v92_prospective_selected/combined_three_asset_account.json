@@ -12,31 +12,31 @@
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
   "sourceBTCandSOLVerifiedClosedHours": 115,
-  "sourceETHVerifiedClosedHours": 121,
+  "sourceETHVerifiedClosedHours": 122,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
-      "expectedThroughUTC": "2026-11-20T02:00:00Z",
-      "expectedHours": 184,
+      "expectedThroughUTC": "2026-11-20T03:00:00Z",
+      "expectedHours": 185,
       "savedVerifiedHours": 115,
-      "missingHourCount": 69,
+      "missingHourCount": 70,
       "lastVerifiedHourUTC": "2026-11-20T02:00:00Z",
-      "lagHours": 0,
+      "lagHours": 1,
       "noBackfill": true
     },
     "ETH": {
       "firstExpectedHourUTC": "2026-11-12T12:00:00Z",
-      "expectedThroughUTC": "2026-11-20T02:00:00Z",
-      "expectedHours": 183,
-      "savedVerifiedHours": 121,
+      "expectedThroughUTC": "2026-11-20T03:00:00Z",
+      "expectedHours": 184,
+      "savedVerifiedHours": 122,
       "missingHourCount": 62,
-      "lastVerifiedHourUTC": "2026-11-20T02:00:00Z",
+      "lastVerifiedHourUTC": "2026-11-20T03:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     }
   },
   "lastCapturedBTCandSOLHourUTC": "2026-11-20T02:00:00Z",
-  "lastCapturedETHHourUTC": "2026-11-20T02:00:00Z",
+  "lastCapturedETHHourUTC": "2026-11-20T03:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1000.0,
   "virtualPaperPnLUSDT": 0.0,
@@ -127,28 +127,14 @@
     },
     "ETHUSDT": {
       "state": "FLAT",
-      "lastClosedUTC": "2026-11-20T02:00:00Z",
+      "lastClosedUTC": "2026-11-20T03:00:00Z",
       "retestPending": false,
       "openPaperPosition": false,
       "newBOSWatches": 0,
       "patternWarnings": {
         "1H": {
-          "lastCompletedCandleCloseUTC": "2026-11-20T02:00:00Z",
-          "confirmedReversalPatterns": [
-            {
-              "family": "HIKKAKE_CONFIRMED",
-              "name": "BEARISH_HIKKAKE_CONFIRMED",
-              "direction": "bearish",
-              "firstUTC": "2026-11-19T22:00:00Z",
-              "confirmedUTC": "2026-11-20T02:00:00Z",
-              "prior20LiquiditySweepAndReentry": false,
-              "internalHikkakeFalseBreakConfirmed": true,
-              "crypto24hNoGapRequirement": true,
-              "signalIsNotStandaloneTrade": true,
-              "onlyClosedCandlesUsed": true,
-              "tf": "1H"
-            }
-          ],
+          "lastCompletedCandleCloseUTC": "2026-11-20T03:00:00Z",
+          "confirmedReversalPatterns": [],
           "ethObservationalOnlyNoAutoVeto": true
         },
         "4H": {
