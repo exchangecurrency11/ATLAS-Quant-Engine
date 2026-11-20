@@ -9,17 +9,17 @@ The 2026-11-15 BTC early-SHORT notice is user-reported at about **$64,738**. Its
 
 For reproducibility, this first baseline deliberately uses a **hypothetical as-of cutoff 2026-11-15 15:05:00 UTC** (18:05 TSİ), *not* a claim that the alert happened at that time:
 
-- **Historical structure Git commit:** \`380f108369e4037af0f0c97e2aa09bbdbe2b1d9e\`, committed **2026-11-15 15:04:37 UTC**; file \`market_structure_data.json\`.
-- **Historical market-data Git commit:** \`492e91c260066a5e94550416b9fd503e9c1063c2\`, committed **2026-11-15 15:04:25 UTC**; file \`market_data.json\`.
+- **Historical structure Git commit:** `380f108369e4037af0f0c97e2aa09bbdbe2b1d9e`, committed **2026-11-15 15:04:37 UTC**; file `market_structure_data.json`.
+- **Historical market-data Git commit:** `492e91c260066a5e94550416b9fd503e9c1063c2`, committed **2026-11-15 15:04:25 UTC**; file `market_data.json`.
 - **Recorded closed BTC 1H:** 2026-11-15 15:00 UTC, close **$64,740.60**.
 - **Recorded 4H:** 2026-11-15 12:00 UTC; **Daily:** 2026-11-15 00:00 UTC.
-- **V7 snapshot:** \`experiment/v7-signal-quality-20261103/forward/snapshots/2026-11-15T15-00Z.json\` (observed at 15:24:43 UTC), so this later V7 publication must NOT be represented as evidence accessible at 15:05. V7 shows no fresh BOS/watch at its own 15:00 observation; this is NOT the early-alert automation.
+- **V7 snapshot:** `experiment/v7-signal-quality-20261103/forward/snapshots/2026-11-15T15-00Z.json` (observed at 15:24:43 UTC), so this later V7 publication must NOT be represented as evidence accessible at 15:05. V7 shows no fresh BOS/watch at its own 15:00 observation; this is NOT the early-alert automation.
 
 The source commit publication time must precede the candidate signal cutoff. For a real alert forensic replay, replace the hypothetical cutoff with the **verified notification time**, fetch the latest actually published source commit **at or before** that time, and apply the same gates. If provenance is missing, label status **UNVERIFIED**, not a predicted target.
 
 ## BTC/SHORT candidate zones at this illustrative cutoff
 
-Candidates are output of existing \`market_structure.py\` heuristics and can be checked using \`research/zone_target_intelligence_v0.py\`. Ranking below is by distance from the recorded $64,740.60 close to the nearest edge, not predictive success.
+Candidates are output of existing `market_structure.py` heuristics and can be checked using `research/zone_target_intelligence_v0.py`. Ranking below is by distance from the recorded $64,740.60 close to the nearest edge, not predictive success.
 
 | Rank | Type | Timeframe | Preexisting range/level (USD) | Distance to entry edge |
 |---|---|---|---|---:|
@@ -45,4 +45,4 @@ Note overlap: Daily OB #2 and #3 are not independent observations. The OBs are *
 
 ## Safety boundary
 
-No changes to \`main\`, market publishers, existing workflows, alert tasks, strategy rules, or paper accounts. This research branch adds a standalone analyzer and synthetic tests only. Its CLI neither calls exchanges nor places orders. Confirm provenance independently on GitHub: the CLI accepts explicit commit SHA and time but cannot itself authenticate GitHub metadata offline.
+No changes to `main`, market publishers, existing workflows, alert tasks, strategy rules, or paper accounts. This research branch adds a standalone analyzer and synthetic tests only. Its CLI neither calls exchanges nor places orders. Confirm provenance independently on GitHub: the CLI accepts explicit commit SHA and time but cannot itself authenticate GitHub metadata offline.
