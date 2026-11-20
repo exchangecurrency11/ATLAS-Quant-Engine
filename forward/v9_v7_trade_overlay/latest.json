@@ -1,7 +1,7 @@
 {
   "status": "V9_V7_ORIGINAL_TRADE_OPPORTUNITY_READONLY_SHADOW",
-  "sameClosed1HUTC": "2026-11-20T13:00:00Z",
-  "joinedAfterBothOriginalSnapshotsUTC": "2026-11-20T13:15:17Z",
+  "sameClosed1HUTC": "2026-11-20T14:00:00Z",
+  "joinedAfterBothOriginalSnapshotsUTC": "2026-11-20T14:15:11Z",
   "current4HTargetStartUTC": "2026-11-20T12:00:00Z",
   "original4HForecastLockStatus": "NO_ORIGINAL_GIT_SEALED_V9_4H_FORECAST",
   "4HOwnColorIsSecondaryNotProfitTarget": true,
@@ -26,8 +26,8 @@
       "noOriginalV7WatchOrRetestRewritten": true
     },
     "SOLUSDT": {
-      "originalV7NewWatchesAtThisClose": 1,
-      "v9QualityScoredOriginalV7NewWatches": 1,
+      "originalV7NewWatchesAtThisClose": 0,
+      "v9QualityScoredOriginalV7NewWatches": 0,
       "v9QualityScoreIsOnlyResearchContextNotAProfitableTradeProbability": true,
       "originalV7RetestConfirmedAtThisClose": false,
       "originalV7PaperPositionAlreadyOpen": false,
@@ -38,74 +38,7 @@
       },
       "v9IndependentHourContext": "BEARISH",
       "v9OriginalSealed4HColorContext": null,
-      "eventOverlayOnly": [
-        {
-          "v7Event": {
-            "kind": "V7_NEW_BOS_WATCH",
-            "side": "bearish",
-            "notAnEntry": true,
-            "recordedAtClosedUTC": "2026-11-20T13:00:00Z"
-          },
-          "v9BOSQualityScoreFromExact250ClosedHours": {
-            "status": "V9_TRADE_QUALITY_SNAPSHOT_FROM_CLOSED_V7_BOS_ONLY",
-            "observedClosed1HUTC": 1795179600,
-            "direction": "bearish",
-            "bosLevel": 71.55,
-            "qualityScoreNotProfitProbability": 79.531,
-            "qualityBand": "HIGH",
-            "components": {
-              "base": 20.0,
-              "breakoutATR": 6.6174,
-              "relativeVolume": 8.5957,
-              "bodyATR": 9.3183,
-              "emaAlignment": 8.0,
-              "ema20Slope": 7.0,
-              "volatilityRegime": 10.0,
-              "priorHighLowSweep": 0.0,
-              "nearOpenFVG": 0.0,
-              "nearUninvalidatedOrderBlock": 10.0,
-              "overextendedPenalty": 0.0,
-              "opposingWickPenalty": 0.0
-            },
-            "featureWeightsRegisteredWithoutOutcomeTuning": {
-              "base": 20.0,
-              "breakoutATR": 18.0,
-              "relativeVolume": 14.0,
-              "bodyATR": 12.0,
-              "emaAlignment": 8.0,
-              "ema20Slope": 7.0,
-              "volatilityRegime": 10.0,
-              "priorHighLowSweep": 6.0,
-              "nearOpenFVG": 8.0,
-              "nearUninvalidatedOrderBlock": 10.0,
-              "overextendedPenalty": -12.0,
-              "opposingWickPenalty": -8.0
-            },
-            "features": {
-              "breakoutInATR": 0.55145,
-              "relativeVolume20": 1.95508,
-              "directionalBodyInATR": 0.77653,
-              "ema20AboveEMA50Agree": true,
-              "ema20SlopeAgrees": true,
-              "atrRegimeRatio": 0.98912,
-              "atrRegime": "NORMAL",
-              "prior20HighLowSweepAgainstOpposingSide": false,
-              "nearFVGCount": 0,
-              "nearOrderBlockCount": 1,
-              "overextensionInATR": 1.76452,
-              "opposingWickShare": 0.2551
-            },
-            "liquidityFVGAndOrderBlocksNotActualOrders": true,
-            "noFutureRetestOrTPUsed": true,
-            "noProviderOIOrFundingOrUnverifiedTradeCount": true,
-            "noTradePlaced": true,
-            "notAStandaloneEntrySignal": true
-          },
-          "v9Primary94DirectionalAgreement": null,
-          "v9SignalFilterWouldBeHypotheticalNotExecuted": true,
-          "doNotTurnDirectionIntoProfitProbability": true
-        }
-      ],
+      "eventOverlayOnly": [],
       "noOriginalV7WatchOrRetestRewritten": true
     }
   },
@@ -113,9 +46,7 @@
   "noNotifications": true,
   "noProductionModified": true,
   "v9QualitySourceAudit": {
-    "status": "COINALYZE_THREE_ASSET_250_CLOSED_HOURS_RETRIEVED",
-    "qualityScoreNotAnOrderOrTradeSignal": true,
-    "sourceSHA256": "e4d099dbdb2711f730ab7351dbde16c561fa050054c5c3fd8cc3b1940352e8cf",
-    "noProviderTradeCountUsed": true
+    "status": "NO_ORIGINAL_V7_NEW_WATCH_TO_SCORE",
+    "qualityScoreNotAnOrderOrTradeSignal": true
   }
 }
