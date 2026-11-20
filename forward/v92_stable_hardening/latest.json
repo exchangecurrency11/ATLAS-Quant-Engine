@@ -1,5 +1,5 @@
 {
-  "status": "V92_STABLE_SHADOW_AUDIT_READY_FOR_NEW_ADMISSION_REVIEW",
+  "status": "V92_STABLE_SHADOW_AUDIT_FAIL_CLOSED",
   "mode": "V92_STABLE_SHADOW_HARDENING_ONLY",
   "sharedVirtualInitialUSDT": 1000,
   "policy": {
@@ -19,7 +19,7 @@
   "noRetroactiveTradesOrRewrittenCandles": true,
   "coverage": {
     "BTC_SOL": {
-      "expected": 182,
+      "expected": 183,
       "saved": 113,
       "missingHoursUTC": [
         "2026-11-12T14:00:00Z",
@@ -90,14 +90,15 @@
         "2026-11-19T04:00:00Z",
         "2026-11-19T05:00:00Z",
         "2026-11-19T06:00:00Z",
-        "2026-11-19T07:00:00Z"
+        "2026-11-19T07:00:00Z",
+        "2026-11-20T01:00:00Z"
       ],
       "latestUTC": "2026-11-20T00:00:00Z",
-      "consecutiveRecentHours": 17
+      "consecutiveRecentHours": 0
     },
     "ETH": {
-      "expected": 181,
-      "saved": 119,
+      "expected": 182,
+      "saved": 120,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
         "2026-11-12T14:00:00Z",
@@ -162,11 +163,11 @@
         "2026-11-19T05:00:00Z",
         "2026-11-19T13:00:00Z"
       ],
-      "latestUTC": "2026-11-20T00:00:00Z",
-      "consecutiveRecentHours": 11
+      "latestUTC": "2026-11-20T01:00:00Z",
+      "consecutiveRecentHours": 12
     }
   },
-  "latestCommonHourUTC": "2026-11-20T00:00:00Z",
+  "latestCommonHourUTC": null,
   "matchedVerifiedHours": 103,
   "matchedAssetChecks": 309,
   "actualObservedOpenPositionSnapshots": 0,
@@ -182,27 +183,8 @@
   "crossAssetLastClosed1H4HDailyAlignmentChecked": true,
   "missingHourNotBackfilled": true,
   "parityErrors": [],
-  "newEntryAdmissionReadiness": true,
-  "latestShadowEntryDecisions": [
-    {
-      "symbol": "BTCUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "ETHUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "SOLUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    }
-  ],
+  "newEntryAdmissionReadiness": false,
+  "latestShadowEntryDecisions": [],
   "limitsCannotGuaranteeExecutionOrStopFill": true,
   "fundingVariableSlippageAndLiquidationNotFullyModeled": true
 }
