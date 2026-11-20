@@ -34,7 +34,8 @@ def _valid_range(low, high):
 
 
 def evaluate(structure, *, symbol, side, signal_at, signal_price,
-             pinned_commit, commit_published_at, pivot_span=3):
+             pinned_commit, commit_published_at, pivot_span=3,
+             signal_candle_low=None, signal_candle_high=None):
     """Return candidate levels knowable by signal_at, without future candles.
 
     Time guard is two-fold: the immutable GitHub commit must have existed before
@@ -49,6 +50,12 @@ def evaluate(structure, *, symbol, side, signal_at, signal_price,
         raise ValueError('A full 40-character pinned commit SHA is required')
     if not isinstance(pivot_span, int) or not 2 <= pivot_span <= 10:
         raise ValueError('pivot_span must be between 2 and 10')
+    if (signal_candle_low is None) != (signal_candle_high is None):
+        raise ValueError('Provide both signal candle low and high, or neither')
+    signal_bar_checked = signal_candle_low is not None
+    if signal_bar_checked and (not _valid_range(signal_candle_low, signal_candle_high)
+                               or not signal_candle_low <= signal_price <= signal_candle_high):
+        raise ValueError('Invalid signal candle OHLC range for closing price')
     cutoff = utc_seconds(signal_at)
     published = utc_seconds(commit_published_at)
     if published > cutoff:
@@ -58,6 +65,7 @@ def evaluate(structure, *, symbol, side, signal_at, signal_price,
     wanted = 'bullish' if side == 'SHORT' else 'bearish'
     liquidity_kind = 'equal_lows' if side == 'SHORT' else 'equal_highs'
     candidates = []
+    already_touched = []
     inspected = []
     unique_intervals = set()
     for item in structure['results']:
@@ -87,6 +95,12 @@ def evaluate(structure, *, symbol, side, signal_at, signal_price,
             if side == 'SHORT' and high >= signal_price:
                 return
             if side == 'LONG' and low <= signal_price:
+                return
+            if signal_bar_checked and ((side == 'SHORT' and signal_candle_low <= high)
+                                       or (side == 'LONG' and signal_candle_high >= low)):
+                already_touched.append({'interval': interval, 'kind': kind,
+                                        'low': low, 'high': high,
+                                        'reason': 'TOUCHED_DURING_SIGNAL_CANDLE'})
                 return
             distance = ((signal_price - high) if side == 'SHORT'
                         else (low - signal_price)) / signal_price * 100
@@ -143,6 +157,9 @@ def evaluate(structure, *, symbol, side, signal_at, signal_price,
                        'signalAtUTC': signal_at, 'signalPrice': signal_price,
                        'signalTimestampExternallyVerified': False},
             'inspected': inspected, 'candidates': candidates,
+            'alreadyTouchedDuringSignalCandle': already_touched,
+            'signalCandleEligibility': ('GATED_USING_CLOSED_CANDLE_HIGH_LOW'
+                                        if signal_bar_checked else 'NOT_CHECKED'),
             'notEvidenceOf': ['future performance', 'institutional orders',
                               'trade entry', 'profit-taking superiority'],
             'warning': 'Candidates are retrospective as-of features, NOT validated forecasts.'}
@@ -155,6 +172,8 @@ def main():
     p.add_argument('--side', required=True, choices=['SHORT', 'LONG'])
     p.add_argument('--signal-at', required=True)
     p.add_argument('--signal-price', required=True, type=float)
+    p.add_argument('--signal-candle-low', type=float)
+    p.add_argument('--signal-candle-high', type=float)
     p.add_argument('--pinned-commit', required=True)
     p.add_argument('--commit-published-at', required=True)
     p.add_argument('--pivot-span', type=int, default=3)
@@ -166,7 +185,9 @@ def main():
                       signal_at=args.signal_at, signal_price=args.signal_price,
                       pinned_commit=args.pinned_commit,
                       commit_published_at=args.commit_published_at,
-                      pivot_span=args.pivot_span)
+                      pivot_span=args.pivot_span,
+                      signal_candle_low=args.signal_candle_low,
+                      signal_candle_high=args.signal_candle_high)
     result = json.dumps(report, indent=2, ensure_ascii=False) + '\n'
     if args.output:
         args.output.write_text(result, encoding='utf-8')
