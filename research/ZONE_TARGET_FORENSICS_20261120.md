@@ -34,6 +34,19 @@ Note overlap: Daily OB #2 and #3 are not independent observations. The OBs are *
 
 **Result:** no recorded bullish candidate OB at **$58,700–59,000**, and no exact preexisting demand-zone call at that range was established. A $57,894.30 equal-low proxy is a different level and must not be retroactively renamed. The price reaching or bouncing from a zone later is not proof that the system forecast the move.
 
+## Symmetric LONG/SHORT coverage (research only)
+
+This project is **bidirectional** and applies identically to **BTC and SOL**. The historical BTC SHORT is only the first forensic case; it does **not** limit the research to shorts.
+
+| Early warning | Look ahead to | Candidate zones | Follow-up confirmation (not entry authorization) |
+|---|---|---|---|
+| **SHORT** | Lower prices | Prior bullish candidate OBs, open bullish FVG, confirmed equal lows / swing lows | 1H or 4H upward reaction; possible SHORT profit-taking hypothesis |
+| **LONG** | Higher prices | Prior bearish candidate OBs, open bearish FVG, confirmed equal highs / swing highs | 1H or 4H downward reaction; possible LONG profit-taking hypothesis |
+
+For each side, accept **only fully ahead-of-price zones** known at the hypothetical signal cutoff, never an already engulfing or behind-price zone; reject any candidate formed/confirmed in future candles, a future-published source commit, invalidated OBs and filled FVG. Chart liquidity is heuristic, not observed order-book liquidity. Symmetric code paths alone do **not** establish symmetric predictive performance: measure LONG and SHORT independently for each symbol, including null-signal and no-zone cases.
+
+The initial synthetic unit-test suite includes SHORT time-leakage checks and additional LONG tests (BTC/SOL, opposing OB/FVG, filled/invalidated zones, pivot delay, future source/candle, and target ranking). **Test file presence is not evidence of CI execution**; run and record the exact suite results before claiming a pass. Historical LONG signal provenance, sample sizes, target hit rates and trading PnL have not yet been verified.
+
 ## Research-only method and next gates
 
 1. Restore the verified 15-Nov early-alert timestamp and its true last-published market + structure commits. If unavailable, report only the *illustrative* cutoff above.
