@@ -1,5 +1,7 @@
 # ATLAS Zone Target Intelligence — 2026-11-20 forensic baseline
 
+**CHRONOLOGY CORRECTION (2026-11-20):** The exact BTC bearish BOS at **$64,738** was confirmed at **2026-11-14 21:00 UTC = 2026-11-15 00:00 TSİ**, not 2026-11-15 15:00 UTC. The 15-Nov 15:05 slice below was a hypothetical, *later* context and must **NOT** be presented as what existed when that SHORT event occurred. In particular, its 1H bullish FVG was not creditable at the original event. The superseding as-of reconstruction and both-direction case study are in [ZONE_TARGET_BIDIRECTIONAL_CASE_AUDIT_20261120.md](ZONE_TARGET_BIDIRECTIONAL_CASE_AUDIT_20261120.md). Independent notification *delivery time* is still unverified.
+
 **Mode:** isolated research, not live alerts or trading.  
 **Status:** initial historical-source audit; NOT a strategy backtest, performance claim, or verified signal-timing match.
 
