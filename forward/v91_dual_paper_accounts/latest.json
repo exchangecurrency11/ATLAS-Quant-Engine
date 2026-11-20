@@ -2,14 +2,14 @@
   "status": "TWO_SEPARATE_PROSPECTIVE_VIRTUAL_PAPER_ACCOUNTS",
   "requestedAtUTC": "2026-11-12T08:44:55Z",
   "firstEligible1HCloseUTC": "2026-11-12T09:00:00Z",
-  "lastCapturedEligibleBTCandSOLHourUTC": "2026-11-20T13:00:00Z",
-  "lastCapturedEligibleETHHourUTC": "2026-11-20T13:00:00Z",
+  "lastCapturedEligibleBTCandSOLHourUTC": "2026-11-20T17:00:00Z",
+  "lastCapturedEligibleETHHourUTC": "2026-11-20T17:00:00Z",
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T09:00:00Z",
-      "expectedThroughUTC": "2026-11-20T13:00:00Z",
-      "expectedHours": 197,
-      "savedExpectedHours": 139,
+      "expectedThroughUTC": "2026-11-20T17:00:00Z",
+      "expectedHours": 201,
+      "savedExpectedHours": 143,
       "missingHourCount": 58,
       "missingHoursUTC": [
         "2026-11-13T14:00:00Z",
@@ -71,15 +71,15 @@
         "2026-11-19T04:00:00Z",
         "2026-11-19T05:00:00Z"
       ],
-      "lastSavedHourUTC": "2026-11-20T13:00:00Z",
+      "lastSavedHourUTC": "2026-11-20T17:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     },
     "ETH": {
       "firstExpectedHourUTC": "2026-11-12T09:00:00Z",
-      "expectedThroughUTC": "2026-11-20T13:00:00Z",
-      "expectedHours": 197,
-      "savedExpectedHours": 138,
+      "expectedThroughUTC": "2026-11-20T17:00:00Z",
+      "expectedHours": 201,
+      "savedExpectedHours": 142,
       "missingHourCount": 59,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
@@ -142,7 +142,7 @@
         "2026-11-18T23:00:00Z",
         "2026-11-19T05:00:00Z"
       ],
-      "lastSavedHourUTC": "2026-11-20T13:00:00Z",
+      "lastSavedHourUTC": "2026-11-20T17:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     }
@@ -154,41 +154,52 @@
       "virtualPaperRiskPerTradeUSDT": 100.0,
       "riskPctOfInitialCapital": 10.0,
       "riskPerTradeIsHighAndNotRecommendedForLive": true,
-      "virtualEquityUSDT": 1000.0,
-      "virtualRealizedPnlUSDT": 0.0,
-      "virtualRealizedPnlStress25BpsUSDT": 0.0,
-      "netRealizedPaperR9BpsPerSide": 0,
-      "closedEligiblePaperTrades": 0,
-      "wins": 0,
+      "virtualEquityUSDT": 1185.243206,
+      "virtualRealizedPnlUSDT": 185.243206,
+      "virtualRealizedPnlStress25BpsUSDT": 159.008905,
+      "netRealizedPaperR9BpsPerSide": 1.852432,
+      "closedEligiblePaperTrades": 1,
+      "wins": 1,
       "losses": 0,
-      "winRatePct": null,
+      "winRatePct": 100.0,
       "perAssetLatestState": {
         "BTCUSDT": {
           "status": "FLAT_NO_CONFIRMED_TRADE",
-          "lastClosedUTC": "2026-11-20T13:00:00Z",
+          "lastClosedUTC": "2026-11-20T17:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         },
         "SOLUSDT": {
-          "status": "BOS_WATCH_WAITING_RETEST",
-          "lastClosedUTC": "2026-11-20T13:00:00Z",
-          "newBOSWatches": 1,
+          "status": "FLAT_NO_CONFIRMED_TRADE",
+          "lastClosedUTC": "2026-11-20T17:00:00Z",
+          "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         },
         "ETHUSDT": {
           "status": "FLAT_NO_CONFIRMED_TRADE",
-          "lastClosedUTC": "2026-11-20T13:00:00Z",
+          "lastClosedUTC": "2026-11-20T17:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         }
       },
-      "paperTradeLedger": [],
+      "paperTradeLedger": [
+        {
+          "asset": "SOLUSDT",
+          "model": "V7_ORIGINAL",
+          "entryUTC": "2026-11-20T15:00:00Z",
+          "exitUTC": "2026-11-20T16:00:00Z",
+          "side": "bearish",
+          "paperNetR9BpsPerSide": 1.85243206,
+          "paperNetR25BpsPerSideStress": 1.59008905,
+          "notRealOrderOrProvenExecution": true
+        }
+      ],
       "brokerOrders": 0,
       "realExecutableFillsVerified": 0
     },
@@ -197,41 +208,52 @@
       "virtualPaperRiskPerTradeUSDT": 100.0,
       "riskPctOfInitialCapital": 10.0,
       "riskPerTradeIsHighAndNotRecommendedForLive": true,
-      "virtualEquityUSDT": 1000.0,
-      "virtualRealizedPnlUSDT": 0.0,
-      "virtualRealizedPnlStress25BpsUSDT": 0.0,
-      "netRealizedPaperR9BpsPerSide": 0,
-      "closedEligiblePaperTrades": 0,
-      "wins": 0,
+      "virtualEquityUSDT": 1185.243206,
+      "virtualRealizedPnlUSDT": 185.243206,
+      "virtualRealizedPnlStress25BpsUSDT": 159.008905,
+      "netRealizedPaperR9BpsPerSide": 1.852432,
+      "closedEligiblePaperTrades": 1,
+      "wins": 1,
       "losses": 0,
-      "winRatePct": null,
+      "winRatePct": 100.0,
       "perAssetLatestState": {
         "BTCUSDT": {
           "status": "FLAT_NO_CONFIRMED_TRADE",
-          "lastClosedUTC": "2026-11-20T13:00:00Z",
+          "lastClosedUTC": "2026-11-20T17:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         },
         "SOLUSDT": {
-          "status": "BOS_WATCH_WAITING_RETEST",
-          "lastClosedUTC": "2026-11-20T13:00:00Z",
-          "newBOSWatches": 1,
+          "status": "FLAT_NO_CONFIRMED_TRADE",
+          "lastClosedUTC": "2026-11-20T17:00:00Z",
+          "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         },
         "ETHUSDT": {
           "status": "FLAT_NO_CONFIRMED_TRADE",
-          "lastClosedUTC": "2026-11-20T13:00:00Z",
+          "lastClosedUTC": "2026-11-20T17:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         }
       },
-      "paperTradeLedger": [],
+      "paperTradeLedger": [
+        {
+          "asset": "SOLUSDT",
+          "model": "V91_RETEST_MAX4H",
+          "entryUTC": "2026-11-20T15:00:00Z",
+          "exitUTC": "2026-11-20T16:00:00Z",
+          "side": "bearish",
+          "paperNetR9BpsPerSide": 1.85243206,
+          "paperNetR25BpsPerSideStress": 1.59008905,
+          "notRealOrderOrProvenExecution": true
+        }
+      ],
       "brokerOrders": 0,
       "realExecutableFillsVerified": 0
     }

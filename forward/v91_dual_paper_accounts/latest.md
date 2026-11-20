@@ -6,22 +6,22 @@ Başlangıç UTC: 2026-11-12T08:44:55Z
 
 | Hesap | Kapanan paper işlem | Kazanma % | Net R | Sanal PnL USDT | Sanal bakiye USDT |
 |---|---:|---:|---:|---:|---:|
-| V7_ORIGINAL | 0 | None | 0 | 0.0 | 1000.0 |
-| V91_RETEST_MAX4H | 0 | None | 0 | 0.0 | 1000.0 |
+| V7_ORIGINAL | 1 | 100.0 | 1.852432 | 185.243206 | 1185.243206 |
+| V91_RETEST_MAX4H | 1 | 100.0 | 1.852432 | 185.243206 | 1185.243206 |
 
 **Son giriş/sinyal durumları (BOS izleme, retest ve açık varsayımsal pozisyon eşiklerine göre):**
 
-- V7_ORIGINAL BTCUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T13:00:00Z.
-- V7_ORIGINAL SOLUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-20T13:00:00Z.
-- V7_ORIGINAL ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T13:00:00Z.
-- V91_RETEST_MAX4H BTCUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T13:00:00Z.
-- V91_RETEST_MAX4H SOLUSDT: BOS_WATCH_WAITING_RETEST — en son doğrulanmış 1H 2026-11-20T13:00:00Z.
-- V91_RETEST_MAX4H ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T13:00:00Z.
+- V7_ORIGINAL BTCUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T17:00:00Z.
+- V7_ORIGINAL SOLUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T17:00:00Z.
+- V7_ORIGINAL ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T17:00:00Z.
+- V91_RETEST_MAX4H BTCUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T17:00:00Z.
+- V91_RETEST_MAX4H SOLUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T17:00:00Z.
+- V91_RETEST_MAX4H ETHUSDT: FLAT_NO_CONFIRMED_TRADE — en son doğrulanmış 1H 2026-11-20T17:00:00Z.
 
 **Kaynak saat kapsama denetimi (eksikler doldurulmaz):**
 
-- BTC_SOL: 139/197 saat; eksik 58; son kayıt 2026-11-20T13:00:00Z; gecikme 0 saat.
-- ETH: 138/197 saat; eksik 59; son kayıt 2026-11-20T13:00:00Z; gecikme 0 saat.
+- BTC_SOL: 143/201 saat; eksik 58; son kayıt 2026-11-20T17:00:00Z; gecikme 0 saat.
+- ETH: 142/201 saat; eksik 59; son kayıt 2026-11-20T17:00:00Z; gecikme 0 saat.
 
 V9 önceden dondurulan 4H renk tahminleri ayrıca değerlendirilir, V9.1 işleme giriş sinyali sayılmaz.
 Önceki geceye sonradan emir yazılmaz; 1H eksikleri kapatılmaz.
