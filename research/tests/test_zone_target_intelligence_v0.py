@@ -186,5 +186,37 @@ class LongZoneTests(unittest.TestCase):
         levels = [z['low'] for z in evaluate(long_fixture(), **self.args)['candidates']]
         self.assertNotIn(64000, levels)
 
+
+class SignalCandleTouchTests(unittest.TestCase):
+    def test_short_excludes_zone_already_touched_in_signal_wick(self):
+        # Price still closes above the OB, but the intrabar wick already entered it.
+        args = dict(BASE, signal_candle_low=62300, signal_candle_high=65000)
+        report = evaluate(fixture(), **args)
+        self.assertEqual(report['signalCandleEligibility'],
+                         'GATED_USING_CLOSED_CANDLE_HIGH_LOW')
+        self.assertNotIn(62000, [z['low'] for z in report['candidates']])
+        self.assertIn(62000, [z['low'] for z in report['alreadyTouchedDuringSignalCandle']])
+
+    def test_long_excludes_zone_already_touched_in_signal_wick(self):
+        args = dict(BASE, side='LONG', signal_candle_low=64000,
+                    signal_candle_high=66100)
+        report = evaluate(long_fixture(), **args)
+        self.assertNotIn(66000, [z['low'] for z in report['candidates']])
+        self.assertIn(66000, [z['low'] for z in report['alreadyTouchedDuringSignalCandle']])
+        self.assertIn(66600, [z['low'] for z in report['candidates']])
+
+    def test_partial_signal_candle_data_rejected(self):
+        with self.assertRaisesRegex(ValueError, 'both'):
+            evaluate(fixture(), **dict(BASE, signal_candle_low=64000))
+
+    def test_signal_candle_must_contain_close(self):
+        with self.assertRaisesRegex(ValueError, 'Invalid signal candle'):
+            evaluate(fixture(), **dict(BASE, signal_candle_low=65000,
+                                       signal_candle_high=66000))
+
+    def test_no_signal_candle_data_is_labeled_unchecked(self):
+        report = evaluate(fixture(), **BASE)
+        self.assertEqual(report['signalCandleEligibility'], 'NOT_CHECKED')
+
 if __name__ == '__main__':
     unittest.main()
