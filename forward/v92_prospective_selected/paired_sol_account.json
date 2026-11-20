@@ -2,9 +2,9 @@
   "status": "V92_SOL_PAIRED_PROSPECTIVE_PAPER_ONLY",
   "symbol": "SOLUSDT",
   "firstEligibleCloseUTC": "2026-11-12T11:00:00Z",
-  "lastDistinctVerifiedCloseUTC": "2026-11-20T13:00:00Z",
-  "savedDistinctVerifiedHours": 126,
-  "sealedHoursWithGitTimestamp": 126,
+  "lastDistinctVerifiedCloseUTC": "2026-11-20T17:00:00Z",
+  "savedDistinctVerifiedHours": 130,
+  "sealedHoursWithGitTimestamp": 130,
   "unsealedHoursExcludedFromVetoAudit": 0,
   "missingHoursNotBackfilled": [
     "2026-11-12T14:00:00Z",
@@ -91,40 +91,71 @@
     "nextOpenFillExecutable": false
   },
   "directRetestAudit": {
+    "baselineRetestOpportunities": 1,
     "warningCounts": {}
   },
   "arms": {
     "V91_UNFILTERED_CONTROL": {
-      "trades": 0,
-      "wins": 0,
+      "trades": 1,
+      "wins": 1,
       "losses": 0,
-      "winRatePct": null,
-      "netR": 0,
-      "stressNetR": 0,
-      "averageR": null,
+      "winRatePct": 100.0,
+      "netR": 1.852432,
+      "stressNetR": 1.590089,
+      "averageR": 1.852432,
       "profitFactor": null,
       "maxDrawdownR": 0.0,
-      "tradeLedger": []
+      "tradeLedger": [
+        {
+          "symbol": "SOLUSDT",
+          "entryUTC": "2026-11-20T15:00:00Z",
+          "exitUTC": "2026-11-20T16:00:00Z",
+          "side": "bearish",
+          "watchKnownUTC": 1795179600,
+          "retestKnownUTC": 1795186800,
+          "entry": 71.02,
+          "stop": 71.88628571428572,
+          "exitReason": "TP3_COMPLETE",
+          "netR9Bps": 1.85243206,
+          "netR25Bps": 1.59008905,
+          "notVerifiedExecutableRealFill": true
+        }
+      ]
     },
     "V92_STAR_HARAMI_SWEEP_FILTER": {
-      "trades": 0,
-      "wins": 0,
+      "trades": 1,
+      "wins": 1,
       "losses": 0,
-      "winRatePct": null,
-      "netR": 0,
-      "stressNetR": 0,
-      "averageR": null,
+      "winRatePct": 100.0,
+      "netR": 1.852432,
+      "stressNetR": 1.590089,
+      "averageR": 1.852432,
       "profitFactor": null,
       "maxDrawdownR": 0.0,
-      "tradeLedger": []
+      "tradeLedger": [
+        {
+          "symbol": "SOLUSDT",
+          "entryUTC": "2026-11-20T15:00:00Z",
+          "exitUTC": "2026-11-20T16:00:00Z",
+          "side": "bearish",
+          "watchKnownUTC": 1795179600,
+          "retestKnownUTC": 1795186800,
+          "entry": 71.02,
+          "stop": 71.88628571428572,
+          "exitReason": "TP3_COMPLETE",
+          "netR9Bps": 1.85243206,
+          "netR25Bps": 1.59008905,
+          "notVerifiedExecutableRealFill": true
+        }
+      ]
     }
   },
   "comparison": {
-    "matchedTradeKeys": 0,
+    "matchedTradeKeys": 1,
     "baselineOnlyTradeKeys": 0,
     "filteredOnlyTradeKeys": 0,
-    "deltaNetR9Bps": 0,
-    "deltaNetR25BpsStress": 0,
+    "deltaNetR9Bps": 0.0,
+    "deltaNetR25BpsStress": 0.0,
     "baselineOnlyTradeKeyExamples": [],
     "filteredOnlyTradeKeyExamples": []
   },

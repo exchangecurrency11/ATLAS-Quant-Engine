@@ -2,17 +2,17 @@
 
 **Prospective paper only. No orders, alerts, or live strategy changes.**
 First eligible close: 2026-11-12T11:00:00Z
-Latest verified close: 2026-11-20T13:00:00Z
-Saved hours: 126; sealed: 126
+Latest verified close: 2026-11-20T17:00:00Z
+Saved hours: 130; sealed: 130
 
 | Arm | Closed trades | Win % | Net R (9bp/side) | Stress R (25bp/side) | Max DD R |
 |---|---:|---:|---:|---:|---:|
-| V9.1 unfiltered control | 0 | None | 0.0000 | 0.0000 | 0.0000 |
-| V9.2 Star/Harami + sweep | 0 | None | 0.0000 | 0.0000 | 0.0000 |
+| V9.1 unfiltered control | 1 | 100.0 | 1.8524 | 1.5901 | 0.0000 |
+| V9.2 Star/Harami + sweep | 1 | 100.0 | 1.8524 | 1.5901 | 0.0000 |
 
-Baseline retest opportunities: 0
+Baseline retest opportunities: 1
 Direct, sealed filter vetoes: 0
-Matched trade keys: 0
+Matched trade keys: 1
 Baseline-only / filtered-only trade keys: 0/0
 Delta net R: 0.0000; stress delta: 0.0000
 
