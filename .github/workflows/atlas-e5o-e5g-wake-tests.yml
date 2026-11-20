@@ -1,0 +1,27 @@
+name: ATLAS E5O E5G post-E5D wake contract (READ ONLY)
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/atlas-e5g-hourly-source-health.yml
+      - .github/workflows/atlas-e5o-e5g-wake-tests.yml
+      - tests/test_atlas_e5o_e5g_wake.py
+
+permissions:
+  contents: read
+
+jobs:
+  e5g-post-e5d-wake-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout PR read-only, no persisted credentials
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Verify all E5O trigger and immutable journal invariants
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s tests -p 'test_atlas_e5o_e5g_wake.py' -v
