@@ -111,7 +111,7 @@ def long_fixture(symbol='BTCUSDT_PERP.A'):
              'low': 67500, 'high': 67700},
             {'side': 'bullish', 'state': 'open', 'formedAt': 1794664800,
              'low': 75000, 'high': 75500},
-            {'side': 'bearish', 'state': 'open', 'formedAt': 1794751200,
+            {'side': 'bearish', 'state': 'open', 'formedAt': 1794754800,
              'low': 76000, 'high': 76300},
         ],
         'liquidity': [
