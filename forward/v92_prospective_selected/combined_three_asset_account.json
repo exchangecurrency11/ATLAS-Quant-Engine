@@ -11,17 +11,17 @@
   "risk10PctVeryAggressiveNotAdvisedLive": true,
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
-  "sourceBTCandSOLVerifiedClosedHours": 128,
+  "sourceBTCandSOLVerifiedClosedHours": 129,
   "sourceETHVerifiedClosedHours": 135,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
       "expectedThroughUTC": "2026-11-20T16:00:00Z",
       "expectedHours": 198,
-      "savedVerifiedHours": 128,
-      "missingHourCount": 70,
-      "lastVerifiedHourUTC": "2026-11-20T15:00:00Z",
-      "lagHours": 1,
+      "savedVerifiedHours": 129,
+      "missingHourCount": 69,
+      "lastVerifiedHourUTC": "2026-11-20T16:00:00Z",
+      "lagHours": 0,
       "noBackfill": true
     },
     "ETH": {
@@ -35,17 +35,17 @@
       "noBackfill": true
     }
   },
-  "lastCapturedBTCandSOLHourUTC": "2026-11-20T15:00:00Z",
+  "lastCapturedBTCandSOLHourUTC": "2026-11-20T16:00:00Z",
   "lastCapturedETHHourUTC": "2026-11-20T16:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
-  "virtualPaperEquityUSDT": 1000.0,
-  "virtualPaperPnLUSDT": 0.0,
-  "netRealizedPaperR9BpsSide": 0,
-  "virtualPaperPnLStress25BpsUSDT": 0.0,
-  "closedEligiblePaperTrades": 0,
-  "wins": 0,
+  "virtualPaperEquityUSDT": 1185.243206,
+  "virtualPaperPnLUSDT": 185.243206,
+  "netRealizedPaperR9BpsSide": 1.852432,
+  "virtualPaperPnLStress25BpsUSDT": 159.008905,
+  "closedEligiblePaperTrades": 1,
+  "wins": 1,
   "losses": 0,
-  "winRatePct": null,
+  "winRatePct": 100.0,
   "perAssetScores": {
     "BTCUSDT": {
       "closedEligiblePaperTrades": 0,
@@ -58,27 +58,41 @@
       "netR": 0
     },
     "SOLUSDT": {
-      "closedEligiblePaperTrades": 0,
-      "wins": 0,
-      "netR": 0
+      "closedEligiblePaperTrades": 1,
+      "wins": 1,
+      "netR": 1.852432
     }
   },
   "perAssetLatestState": {
     "BTCUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-20T15:00:00Z",
+      "lastClosedUTC": "2026-11-20T16:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-20T15:00:00Z",
+          "lastClosedCandleUTC": "2026-11-20T16:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-20T12:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-20T16:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "HIKKAKE_CONFIRMED",
+              "name": "BEARISH_HIKKAKE_CONFIRMED",
+              "direction": "bearish",
+              "firstUTC": "2026-11-20T00:00:00Z",
+              "confirmedUTC": "2026-11-20T16:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": true,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "4H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
@@ -131,19 +145,19 @@
       }
     },
     "SOLUSDT": {
-      "state": "PENDING_HYPOTHETICAL_NEXT_OPEN",
-      "lastClosedUTC": "2026-11-20T15:00:00Z",
+      "state": "FLAT_NO_ENTRY",
+      "lastClosedUTC": "2026-11-20T16:00:00Z",
       "newBOSWatches": 0,
-      "retestPending": true,
+      "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-20T15:00:00Z",
+          "lastClosedCandleUTC": "2026-11-20T16:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-20T12:00:00Z",
+          "lastClosedCandleUTC": "2026-11-20T16:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
@@ -178,7 +192,18 @@
       }
     }
   },
-  "forwardOnlyPrecommittedPaperLedger": [],
+  "forwardOnlyPrecommittedPaperLedger": [
+    {
+      "symbol": "SOLUSDT",
+      "entryUTC": "2026-11-20T15:00:00Z",
+      "exitUTC": "2026-11-20T16:00:00Z",
+      "side": "bearish",
+      "exitReason": "TP3_COMPLETE",
+      "netR9Bps": 1.85243206,
+      "netR25Bps": 1.59008905,
+      "notVerifiedExecutableRealFill": true
+    }
+  ],
   "ethPatternsObservedButNotAutomaticTradeFilter": true,
   "solStrictSelectedStarHaramiSweepOnly": true,
   "btcPatternVetoDisabled": true,
