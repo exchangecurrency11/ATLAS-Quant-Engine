@@ -134,6 +134,8 @@ def score_hour(market, structure, history, *, event_close_utc, observed_at_utc,
         for ev in matching:
             side = "LONG" if ev["direction"] == "bullish" else "SHORT"
             atr, atr_shas = atr_from_pinned_history(history, close, symbol, m, cutoff)
+            if atr_shas[-1].lower() != market_sha.lower():
+                raise ValueError("ATR_INPUT_GAP: event candle source SHA mismatch")
             result = assess(structure, symbol=symbol, side=side,
                             signal_at=stamp(cutoff), signal_price=candle["close"],
                             pinned_commit=structure_sha,
