@@ -34,7 +34,7 @@
 - Keep all zones, NO_ZONE, no-event checks, source gaps and failures. Compare top-quality vs nearest-distance regions on visit, conditional adverse reaction, far-edge break and distance-ATR strata.
 - Report BTC LONG, BTC SHORT, SOL LONG, SOL SHORT separately; BOS vs CHoCH separately. Correlated hours and shared price action cannot be summed as actual trades.
 - A score of 80 is not an 80% reversal probability. No orders, hypothetical positions, profit transfers or ledger balance changes are authorized.
-- The task may notify the user when a fresh scored event is captured, a 12h settlement materializes, or a source failure blocks coverage; otherwise stay quiet.
+- **Notifications are disabled by design.** The observer only writes event files, NO_EVENT checks, outcomes and source-error files to the research branch; no ChatGPT, app push, Telegram, email or market alert messages are generated.
 
 ## CLI shape (research only)
 
@@ -46,4 +46,4 @@ python zone_quality_forward_shadow_v1.py settle-hour --prediction frozen-predict
 
 Input hour records use the archived schema from research/data/atlas_hourly_ohlcv_part_*.json: each record includes sha, publishedUTC, btc (market result row) and sol (market result row).
 
-**Execution note:** This research branch has no new workflow. Recurring observation requires the newly created ChatGPT automation; an existing price/alert automation is not modified. Before claiming any run succeeded, inspect that run's GitHub files and timestamps.
+**Execution note (updated):** No ChatGPT automation is created or modified; five active task slots are not needed for this approach. The pure-GitHub observer is research/atlas_zqi_v1_github_observer.py; GitHub Actions draft is research/forward/zqi_v1/GITHUB_ACTIONS_WORKFLOW_DRAFT.yml. GitHub scheduled workflows run from the repository default branch, so the draft kept on this research branch does NOT run automatically. Enabling requires separate approval to install ONLY the small scheduler on main; the checked-out code, observations, outcomes and errors remain on research/atlas-zone-quality-v1-forward-20261121. Before claiming a run succeeded, verify a GitHub observation file, SHA and creation timestamp. Do not backdate or reconstruct missing prospective observations.
