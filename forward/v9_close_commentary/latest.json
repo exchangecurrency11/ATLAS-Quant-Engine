@@ -1,75 +1,75 @@
 {
   "status": "V9_VERIFIED_DAILY_4H_INTERPRETATIONS_ONLY",
-  "asOf4HCloseUTC": "2026-11-19T20:00:00Z",
-  "asOf4HCloseTSI": "2026-11-19 23:00 TSİ",
-  "asOfDailyCloseUTC": "2026-11-19T00:00:00Z",
-  "asOfDailyCloseTSI": "2026-11-19 03:00 TSİ",
+  "asOf4HCloseUTC": "2026-11-20T00:00:00Z",
+  "asOf4HCloseTSI": "2026-11-20 03:00 TSİ",
+  "asOfDailyCloseUTC": "2026-11-20T00:00:00Z",
+  "asOfDailyCloseTSI": "2026-11-20 03:00 TSİ",
   "assets": {
     "BTC": {
       "timeframes": {
         "1hour": {
-          "closeUTC": "2026-11-19T21:00:00Z",
+          "closeUTC": "2026-11-20T02:00:00Z",
+          "OHLCV": {
+            "open": 62117.9,
+            "high": 62615.4,
+            "low": 61255.6,
+            "close": 61544.7,
+            "volume": 17628.086000000018,
+            "volumeChangePct": 167.1702
+          },
+          "RSI14": 33.9131,
+          "EMA20": 62628.864,
+          "EMA50": 63250.6363,
+          "EMA200": 66231.7715,
+          "MACDHistogram": -133.1215
+        },
+        "4hour": {
+          "closeUTC": "2026-11-20T00:00:00Z",
           "OHLCV": {
             "open": 62341,
             "high": 62438.9,
-            "low": 61712.8,
-            "close": 62099.8,
-            "volume": 21441.07500000002,
-            "volumeChangePct": 108.7495
+            "low": 61375.2,
+            "close": 61959.3,
+            "volume": 61825.8459999986,
+            "volumeChangePct": -3.6921
           },
-          "RSI14": 32.4833,
-          "EMA20": 63132.0037,
-          "EMA50": 63559.6023,
-          "EMA200": 66449.6129,
-          "MACDHistogram": -134.2052
-        },
-        "4hour": {
-          "closeUTC": "2026-11-19T20:00:00Z",
-          "OHLCV": {
-            "open": 63077.2,
-            "high": 63392.1,
-            "low": 62200,
-            "close": 62341,
-            "volume": 64196.05299999789,
-            "volumeChangePct": 49.0508
-          },
-          "RSI14": 33.9071,
-          "EMA20": 64031.7,
-          "EMA50": 66553.5687,
-          "EMA200": 74049.3582,
-          "MACDHistogram": 70.2505,
+          "RSI14": 32.1407,
+          "EMA20": 63834.3286,
+          "EMA50": 66373.3991,
+          "EMA200": 73911.816,
+          "MACDHistogram": 14.8778,
           "candleBody": "RED",
           "emaContext": "BEARISH_CONTEXT",
           "oscillatorRisk": "RSI_NOT_EXTREME",
           "MACDHistogramSign": "POSITIVE",
-          "volumeChangePct": 49.0508,
-          "volumeStatement": "HIGHER_THAN_PREVIOUS"
+          "volumeChangePct": -3.6921,
+          "volumeStatement": "LOWER_THAN_PREVIOUS"
         },
         "daily": {
-          "closeUTC": "2026-11-19T00:00:00Z",
+          "closeUTC": "2026-11-20T00:00:00Z",
           "OHLCV": {
-            "open": 64921,
-            "high": 64976.3,
-            "low": 62030.8,
-            "close": 63036.8,
-            "volume": 205634.38499996884,
-            "volumeChangePct": -4.5974
+            "open": 63036.9,
+            "high": 64056,
+            "low": 61375.2,
+            "close": 61959.3,
+            "volume": 247180.76999998742,
+            "volumeChangePct": 20.204
           },
-          "RSI14": 21.5357,
-          "EMA20": 71440.1396,
-          "EMA50": 75680.025,
-          "EMA200": 74275.6663,
-          "MACDHistogram": -1032.716,
+          "RSI14": 20.2975,
+          "EMA20": 70537.2025,
+          "EMA50": 75141.8697,
+          "EMA200": 73945.1793,
+          "MACDHistogram": -1006.1974,
           "candleBody": "RED",
           "emaContext": "BEARISH_CONTEXT",
           "oscillatorRisk": "RSI_OVERSOLD_BOUNCE_RISK",
           "MACDHistogramSign": "NEGATIVE",
-          "volumeChangePct": -4.5974,
-          "volumeStatement": "LOWER_THAN_PREVIOUS"
+          "volumeChangePct": 20.204,
+          "volumeStatement": "HIGHER_THAN_PREVIOUS"
         }
       },
-      "source4HCloseUTC": "2026-11-19T20:00:00Z",
-      "lastDailyCloseUTC": "2026-11-19T00:00:00Z",
+      "source4HCloseUTC": "2026-11-20T00:00:00Z",
+      "lastDailyCloseUTC": "2026-11-20T00:00:00Z",
       "combinedInterpretation": {
         "contextAgreement": true,
         "dailyContext": "BEARISH_CONTEXT",
@@ -82,11 +82,21 @@
         "mostRecentBOSorCHoCH": {
           "event": "BOS",
           "direction": "bearish",
-          "at": 1795003200,
-          "brokenSwingAt": 1794916800,
-          "brokenLevel": 63300.9
+          "at": 1795118400,
+          "brokenSwingAt": 1795032000,
+          "brokenLevel": 62030.8
         },
         "nearestCandidateOB": [
+          {
+            "side": "bearish",
+            "body": {
+              "low": 63709.3,
+              "high": 63917.2
+            },
+            "confirmedAt": 1795132800,
+            "state": "fresh",
+            "institutionalOrderProven": false
+          },
           {
             "side": "bearish",
             "body": {
@@ -96,30 +106,20 @@
             "confirmedAt": 1795017600,
             "state": "fresh",
             "institutionalOrderProven": false
-          },
-          {
-            "side": "bearish",
-            "body": {
-              "low": 68873.1,
-              "high": 69034.5
-            },
-            "confirmedAt": 1794628800,
-            "state": "fresh",
-            "institutionalOrderProven": false
           }
         ],
         "nearestOpenFVG": [
           {
             "side": "bearish",
-            "low": 63392.1,
-            "high": 63530.9,
-            "formedAt": 1795104000
+            "low": 62438.9,
+            "high": 62750.0,
+            "formedAt": 1795118400
           },
           {
             "side": "bearish",
-            "low": 63504.7,
-            "high": 64073.9,
-            "formedAt": 1795017600
+            "low": 63392.1,
+            "high": 63530.9,
+            "formedAt": 1795104000
           }
         ],
         "nearestChartLiquidity": [
@@ -145,68 +145,68 @@
     "ETH": {
       "timeframes": {
         "1hour": {
-          "closeUTC": "2026-11-19T20:00:00Z",
+          "closeUTC": "2026-11-20T00:00:00Z",
           "OHLCV": {
-            "open": 1776.93,
-            "high": 1782.4,
-            "low": 1767.69,
-            "close": 1770.01,
-            "volume": 129019.74700000044,
-            "volumeChangePct": -27.36839261479088
+            "open": 1759.83,
+            "high": 1761.36,
+            "low": 1747.42,
+            "close": 1756.73,
+            "volume": 136395.68500000008,
+            "volumeChangePct": -35.475576179467
           },
-          "RSI14": 41.1079,
-          "EMA20": 1786.9655,
-          "EMA50": 1793.039,
-          "EMA200": 1876.0645,
-          "MACDHistogram": -3.351703
+          "RSI14": 40.3629,
+          "EMA20": 1776.2612,
+          "EMA50": 1787.3312,
+          "EMA200": 1871.6926,
+          "MACDHistogram": -4.377967
         },
         "4hour": {
-          "closeUTC": "2026-11-19T20:00:00Z",
+          "closeUTC": "2026-11-20T00:00:00Z",
           "OHLCV": {
-            "open": 1781.0,
-            "high": 1791.0,
-            "low": 1749.29,
-            "close": 1770.01,
-            "volume": 1229726.5380000058,
-            "volumeChangePct": 12.513040141884169
+            "open": 1770.0,
+            "high": 1770.0,
+            "low": 1735.24,
+            "close": 1756.73,
+            "volume": 958109.175999997,
+            "volumeChangePct": -22.08762302891828
           },
-          "RSI14": 39.3096,
-          "EMA20": 1803.156,
-          "EMA50": 1878.2934,
-          "EMA200": 2152.0574,
-          "MACDHistogram": 4.288957,
+          "RSI14": 37.1046,
+          "EMA20": 1798.7345,
+          "EMA50": 1873.5261,
+          "EMA200": 2147.1568,
+          "MACDHistogram": 2.652448,
           "candleBody": "RED",
           "emaContext": "BEARISH_CONTEXT",
           "oscillatorRisk": "RSI_NOT_EXTREME",
           "MACDHistogramSign": "POSITIVE",
-          "volumeChangePct": 12.513040141884169,
-          "volumeStatement": "HIGHER_THAN_PREVIOUS"
+          "volumeChangePct": -22.08762302891828,
+          "volumeStatement": "LOWER_THAN_PREVIOUS"
         },
         "daily": {
-          "closeUTC": "2026-11-19T00:00:00Z",
+          "closeUTC": "2026-11-20T00:00:00Z",
           "OHLCV": {
-            "open": 1824.31,
-            "high": 1825.78,
-            "low": 1731.42,
-            "close": 1776.49,
-            "volume": 4173643.4660001453,
-            "volumeChangePct": -20.153044686561007
+            "open": 1776.49,
+            "high": 1816.95,
+            "low": 1735.24,
+            "close": 1756.73,
+            "volume": 4895130.164000203,
+            "volumeChangePct": 17.286735292018165
           },
-          "RSI14": 24.1979,
-          "EMA20": 2042.8621,
-          "EMA50": 2224.3434,
-          "EMA200": 2209.6166,
-          "MACDHistogram": -28.493848,
+          "RSI14": 23.4735,
+          "EMA20": 2015.6114,
+          "EMA50": 2206.0026,
+          "EMA200": 2198.0195,
+          "MACDHistogram": -25.672139,
           "candleBody": "RED",
           "emaContext": "BEARISH_CONTEXT",
           "oscillatorRisk": "RSI_OVERSOLD_BOUNCE_RISK",
           "MACDHistogramSign": "NEGATIVE",
-          "volumeChangePct": -20.153044686561007,
-          "volumeStatement": "LOWER_THAN_PREVIOUS"
+          "volumeChangePct": 17.286735292018165,
+          "volumeStatement": "HIGHER_THAN_PREVIOUS"
         }
       },
-      "source4HCloseUTC": "2026-11-19T20:00:00Z",
-      "lastDailyCloseUTC": "2026-11-19T00:00:00Z",
+      "source4HCloseUTC": "2026-11-20T00:00:00Z",
+      "lastDailyCloseUTC": "2026-11-20T00:00:00Z",
       "combinedInterpretation": {
         "contextAgreement": true,
         "dailyContext": "BEARISH_CONTEXT",
@@ -222,68 +222,68 @@
     "SOL": {
       "timeframes": {
         "1hour": {
-          "closeUTC": "2026-11-19T21:00:00Z",
+          "closeUTC": "2026-11-20T02:00:00Z",
+          "OHLCV": {
+            "open": 73.01,
+            "high": 73.54,
+            "low": 71.7,
+            "close": 72.07,
+            "volume": 1142840.530000002,
+            "volumeChangePct": 147.3626
+          },
+          "RSI14": 37.3177,
+          "EMA20": 73.4856,
+          "EMA50": 73.6345,
+          "EMA200": 75.8496,
+          "MACDHistogram": -0.1978
+        },
+        "4hour": {
+          "closeUTC": "2026-11-20T00:00:00Z",
           "OHLCV": {
             "open": 73.55,
             "high": 73.56,
-            "low": 72.54,
-            "close": 73.03,
-            "volume": 1311602.3600000052,
-            "volumeChangePct": 53.8976
+            "low": 72.06,
+            "close": 73.11,
+            "volume": 3883221.3300000383,
+            "volumeChangePct": -24.204
           },
-          "RSI14": 40.9021,
-          "EMA20": 73.9926,
-          "EMA50": 73.8384,
-          "EMA200": 76.0043,
-          "MACDHistogram": -0.1686
-        },
-        "4hour": {
-          "closeUTC": "2026-11-19T20:00:00Z",
-          "OHLCV": {
-            "open": 73.52,
-            "high": 74.66,
-            "low": 72.62,
-            "close": 73.55,
-            "volume": 5123251.270000028,
-            "volumeChangePct": 14.014
-          },
-          "RSI14": 46.7839,
-          "EMA20": 73.8487,
-          "EMA50": 76.2561,
-          "EMA200": 89.4892,
-          "MACDHistogram": 0.2556,
-          "candleBody": "GREEN",
+          "RSI14": 44.697,
+          "EMA20": 73.7783,
+          "EMA50": 76.1328,
+          "EMA200": 89.2649,
+          "MACDHistogram": 0.1711,
+          "candleBody": "RED",
           "emaContext": "BEARISH_CONTEXT",
           "oscillatorRisk": "RSI_NOT_EXTREME",
           "MACDHistogramSign": "POSITIVE",
-          "volumeChangePct": 14.014,
-          "volumeStatement": "HIGHER_THAN_PREVIOUS"
+          "volumeChangePct": -24.204,
+          "volumeStatement": "LOWER_THAN_PREVIOUS"
         },
         "daily": {
-          "closeUTC": "2026-11-19T00:00:00Z",
+          "closeUTC": "2026-11-20T00:00:00Z",
           "OHLCV": {
-            "open": 75.15,
-            "high": 75.6,
-            "low": 72.16,
-            "close": 73.6,
-            "volume": 18179285.9000005,
-            "volumeChangePct": -22.396
+            "open": 73.61,
+            "high": 75.63,
+            "low": 72.06,
+            "close": 73.11,
+            "volume": 19358870.019999497,
+            "volumeChangePct": 6.4886
           },
-          "RSI14": 27.6589,
-          "EMA20": 83.6574,
-          "EMA50": 93.006,
-          "EMA200": 92.1984,
-          "MACDHistogram": -0.8042,
+          "RSI14": 27.2122,
+          "EMA20": 82.6529,
+          "EMA50": 92.2257,
+          "EMA200": 91.7009,
+          "MACDHistogram": -0.5677,
           "candleBody": "RED",
           "emaContext": "BEARISH_CONTEXT",
           "oscillatorRisk": "RSI_OVERSOLD_BOUNCE_RISK",
           "MACDHistogramSign": "NEGATIVE",
-          "volumeChangePct": -22.396,
-          "volumeStatement": "LOWER_THAN_PREVIOUS"
+          "volumeChangePct": 6.4886,
+          "volumeStatement": "HIGHER_THAN_PREVIOUS"
         }
       },
-      "source4HCloseUTC": "2026-11-19T20:00:00Z",
-      "lastDailyCloseUTC": "2026-11-19T00:00:00Z",
+      "source4HCloseUTC": "2026-11-20T00:00:00Z",
+      "lastDailyCloseUTC": "2026-11-20T00:00:00Z",
       "combinedInterpretation": {
         "contextAgreement": true,
         "dailyContext": "BEARISH_CONTEXT",
@@ -358,9 +358,9 @@
     }
   },
   "sourceSHA256": {
-    "BTC_SOL_main": "076d81de4bfea75db58ba292ae96490fb5cd0b7044710eccc70cecf81c6656b0",
-    "ETH_independent": "b8b7783e91acd15db2a3a4810575c802078c3d5103f4c54d3a6c4ec72cbbaf34",
-    "BTC_SOL_structure": "55597266bd9a47b3441d5f9c75b456bbe8e537fa0217aa43b89310e46a3ce659"
+    "BTC_SOL_main": "23464af5f4eca30ac5831d5b80d22ea1d197f919c56a33ac1073b15fb2d5df8f",
+    "ETH_independent": "499f47b535883ae892cf27fb55bf1db3322a75a1bdd70ef824d440dde3c33f49",
+    "BTC_SOL_structure": "3fd46f55962c0f0332a1ac338c36a3ba21197c621141d9b785e4d5ea6c12d886"
   },
   "preservePreviousFrozen4HPreStartPredictions": true,
   "commentaryNotAnEntrySignal": true,
