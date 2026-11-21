@@ -14,7 +14,7 @@
 | Kaynak | Kaydedilen / beklenen | Eksik saat | Son doğrulanmış saat | Gecikme |
 |---|---:|---:|---|---:|
 | BTC_SOL | 140/209 | 69 | 2026-11-21T03:00:00Z | 0 saat |
-| ETH | 145/208 | 63 | 2026-11-21T02:00:00Z | 1 saat |
+| ETH | 146/208 | 62 | 2026-11-21T03:00:00Z | 0 saat |
 
 | Toplam | İşlem | Win % | Net R | Sanal PnL | Sanal bakiye |
 |---|---:|---:|---:|---:|---:|
