@@ -1,8 +1,8 @@
 {
   "mode": "V7_RETROSPECTIVE_REJECTED_BOS_PAPER_STUDY_NO_ORDERS",
-  "asOfClosed1HUTC": "2026-11-20T09:00:00Z",
-  "forwardSnapshotsVerified": 336,
-  "historicalRawCandlesSourceSHA256": "41a33ab53e57387416f1ebf8b1c9145d34e5269d68cb8df0e8a510b57a0faa8f",
+  "asOfClosed1HUTC": "2026-11-21T08:00:00Z",
+  "forwardSnapshotsVerified": 359,
+  "historicalRawCandlesSourceSHA256": "971f582310183891ffb073a20c110f91b3e48464ddc95b426d4714eef5016f2f",
   "historicalRawSourceNote": "Current Coinalyze historical 1H feed, checked against original BOS OHLC values",
   "method": "Frozen forward-observed BOS and filters at original close; later fully closed 1H candles for 1..6h retest, next-open simulated entry, 24h maximum hold, stop-first collision, TP1/TP2/TP3 thirds, 6bps fees + 3bps slippage per side. Diagnostic independent counterfactuals (not mutually exclusive positions).",
   "limitations": [
@@ -16,27 +16,28 @@
     "No V7 threshold tuning on this inspected sample; tiny samples are not efficacy proof."
   ],
   "summary": {
-    "forwardObservedBOS": 19,
-    "v4AcceptedBOS": 7,
-    "v7AcceptedBOS": 3,
-    "v7RejectedBOS": 16,
-    "incrementalV7VetoOfV4AcceptedBOS": 4,
+    "forwardObservedBOS": 23,
+    "v4AcceptedBOS": 11,
+    "v7AcceptedBOS": 5,
+    "v7RejectedBOS": 18,
+    "incrementalV7VetoOfV4AcceptedBOS": 6,
     "incrementalV7AvoidedNegativePaper": 0,
     "incrementalV7MissedPositivePaper": 0,
     "rejectedWithClosedCounterfactualPaperTrade": 6,
     "avoidedNegativeOrFlatPaper": 5,
     "potentiallyMissedPositivePaper": 1,
-    "rejectedWithoutCompletedActionableCounterfactual": 10,
+    "rejectedWithoutCompletedActionableCounterfactual": 12,
     "rejectedCounterfactualStatuses": {
-      "HISTORY_COVERAGE_MISSING_BOS": 1,
+      "HISTORY_COVERAGE_MISSING_BOS": 2,
       "INSUFFICIENT_ATR_LOOKBACK": 1,
+      "CLOSED_COUNTERFACTUAL_PAPER": 6,
       "EXPIRED_WITHOUT_V4_RETEST": 8,
-      "CLOSED_COUNTERFACTUAL_PAPER": 6
+      "PENDING_RETEST_UNCLOSED": 1
     },
     "overlappingRejectionFactors": {
       "4H_DAILY_ALIGNMENT_VETO": 11,
       "PREVIOUS_HOUR_VOLUME_VETO": 3,
-      "V7_QUALITY_EMA20_OVEREXTENDED": 5,
+      "V7_QUALITY_EMA20_OVEREXTENDED": 7,
       "V7_QUALITY_LOW_RELATIVE_VOLUME": 5,
       "V7_QUALITY_WEAK_BREAK_ATR": 4,
       "1H_RSI_MACD_MOMENTUM_VETO": 2
@@ -46,17 +47,17 @@
     },
     "byPair": {
       "BTCUSDT_PERP.A": {
-        "observedBOS": 11,
+        "observedBOS": 13,
         "acceptedByV7": 1,
-        "rejectedBOS": 10,
+        "rejectedBOS": 12,
         "rejectedWithClosedCounterfactualPaperTrade": 4,
         "avoidedNegativeOrFlatPaper": 3,
         "potentiallyMissedPositivePaper": 1,
-        "notActionableOrUnresolved": 6
+        "notActionableOrUnresolved": 8
       },
       "SOLUSDT_PERP.A": {
-        "observedBOS": 8,
-        "acceptedByV7": 2,
+        "observedBOS": 10,
+        "acceptedByV7": 4,
         "rejectedBOS": 6,
         "rejectedWithClosedCounterfactualPaperTrade": 2,
         "avoidedNegativeOrFlatPaper": 2,
@@ -176,7 +177,7 @@
       },
       "sourceSnapshot": "2026-11-08T15-00Z.json",
       "counterfactual": {
-        "status": "INSUFFICIENT_ATR_LOOKBACK"
+        "status": "HISTORY_COVERAGE_MISSING_BOS"
       },
       "classification": "UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
     },
@@ -219,8 +220,7 @@
       },
       "sourceSnapshot": "2026-11-08T22-00Z.json",
       "counterfactual": {
-        "status": "EXPIRED_WITHOUT_V4_RETEST",
-        "note": "No eligible entry; subsequent directional price move does NOT count as missed trade"
+        "status": "INSUFFICIENT_ATR_LOOKBACK"
       },
       "classification": "UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
     },
@@ -967,6 +967,182 @@
         "note": "No eligible entry; subsequent directional price move does NOT count as missed trade"
       },
       "classification": "UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
+    },
+    {
+      "pair": "SOLUSDT_PERP.A",
+      "bosClosedUTC": "2026-11-20T13:00:00Z",
+      "bosCloseEpoch": 1795179600,
+      "side": "bearish",
+      "brokenLevel": 71.55,
+      "acceptedByV4": true,
+      "acceptedByV7": true,
+      "rejectionFactors": [],
+      "v7Quality": {
+        "passed": true,
+        "reasons": [],
+        "warnings": [],
+        "features": {
+          "breakATR": 0.551447,
+          "relativeVolume20": 1.955079,
+          "ema20ExtensionATR": 1.764493
+        }
+      },
+      "context": {
+        "higherTFaligned": true,
+        "momentumAligned": true,
+        "priorHourVolumeUp20Pct": true
+      },
+      "frozenBosCandle": {
+        "open": 71.75,
+        "high": 71.79,
+        "low": 70.81,
+        "close": 71.06
+      },
+      "sourceSnapshot": "2026-11-20T13-00Z.json",
+      "counterfactual": {
+        "status": "CLOSED_COUNTERFACTUAL_PAPER",
+        "retestClosedUTC": "2026-11-20T15:00:00Z",
+        "entryOpenUTC": "2026-11-20T15:00:00Z",
+        "entry": 71.02,
+        "stop": 71.88628571,
+        "targets": [
+          70.15371429,
+          69.28742857,
+          68.42114286
+        ],
+        "exitClosedUTC": "2026-11-20T16:00:00Z",
+        "exitReason": "TP3_COMPLETE",
+        "targetCount": 3,
+        "grossR": 2.0,
+        "assumedNetR": 1.852432,
+        "perSideCostBps": 9,
+        "outcome": "PAPER_POSITIVE",
+        "notExecuted": true
+      },
+      "classification": "ACCEPTED_BY_V7_NOT_A_REJECTED_SIGNAL"
+    },
+    {
+      "pair": "BTCUSDT_PERP.A",
+      "bosClosedUTC": "2026-11-20T16:00:00Z",
+      "bosCloseEpoch": 1795190400,
+      "side": "bearish",
+      "brokenLevel": 61255.6,
+      "acceptedByV4": true,
+      "acceptedByV7": false,
+      "rejectionFactors": [
+        "V7_QUALITY_EMA20_OVEREXTENDED"
+      ],
+      "v7Quality": {
+        "passed": false,
+        "reasons": [
+          "EMA20_OVEREXTENDED"
+        ],
+        "warnings": [
+          "RSI_EXTREME_NOT_A_HARD_REJECTION"
+        ],
+        "features": {
+          "breakATR": 2.412874,
+          "relativeVolume20": 5.550937,
+          "ema20ExtensionATR": 3.121075
+        }
+      },
+      "context": {
+        "higherTFaligned": true,
+        "momentumAligned": true,
+        "priorHourVolumeUp20Pct": true
+      },
+      "frozenBosCandle": {
+        "open": 61744.1,
+        "high": 61926.2,
+        "low": 59352.7,
+        "close": 59445.1
+      },
+      "sourceSnapshot": "2026-11-20T16-00Z.json",
+      "counterfactual": {
+        "status": "EXPIRED_WITHOUT_V4_RETEST",
+        "note": "No eligible entry; subsequent directional price move does NOT count as missed trade"
+      },
+      "classification": "UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
+    },
+    {
+      "pair": "BTCUSDT_PERP.A",
+      "bosClosedUTC": "2026-11-21T04:00:00Z",
+      "bosCloseEpoch": 1795233600,
+      "side": "bearish",
+      "brokenLevel": 57700.1,
+      "acceptedByV4": true,
+      "acceptedByV7": false,
+      "rejectionFactors": [
+        "V7_QUALITY_EMA20_OVEREXTENDED"
+      ],
+      "v7Quality": {
+        "passed": false,
+        "reasons": [
+          "EMA20_OVEREXTENDED"
+        ],
+        "warnings": [
+          "RSI_EXTREME_NOT_A_HARD_REJECTION"
+        ],
+        "features": {
+          "breakATR": 1.015618,
+          "relativeVolume20": 2.609837,
+          "ema20ExtensionATR": 2.887366
+        }
+      },
+      "context": {
+        "higherTFaligned": true,
+        "momentumAligned": true,
+        "priorHourVolumeUp20Pct": true
+      },
+      "frozenBosCandle": {
+        "open": 58574.6,
+        "high": 58574.7,
+        "low": 56333.0,
+        "close": 56704.7
+      },
+      "sourceSnapshot": "2026-11-21T04-00Z.json",
+      "counterfactual": {
+        "status": "PENDING_RETEST_UNCLOSED"
+      },
+      "classification": "UNRESOLVED_OR_NO_ACTIONABLE_ENTRY"
+    },
+    {
+      "pair": "SOLUSDT_PERP.A",
+      "bosClosedUTC": "2026-11-21T04:00:00Z",
+      "bosCloseEpoch": 1795233600,
+      "side": "bearish",
+      "brokenLevel": 67.08,
+      "acceptedByV4": true,
+      "acceptedByV7": true,
+      "rejectionFactors": [],
+      "v7Quality": {
+        "passed": true,
+        "reasons": [],
+        "warnings": [
+          "RSI_EXTREME_NOT_A_HARD_REJECTION"
+        ],
+        "features": {
+          "breakATR": 0.606155,
+          "relativeVolume20": 3.434317,
+          "ema20ExtensionATR": 2.361793
+        }
+      },
+      "context": {
+        "higherTFaligned": true,
+        "momentumAligned": true,
+        "priorHourVolumeUp20Pct": true
+      },
+      "frozenBosCandle": {
+        "open": 68.52,
+        "high": 68.54,
+        "low": 65.72,
+        "close": 66.25
+      },
+      "sourceSnapshot": "2026-11-21T04-00Z.json",
+      "counterfactual": {
+        "status": "PENDING_RETEST_UNCLOSED"
+      },
+      "classification": "ACCEPTED_BY_V7_NOT_A_REJECTED_SIGNAL"
     }
   ]
 }
