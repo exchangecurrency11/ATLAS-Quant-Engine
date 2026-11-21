@@ -14,7 +14,7 @@
 
 ## Gerçek zamanda kaydedilmiş sessiz paper
 
-Gerçekten saklanmış karşılaştırılabilir saat: **166**
+Gerçekten saklanmış karşılaştırılabilir saat: **168**
 
 | Coin | V7 kapanmış paper | V9.1 kapanmış paper |
 |---|---:|---:|
@@ -27,7 +27,7 @@ Kapanış sonrası emir gerçekleştiği veya aynı fiyattan işlem yapılabildi
 
 ### Karar kapıları (asgari tanısal örnek eşiği; tek başına istatistiksel kanıt değil)
 
-- 168 doğrulanmış saat: **False**
+- 168 doğrulanmış saat: **True**
 - Her coin × iki sistem için en az 20 kapanmış paper işlem: **False**
 - İşlem maliyeti stresini, maksimum düşüşü ve geç yayımlanmış sinyalleri ayrıca ölç.
 - Bu eşikler geçse bile **otomatik gerçek işleme/bildirime geçiş yok**.
