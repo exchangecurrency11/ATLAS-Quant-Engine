@@ -53,9 +53,11 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p forward/sol_v8_shadow/tmp
-          gh api "repos/$GITHUB_REPOSITORY/contents/forward/snapshots/$TARGET.json?ref=experiment/v7-signal-quality-20261103" \
-            --jq '.content' | base64 --decode > forward/sol_v8_shadow/tmp/v7.json
-          test -s forward/sol_v8_shadow/tmp/v7.json
+          if ! gh api "repos/$GITHUB_REPOSITORY/contents/forward/snapshots/$TARGET.json?ref=experiment/v7-signal-quality-20261103" \
+            --jq '.content' | base64 --decode > forward/sol_v8_shadow/tmp/v7.json; then
+            rm -f forward/sol_v8_shadow/tmp/v7.json
+            echo "V7_SOURCE_MISSING_QUALIFIED_HOUR $TARGET"
+          fi
 
       - name: Record only independently observed matching-hour shadow evidence
         if: steps.timing.outputs.run == 'true'
@@ -70,16 +72,22 @@ jobs:
             echo "EXISTING_VERIFIED_SHADOW_PAIR_PRESERVED $TARGET"
             exit 0
           fi
+          v7_snapshot="forward/sol_v8_shadow/tmp/v7.json"
           v8_snapshot="forward/sol_v8_derivatives_probe/snapshots/$TARGET.json"
-          # Missing independent derivative evidence is a coverage gap, NOT
-          # a valid zero-signal join. Never invent the missing V8 snapshot.
-          # Do not change original V7 / V9 strategies or any paper ledger.
-          if [[ ! -s "$v8_snapshot" ]]; then
-            echo "V8_SOURCE_MISSING_SAFE_SKIP $TARGET (no pair, no invented result)"
+          # Source absence is not zero signals or a paired market observation.
+          # Keep an immutable per-hour source-coverage marker in V8 only.
+          if [[ ! -s "$v7_snapshot" || ! -s "$v8_snapshot" ]]; then
+            reason="V8_DERIVATIVES_SOURCE_MISSING"
+            if [[ ! -s "$v7_snapshot" ]]; then reason="ORIGINAL_V7_SOURCE_MISSING"; fi
+            marker="forward/sol_v8_shadow/$TARGET.coverage.json"
+            if [[ ! -e "$marker" ]]; then
+              printf '{"schemaVersion":1,"recordKind":"V8_SHADOW_SOURCE_COVERAGE_ONLY","targetClosed1HUTC":"%s","status":"%s","signalsEnabled":false,"brokerOrders":false,"noRetrospectiveJoin":true,"missingIsNotZeroSignal":true}\n' "${TARGET%-00Z}:00:00Z" "$reason" > "$marker"
+            fi
+            echo "V8_SHADOW_COVERAGE_ONLY $TARGET $reason (NO PAIR, NO ORDERS)"
             exit 0
           fi
           python3 sol_v8_shadow_join.py \
-            --v7 forward/sol_v8_shadow/tmp/v7.json \
+            --v7 "$v7_snapshot" \
             --v8 "$v8_snapshot" \
             --output "$output"
 
