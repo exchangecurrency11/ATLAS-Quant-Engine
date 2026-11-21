@@ -70,9 +70,17 @@ jobs:
             echo "EXISTING_VERIFIED_SHADOW_PAIR_PRESERVED $TARGET"
             exit 0
           fi
+          v8_snapshot="forward/sol_v8_derivatives_probe/snapshots/$TARGET.json"
+          # Missing independent derivative evidence is a coverage gap, NOT
+          # a valid zero-signal join. Never invent the missing V8 snapshot.
+          # Do not change original V7 / V9 strategies or any paper ledger.
+          if [[ ! -s "$v8_snapshot" ]]; then
+            echo "V8_SOURCE_MISSING_SAFE_SKIP $TARGET (no pair, no invented result)"
+            exit 0
+          fi
           python3 sol_v8_shadow_join.py \
             --v7 forward/sol_v8_shadow/tmp/v7.json \
-            --v8 "forward/sol_v8_derivatives_probe/snapshots/$TARGET.json" \
+            --v8 "$v8_snapshot" \
             --output "$output"
 
       - name: Save paired evidence artifact
