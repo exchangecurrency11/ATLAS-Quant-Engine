@@ -1,0 +1,112 @@
+{
+  "status": "BEFORE_START_PAPER_FORECAST_UNCALIBRATED_NOT_TRADE",
+  "mode": "NEXT_4H_OWN_OPEN_CLOSE_GREEN_RED_BEFORE_START",
+  "decisionCapturedUTC": "2026-11-21T19:37:11Z",
+  "target4HStartUTC": "2026-11-21T20:00:00Z",
+  "target4HEndUTC": "2026-11-22T00:00:00Z",
+  "minutesBeforeStart": 22.82,
+  "allThreeAtSameTarget": true,
+  "contract": "Binance USD-M perpetual via Coinalyze",
+  "ohlcv1hResponseSHA256": "5cf784c40053d39b5cb9c54e07c0fe0097569b59a145afd105d7cd59c7b7a1a0",
+  "dailyResponseSHA256": "dfe2ef469c2855da9cf34cf13dbe59bafba23d9d7b068f05ab792827ba3d2ca3",
+  "assetForecasts": {
+    "BTCUSDT": {
+      "lastCompleted4HColorBaseline": "GREEN",
+      "baselineClosedAtUTC": "2026-11-21T16:00:00Z",
+      "baselineUsesOnlyCandleClosedBeforeTarget": true,
+      "direction": "RED",
+      "pGreenUNCALIBRATED": 0.490365,
+      "confidenceUNCALIBRATED": 0.509635,
+      "predictionOnlyNotAnOrder": true,
+      "lastFullyClosed1HEndUTC": "2026-11-21T19:00:00Z",
+      "lastFullyClosed4HEndUTC": "2026-11-21T16:00:00Z",
+      "latestCompletedDailyEndUTC": 1795219200,
+      "txFieldProviderParityNotIndependentlyVerified": true,
+      "bvCrossVerifiedForBTCETH": false,
+      "modelTrainingLabelsSHA256": "2ddeebb30f3fb8211539a498d772284878437f46fa3f05dea7b3b4fa5d56cc5f",
+      "featuresReplayed": 94
+    },
+    "ETHUSDT": {
+      "lastCompleted4HColorBaseline": "GREEN",
+      "baselineClosedAtUTC": "2026-11-21T16:00:00Z",
+      "baselineUsesOnlyCandleClosedBeforeTarget": true,
+      "direction": "RED",
+      "pGreenUNCALIBRATED": 0.405171,
+      "confidenceUNCALIBRATED": 0.594829,
+      "predictionOnlyNotAnOrder": true,
+      "lastFullyClosed1HEndUTC": "2026-11-21T19:00:00Z",
+      "lastFullyClosed4HEndUTC": "2026-11-21T16:00:00Z",
+      "latestCompletedDailyEndUTC": 1795219200,
+      "txFieldProviderParityNotIndependentlyVerified": true,
+      "bvCrossVerifiedForBTCETH": false,
+      "modelTrainingLabelsSHA256": "0b29a21b3ca81add396cf0d734ff9ce4df9ef30d1875e6c6a779e8e8ff6217e9",
+      "featuresReplayed": 94
+    },
+    "SOLUSDT": {
+      "lastCompleted4HColorBaseline": "GREEN",
+      "baselineClosedAtUTC": "2026-11-21T16:00:00Z",
+      "baselineUsesOnlyCandleClosedBeforeTarget": true,
+      "direction": "GREEN",
+      "pGreenUNCALIBRATED": 0.529027,
+      "confidenceUNCALIBRATED": 0.529027,
+      "predictionOnlyNotAnOrder": true,
+      "lastFullyClosed1HEndUTC": "2026-11-21T19:00:00Z",
+      "lastFullyClosed4HEndUTC": "2026-11-21T16:00:00Z",
+      "latestCompletedDailyEndUTC": 1795219200,
+      "txFieldProviderParityNotIndependentlyVerified": true,
+      "bvCrossVerifiedForBTCETH": false,
+      "modelTrainingLabelsSHA256": "11c4d5ae4cbb59b2cb7894ca013e6fd0415293d618081c8eb7854075456bb328",
+      "featuresReplayed": 94
+    }
+  },
+  "researchOnlyShadow88NoProviderTradeCount": {
+    "status": "FROZEN_88_NO_PROVIDER_TX_PARALLEL_PAPER_NOT_PROMOTED",
+    "modelFeatureCount": 88,
+    "sixTransactionCountFeaturePositionsDropped": [
+      20,
+      27,
+      50,
+      57,
+      80,
+      87
+    ],
+    "shadowAssetForecasts": {
+      "BTCUSDT": {
+        "direction": "GREEN",
+        "pGreenUNCALIBRATED": 0.547146,
+        "modelTrainingLabelsSHA256": "2ddeebb30f3fb8211539a498d772284878437f46fa3f05dea7b3b4fa5d56cc5f",
+        "noCoinalyzeTXUsedInFeatureVector": true,
+        "onlyAlreadyClosedDataAtDecision": true,
+        "sameTargetAsOriginalFrozenModel": true,
+        "notATradingSignal": true
+      },
+      "ETHUSDT": {
+        "direction": "RED",
+        "pGreenUNCALIBRATED": 0.465418,
+        "modelTrainingLabelsSHA256": "0b29a21b3ca81add396cf0d734ff9ce4df9ef30d1875e6c6a779e8e8ff6217e9",
+        "noCoinalyzeTXUsedInFeatureVector": true,
+        "onlyAlreadyClosedDataAtDecision": true,
+        "sameTargetAsOriginalFrozenModel": true,
+        "notATradingSignal": true
+      },
+      "SOLUSDT": {
+        "direction": "GREEN",
+        "pGreenUNCALIBRATED": 0.573041,
+        "modelTrainingLabelsSHA256": "11c4d5ae4cbb59b2cb7894ca013e6fd0415293d618081c8eb7854075456bb328",
+        "noCoinalyzeTXUsedInFeatureVector": true,
+        "onlyAlreadyClosedDataAtDecision": true,
+        "sameTargetAsOriginalFrozenModel": true,
+        "notATradingSignal": true
+      }
+    },
+    "sameOriginalDecisionAnd4HTarget": true,
+    "neverEnableNotificationsFromThisExperiment": true
+  },
+  "noUserNotifications": true,
+  "noTargetOpenKnown": true,
+  "forecastAlwaysRecordedEvenIfConfidenceLow": true,
+  "notValidatedLiveDirection": true,
+  "brokerOrders": false,
+  "productionModified": false,
+  "liveTradeOrAlertsActivated": false
+}
