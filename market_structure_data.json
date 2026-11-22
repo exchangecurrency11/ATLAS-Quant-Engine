@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-22T11:00:00Z",
+      "lastCloseTimeUTC": "2026-11-22T12:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -486,7 +486,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-22T11:00:00Z",
+      "lastCloseTimeUTC": "2026-11-22T12:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -860,16 +860,9 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-22T08:00:00Z",
+      "lastCloseTimeUTC": "2026-11-22T12:00:00Z",
       "closedCandles": 299,
       "structure": [
-        {
-          "event": "CHoCH",
-          "direction": "bullish",
-          "at": 1793131200,
-          "brokenSwingAt": 1793016000,
-          "brokenLevel": 80819.4
-        },
         {
           "event": "CHoCH",
           "direction": "bearish",
@@ -946,6 +939,13 @@
           "at": 1795118400,
           "brokenSwingAt": 1795032000,
           "brokenLevel": 62030.8
+        },
+        {
+          "event": "CHoCH",
+          "direction": "bullish",
+          "at": 1795334400,
+          "brokenSwingAt": 1795262400,
+          "brokenLevel": 60978.3
         }
       ],
       "candidateOrderBlocks": [
@@ -1124,6 +1124,28 @@
           "state": "fresh",
           "retests": 0,
           "invalidatedAt": null
+        },
+        {
+          "side": "bullish",
+          "event": "CHoCH",
+          "originAt": 1795320000,
+          "confirmedAt": 1795348800,
+          "breakAt": 1795334400,
+          "brokenLevel": 60978.3,
+          "body": {
+            "low": 59145.1,
+            "high": 59335.7
+          },
+          "wick": {
+            "low": 58746.1,
+            "high": 59645.0
+          },
+          "volumeRatio": 1.21,
+          "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
         }
       ],
       "recentInvalidatedOrderBlocks": [
@@ -1195,6 +1217,14 @@
         }
       ],
       "openFVG": [
+        {
+          "side": "bearish",
+          "formedAt": 1792656000,
+          "low": 82227.6,
+          "high": 82624.1,
+          "state": "open",
+          "fullyFilledAt": null
+        },
         {
           "side": "bearish",
           "formedAt": 1793894400,
@@ -1280,14 +1310,6 @@
           "formedAt": 1795276800,
           "low": 58611.0,
           "high": 59756.0,
-          "state": "open",
-          "fullyFilledAt": null
-        },
-        {
-          "side": "bearish",
-          "formedAt": 1795320000,
-          "low": 59645.0,
-          "high": 59950.2,
           "state": "open",
           "fullyFilledAt": null
         }
@@ -1379,16 +1401,16 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 8,
-        "openFVG": 14,
-        "structureEventsInLookback": 19
+        "activeCandidateOB": 9,
+        "openFVG": 13,
+        "structureEventsInLookback": 20
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-22T08:00:00Z",
+      "lastCloseTimeUTC": "2026-11-22T12:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
