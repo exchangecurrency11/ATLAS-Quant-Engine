@@ -7,16 +7,9 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-22T09:00:00Z",
+      "lastCloseTimeUTC": "2026-11-22T10:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "BOS",
-          "direction": "bearish",
-          "at": 1794664800,
-          "brokenSwingAt": 1794628800,
-          "brokenLevel": 66427.5
-        },
         {
           "event": "BOS",
           "direction": "bearish",
@@ -93,6 +86,13 @@
           "at": 1795262400,
           "brokenSwingAt": 1795244400,
           "brokenLevel": 58649.7
+        },
+        {
+          "event": "BOS",
+          "direction": "bullish",
+          "at": 1795338000,
+          "brokenSwingAt": 1795294800,
+          "brokenLevel": 60570.1
         }
       ],
       "candidateOrderBlocks": [
@@ -246,8 +246,8 @@
           "volumeRatio": 5.551,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "fresh",
-          "retests": 0,
+          "state": "retested",
+          "retests": 1,
           "invalidatedAt": null
         },
         {
@@ -267,6 +267,28 @@
           },
           "volumeRatio": 0.667,
           "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
+        },
+        {
+          "side": "bullish",
+          "event": "BOS",
+          "originAt": 1795323600,
+          "confirmedAt": 1795341600,
+          "breakAt": 1795338000,
+          "brokenLevel": 60570.1,
+          "body": {
+            "low": 58900.4,
+            "high": 59290.4
+          },
+          "wick": {
+            "low": 58746.1,
+            "high": 59307.8
+          },
+          "volumeRatio": 2.214,
+          "fvgConfluence": true,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "fresh",
           "retests": 0,
@@ -344,14 +366,6 @@
       "openFVG": [
         {
           "side": "bearish",
-          "formedAt": 1794538800,
-          "low": 70290.0,
-          "high": 70725.5,
-          "state": "open",
-          "fullyFilledAt": null
-        },
-        {
-          "side": "bearish",
           "formedAt": 1794607200,
           "low": 68466.3,
           "high": 68833.0,
@@ -407,14 +421,6 @@
           "fullyFilledAt": null
         },
         {
-          "side": "bearish",
-          "formedAt": 1795190400,
-          "low": 59793.2,
-          "high": 61314.4,
-          "state": "open",
-          "fullyFilledAt": null
-        },
-        {
           "side": "bullish",
           "formedAt": 1795244400,
           "low": 56477.8,
@@ -427,6 +433,14 @@
           "formedAt": 1795266000,
           "low": 58611.0,
           "high": 58770.0,
+          "state": "open",
+          "fullyFilledAt": null
+        },
+        {
+          "side": "bullish",
+          "formedAt": 1795338000,
+          "low": 59214.7,
+          "high": 59641.1,
           "state": "open",
           "fullyFilledAt": null
         }
@@ -455,16 +469,16 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 8,
-        "openFVG": 11,
-        "structureEventsInLookback": 18
+        "activeCandidateOB": 9,
+        "openFVG": 10,
+        "structureEventsInLookback": 19
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-22T09:00:00Z",
+      "lastCloseTimeUTC": "2026-11-22T10:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -757,14 +771,6 @@
       "openFVG": [
         {
           "side": "bearish",
-          "formedAt": 1794621600,
-          "low": 77.07,
-          "high": 77.59,
-          "state": "open",
-          "fullyFilledAt": null
-        },
-        {
-          "side": "bearish",
           "formedAt": 1794625200,
           "low": 76.29,
           "high": 76.86,
@@ -808,6 +814,14 @@
           "formedAt": 1795262400,
           "low": 68.39,
           "high": 68.68,
+          "state": "open",
+          "fullyFilledAt": null
+        },
+        {
+          "side": "bullish",
+          "formedAt": 1795338000,
+          "low": 69.34,
+          "high": 69.61,
           "state": "open",
           "fullyFilledAt": null
         }
