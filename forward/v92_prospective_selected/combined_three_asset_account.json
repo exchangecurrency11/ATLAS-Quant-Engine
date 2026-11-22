@@ -11,17 +11,17 @@
   "risk10PctVeryAggressiveNotAdvisedLive": true,
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
-  "sourceBTCandSOLVerifiedClosedHours": 164,
+  "sourceBTCandSOLVerifiedClosedHours": 165,
   "sourceETHVerifiedClosedHours": 171,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
       "expectedThroughUTC": "2026-11-22T04:00:00Z",
       "expectedHours": 234,
-      "savedVerifiedHours": 164,
-      "missingHourCount": 70,
-      "lastVerifiedHourUTC": "2026-11-22T03:00:00Z",
-      "lagHours": 1,
+      "savedVerifiedHours": 165,
+      "missingHourCount": 69,
+      "lastVerifiedHourUTC": "2026-11-22T04:00:00Z",
+      "lagHours": 0,
       "noBackfill": true
     },
     "ETH": {
@@ -35,7 +35,7 @@
       "noBackfill": true
     }
   },
-  "lastCapturedBTCandSOLHourUTC": "2026-11-22T03:00:00Z",
+  "lastCapturedBTCandSOLHourUTC": "2026-11-22T04:00:00Z",
   "lastCapturedETHHourUTC": "2026-11-22T04:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1185.243206,
@@ -66,19 +66,59 @@
   "perAssetLatestState": {
     "BTCUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-22T03:00:00Z",
+      "lastClosedUTC": "2026-11-22T04:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-22T03:00:00Z",
+          "lastClosedCandleUTC": "2026-11-22T04:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-22T00:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-22T04:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "STAR",
+              "name": "EVENING_STAR",
+              "direction": "bearish",
+              "firstUTC": "2026-11-21T16:00:00Z",
+              "confirmedUTC": "2026-11-22T04:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "4H"
+            },
+            {
+              "family": "HARAMI_CONFIRMED",
+              "name": "BEARISH_HARAMI_CONFIRMED",
+              "direction": "bearish",
+              "firstUTC": "2026-11-21T16:00:00Z",
+              "confirmedUTC": "2026-11-22T04:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "4H"
+            },
+            {
+              "family": "HIKKAKE_CONFIRMED",
+              "name": "BEARISH_HIKKAKE_CONFIRMED",
+              "direction": "bearish",
+              "firstUTC": "2026-11-21T12:00:00Z",
+              "confirmedUTC": "2026-11-22T04:00:00Z",
+              "prior20LiquiditySweepAndReentry": false,
+              "internalHikkakeFalseBreakConfirmed": true,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "4H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "1D": {
@@ -132,18 +172,18 @@
     },
     "SOLUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-22T03:00:00Z",
+      "lastClosedUTC": "2026-11-22T04:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-22T03:00:00Z",
+          "lastClosedCandleUTC": "2026-11-22T04:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
-          "lastClosedCandleUTC": "2026-11-22T00:00:00Z",
+          "lastClosedCandleUTC": "2026-11-22T04:00:00Z",
           "observedReversalsAtLastCompletedCandle": [],
           "informationOnlyNotAutomaticNewTrade": true
         },
