@@ -1,0 +1,139 @@
+{
+  "mode": "ETH_V7_INDEPENDENT_PAPER_FORWARD_NO_ORDERS",
+  "symbol": "ETHUSDT_PERP.A",
+  "exchange": "Binance",
+  "observedAtUTC": "2026-11-22T15:15:11Z",
+  "targetClosed1HUTC": "2026-11-22T15:00:00Z",
+  "status": "VERIFIED_PAPER_OBSERVATION",
+  "brokerOrders": false,
+  "productionSystemModified": false,
+  "paperForwardObservation": true,
+  "marketContext": {
+    "ETHUSDT_PERP.A": {
+      "checkedClosed1HUTC": "2026-11-22T15:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "closeTimeUTC": "2026-11-22T15:00:00Z",
+          "candle": {
+            "open": 1702.44,
+            "high": 1716.39,
+            "low": 1701.5,
+            "close": 1712.1,
+            "volume": 164472.17799999984,
+            "volumeChangePct": 46.308624986052415
+          },
+          "indicators": {
+            "RSI14": 62.6864,
+            "EMA20": 1687.4925,
+            "EMA50": 1686.0306,
+            "EMA200": 1779.9747,
+            "MACDHistogram": 3.363598
+          },
+          "directionVotes": {
+            "label": "bullish",
+            "score": 4
+          }
+        },
+        "4hour": {
+          "closeTimeUTC": "2026-11-22T12:00:00Z",
+          "candle": {
+            "open": 1665.51,
+            "high": 1723.5,
+            "low": 1665.0,
+            "close": 1707.48,
+            "volume": 1049557.4309999938,
+            "volumeChangePct": 122.97974389058118
+          },
+          "indicators": {
+            "RSI14": 48.429,
+            "EMA20": 1698.5746,
+            "EMA50": 1781.7495,
+            "EMA200": 2081.123,
+            "MACDHistogram": 8.053634
+          },
+          "directionVotes": {
+            "label": "mixed",
+            "score": 0
+          }
+        },
+        "daily": {
+          "closeTimeUTC": "2026-11-22T00:00:00Z",
+          "candle": {
+            "open": 1622.02,
+            "high": 1715.87,
+            "low": 1536.1,
+            "close": 1684.86,
+            "volume": 6392099.439000195,
+            "volumeChangePct": -28.929360180082796
+          },
+          "indicators": {
+            "RSI14": 25.9465,
+            "EMA20": 1950.1973,
+            "EMA50": 2163.5615,
+            "EMA200": 2184.1186,
+            "MACDHistogram": -25.783164
+          },
+          "directionVotes": {
+            "label": "bearish",
+            "score": -4
+          }
+        }
+      },
+      "newStructureEventsAtClose": [],
+      "newBOSCount": 0,
+      "bosQualityBreakdown": [],
+      "higherTimeframesAgree": false,
+      "atr14_1H": 18.36857143,
+      "relativeVolume20_1H": 1.14574,
+      "noSignalExplanation": "NO_NEW_1H_BOS",
+      "caution": "BOS is not an entry; retest and next-open are required."
+    }
+  },
+  "results": {
+    "ETHUSDT_PERP.A": {
+      "V4_baseline": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 2,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_filter": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_plus_retest": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      }
+    }
+  },
+  "dataSource": "Coinalyze ETHUSDT_PERP.A / Binance perpetual read-only API",
+  "sourceSHA256": {
+    "1hour": "ec5b500de75599184e8f39d853eaa7e3014ae300385b3edd42c74229df3036e2",
+    "4hour": "ee98d481b0bcd82d9ccc360b5abf5c89963b879c19e23635843cb45aa100fd68",
+    "daily": "05a6b54e87ec3382b9679bee46bca8ad8923ab8198c41ccb9eaaa20cec587b6a"
+  },
+  "crossTimeframeOHLCVVerifiedLast5": {
+    "1H_matches_4H": 5,
+    "1H_matches_daily": 5
+  }
+}
