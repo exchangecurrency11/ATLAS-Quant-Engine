@@ -1,0 +1,139 @@
+{
+  "mode": "ETH_V7_INDEPENDENT_PAPER_FORWARD_NO_ORDERS",
+  "symbol": "ETHUSDT_PERP.A",
+  "exchange": "Binance",
+  "observedAtUTC": "2026-11-22T20:15:12Z",
+  "targetClosed1HUTC": "2026-11-22T20:00:00Z",
+  "status": "VERIFIED_PAPER_OBSERVATION",
+  "brokerOrders": false,
+  "productionSystemModified": false,
+  "paperForwardObservation": true,
+  "marketContext": {
+    "ETHUSDT_PERP.A": {
+      "checkedClosed1HUTC": "2026-11-22T20:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "closeTimeUTC": "2026-11-22T20:00:00Z",
+          "candle": {
+            "open": 1713.89,
+            "high": 1716.2,
+            "low": 1712.65,
+            "close": 1714.8,
+            "volume": 26443.102999999974,
+            "volumeChangePct": -57.63228100306206
+          },
+          "indicators": {
+            "RSI14": 61.4221,
+            "EMA20": 1698.7654,
+            "EMA50": 1691.5153,
+            "EMA200": 1773.2368,
+            "MACDHistogram": 1.612726
+          },
+          "directionVotes": {
+            "label": "bullish",
+            "score": 4
+          }
+        },
+        "4hour": {
+          "closeTimeUTC": "2026-11-22T20:00:00Z",
+          "candle": {
+            "open": 1717.57,
+            "high": 1723.8,
+            "low": 1708.6,
+            "close": 1714.8,
+            "volume": 314437.10899999534,
+            "volumeChangePct": -62.446187387272836
+          },
+          "indicators": {
+            "RSI14": 49.6151,
+            "EMA20": 1701.7558,
+            "EMA50": 1776.7056,
+            "EMA200": 2074.3481,
+            "MACDHistogram": 12.125593
+          },
+          "directionVotes": {
+            "label": "mixed",
+            "score": 0
+          }
+        },
+        "daily": {
+          "closeTimeUTC": "2026-11-22T00:00:00Z",
+          "candle": {
+            "open": 1622.02,
+            "high": 1715.87,
+            "low": 1536.1,
+            "close": 1684.86,
+            "volume": 6392099.439000195,
+            "volumeChangePct": -28.929360180082796
+          },
+          "indicators": {
+            "RSI14": 25.9465,
+            "EMA20": 1950.1973,
+            "EMA50": 2163.5615,
+            "EMA200": 2184.1186,
+            "MACDHistogram": -25.783164
+          },
+          "directionVotes": {
+            "label": "bearish",
+            "score": -4
+          }
+        }
+      },
+      "newStructureEventsAtClose": [],
+      "newBOSCount": 0,
+      "bosQualityBreakdown": [],
+      "higherTimeframesAgree": false,
+      "atr14_1H": 16.24071429,
+      "relativeVolume20_1H": 0.16549,
+      "noSignalExplanation": "NO_NEW_1H_BOS",
+      "caution": "BOS is not an entry; retest and next-open are required."
+    }
+  },
+  "results": {
+    "ETHUSDT_PERP.A": {
+      "V4_baseline": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 2,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_filter": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_plus_retest": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": null
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      }
+    }
+  },
+  "dataSource": "Coinalyze ETHUSDT_PERP.A / Binance perpetual read-only API",
+  "sourceSHA256": {
+    "1hour": "dcaf2fc6e807d987447e6ef67af36b4ec2b501a41dacc2feadaf7e2198a5d4e9",
+    "4hour": "5ed1a8a4ca467f8ccac22e377ea5d36a6cef962e3cb2a21b24a811de0bcf4a5a",
+    "daily": "15ce575ed5161017ed03f2ac06419f75c7ad32bee3e7208d95c03a558a7776fc"
+  },
+  "crossTimeframeOHLCVVerifiedLast5": {
+    "1H_matches_4H": 5,
+    "1H_matches_daily": 5
+  }
+}
