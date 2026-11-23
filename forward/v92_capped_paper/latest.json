@@ -9,8 +9,8 @@
   "firstEligibleHourUTC": "2026-11-13T03:00:00Z",
   "noBrokerOrders": true,
   "mode": "V92_INDEPENDENT_CAPPED_10_20_SHADOW_PAPER_FORWARD_ONLY",
-  "lastClosed1HUTC": "2026-11-23T13:00:00Z",
-  "capturedAtUTC": "2026-11-23T13:31:06Z",
+  "lastClosed1HUTC": "2026-11-23T15:00:00Z",
+  "capturedAtUTC": "2026-11-23T15:15:56Z",
   "noUserNotifications": true,
   "noLegacyV7V91OrV92Modification": true,
   "noHistoricalBackfill": true,
@@ -32,12 +32,19 @@
   "paperRealizedEquityStress25BpsUSDT": 1000.0,
   "closedPaperTrades": 0,
   "paperEntriesEverRecorded": 0,
-  "entryEligibilityForThisHour": true,
-  "observedEvents": [],
+  "entryEligibilityForThisHour": false,
+  "observedEvents": [
+    {
+      "type": "SOURCE_HOUR_GAP",
+      "prevUTC": "2026-11-23T13:00:00Z",
+      "nowUTC": "2026-11-23T15:00:00Z",
+      "historicalHoursBackfilled": false
+    }
+  ],
   "sourceHashes": {
-    "coreV92Sha256": "c608de601cfc57eb3ca8d0011588fe5eb43e96c00639dc19c886f380f98d204c",
-    "ethV92Sha256": "7951b9e9ee0efc0e0246b58f45d36b34054c22bcaa048bc7b53496295e4009ab",
-    "verifiedV7ClosedCandlesSha256": "f23212d8539d95d3cd277bb4ffa33a25e5265b5ecc08be719d5f81e4274b7ce8"
+    "coreV92Sha256": "0fe28fcb5b9dec053f5ec62b4e635f3bb55b85cdf454c6a6c91d73b9d91e74e3",
+    "ethV92Sha256": "b45af5a85fdd9311cfdbe267010ad56423c963b907304fc43449cd8a76561508",
+    "verifiedV7ClosedCandlesSha256": "bdb683a916f13e7d388c300ce6fe02c11ee985b08235383d11c73e13a3b44a97"
   },
-  "previousImmutableSnapshotSha256": "4921e72b562b2ad8fd9f173c192caca427faa2b363eeefc04c3d9bed91a501cc"
+  "previousImmutableSnapshotSha256": "5259c3b92ae5abcdc2290a74c10a0d2a7a47706b42c0b36d6424df2e538295ac"
 }
