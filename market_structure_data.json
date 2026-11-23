@@ -7,16 +7,9 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-23T05:00:00Z",
+      "lastCloseTimeUTC": "2026-11-23T06:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "BOS",
-          "direction": "bearish",
-          "at": 1794686400,
-          "brokenSwingAt": 1794672000,
-          "brokenLevel": 64969.0
-        },
         {
           "event": "BOS",
           "direction": "bearish",
@@ -93,6 +86,13 @@
           "at": 1795338000,
           "brokenSwingAt": 1795294800,
           "brokenLevel": 60570.1
+        },
+        {
+          "event": "BOS",
+          "direction": "bullish",
+          "at": 1795410000,
+          "brokenSwingAt": 1795363200,
+          "brokenLevel": 61413.0
         }
       ],
       "candidateOrderBlocks": [
@@ -293,6 +293,28 @@
           "state": "fresh",
           "retests": 0,
           "invalidatedAt": null
+        },
+        {
+          "side": "bullish",
+          "event": "BOS",
+          "originAt": 1795406400,
+          "confirmedAt": 1795413600,
+          "breakAt": 1795410000,
+          "brokenLevel": 61413.0,
+          "body": {
+            "low": 61218.1,
+            "high": 61264.5
+          },
+          "wick": {
+            "low": 61033.7,
+            "high": 61464.0
+          },
+          "volumeRatio": 0.935,
+          "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "fresh",
+          "retests": 0,
+          "invalidatedAt": null
         }
       ],
       "recentInvalidatedOrderBlocks": [
@@ -461,16 +483,16 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 9,
+        "activeCandidateOB": 10,
         "openFVG": 9,
-        "structureEventsInLookback": 18
+        "structureEventsInLookback": 19
       }
     },
     {
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-23T05:00:00Z",
+      "lastCloseTimeUTC": "2026-11-23T06:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -665,8 +687,8 @@
           "volumeRatio": 1.955,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "fresh",
-          "retests": 0,
+          "state": "retested",
+          "retests": 1,
           "invalidatedAt": null
         },
         {
@@ -831,6 +853,13 @@
           "level": 82.18,
           "firstPivotAt": 1794380400,
           "secondPivotAt": 1794438000,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_lows",
+          "level": 69.85,
+          "firstPivotAt": 1795377600,
+          "secondPivotAt": 1795399200,
           "note": "Potential chart liquidity; not live order-book data"
         }
       ],
