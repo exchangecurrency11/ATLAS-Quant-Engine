@@ -11,31 +11,31 @@
   "risk10PctVeryAggressiveNotAdvisedLive": true,
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
-  "sourceBTCandSOLVerifiedClosedHours": 226,
+  "sourceBTCandSOLVerifiedClosedHours": 227,
   "sourceETHVerifiedClosedHours": 232,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
-      "expectedThroughUTC": "2026-11-24T17:00:00Z",
-      "expectedHours": 295,
-      "savedVerifiedHours": 226,
+      "expectedThroughUTC": "2026-11-24T18:00:00Z",
+      "expectedHours": 296,
+      "savedVerifiedHours": 227,
       "missingHourCount": 69,
-      "lastVerifiedHourUTC": "2026-11-24T17:00:00Z",
+      "lastVerifiedHourUTC": "2026-11-24T18:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     },
     "ETH": {
       "firstExpectedHourUTC": "2026-11-12T12:00:00Z",
-      "expectedThroughUTC": "2026-11-24T17:00:00Z",
-      "expectedHours": 294,
+      "expectedThroughUTC": "2026-11-24T18:00:00Z",
+      "expectedHours": 295,
       "savedVerifiedHours": 232,
-      "missingHourCount": 62,
+      "missingHourCount": 63,
       "lastVerifiedHourUTC": "2026-11-24T17:00:00Z",
-      "lagHours": 0,
+      "lagHours": 1,
       "noBackfill": true
     }
   },
-  "lastCapturedBTCandSOLHourUTC": "2026-11-24T17:00:00Z",
+  "lastCapturedBTCandSOLHourUTC": "2026-11-24T18:00:00Z",
   "lastCapturedETHHourUTC": "2026-11-24T17:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
   "virtualPaperEquityUSDT": 1185.243206,
@@ -66,14 +66,28 @@
   "perAssetLatestState": {
     "BTCUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-24T17:00:00Z",
+      "lastClosedUTC": "2026-11-24T18:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-24T17:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-24T18:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "STAR",
+              "name": "MORNING_STAR",
+              "direction": "bullish",
+              "firstUTC": "2026-11-24T15:00:00Z",
+              "confirmedUTC": "2026-11-24T18:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
@@ -132,14 +146,28 @@
     },
     "SOLUSDT": {
       "state": "FLAT_NO_ENTRY",
-      "lastClosedUTC": "2026-11-24T17:00:00Z",
+      "lastClosedUTC": "2026-11-24T18:00:00Z",
       "newBOSWatches": 0,
       "retestPending": false,
       "openPaperPosition": false,
       "patternWarnings": {
         "1H": {
-          "lastClosedCandleUTC": "2026-11-24T17:00:00Z",
-          "observedReversalsAtLastCompletedCandle": [],
+          "lastClosedCandleUTC": "2026-11-24T18:00:00Z",
+          "observedReversalsAtLastCompletedCandle": [
+            {
+              "family": "HARAMI_CONFIRMED",
+              "name": "BULLISH_HARAMI_CONFIRMED",
+              "direction": "bullish",
+              "firstUTC": "2026-11-24T15:00:00Z",
+              "confirmedUTC": "2026-11-24T18:00:00Z",
+              "prior20LiquiditySweepAndReentry": true,
+              "internalHikkakeFalseBreakConfirmed": false,
+              "crypto24hNoGapRequirement": true,
+              "signalIsNotStandaloneTrade": true,
+              "onlyClosedCandlesUsed": true,
+              "tf": "1H"
+            }
+          ],
           "informationOnlyNotAutomaticNewTrade": true
         },
         "4H": {
