@@ -1,13 +1,13 @@
 # BTC → ETH → SOL — Verified Daily + 4H close interpretation
 
-4H closed: **2026-11-23 23:00 TSİ**. Daily closed: **2026-11-23 03:00 TSİ**.
+4H closed: **2026-11-24 03:00 TSİ**. Daily closed: **2026-11-24 03:00 TSİ**.
 
 **This is context and technical commentary, NOT a prediction of the next 4H candle.** V9 pre-start forecast remains immutable and must be evaluated separately.
 
 
 ## BTC
-**Daily:** GREEN | O 60,191.00 H 61,647.90 L 58,746.10 C 61,236.90 | RSI14 26.57 | MACD hist -759.9157 | EMA20/50 67,853.87/73,445.86 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
-**4H:** RED | O 62,867.10 H 62,912.10 L 60,719.50 C 61,233.00 | RSI14 49.61 | MACD hist +423.4707 | EMA20/50 61,056.57/62,809.37 | MIXED_CONTEXT | RSI_NOT_EXTREME
+**Daily:** GREEN | O 61,236.90 H 64,572.80 L 60,351.20 C 61,239.90 | RSI14 26.58 | MACD hist -540.6003 | EMA20/50 67,223.97/72,967.24 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
+**4H:** GREEN | O 61,232.90 H 61,564.50 L 61,034.00 C 61,239.90 | RSI14 49.65 | MACD hist +356.8060 | EMA20/50 61,074.03/62,747.83 | MIXED_CONTEXT | RSI_NOT_EXTREME
 **Daily+4H interpretation:** trend agreement=False; Daily=BEARISH_CONTEXT; 4H=MIXED_CONTEXT; risk=Oversold bounce.
 **Latest chart structure:** CHoCH bullish at level 60,978.30 (heuristic, not guaranteed)
 - Candidate bullish OB body 59,145.10–59,335.70; not proven institutional orders.
@@ -19,15 +19,15 @@
 - Chart equal_lows near 76,357.00; actual resting orders unverified.
 
 ## ETH
-**Daily:** GREEN | O 1,684.86 H 1,732.65 L 1,647.51 C 1,723.33 | RSI14 29.79 | MACD hist -18.0343 | EMA20/50 1,928.59/2,146.30 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
-**4H:** RED | O 1,772.74 H 1,778.24 L 1,714.15 C 1,730.95 | RSI14 51.36 | MACD hist +13.0550 | EMA20/50 1,716.99/1,767.74 | MIXED_CONTEXT | RSI_NOT_EXTREME
-**Daily+4H interpretation:** trend agreement=False; Daily=BEARISH_CONTEXT; 4H=MIXED_CONTEXT; risk=Oversold bounce.
+**Daily:** RED | O 1,723.34 H 1,845.00 L 1,695.63 C 1,709.85 | RSI14 29.22 | MACD hist -11.7217 | EMA20/50 1,907.76/2,129.18 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
+**4H:** RED | O 1,730.94 H 1,735.44 L 1,702.38 C 1,709.85 | RSI14 47.71 | MACD hist +9.9756 | EMA20/50 1,716.31/1,765.47 | BEARISH_CONTEXT | RSI_NOT_EXTREME
+**Daily+4H interpretation:** trend agreement=True; Daily=BEARISH_CONTEXT; 4H=BEARISH_CONTEXT; risk=Oversold bounce.
 **BOS/OB/FVG/liquidity:** Not verified for ETH at this timestamp.
 
 ## SOL
-**Daily:** GREEN | O 70.27 H 71.39 L 68.67 C 70.69 | RSI14 28.15 | MACD hist -0.2133 | EMA20/50 79.37/89.71 | BEARISH_CONTEXT | RSI_OVERSOLD_BOUNCE_RISK
-**4H:** RED | O 75.62 H 75.88 L 72.36 C 73.05 | RSI14 55.49 | MACD hist +0.6415 | EMA20/50 71.50/72.90 | MIXED_CONTEXT | RSI_NOT_EXTREME
-**Daily+4H interpretation:** trend agreement=False; Daily=BEARISH_CONTEXT; 4H=MIXED_CONTEXT; risk=Oversold bounce.
+**Daily:** GREEN | O 70.69 H 78.49 L 69.83 C 71.98 | RSI14 31.36 | MACD hist +0.0840 | EMA20/50 78.66/89.01 | BEARISH_CONTEXT | RSI_NOT_EXTREME
+**4H:** RED | O 73.05 H 73.39 L 71.54 C 71.98 | RSI14 51.37 | MACD hist +0.5064 | EMA20/50 71.55/72.86 | MIXED_CONTEXT | RSI_NOT_EXTREME
+**Daily+4H interpretation:** trend agreement=False; Daily=BEARISH_CONTEXT; 4H=MIXED_CONTEXT; risk=No RSI extreme.
 **Latest chart structure:** CHoCH bullish at level 71.08 (heuristic, not guaranteed)
 - Candidate bearish OB body 80.00–80.26; not proven institutional orders.
 - Candidate bearish OB body 81.60–81.68; not proven institutional orders.
