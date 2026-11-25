@@ -1,0 +1,154 @@
+{
+  "mode": "V91_ETH_PROSPECTIVE_4H_RETEST_IMMUTABLE_PAPER_SHADOW",
+  "symbol": "ETHUSDT",
+  "originalV7Reference": "ETHUSDT_PERP.A",
+  "targetClosed1HUTC": "2026-11-25T02:00:00Z",
+  "capturedAtUTC": "2026-11-25T02:16:31Z",
+  "originalV7CapturedAtUTC": "2026-11-25T02:15:18Z",
+  "source": "Coinalyze Binance ETHUSDT perpetual; exact same instrument",
+  "sourceIntegrity": {
+    "1hour": {
+      "closeUTC": "2026-11-25T02:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "4hour": {
+      "closeUTC": "2026-11-25T00:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "daily": {
+      "closeUTC": "2026-11-25T00:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    }
+  },
+  "sourceSHA256NewFetch": {
+    "1hour": "cd379720179465af05c33cbc8a9d1a16a8916d39bc811c939331c878903170d9",
+    "4hour": "921a0b39953c43d202c054dc3027b22e96e248e2986483ce3af7c85dbd2e70e6",
+    "daily": "d7ffa6815fccc3add070e092406f98d5901e2a7aa3492de81e151c2d1987521c"
+  },
+  "crossTimeframeOHLCV": {
+    "1H_matches_4H": 5,
+    "1H_matches_daily": 5
+  },
+  "verifiedSourceAndExactV7Replay": true,
+  "independentBinanceMarketTruthEstablished": false,
+  "BTCandSOLV91ScoreboardUnaffected": true,
+  "retentionRuleHours": {
+    "V7_ORIGINAL": 6,
+    "V91_RETEST_MAX4H": 4
+  },
+  "sourceClose1H": 1657.59,
+  "originalV7": {
+    "newWatchAtThisClose": [
+      {
+        "knownUTC": 1795572000,
+        "side": "bearish",
+        "BOSLevel": 1663.17,
+        "hourClose": 1657.59,
+        "RSI14": 35.40246529829693,
+        "hist": -0.64501647173077,
+        "volumeChangePct": 99.32760665511617,
+        "higherTimeframes": [
+          "bearish",
+          "bearish"
+        ],
+        "v7Quality": {
+          "passed": true,
+          "reasons": [],
+          "warnings": [],
+          "features": {
+            "breakATR": 0.334289,
+            "relativeVolume20": 1.24551,
+            "ema20ExtensionATR": 1.587056
+          }
+        }
+      }
+    ],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": {
+        "index": 334,
+        "side": "bearish",
+        "knownUTC": 1795572000,
+        "level": 1663.17
+      },
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": null
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 0
+  },
+  "max4hRetest": {
+    "newWatchAtThisClose": [
+      {
+        "knownUTC": 1795572000,
+        "side": "bearish",
+        "BOSLevel": 1663.17,
+        "hourClose": 1657.59,
+        "RSI14": 35.40246529829693,
+        "hist": -0.64501647173077,
+        "volumeChangePct": 99.32760665511617,
+        "higherTimeframes": [
+          "bearish",
+          "bearish"
+        ],
+        "v7Quality": {
+          "passed": true,
+          "reasons": [],
+          "warnings": [],
+          "features": {
+            "breakATR": 0.334289,
+            "relativeVolume20": 1.24551,
+            "ema20ExtensionATR": 1.587056
+          }
+        }
+      }
+    ],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": {
+        "index": 334,
+        "side": "bearish",
+        "knownUTC": 1795572000,
+        "level": 1663.17
+      },
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": null
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 0
+  },
+  "retestDiagnosticsOnlyNoEntryVeto": {
+    "originalV7": null,
+    "max4hRetest": null
+  },
+  "noBackfill": true,
+  "entryAtNextOpenIsHistoricalUnverifiedFill": true,
+  "realTimeExecutableOrderCountVerified": 0,
+  "noUserNotifications": true,
+  "noBrokerOrders": true,
+  "V7AndV9ProductionAndSignalsUnchanged": true
+}
