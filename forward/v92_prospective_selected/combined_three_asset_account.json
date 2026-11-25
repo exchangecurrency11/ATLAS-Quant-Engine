@@ -12,38 +12,38 @@
   "firstEligibleBTCandSOLUTC": "2026-11-12T11:00:00Z",
   "firstEligibleETHUTC": "2026-11-12T12:00:00Z",
   "sourceBTCandSOLVerifiedClosedHours": 247,
-  "sourceETHVerifiedClosedHours": 253,
+  "sourceETHVerifiedClosedHours": 254,
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T11:00:00Z",
-      "expectedThroughUTC": "2026-11-25T14:00:00Z",
-      "expectedHours": 316,
+      "expectedThroughUTC": "2026-11-25T15:00:00Z",
+      "expectedHours": 317,
       "savedVerifiedHours": 247,
-      "missingHourCount": 69,
+      "missingHourCount": 70,
       "lastVerifiedHourUTC": "2026-11-25T14:00:00Z",
-      "lagHours": 0,
+      "lagHours": 1,
       "noBackfill": true
     },
     "ETH": {
       "firstExpectedHourUTC": "2026-11-12T12:00:00Z",
-      "expectedThroughUTC": "2026-11-25T14:00:00Z",
-      "expectedHours": 315,
-      "savedVerifiedHours": 253,
+      "expectedThroughUTC": "2026-11-25T15:00:00Z",
+      "expectedHours": 316,
+      "savedVerifiedHours": 254,
       "missingHourCount": 62,
-      "lastVerifiedHourUTC": "2026-11-25T14:00:00Z",
+      "lastVerifiedHourUTC": "2026-11-25T15:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     }
   },
   "lastCapturedBTCandSOLHourUTC": "2026-11-25T14:00:00Z",
-  "lastCapturedETHHourUTC": "2026-11-25T14:00:00Z",
+  "lastCapturedETHHourUTC": "2026-11-25T15:00:00Z",
   "sharedSingleVirtualPortfolioNotThreeTimes1000": true,
-  "virtualPaperEquityUSDT": 1185.243206,
-  "virtualPaperPnLUSDT": 185.243206,
-  "netRealizedPaperR9BpsSide": 1.852432,
-  "virtualPaperPnLStress25BpsUSDT": 159.008905,
-  "closedEligiblePaperTrades": 1,
-  "wins": 1,
+  "virtualPaperEquityUSDT": 1366.727859,
+  "virtualPaperPnLUSDT": 366.727859,
+  "netRealizedPaperR9BpsSide": 3.667279,
+  "virtualPaperPnLStress25BpsUSDT": 307.577387,
+  "closedEligiblePaperTrades": 2,
+  "wins": 2,
   "losses": 0,
   "winRatePct": 100.0,
   "perAssetScores": {
@@ -53,9 +53,9 @@
       "netR": 0
     },
     "ETHUSDT": {
-      "closedEligiblePaperTrades": 0,
-      "wins": 0,
-      "netR": 0
+      "closedEligiblePaperTrades": 1,
+      "wins": 1,
+      "netR": 1.814847
     },
     "SOLUSDT": {
       "closedEligiblePaperTrades": 1,
@@ -112,14 +112,14 @@
       }
     },
     "ETHUSDT": {
-      "state": "PAPER_OPEN",
-      "lastClosedUTC": "2026-11-25T14:00:00Z",
+      "state": "FLAT",
+      "lastClosedUTC": "2026-11-25T15:00:00Z",
       "retestPending": false,
-      "openPaperPosition": true,
+      "openPaperPosition": false,
       "newBOSWatches": 0,
       "patternWarnings": {
         "1H": {
-          "lastCompletedCandleCloseUTC": "2026-11-25T14:00:00Z",
+          "lastCompletedCandleCloseUTC": "2026-11-25T15:00:00Z",
           "confirmedReversalPatterns": [],
           "ethObservationalOnlyNoAutoVeto": true
         },
@@ -187,6 +187,16 @@
       "exitReason": "TP3_COMPLETE",
       "netR9Bps": 1.85243206,
       "netR25Bps": 1.59008905,
+      "notVerifiedExecutableRealFill": true
+    },
+    {
+      "symbol": "ETHUSDT",
+      "entryUTC": "2026-11-25T05:00:00Z",
+      "exitUTC": "2026-11-25T15:00:00Z",
+      "side": "bearish",
+      "exitReason": "TP3_COMPLETE",
+      "netR9Bps": 1.81484653,
+      "netR25Bps": 1.48568482,
       "notVerifiedExecutableRealFill": true
     }
   ],

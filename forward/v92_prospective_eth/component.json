@@ -3,26 +3,37 @@
   "asset": "ETHUSDT",
   "requestedAtUTC": "2026-11-12T11:01:54Z",
   "firstEligible1HCloseUTC": "2026-11-12T12:00:00Z",
-  "savedDistinctVerifiedETHHours": 253,
-  "lastVerifiedETHCloseUTC": "2026-11-25T14:00:00Z",
+  "savedDistinctVerifiedETHHours": 254,
+  "lastVerifiedETHCloseUTC": "2026-11-25T15:00:00Z",
   "ETHselectedPatternStatus": "OBSERVATION_ONLY_PENDING_INDEPENDENT_ETH_BACKTEST",
   "ETHretentionHours": 4,
   "ETHmax4hPaperEngineSameAsV91NoCandleVeto": true,
-  "closedEligiblePaperTrades": 0,
-  "wins": 0,
-  "netPaperR9BpsSide": 0,
-  "netPaperRStress25BpsSide": 0,
-  "verifiedProspectivePaperLedger": [],
+  "closedEligiblePaperTrades": 1,
+  "wins": 1,
+  "netPaperR9BpsSide": 1.81484653,
+  "netPaperRStress25BpsSide": 1.48568482,
+  "verifiedProspectivePaperLedger": [
+    {
+      "symbol": "ETHUSDT",
+      "entryUTC": "2026-11-25T05:00:00Z",
+      "exitUTC": "2026-11-25T15:00:00Z",
+      "side": "bearish",
+      "exitReason": "TP3_COMPLETE",
+      "netR9Bps": 1.81484653,
+      "netR25Bps": 1.48568482,
+      "notVerifiedExecutableRealFill": true
+    }
+  ],
   "excludedUnsealedETHExits": [],
   "stateETH": {
-    "state": "PAPER_OPEN",
-    "lastClosedUTC": "2026-11-25T14:00:00Z",
+    "state": "FLAT",
+    "lastClosedUTC": "2026-11-25T15:00:00Z",
     "retestPending": false,
-    "openPaperPosition": true,
+    "openPaperPosition": false,
     "newBOSWatches": 0,
     "patternWarnings": {
       "1H": {
-        "lastCompletedCandleCloseUTC": "2026-11-25T14:00:00Z",
+        "lastCompletedCandleCloseUTC": "2026-11-25T15:00:00Z",
         "confirmedReversalPatterns": [],
         "ethObservationalOnlyNoAutoVeto": true
       },
