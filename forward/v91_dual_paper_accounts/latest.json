@@ -2,14 +2,14 @@
   "status": "TWO_SEPARATE_PROSPECTIVE_VIRTUAL_PAPER_ACCOUNTS",
   "requestedAtUTC": "2026-11-12T08:44:55Z",
   "firstEligible1HCloseUTC": "2026-11-12T09:00:00Z",
-  "lastCapturedEligibleBTCandSOLHourUTC": "2026-11-25T14:00:00Z",
-  "lastCapturedEligibleETHHourUTC": "2026-11-25T14:00:00Z",
+  "lastCapturedEligibleBTCandSOLHourUTC": "2026-11-25T15:00:00Z",
+  "lastCapturedEligibleETHHourUTC": "2026-11-25T15:00:00Z",
   "sourceCoverageAudit": {
     "BTC_SOL": {
       "firstExpectedHourUTC": "2026-11-12T09:00:00Z",
-      "expectedThroughUTC": "2026-11-25T14:00:00Z",
-      "expectedHours": 318,
-      "savedExpectedHours": 260,
+      "expectedThroughUTC": "2026-11-25T15:00:00Z",
+      "expectedHours": 319,
+      "savedExpectedHours": 261,
       "missingHourCount": 58,
       "missingHoursUTC": [
         "2026-11-13T14:00:00Z",
@@ -71,15 +71,15 @@
         "2026-11-19T04:00:00Z",
         "2026-11-19T05:00:00Z"
       ],
-      "lastSavedHourUTC": "2026-11-25T14:00:00Z",
+      "lastSavedHourUTC": "2026-11-25T15:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     },
     "ETH": {
       "firstExpectedHourUTC": "2026-11-12T09:00:00Z",
-      "expectedThroughUTC": "2026-11-25T14:00:00Z",
-      "expectedHours": 318,
-      "savedExpectedHours": 259,
+      "expectedThroughUTC": "2026-11-25T15:00:00Z",
+      "expectedHours": 319,
+      "savedExpectedHours": 260,
       "missingHourCount": 59,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
@@ -142,7 +142,7 @@
         "2026-11-18T23:00:00Z",
         "2026-11-19T05:00:00Z"
       ],
-      "lastSavedHourUTC": "2026-11-25T14:00:00Z",
+      "lastSavedHourUTC": "2026-11-25T15:00:00Z",
       "lagHours": 0,
       "noBackfill": true
     }
@@ -154,18 +154,18 @@
       "virtualPaperRiskPerTradeUSDT": 100.0,
       "riskPctOfInitialCapital": 10.0,
       "riskPerTradeIsHighAndNotRecommendedForLive": true,
-      "virtualEquityUSDT": 1185.243206,
-      "virtualRealizedPnlUSDT": 185.243206,
-      "virtualRealizedPnlStress25BpsUSDT": 159.008905,
-      "netRealizedPaperR9BpsPerSide": 1.852432,
-      "closedEligiblePaperTrades": 1,
-      "wins": 1,
+      "virtualEquityUSDT": 1366.727859,
+      "virtualRealizedPnlUSDT": 366.727859,
+      "virtualRealizedPnlStress25BpsUSDT": 307.577387,
+      "netRealizedPaperR9BpsPerSide": 3.667279,
+      "closedEligiblePaperTrades": 2,
+      "wins": 2,
       "losses": 0,
       "winRatePct": 100.0,
       "perAssetLatestState": {
         "BTCUSDT": {
           "status": "OPEN_PAPER_POSITION_NOT_PROVEN_EXECUTABLE",
-          "lastClosedUTC": "2026-11-25T14:00:00Z",
+          "lastClosedUTC": "2026-11-25T15:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 1,
@@ -173,18 +173,18 @@
         },
         "SOLUSDT": {
           "status": "FLAT_NO_CONFIRMED_TRADE",
-          "lastClosedUTC": "2026-11-25T14:00:00Z",
+          "lastClosedUTC": "2026-11-25T15:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         },
         "ETHUSDT": {
-          "status": "OPEN_PAPER_POSITION_NOT_PROVEN_EXECUTABLE",
-          "lastClosedUTC": "2026-11-25T14:00:00Z",
+          "status": "FLAT_NO_CONFIRMED_TRADE",
+          "lastClosedUTC": "2026-11-25T15:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
-          "hypotheticalOpenPositions": 1,
+          "hypotheticalOpenPositions": 0,
           "realOrders": 0
         }
       },
@@ -198,6 +198,16 @@
           "paperNetR9BpsPerSide": 1.85243206,
           "paperNetR25BpsPerSideStress": 1.59008905,
           "notRealOrderOrProvenExecution": true
+        },
+        {
+          "asset": "ETHUSDT",
+          "model": "V7_ORIGINAL",
+          "entryUTC": "2026-11-25T05:00:00Z",
+          "exitUTC": "2026-11-25T15:00:00Z",
+          "side": "bearish",
+          "paperNetR9BpsPerSide": 1.81484653,
+          "paperNetR25BpsPerSideStress": 1.48568482,
+          "notRealOrderOrProvenExecution": true
         }
       ],
       "brokerOrders": 0,
@@ -208,18 +218,18 @@
       "virtualPaperRiskPerTradeUSDT": 100.0,
       "riskPctOfInitialCapital": 10.0,
       "riskPerTradeIsHighAndNotRecommendedForLive": true,
-      "virtualEquityUSDT": 1185.243206,
-      "virtualRealizedPnlUSDT": 185.243206,
-      "virtualRealizedPnlStress25BpsUSDT": 159.008905,
-      "netRealizedPaperR9BpsPerSide": 1.852432,
-      "closedEligiblePaperTrades": 1,
-      "wins": 1,
+      "virtualEquityUSDT": 1366.727859,
+      "virtualRealizedPnlUSDT": 366.727859,
+      "virtualRealizedPnlStress25BpsUSDT": 307.577387,
+      "netRealizedPaperR9BpsPerSide": 3.667279,
+      "closedEligiblePaperTrades": 2,
+      "wins": 2,
       "losses": 0,
       "winRatePct": 100.0,
       "perAssetLatestState": {
         "BTCUSDT": {
           "status": "OPEN_PAPER_POSITION_NOT_PROVEN_EXECUTABLE",
-          "lastClosedUTC": "2026-11-25T14:00:00Z",
+          "lastClosedUTC": "2026-11-25T15:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 1,
@@ -227,18 +237,18 @@
         },
         "SOLUSDT": {
           "status": "FLAT_NO_CONFIRMED_TRADE",
-          "lastClosedUTC": "2026-11-25T14:00:00Z",
+          "lastClosedUTC": "2026-11-25T15:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
           "hypotheticalOpenPositions": 0,
           "realOrders": 0
         },
         "ETHUSDT": {
-          "status": "OPEN_PAPER_POSITION_NOT_PROVEN_EXECUTABLE",
-          "lastClosedUTC": "2026-11-25T14:00:00Z",
+          "status": "FLAT_NO_CONFIRMED_TRADE",
+          "lastClosedUTC": "2026-11-25T15:00:00Z",
           "newBOSWatches": 0,
           "retestsPending": 0,
-          "hypotheticalOpenPositions": 1,
+          "hypotheticalOpenPositions": 0,
           "realOrders": 0
         }
       },
@@ -251,6 +261,16 @@
           "side": "bearish",
           "paperNetR9BpsPerSide": 1.85243206,
           "paperNetR25BpsPerSideStress": 1.59008905,
+          "notRealOrderOrProvenExecution": true
+        },
+        {
+          "asset": "ETHUSDT",
+          "model": "V91_RETEST_MAX4H",
+          "entryUTC": "2026-11-25T05:00:00Z",
+          "exitUTC": "2026-11-25T15:00:00Z",
+          "side": "bearish",
+          "paperNetR9BpsPerSide": 1.81484653,
+          "paperNetR25BpsPerSideStress": 1.48568482,
           "notRealOrderOrProvenExecution": true
         }
       ],
