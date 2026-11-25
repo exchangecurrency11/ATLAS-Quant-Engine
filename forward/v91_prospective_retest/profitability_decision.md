@@ -14,11 +14,11 @@
 
 ## Gerçek zamanda kaydedilmiş sessiz paper
 
-Gerçekten saklanmış karşılaştırılabilir saat: **278**
+Gerçekten saklanmış karşılaştırılabilir saat: **280**
 
 | Coin | V7 kapanmış paper | V9.1 kapanmış paper |
 |---|---:|---:|
-| BTCUSDT | 0 | 0 |
+| BTCUSDT | 1 | 1 |
 | SOLUSDT | 1 | 1 |
 
 Gerçek icra fiyatı doğrulanmış işlem: **0**.
