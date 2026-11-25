@@ -2,12 +2,12 @@
 
 **GERÇEK EMİR, GERÇEK UYGULANABİLİR GİRİŞ VE KULLANICI BİLDİRİMİ YOK.**
 İleri paper başlangıç: 2026-11-12T11:00:00Z
-En son doğrulanmış kapanış: 2026-11-25T17:00:00Z
-Doğrulanan saat: 249
+En son doğrulanmış kapanış: 2026-11-25T18:00:00Z
+Doğrulanan saat: 250
 
 | Hesap | İşlem | Kazanç | Net R | Sanal PnL | Sanal bakiye |
 |---|---:|---:|---:|---:|---:|
-| V9.2 bağımsız | 1 | 100.0 | 1.852432 | 185.243206 USDT | 1185.243206 USDT |
+| V9.2 bağımsız | 2 | 100.0 | 2.331601 | 233.160117 USDT | 1233.160117 USDT |
 
 BTC yalnız izleme; SOL 1H/4H kapanmış Morning/Evening Star veya 3 mum teyitli Harami ve likidite geri dönüşüyle karşıt retest reddi.
 Hikkake, Engulfing, Three Soldiers/Crows yalnız gözlem.

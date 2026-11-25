@@ -5,7 +5,7 @@
 
 | Coin | Kapanmış işlem | Kazanan | Net R |
 |---|---:|---:|---:|
-| BTCUSDT | 0 | 0 | 0 |
+| BTCUSDT | 1 | 1 | 0.479169 |
 | ETHUSDT | 1 | 1 | 1.814847 |
 | SOLUSDT | 1 | 1 | 1.852432 |
 
@@ -13,12 +13,12 @@
 
 | Kaynak | Kaydedilen / beklenen | Eksik saat | Son doğrulanmış saat | Gecikme |
 |---|---:|---:|---|---:|
-| BTC_SOL | 249/320 | 71 | 2026-11-25T17:00:00Z | 1 saat |
+| BTC_SOL | 250/320 | 70 | 2026-11-25T18:00:00Z | 0 saat |
 | ETH | 256/319 | 63 | 2026-11-25T18:00:00Z | 0 saat |
 
 | Toplam | İşlem | Win % | Net R | Sanal PnL | Sanal bakiye |
 |---|---:|---:|---:|---:|---:|
-| V9.2 BTC+ETH+SOL | 2 | 100.0 | 3.667279 | 366.727859 USDT | 1366.727859 USDT |
+| V9.2 BTC+ETH+SOL | 3 | 100.0 | 4.146448 | 414.64477 USDT | 1414.64477 USDT |
 
 ETH ilk uygun saat (TSİ): 12 Kasım 2026 15.00; yeni saatlik ETH V7 + V9.1
  kaynakları Git'te doğrulanmışsa gözlem yapılır.
