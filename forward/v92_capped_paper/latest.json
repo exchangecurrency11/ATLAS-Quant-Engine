@@ -9,8 +9,8 @@
   "firstEligibleHourUTC": "2026-11-13T03:00:00Z",
   "noBrokerOrders": true,
   "mode": "V92_INDEPENDENT_CAPPED_10_20_SHADOW_PAPER_FORWARD_ONLY",
-  "lastClosed1HUTC": "2026-11-25T08:00:00Z",
-  "capturedAtUTC": "2026-11-25T08:31:22Z",
+  "lastClosed1HUTC": "2026-11-25T11:00:00Z",
+  "capturedAtUTC": "2026-11-25T11:42:07Z",
   "noUserNotifications": true,
   "noLegacyV7V91OrV92Modification": true,
   "noHistoricalBackfill": true,
@@ -36,20 +36,20 @@
   "observedEvents": [
     {
       "type": "SOURCE_HOUR_GAP",
-      "prevUTC": "2026-11-25T05:00:00Z",
-      "nowUTC": "2026-11-25T08:00:00Z",
+      "prevUTC": "2026-11-25T08:00:00Z",
+      "nowUTC": "2026-11-25T11:00:00Z",
       "historicalHoursBackfilled": false
     },
     {
-      "type": "CAPPED_INTENT_REJECTED",
-      "symbol": "ETHUSDT",
-      "reason": "UNSAFE_SOURCE_OR_NONCONSECUTIVE_HOUR"
+      "type": "NEW_INTENT_BLOCKED",
+      "symbol": "BTCUSDT",
+      "reason": "SOURCE_UNREADY_OR_SYMBOL_ALREADY_OPEN"
     }
   ],
   "sourceHashes": {
-    "coreV92Sha256": "bce48393b25961bde37ad09dca42f8630b5ab0c209113314fc4ee828a1509705",
-    "ethV92Sha256": "c3c1da4c8a6a2bd96aeef2efd90aa0b3499f07b00b2687f45b56486e31e973ac",
-    "verifiedV7ClosedCandlesSha256": "8eae99ac3d99baea505be9a1d3bfaee3eaf4f9f66e9c96e196420ca56f2ef307"
+    "coreV92Sha256": "3b9a0ad130768cbd7347348f60e9cd5e5326b8113627f3ef2bd5e35b018bfa89",
+    "ethV92Sha256": "23690272dbaa9f27571c7b0a99731c9d082ebe19033718d70d8157f7711413d0",
+    "verifiedV7ClosedCandlesSha256": "d93e7a3fb3c8b4e45d6a9676b1a8c45d12d0f95f5289e65303568a3dee981ced"
   },
-  "previousImmutableSnapshotSha256": "43fd3b89e47eb5a9710d626002d5c2551e34d37cbd176ef319bd2226057af423"
+  "previousImmutableSnapshotSha256": "9c7ce889f62da27d7e6b041cced82d86d40a77967ac6eac7086d15ce136d2e3d"
 }

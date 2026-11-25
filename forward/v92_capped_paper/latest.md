@@ -1,6 +1,6 @@
 # V9.2 — ayrı 10/20 USDT risk limitli paper hesap
 
-**Doğrulanmış kapanış (UTC):** 2026-11-25T08:00:00Z
+**Doğrulanmış kapanış (UTC):** 2026-11-25T11:00:00Z
 **Sanal gerçekleşmiş bakiye (9 bps/yön):** 1000.0000 USDT
 **25 bps stres bakiye:** 1000.0000 USDT
 **Kapanmış paper işlem:** 0
@@ -24,4 +24,4 @@ Funding, değişken spread, stop kayması, likidasyon ve gerçek fill doğrulanm
 
 ## Bu saatteki audit olayları
 - SOURCE_HOUR_GAP:
-- CAPPED_INTENT_REJECTED: ETHUSDT, UNSAFE_SOURCE_OR_NONCONSECUTIVE_HOUR
+- NEW_INTENT_BLOCKED: BTCUSDT, SOURCE_UNREADY_OR_SYMBOL_ALREADY_OPEN
