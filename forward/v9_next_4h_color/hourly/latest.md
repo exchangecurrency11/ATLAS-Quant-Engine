@@ -1,12 +1,12 @@
 # V9 SAATLİK BTC → ETH → SOL (paper gözlem)
 
-**Doğrulanmış 1H kapanışı:** 2026-11-25 04:00 TSİ. Her satır gerçek tamamlanmış mumdur. **Resmî V9 4H tahmini yalnız mum açılmadan kaydedilmişse geçerlidir.**
+**Doğrulanmış 1H kapanışı:** 2026-11-25 05:00 TSİ. Her satır gerçek tamamlanmış mumdur. **Resmî V9 4H tahmini yalnız mum açılmadan kaydedilmişse geçerlidir.**
 
 | Varlık | 1H kapanış | 1H rengi | 1H RSI | 4H yön bağlamı | Daily yön bağlamı |
 |---|---:|---|---:|---|---|
-| BTCUSDT | 59,632.3000 | RED | 41.76 | BEARISH | BEARISH |
-| ETHUSDT | 1,672.7800 | RED | 40.80 | BEARISH | BEARISH |
-| SOLUSDT | 69.6100 | RED | 41.89 | BEARISH | BEARISH |
+| BTCUSDT | 59,244.0000 | RED | 37.58 | BEARISH | BEARISH |
+| ETHUSDT | 1,657.5900 | RED | 35.40 | BEARISH | BEARISH |
+| SOLUSDT | 69.0000 | RED | 37.06 | BEARISH | BEARISH |
 
 ## Önceden kaydedilmiş 4H yön tahmini
 - **Aktif 4H** (2026-11-25T00:00:00Z): BTCUSDT: RED, ETHUSDT: RED, SOLUSDT: GREEN — kayıt: 2026-11-24T23:35:11Z
