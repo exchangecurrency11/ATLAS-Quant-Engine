@@ -3,25 +3,14 @@
   "realizedPaperPnL9BpsUSDT": 0.0,
   "realizedPaperPnL25BpsUSDT": 0.0,
   "openPositions": {},
-  "intentNextObservation": {
-    "ETHUSDT": {
-      "symbol": "ETHUSDT",
-      "side": "bearish",
-      "stop": 1675.9562142857144,
-      "watchKnownUTC": 1795572000,
-      "retestKnownUTC": 1795582800,
-      "sourceV92SealedCloseUTC": "2026-11-25T05:00:00Z",
-      "paperOnlyNoRealOrder": true,
-      "notAnEntryOrActualFill": true
-    }
-  },
+  "intentNextObservation": {},
   "closedTrades": [],
   "historyFrozenByMissingHour": false,
   "firstEligibleHourUTC": "2026-11-13T03:00:00Z",
   "noBrokerOrders": true,
   "mode": "V92_INDEPENDENT_CAPPED_10_20_SHADOW_PAPER_FORWARD_ONLY",
-  "lastClosed1HUTC": "2026-11-25T05:00:00Z",
-  "capturedAtUTC": "2026-11-25T05:39:36Z",
+  "lastClosed1HUTC": "2026-11-25T08:00:00Z",
+  "capturedAtUTC": "2026-11-25T08:31:22Z",
   "noUserNotifications": true,
   "noLegacyV7V91OrV92Modification": true,
   "noHistoricalBackfill": true,
@@ -43,19 +32,24 @@
   "paperRealizedEquityStress25BpsUSDT": 1000.0,
   "closedPaperTrades": 0,
   "paperEntriesEverRecorded": 0,
-  "entryEligibilityForThisHour": true,
+  "entryEligibilityForThisHour": false,
   "observedEvents": [
     {
-      "type": "CAPPED_PENDING_INTENT_BEFORE_FUTURE_PRICE",
+      "type": "SOURCE_HOUR_GAP",
+      "prevUTC": "2026-11-25T05:00:00Z",
+      "nowUTC": "2026-11-25T08:00:00Z",
+      "historicalHoursBackfilled": false
+    },
+    {
+      "type": "CAPPED_INTENT_REJECTED",
       "symbol": "ETHUSDT",
-      "side": "bearish",
-      "retestCloseUTC": "2026-11-25T05:00:00Z"
+      "reason": "UNSAFE_SOURCE_OR_NONCONSECUTIVE_HOUR"
     }
   ],
   "sourceHashes": {
-    "coreV92Sha256": "351b981f1133f46726d0bbd4632db42e9651ec20059a39a611433c82789c3185",
-    "ethV92Sha256": "969b88f6cbcab8268d287bc2e6d49312ba6241811f4dcbce5bd7b044199cb2da",
-    "verifiedV7ClosedCandlesSha256": "5c41eff46bf2fe313cde1b6d0dc80313b52efc1cd7bbacaa51e9956258062a14"
+    "coreV92Sha256": "bce48393b25961bde37ad09dca42f8630b5ab0c209113314fc4ee828a1509705",
+    "ethV92Sha256": "c3c1da4c8a6a2bd96aeef2efd90aa0b3499f07b00b2687f45b56486e31e973ac",
+    "verifiedV7ClosedCandlesSha256": "8eae99ac3d99baea505be9a1d3bfaee3eaf4f9f66e9c96e196420ca56f2ef307"
   },
-  "previousImmutableSnapshotSha256": "1c621491aa9ad08f331959e86da2376fe784ceb020f237f2b5df952991ce4333"
+  "previousImmutableSnapshotSha256": "43fd3b89e47eb5a9710d626002d5c2551e34d37cbd176ef319bd2226057af423"
 }
