@@ -1,26 +1,26 @@
 {
   "mode": "V91_PROSPECTIVE_CAUSAL_PAPER_SCOREBOARD",
   "sinceFirstActualSavedVerifiedCaptureUTC": "2026-11-11T16:00:00Z",
-  "savedDistinctVerifiedHours": 278,
+  "savedDistinctVerifiedHours": 279,
   "results": {
     "BTCUSDT": {
       "V7_ORIGINAL": {
-        "eligibleClosedPaperTrades": 0,
-        "wins": 0,
-        "winRatePct": null,
-        "totalNetR9BpsPerSide": 0,
-        "averageNetR9BpsPerSide": null,
-        "totalNetR25BpsPerSide": 0,
+        "eligibleClosedPaperTrades": 1,
+        "wins": 1,
+        "winRatePct": 100.0,
+        "totalNetR9BpsPerSide": 0.4792,
+        "averageNetR9BpsPerSide": 0.4792,
+        "totalNetR25BpsPerSide": 0.1458,
         "profitFactorR": null,
         "maxDrawdownR": 0.0
       },
       "V91_RETEST_MAX4H": {
-        "eligibleClosedPaperTrades": 0,
-        "wins": 0,
-        "winRatePct": null,
-        "totalNetR9BpsPerSide": 0,
-        "averageNetR9BpsPerSide": null,
-        "totalNetR25BpsPerSide": 0,
+        "eligibleClosedPaperTrades": 1,
+        "wins": 1,
+        "winRatePct": 100.0,
+        "totalNetR9BpsPerSide": 0.4792,
+        "averageNetR9BpsPerSide": 0.4792,
+        "totalNetR25BpsPerSide": 0.1458,
         "profitFactorR": null,
         "maxDrawdownR": 0.0
       }
@@ -60,8 +60,62 @@
   },
   "tradeLedger": {
     "BTCUSDT": {
-      "V7_ORIGINAL": [],
-      "V91_RETEST_MAX4H": []
+      "V7_ORIGINAL": [
+        {
+          "entryUTC": "2026-11-25T11:00:00Z",
+          "exitUTC": "2026-11-25T18:00:00Z",
+          "side": "bearish",
+          "netR9Bps": 0.47916911,
+          "netR25Bps": 0.14584012,
+          "paperOnlyNoRealExecution": true,
+          "diagnosticAtPreviouslySealedRetest": {
+            "observationOnlyNoVeto": true,
+            "status": "DIAGNOSTIC_VERIFIED_CLOSED_1H",
+            "strongGateWouldPassButIsNotActive": false,
+            "hypotheticalGateRejectionReasons": [
+              "WEAK_RETEST_REJECTION",
+              "V91_CLOSE_NOT_0_20_ATR_BEYOND_BOS",
+              "V91_RETEST_VOLUME_BELOW_PRIOR20"
+            ],
+            "closed1HRetraceFeatures": {
+              "closeBeyondBOS_ATR": 0.08696,
+              "directionalBody_ATR": 0.38023,
+              "directionalCloseLocation": 0.71776,
+              "retestRelativeVolume20": 0.46693,
+              "retestClosedAtUTC": 1795604400,
+              "noFutureEntryCandleUsed": true
+            }
+          }
+        }
+      ],
+      "V91_RETEST_MAX4H": [
+        {
+          "entryUTC": "2026-11-25T11:00:00Z",
+          "exitUTC": "2026-11-25T18:00:00Z",
+          "side": "bearish",
+          "netR9Bps": 0.47916911,
+          "netR25Bps": 0.14584012,
+          "paperOnlyNoRealExecution": true,
+          "diagnosticAtPreviouslySealedRetest": {
+            "observationOnlyNoVeto": true,
+            "status": "DIAGNOSTIC_VERIFIED_CLOSED_1H",
+            "strongGateWouldPassButIsNotActive": false,
+            "hypotheticalGateRejectionReasons": [
+              "WEAK_RETEST_REJECTION",
+              "V91_CLOSE_NOT_0_20_ATR_BEYOND_BOS",
+              "V91_RETEST_VOLUME_BELOW_PRIOR20"
+            ],
+            "closed1HRetraceFeatures": {
+              "closeBeyondBOS_ATR": 0.08696,
+              "directionalBody_ATR": 0.38023,
+              "directionalCloseLocation": 0.71776,
+              "retestRelativeVolume20": 0.46693,
+              "retestClosedAtUTC": 1795604400,
+              "noFutureEntryCandleUsed": true
+            }
+          }
+        }
+      ]
     },
     "SOLUSDT": {
       "V7_ORIGINAL": [
