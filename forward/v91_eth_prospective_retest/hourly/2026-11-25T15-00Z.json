@@ -1,0 +1,138 @@
+{
+  "mode": "V91_ETH_PROSPECTIVE_4H_RETEST_IMMUTABLE_PAPER_SHADOW",
+  "symbol": "ETHUSDT",
+  "originalV7Reference": "ETHUSDT_PERP.A",
+  "targetClosed1HUTC": "2026-11-25T15:00:00Z",
+  "capturedAtUTC": "2026-11-25T15:16:23Z",
+  "originalV7CapturedAtUTC": "2026-11-25T15:15:16Z",
+  "source": "Coinalyze Binance ETHUSDT perpetual; exact same instrument",
+  "sourceIntegrity": {
+    "1hour": {
+      "closeUTC": "2026-11-25T15:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "4hour": {
+      "closeUTC": "2026-11-25T12:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "daily": {
+      "closeUTC": "2026-11-25T00:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    }
+  },
+  "sourceSHA256NewFetch": {
+    "1hour": "abe7cfef38aa23a43cb5c709026ff0fbe21221361fe9a3213299045ff16274b7",
+    "4hour": "51c789cc47f97e106cab61d89b8bafeb2c6c36c1d7681ad3c5ad3713a16d4031",
+    "daily": "8de7e0fb7695653979d1257aa7bd2f615a6ed1c1d87d4a011eaaf38a6218a2c2"
+  },
+  "crossTimeframeOHLCV": {
+    "1H_matches_4H": 5,
+    "1H_matches_daily": 5
+  },
+  "verifiedSourceAndExactV7Replay": true,
+  "independentBinanceMarketTruthEstablished": false,
+  "BTCandSOLV91ScoreboardUnaffected": true,
+  "retentionRuleHours": {
+    "V7_ORIGINAL": 6,
+    "V91_RETEST_MAX4H": 4
+  },
+  "sourceClose1H": 1645.44,
+  "originalV7": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [
+      {
+        "side": "bearish",
+        "watchKnownUTC": 1795572000,
+        "retestKnownUTC": 1795582800,
+        "entryOpenUTC": 1795582800,
+        "entry": 1659.82,
+        "stop": 1675.9562142857144,
+        "targets": [
+          1643.6837857142855,
+          1627.547571428571,
+          1611.4113571428566
+        ],
+        "risk": 16.13621428571446,
+        "realizedR": 2.0,
+        "targetCount": 3,
+        "exitKnownUTC": 1795618800,
+        "exitReason": "TP3_COMPLETE",
+        "feeSlippageAssumptionBpsPerSide": 9,
+        "netRIllustrative": 1.8148465341932762
+      }
+    ],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": null
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 1
+  },
+  "max4hRetest": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [
+      {
+        "side": "bearish",
+        "watchKnownUTC": 1795572000,
+        "retestKnownUTC": 1795582800,
+        "entryOpenUTC": 1795582800,
+        "entry": 1659.82,
+        "stop": 1675.9562142857144,
+        "targets": [
+          1643.6837857142855,
+          1627.547571428571,
+          1611.4113571428566
+        ],
+        "risk": 16.13621428571446,
+        "realizedR": 2.0,
+        "targetCount": 3,
+        "exitKnownUTC": 1795618800,
+        "exitReason": "TP3_COMPLETE",
+        "feeSlippageAssumptionBpsPerSide": 9,
+        "netRIllustrative": 1.8148465341932762
+      }
+    ],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": null
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 1
+  },
+  "retestDiagnosticsOnlyNoEntryVeto": {
+    "originalV7": null,
+    "max4hRetest": null
+  },
+  "noBackfill": true,
+  "entryAtNextOpenIsHistoricalUnverifiedFill": true,
+  "realTimeExecutableOrderCountVerified": 0,
+  "noUserNotifications": true,
+  "noBrokerOrders": true,
+  "V7AndV9ProductionAndSignalsUnchanged": true
+}
