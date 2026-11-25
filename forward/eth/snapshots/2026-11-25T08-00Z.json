@@ -1,0 +1,218 @@
+{
+  "mode": "ETH_V7_INDEPENDENT_PAPER_FORWARD_NO_ORDERS",
+  "symbol": "ETHUSDT_PERP.A",
+  "exchange": "Binance",
+  "observedAtUTC": "2026-11-25T08:15:11Z",
+  "targetClosed1HUTC": "2026-11-25T08:00:00Z",
+  "status": "VERIFIED_PAPER_OBSERVATION",
+  "brokerOrders": false,
+  "productionSystemModified": false,
+  "paperForwardObservation": true,
+  "marketContext": {
+    "ETHUSDT_PERP.A": {
+      "checkedClosed1HUTC": "2026-11-25T08:00:00Z",
+      "timeframes": {
+        "1hour": {
+          "closeTimeUTC": "2026-11-25T08:00:00Z",
+          "candle": {
+            "open": 1659.35,
+            "high": 1664.6,
+            "low": 1632.23,
+            "close": 1640.35,
+            "volume": 384309.1830000008,
+            "volumeChangePct": 291.2006797995338
+          },
+          "indicators": {
+            "RSI14": 31.9834,
+            "EMA20": 1670.9872,
+            "EMA50": 1687.9698,
+            "EMA200": 1738.4879,
+            "MACDHistogram": -1.53865
+          },
+          "directionVotes": {
+            "label": "bearish",
+            "score": -4
+          }
+        },
+        "4hour": {
+          "closeTimeUTC": "2026-11-25T08:00:00Z",
+          "candle": {
+            "open": 1663.8,
+            "high": 1666.62,
+            "low": 1632.23,
+            "close": 1640.35,
+            "volume": 691522.226000001,
+            "volumeChangePct": 8.130597104093763
+          },
+          "indicators": {
+            "RSI14": 36.3894,
+            "EMA20": 1693.3139,
+            "EMA50": 1741.2343,
+            "EMA200": 2022.6998,
+            "MACDHistogram": -4.578797
+          },
+          "directionVotes": {
+            "label": "bearish",
+            "score": -4
+          }
+        },
+        "daily": {
+          "closeTimeUTC": "2026-11-25T00:00:00Z",
+          "candle": {
+            "open": 1709.85,
+            "high": 1721.14,
+            "low": 1663.17,
+            "close": 1679.4,
+            "volume": 4350930.0330002345,
+            "volumeChangePct": -30.341637786093013
+          },
+          "indicators": {
+            "RSI14": 27.9128,
+            "EMA20": 1886.01,
+            "EMA50": 2111.5469,
+            "EMA200": 2178.443,
+            "MACDHistogram": -7.696531
+          },
+          "directionVotes": {
+            "label": "bearish",
+            "score": -4
+          }
+        }
+      },
+      "newStructureEventsAtClose": [
+        {
+          "event": "BOS",
+          "direction": "bearish",
+          "at": 1795590000,
+          "confirmedAt": 1795593600,
+          "brokenSwingAt": 1795575600,
+          "brokenLevel": 1648.0,
+          "knownAtUTC": "2026-11-25T08:00:00Z"
+        }
+      ],
+      "newBOSCount": 1,
+      "bosQualityBreakdown": [
+        {
+          "direction": "bearish",
+          "level": 1648.0,
+          "gate": {
+            "passed": true,
+            "reasons": [],
+            "warnings": [],
+            "features": {
+              "breakATR": 0.533287,
+              "relativeVolume20": 2.338792,
+              "ema20ExtensionATR": 2.135738
+            }
+          },
+          "higherTFalignedWithBOS": true,
+          "momentumAlignedWithBOS": true,
+          "previousHourVolumeIncrease20Pct": true
+        }
+      ],
+      "higherTimeframesAgree": true,
+      "atr14_1H": 14.345,
+      "relativeVolume20_1H": 2.33879,
+      "noSignalExplanation": "BOS_PRESENT_WAIT_FOR_SEPARATE_RETEST",
+      "caution": "BOS is not an entry; retest and next-open are required."
+    }
+  },
+  "results": {
+    "ETHUSDT_PERP.A": {
+      "V4_baseline": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": {
+            "side": "bearish",
+            "watchKnownUTC": 1795572000,
+            "retestKnownUTC": 1795582800,
+            "level": 1663.17,
+            "stop": 1675.9562142857144,
+            "entry": 1659.82,
+            "entryOpenUTC": 1795582800,
+            "risk": 16.13621428571446,
+            "targets": [
+              1643.6837857142855,
+              1627.547571428571,
+              1611.4113571428566
+            ],
+            "targetCount": 1,
+            "realizedR": 0.3333333333333333,
+            "heldBars": 3
+          }
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_filter": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": {
+            "side": "bearish",
+            "watchKnownUTC": 1795572000,
+            "retestKnownUTC": 1795582800,
+            "level": 1663.17,
+            "stop": 1675.9562142857144,
+            "entry": 1659.82,
+            "entryOpenUTC": 1795582800,
+            "risk": 16.13621428571446,
+            "targets": [
+              1643.6837857142855,
+              1627.547571428571,
+              1611.4113571428566
+            ],
+            "targetCount": 1,
+            "realizedR": 0.3333333333333333,
+            "heldBars": 3
+          }
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      },
+      "V7_signal_plus_retest": {
+        "newWatchAtThisClose": [],
+        "paperTradeExitsObservedAtThisClose": [],
+        "currentPaperState": {
+          "activeBOSWatch": null,
+          "pendingNextOpenPaperEntry": null,
+          "openHypotheticalPosition": {
+            "side": "bearish",
+            "watchKnownUTC": 1795572000,
+            "retestKnownUTC": 1795582800,
+            "level": 1663.17,
+            "stop": 1675.9562142857144,
+            "entry": 1659.82,
+            "entryOpenUTC": 1795582800,
+            "risk": 16.13621428571446,
+            "targets": [
+              1643.6837857142855,
+              1627.547571428571,
+              1611.4113571428566
+            ],
+            "targetCount": 1,
+            "realizedR": 0.3333333333333333,
+            "heldBars": 3
+          }
+        },
+        "diagnosticTotalRollingWindowAlerts": 1,
+        "diagnosticTotalRollingWindowClosedTrades": 0
+      }
+    }
+  },
+  "dataSource": "Coinalyze ETHUSDT_PERP.A / Binance perpetual read-only API",
+  "sourceSHA256": {
+    "1hour": "9ea7b615449d724311a7561166276b75edc8d41a60f8eb0df3b0f1cf5ad7aa45",
+    "4hour": "100f761ad9f7be289bfeffe78690c155b01040820ab937f28c720a6e03ee2294",
+    "daily": "28e8ea350ef8a42883ba17d4d1eaa2be6ff1e5a7abda418dfa062e39270f8b99"
+  },
+  "crossTimeframeOHLCVVerifiedLast5": {
+    "1H_matches_4H": 5,
+    "1H_matches_daily": 5
+  }
+}
