@@ -1,0 +1,191 @@
+{
+  "mode": "V92_ETH_VERIFIED_HOURLY_CANDLES_OBSERVATIONAL_PAPER",
+  "symbol": "ETHUSDT",
+  "targetClosed1HUTC": "2026-11-25T06:00:00Z",
+  "capturedAtUTC": "2026-11-25T06:16:42Z",
+  "originalV91CapturedAtUTC": "2026-11-25T06:16:25Z",
+  "originalV7ObservedAtUTC": "2026-11-25T06:15:15Z",
+  "verifiedSourceAndExactV7AndV91Replay": true,
+  "sourceIntegrity": {
+    "1hour": {
+      "closeUTC": "2026-11-25T06:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "4hour": {
+      "closeUTC": "2026-11-25T04:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "daily": {
+      "closeUTC": "2026-11-25T00:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    }
+  },
+  "sourceHashesIndependentRead": {
+    "1hour": "60b10cd4ecd8d6c21f05320061aec9f9a98b43deeda074eb3fb60430e79c34cf",
+    "4hour": "c867776a7d11c1563c4e1af0470ff08b89bd272c50104b960fd16b0c45e463f6",
+    "daily": "563fb9abeeea992bf73bd5c121580e0d6506567dc30dc0c69b7acd50d0b0e267"
+  },
+  "crossTimeframeOHLCV": {
+    "1H_matches_4H": 5,
+    "1H_matches_daily": 5
+  },
+  "independentBinanceTruthNotEstablished": true,
+  "ethReversalPatternRecognition1H4H": {
+    "1H": {
+      "lastCompletedCandleCloseUTC": "2026-11-25T06:00:00Z",
+      "confirmedReversalPatterns": [],
+      "ethObservationalOnlyNoAutoVeto": true
+    },
+    "4H": {
+      "lastCompletedCandleCloseUTC": "2026-11-25T04:00:00Z",
+      "confirmedReversalPatterns": [],
+      "ethObservationalOnlyNoAutoVeto": true
+    }
+  },
+  "ethHigherTimeframeRecognition1D3D": {
+    "1D": {
+      "lastClosedCandleUTC": "2026-11-25T00:00:00Z",
+      "closedCandlesAvailable": 259,
+      "close": 1679.4,
+      "EMA20": 1886.0099744,
+      "EMA50": 2111.54215174,
+      "trendByCloseVsEMA20EMA50": "bearish",
+      "observedReversalsAtLastCompletedCandle": [],
+      "onlyFullyClosedCandlesUsed": true,
+      "informationOnlyNotAutomaticNewTrade": true,
+      "notVetoOrEntryFilter": true,
+      "threeDaySource": "VERIFIED_ORIGINAL_DAILY_CLOSED_OHLCV",
+      "exchangeNative3DParityNotProven": false
+    },
+    "3D": {
+      "lastClosedCandleUTC": "2026-11-24T00:00:00Z",
+      "closedCandlesAvailable": 86,
+      "close": 1709.85,
+      "EMA20": 2134.19102,
+      "EMA50": 2203.78815129,
+      "trendByCloseVsEMA20EMA50": "bearish",
+      "observedReversalsAtLastCompletedCandle": [],
+      "onlyFullyClosedCandlesUsed": true,
+      "informationOnlyNotAutomaticNewTrade": true,
+      "notVetoOrEntryFilter": true,
+      "threeDaySource": "DERIVED_UTC_UNIX_EPOCH_ALIGNED_3_COMPLETE_DAILY_OHLCV_BARS",
+      "exchangeNative3DParityNotProven": true
+    }
+  },
+  "originalV7": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": {
+        "side": "bearish",
+        "watchKnownUTC": 1795572000,
+        "retestKnownUTC": 1795582800,
+        "level": 1663.17,
+        "stop": 1675.9562142857144,
+        "entry": 1659.82,
+        "entryOpenUTC": 1795582800,
+        "risk": 16.13621428571446,
+        "targets": [
+          1643.6837857142855,
+          1627.547571428571,
+          1611.4113571428566
+        ],
+        "targetCount": 0,
+        "realizedR": 0.0,
+        "heldBars": 1
+      }
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 0
+  },
+  "originalV91": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": {
+        "side": "bearish",
+        "watchKnownUTC": 1795572000,
+        "retestKnownUTC": 1795582800,
+        "level": 1663.17,
+        "stop": 1675.9562142857144,
+        "entry": 1659.82,
+        "entryOpenUTC": 1795582800,
+        "risk": 16.13621428571446,
+        "targets": [
+          1643.6837857142855,
+          1627.547571428571,
+          1611.4113571428566
+        ],
+        "targetCount": 0,
+        "realizedR": 0.0,
+        "heldBars": 1
+      }
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 0
+  },
+  "selectedV92": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": {
+        "side": "bearish",
+        "watchKnownUTC": 1795572000,
+        "retestKnownUTC": 1795582800,
+        "level": 1663.17,
+        "stop": 1675.9562142857144,
+        "entry": 1659.82,
+        "entryOpenUTC": 1795582800,
+        "risk": 16.13621428571446,
+        "targets": [
+          1643.6837857142855,
+          1627.547571428571,
+          1611.4113571428566
+        ],
+        "targetCount": 0,
+        "realizedR": 0.0,
+        "heldBars": 1
+      }
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 0
+  },
+  "ethV92RetestVetoEnabled": false,
+  "ethPatternObservationsOnly": true,
+  "sameV91Max4hEntryStopTPAndExitLogic": true,
+  "notNewETHTradeFromCandleAlone": true,
+  "noRetroactiveBackfill": true,
+  "originalBTCAndSOLV92RulesUnchanged": true,
+  "noBrokerOrders": true,
+  "noUserNotifications": true
+}
