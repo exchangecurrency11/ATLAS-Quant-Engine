@@ -1,0 +1,91 @@
+{
+  "mode": "V91_COINBASE_HOURLY_SPOT_INDEPENDENT_SHADOW_READ_ONLY",
+  "targetClosed1HUTC": "2026-11-26T22:00:00Z",
+  "observedAtUTC": "2026-11-26T22:27:31.853990Z",
+  "venue": "COINBASE_EXCHANGE_SPOT_USD_NOT_BINANCE_USDM_FUTURES",
+  "assets": {
+    "BTC": {
+      "coinbaseSpotClosed1H": {
+        "status": "VALID_COINBASE_SPOT_CLOSED_1H",
+        "httpCode": 200,
+        "candle": {
+          "openTimeUTC": "2026-11-26T21:00:00Z",
+          "closeTimeUTC": "2026-11-26T22:00:00Z",
+          "open": 60687.3,
+          "high": 60923.01,
+          "low": 60686.08,
+          "close": 60740.49,
+          "spotBaseVolume": 140.18542703
+        }
+      },
+      "sameHourSpotVsPerpetualContext": {
+        "coinbaseSpot1HReturnBps": 8.7646,
+        "coinalyzePerpetual1HReturnBps": 8.7094,
+        "returnDifferenceBps": 0.0552,
+        "sameHourlyCandleDirection": true,
+        "comparisonType": "DIRECTION_AND_RETURN_ONLY_DIFFERENT_MARKETS",
+        "notDirectPriceOrVolumeParity": true,
+        "notAnEntryFilterOrSignal": true
+      }
+    },
+    "ETH": {
+      "coinbaseSpotClosed1H": {
+        "status": "VALID_COINBASE_SPOT_CLOSED_1H",
+        "httpCode": 200,
+        "candle": {
+          "openTimeUTC": "2026-11-26T21:00:00Z",
+          "closeTimeUTC": "2026-11-26T22:00:00Z",
+          "open": 1702.42,
+          "high": 1708.37,
+          "low": 1701.43,
+          "close": 1702.7,
+          "spotBaseVolume": 4410.89355003
+        }
+      },
+      "sameHourSpotVsPerpetualContext": {
+        "coinbaseSpot1HReturnBps": 1.6447,
+        "coinalyzePerpetual1HReturnBps": 2.9345,
+        "returnDifferenceBps": -1.2898,
+        "sameHourlyCandleDirection": true,
+        "comparisonType": "DIRECTION_AND_RETURN_ONLY_DIFFERENT_MARKETS",
+        "notDirectPriceOrVolumeParity": true,
+        "notAnEntryFilterOrSignal": true
+      }
+    },
+    "SOL": {
+      "coinbaseSpotClosed1H": {
+        "status": "VALID_COINBASE_SPOT_CLOSED_1H",
+        "httpCode": 200,
+        "candle": {
+          "openTimeUTC": "2026-11-26T21:00:00Z",
+          "closeTimeUTC": "2026-11-26T22:00:00Z",
+          "open": 71.2,
+          "high": 71.75,
+          "low": 71.19,
+          "close": 71.56,
+          "spotBaseVolume": 26601.38435297
+        }
+      },
+      "sameHourSpotVsPerpetualContext": {
+        "coinbaseSpot1HReturnBps": 50.5618,
+        "coinalyzePerpetual1HReturnBps": 47.7126,
+        "returnDifferenceBps": 2.8492,
+        "sameHourlyCandleDirection": true,
+        "comparisonType": "DIRECTION_AND_RETURN_ONLY_DIFFERENT_MARKETS",
+        "notDirectPriceOrVolumeParity": true,
+        "notAnEntryFilterOrSignal": true
+      }
+    }
+  },
+  "coinalyzeComparisonStatus": "V9_SAME_HOUR_AVAILABLE",
+  "successAllThreeCoinbaseSpotClosed1H": true,
+  "allThreeSameHourV9Comparisons": true,
+  "noIndependentLiveBinancePerpetualOHLCParity": true,
+  "noCoinalyzeVolumeParityClaim": true,
+  "noEntrySignalOrVeto": true,
+  "originalV7Unmodified": true,
+  "v91RulesUnmodified": true,
+  "noBrokerOrders": true,
+  "noNotifications": true,
+  "noPaperTradesSynthesized": true
+}
