@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-26T01:00:00Z",
+      "lastCloseTimeUTC": "2026-11-26T02:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -393,16 +393,9 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-26T01:00:00Z",
+      "lastCloseTimeUTC": "2026-11-26T02:00:00Z",
       "closedCandles": 300,
       "structure": [
-        {
-          "event": "BOS",
-          "direction": "bullish",
-          "at": 1794913200,
-          "brokenSwingAt": 1794891600,
-          "brokenLevel": 73.27
-        },
         {
           "event": "BOS",
           "direction": "bullish",
@@ -479,31 +472,16 @@
           "at": 1795633200,
           "brokenSwingAt": 1795561200,
           "brokenLevel": 70.08
+        },
+        {
+          "event": "BOS",
+          "direction": "bullish",
+          "at": 1795654800,
+          "brokenSwingAt": 1795633200,
+          "brokenLevel": 71.03
         }
       ],
       "candidateOrderBlocks": [
-        {
-          "side": "bearish",
-          "event": "BOS",
-          "originAt": 1795518000,
-          "confirmedAt": 1795528800,
-          "breakAt": 1795525200,
-          "brokenLevel": 70.04,
-          "body": {
-            "low": 70.42,
-            "high": 70.84
-          },
-          "wick": {
-            "low": 69.89,
-            "high": 70.95
-          },
-          "volumeRatio": 2.067,
-          "fvgConfluence": false,
-          "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "retested",
-          "retests": 3,
-          "invalidatedAt": null
-        },
         {
           "side": "bullish",
           "event": "CHoCH",
@@ -529,28 +507,6 @@
       ],
       "recentInvalidatedOrderBlocks": [
         {
-          "side": "bearish",
-          "event": "BOS",
-          "originAt": 1795219200,
-          "confirmedAt": 1795233600,
-          "breakAt": 1795230000,
-          "brokenLevel": 67.08,
-          "body": {
-            "low": 68.83,
-            "high": 68.92
-          },
-          "wick": {
-            "low": 68.71,
-            "high": 69.11
-          },
-          "volumeRatio": 3.434,
-          "fvgConfluence": false,
-          "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "invalidated",
-          "retests": 1,
-          "invalidatedAt": 1795262400
-        },
-        {
           "side": "bullish",
           "event": "CHoCH",
           "originAt": 1795255200,
@@ -571,6 +527,28 @@
           "state": "invalidated",
           "retests": 1,
           "invalidatedAt": 1795590000
+        },
+        {
+          "side": "bearish",
+          "event": "BOS",
+          "originAt": 1795518000,
+          "confirmedAt": 1795528800,
+          "breakAt": 1795525200,
+          "brokenLevel": 70.04,
+          "body": {
+            "low": 70.42,
+            "high": 70.84
+          },
+          "wick": {
+            "low": 69.89,
+            "high": 70.95
+          },
+          "volumeRatio": 2.067,
+          "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "invalidated",
+          "retests": 3,
+          "invalidatedAt": 1795654800
         },
         {
           "side": "bearish",
@@ -637,13 +615,6 @@
         },
         {
           "kind": "equal_lows",
-          "level": 70.825,
-          "firstPivotAt": 1794751200,
-          "secondPivotAt": 1794765600,
-          "note": "Potential chart liquidity; not live order-book data"
-        },
-        {
-          "kind": "equal_lows",
           "level": 72.23,
           "firstPivotAt": 1795017600,
           "secondPivotAt": 1795039200,
@@ -665,9 +636,9 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 2,
+        "activeCandidateOB": 1,
         "openFVG": 2,
-        "structureEventsInLookback": 16
+        "structureEventsInLookback": 17
       }
     },
     {
