@@ -499,3 +499,44 @@ Do not treat the current BTC/SOL Binance-perpetual implementation as a universal
 
 **Next review**
 Inspect the two workflow files (`.github/workflows/publish-market-structure.yml` and `.github/workflows/test-market-structure.yml`) before approving changes. Then design lane-level failure-isolation tests, including one failed lane while other lanes successfully refresh, stale last-known-good retention, recovery after source restoration, and concurrent publication safety. Keep the current P0 work isolated; do not merge or enable production publishing until the review and tests are complete.
+
+
+### 8.11 P0 GitHub Actions workflow review — both workflow files received
+
+Reviewed the complete user-pasted contents of:
+- `.github/workflows/publish-market-structure.yml`
+- `.github/workflows/test-market-structure.yml`
+
+**Publisher workflow findings**
+- Triggers on successful completion of `Publish BTC SOL Market Data` on `main`, manual dispatch, and a push changing the publisher workflow file on `main`.
+- Uses one concurrency group for structure publication with `cancel-in-progress: false`.
+- Checks out `main`, then downloads `1hour`, `4hour`, and `daily` history sequentially from the Cloudflare Worker, then runs `scripts/market_structure_publish.py`.
+- Global workflow permission is `contents: write`; consider least-privilege scoping at job level with read-only workflow default and write only for the publishing job.
+- A failure in any one sequential history download fails the shell step and therefore blocks the entire structure run. This is consistent with current all-six-groups builder/publisher behavior, but conflicts with the agreed future independent-lane fault-isolation goal.
+- The workflow fetches three history responses independently. Matching last-close timestamps does not prove candle-by-candle OHLCV identity between history and the OHLCV source used to publish `market_data.json`. The builder currently checks group readiness, candle count and closure alignment, not full OHLCV parity.
+- The one combined `market_structure_data.json` output and six-group all-or-nothing validator mean one bad lane can prevent healthy lanes from updating.
+- The workflow has no explicit artifact/source-manifest handoff tying the structure calculation to the exact immutable OHLCV package used by the market-data publisher.
+- Its name and endpoint/symbol scope remain BTC/SOL-specific; this is not yet the multi-asset/multi-market engine architecture.
+
+**Test workflow findings**
+- Runs the full `tests/test_*.py` unittest discovery on configured pushes, pull requests targeting `main`, and manual dispatch.
+- Uses Python 3.12, `actions/checkout@v5`, `actions/setup-python@v6`, and workflow-level `contents: read`.
+- Pull requests targeting `main` are tested without granting write permissions.
+- The push path filters include the engine, builder, publisher, both relevant test files, and the workflows themselves.
+- Consider adding a timeout and a concurrency policy for redundant CI runs; these are maintainability improvements, not the central P0 correctness gap.
+- Manual dispatch is not explicitly restricted to `main`; the job is read-only, so this is not a production-write exposure, but branch/ref behavior should be intentional and tested.
+- The workflow's BTC/SOL naming reflects the current limited scope.
+
+**Review conclusion**
+The current workflows are internally consistent with a single combined BTC/SOL structure publication, and the 23 publisher tests passed in the user's isolated worktree. However, they do not implement independent instrument/timeframe collection, validation, recovery, or publishing. A single failed history request currently blocks the complete Structure job. Same-close validation is weaker than exact OHLCV input identity.
+
+**Required P0 architecture before acceptance**
+1. Produce or identify one immutable, validated OHLCV source package/manifest per instrument × venue/source × timeframe lane. Include source identity, interval, close timestamp, candle count/range, and deterministic content hash.
+2. Ensure downstream analysis consumes that exact package or verifies exact candle-by-candle OHLCV equality—not just matching close timestamps.
+3. Validate lane completeness and continuity (missing/duplicate/misaligned candles, invalid OHLCV, stale closes) independently.
+4. Permit healthy lanes to refresh when another lane fails. Retain last-known-good output for a failed lane with explicit freshness/status metadata; never label stale retained data as fresh.
+5. Aggregate lane outputs into one canonical dataset using serialized or compare-and-swap publication so concurrent lane updates cannot overwrite one another.
+6. Add tests for partial provider failure, exact OHLCV mismatch with identical close time, missing candles, stale lane retention, successful lane recovery, and concurrent aggregate writes.
+7. Keep write permissions least-privilege: read-only workflow default and write only in the minimal publication job.
+
+**Current status:** Static workflow review complete. No repository application code, production workflow, or main branch was changed by this review. P0 remains isolated and not approved for merge/production deployment.
