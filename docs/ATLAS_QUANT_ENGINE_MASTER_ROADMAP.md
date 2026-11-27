@@ -294,3 +294,85 @@ At the start of a new ATLAS conversation:
 ---
 
 **End of roadmap — update this file as the project evolves.**
+
+
+---
+
+## 8. Session checkpoint — 2026-11-28
+
+This checkpoint records the latest important developments discussed after Roadmap v1.0 was created. It is an evidence/status note, not a claim that the local machine was independently inspected during this update.
+
+### 8.1 Roadmap persistence
+
+- The user explicitly requested that every important ATLAS development, architecture decision, risk and next action be recorded here so a new chat can resume without relying on chat history.
+- The roadmap was created on the isolated branch `docs/atlas-quant-engine-roadmap`.
+- The repository README on that branch now links to this roadmap and states the multi-asset product vision.
+- The documentation branch is separate from `main`; no roadmap merge to `main` has been performed.
+- The latest remote `main` head was rechecked on 2026-11-28 and remained `e3f11234ec25ff5eafea33158e9652758b85cefa` (commit: `Update BTC SOL market structure data`).
+- The roadmap/documentation branch latest commit after README update was `a4eee8e238eabf8ebac4b627b60cbcf98839d3e0`.
+
+### 8.2 Latest reported P0 local worktree state
+
+The following was supplied by the user from Windows PowerShell on 2026-11-27. It has not been re-inspected on the user's computer since that report:
+
+- Main local clone: `C:/Users/HOME/atlas-quant-engine-ai-duo`
+- P0 worktree: `C:/Users/HOME/.atlas-ai-duo/worktrees/atlas-quant-engine-ai-duo-20261123-211942-71d632`
+- P0 branch: `ai/duo-20261123-211942-71d632`
+- P0 worktree base: `2b641d007324a48bb39b9addb83f38f562594cfb`
+- Reported working-tree paths:
+  - Modified: `.github/workflows/publish-market-structure.yml`
+  - Modified: `.github/workflows/test-market-structure.yml`
+  - Added: `scripts/market_structure_publish.py`
+  - Added: `tests/test_market_structure_publish.py`
+- Reported patch summary: 715 insertions and 18 deletions across four paths.
+- `git diff --check` showed no whitespace-error diagnostics; it emitted LF-to-CRLF line-ending warnings.
+- The local P0 base `2b641d...` is behind the remote `main` head `e3f112...` observed on 2026-11-28. This discrepancy must be reconciled before any integration. Do not assume the worktree is based on current `main`.
+- No completed P0 test-suite result, PR, merge or deployment was evidenced in the supplied logs.
+
+### 8.3 Code review findings and open gaps
+
+The user supplied the contents of `scripts/market_structure_publish.py` and `build_market_structure.py` for review.
+
+Observed strengths in the proposed publisher:
+
+- Pins the Git blobs for `market_data.json`, `build_market_structure.py` and `market_structure.py` to the build base.
+- Checks that the working copies match the pinned blobs before and after calculation.
+- Hashes the history input files before calculation and rejects changes during calculation.
+- Builds a candidate commit intended to change only `market_structure_data.json`.
+- Fetches remote `main` and stops if the base or pinned source blobs changed.
+- Uses a pre-push check to verify the candidate's parent/destination and recheck closure consistency.
+
+Important gaps to close before P0 acceptance:
+
+1. The supplied builder currently expects all six BTC/SOL × 1H/4H/Daily groups together. This all-six requirement is incompatible with the agreed independent-lane failure isolation if retained as the only publication gate.
+2. The supplied builder checks the latest close timestamp in the downloaded history against `market_data.json`, but does not prove candle-by-candle equality of OHLCV contents. Matching close timestamps alone are insufficient provenance.
+3. The current builder and market-structure logic are BTC/SOL-specific. That is acceptable as a first P0 validation scope only if the data contract and publication design are not permanently hard-coded to those symbols.
+4. The complete `tests/test_market_structure_publish.py` (reported as 515 lines) and full workflow diffs still require review.
+5. Test execution and acceptance evidence are still outstanding in the supplied record.
+
+### 8.4 Current agreed architecture clarification
+
+The user confirmed the desired model:
+
+- One logical canonical ATLAS data universe.
+- Independent collection, validation, retry and health state for each instrument/timeframe lane.
+- A fault in one lane must not block healthy BTC, ETH, SOL or future asset-class lanes.
+- Last-known-good data may be retained only with an explicit stale marker and must not pass a freshness gate.
+- A unified file or logical dataset must not become a global all-or-nothing refresh barrier.
+- Canonical writes still need a controlled, race-safe publisher/transaction mechanism so independent lane updates cannot overwrite each other.
+- This architecture must scale beyond crypto to FX, commodities, equities, indices and supported derivatives.
+
+### 8.5 Immediate next work — P0 remains active
+
+Do these in order; do not jump to P1 yet:
+
+1. Re-open and review the full P0 test file, both workflow diffs, `market_structure.py`, `build_market_structure.py` and `scripts/market_structure_publish.py` as one end-to-end data/provenance chain.
+2. Add or confirm tests for exact candle OHLCV equality, stale/missing/invalid lane behavior, one-lane failure isolation, concurrent publication and safe recovery.
+3. Decide the smallest compatible P0 implementation that preserves existing BTC/SOL consumers while removing the global six-group failure dependency.
+4. Reconcile the P0 worktree against the current remote `main` SHA. Prefer a fresh isolated worktree from current `main` and selectively reapply/review the P0 patch if the old base cannot be safely reconciled. Never blindly rebase a candidate calculated from stale inputs.
+5. Run the full relevant test suite and record exact commands/results.
+6. Only after review and explicit approval, prepare a PR or controlled integration. Keep `main`, active research workflows and deployments untouched until then.
+
+**Current phase:** P0 — publication integrity, exact provenance and independent-lane recovery.  
+**Current state:** design agreed; isolated implementation under review; tests and safe base reconciliation pending.  
+**Next checkpoint:** full P0 test/workflow review and fresh-base reconciliation.
