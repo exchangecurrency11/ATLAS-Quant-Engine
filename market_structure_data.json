@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-27T15:00:00Z",
+      "lastCloseTimeUTC": "2026-11-27T16:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -180,8 +180,8 @@
           "volumeRatio": 2.72,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "fresh",
-          "retests": 0,
+          "state": "retested",
+          "retests": 1,
           "invalidatedAt": null
         },
         {
@@ -293,10 +293,10 @@
           "fullyFilledAt": null
         },
         {
-          "side": "bullish",
-          "formedAt": 1795629600,
-          "low": 58971.5,
-          "high": 59456.8,
+          "side": "bearish",
+          "formedAt": 1795791600,
+          "low": 60224.7,
+          "high": 61272.3,
           "state": "open",
           "fullyFilledAt": null
         }
@@ -311,9 +311,23 @@
         },
         {
           "kind": "equal_lows",
+          "level": 61315.4,
+          "firstPivotAt": 1795122000,
+          "secondPivotAt": 1795136400,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_lows",
           "level": 59396.95,
           "firstPivotAt": 1795489200,
           "secondPivotAt": 1795514400,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_lows",
+          "level": 59308.5,
+          "firstPivotAt": 1795514400,
+          "secondPivotAt": 1795539600,
           "note": "Potential chart liquidity; not live order-book data"
         }
       ],
@@ -327,7 +341,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-27T15:00:00Z",
+      "lastCloseTimeUTC": "2026-11-27T16:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -545,6 +559,14 @@
           "high": 69.2,
           "state": "open",
           "fullyFilledAt": null
+        },
+        {
+          "side": "bearish",
+          "formedAt": 1795791600,
+          "low": 72.24,
+          "high": 73.0,
+          "state": "open",
+          "fullyFilledAt": null
         }
       ],
       "liquidity": [
@@ -600,7 +622,7 @@
       ],
       "counts": {
         "activeCandidateOB": 2,
-        "openFVG": 2,
+        "openFVG": 3,
         "structureEventsInLookback": 17
       }
     },
@@ -608,7 +630,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-27T12:00:00Z",
+      "lastCloseTimeUTC": "2026-11-27T16:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -984,25 +1006,16 @@
           "high": 66930.0,
           "state": "open",
           "fullyFilledAt": null
-        },
-        {
-          "side": "bullish",
-          "formedAt": 1795636800,
-          "low": 58899.0,
-          "high": 59774.5,
-          "state": "open",
-          "fullyFilledAt": null
-        },
-        {
-          "side": "bullish",
-          "formedAt": 1795752000,
-          "low": 60979.0,
-          "high": 61310.0,
-          "state": "open",
-          "fullyFilledAt": null
         }
       ],
       "liquidity": [
+        {
+          "kind": "equal_highs",
+          "level": 84237.2,
+          "firstPivotAt": 1791777600,
+          "secondPivotAt": 1791878400,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
         {
           "kind": "equal_highs",
           "level": 84125.9,
@@ -1076,7 +1089,7 @@
       ],
       "counts": {
         "activeCandidateOB": 7,
-        "openFVG": 10,
+        "openFVG": 8,
         "structureEventsInLookback": 20
       }
     },
@@ -1084,7 +1097,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-27T12:00:00Z",
+      "lastCloseTimeUTC": "2026-11-27T16:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -1345,8 +1358,8 @@
           "volumeRatio": 0.869,
           "fvgConfluence": false,
           "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "fresh",
-          "retests": 0,
+          "state": "retested",
+          "retests": 1,
           "invalidatedAt": null
         }
       ],
@@ -1474,14 +1487,6 @@
           "high": 70.07,
           "state": "open",
           "fullyFilledAt": null
-        },
-        {
-          "side": "bullish",
-          "formedAt": 1795752000,
-          "low": 71.8,
-          "high": 72.47,
-          "state": "open",
-          "fullyFilledAt": null
         }
       ],
       "liquidity": [
@@ -1490,6 +1495,13 @@
           "level": 102.72,
           "firstPivotAt": 1792900800,
           "secondPivotAt": 1793016000,
+          "note": "Potential chart liquidity; not live order-book data"
+        },
+        {
+          "kind": "equal_highs",
+          "level": 73.06,
+          "firstPivotAt": 1794744000,
+          "secondPivotAt": 1794830400,
           "note": "Potential chart liquidity; not live order-book data"
         },
         {
@@ -1509,7 +1521,7 @@
       ],
       "counts": {
         "activeCandidateOB": 8,
-        "openFVG": 8,
+        "openFVG": 7,
         "structureEventsInLookback": 20
       }
     },
