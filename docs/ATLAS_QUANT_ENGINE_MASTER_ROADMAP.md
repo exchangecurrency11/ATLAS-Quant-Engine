@@ -376,3 +376,24 @@ Do these in order; do not jump to P1 yet:
 **Current phase:** P0 — publication integrity, exact provenance and independent-lane recovery.  
 **Current state:** design agreed; isolated implementation under review; tests and safe base reconciliation pending.  
 **Next checkpoint:** full P0 test/workflow review and fresh-base reconciliation.
+
+
+### 8.6 Initial review of P0 publisher tests — first 180 lines received
+
+On 2026-11-28, the user supplied lines 1–180 of the local `tests/test_market_structure_publish.py` from the P0 worktree. Only this excerpt has been reviewed so far; conclusions below are limited to the supplied lines.
+
+**Coverage visible in lines 1–180:**
+
+- Closure validation tests require JSON boolean `ok: true`, UTC closure formats, all six BTC/SOL × 1H/4H/Daily groups, unique/valid rows, READY statuses and matching latest close times.
+- Negative cases cover malformed JSON, missing/duplicate/extra rows, invalid fields, non-UTC timestamps, stale/mismatched closes and invalid pre-push hook input.
+- Workflow source tests assert use of `scripts/market_structure_publish.py`, absence of direct `git push` in the workflow, main-branch event restrictions and read-only `contents: read` permissions for the test workflow.
+
+**Review observations / limitations:**
+
+- The visible `snapshots()` fixtures model only the six hard-coded BTC/SOL groups.
+- The visible closure tests compare the market and structure close timestamps; they do not compare individual OHLCV candle values.
+- Independent instrument/timeframe lane failure isolation is not demonstrated in the supplied excerpt.
+- The file continues with `PublicationTests` after line 180, so no claim is made that the complete test file lacks publication, concurrency or recovery tests until the remaining sections are reviewed.
+- The complete test suite has not yet been reported as executed successfully.
+
+**Next review action:** Obtain lines 181–360, then the remainder of `tests/test_market_structure_publish.py`. Review the rest of `scripts/market_structure_publish.py`, `build_market_structure.py`, `market_structure.py` and both workflow diffs as one chain before recommending implementation changes.
