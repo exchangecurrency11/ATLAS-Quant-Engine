@@ -473,3 +473,29 @@ All 23 tests in `test_market_structure_publish.py` passed in this local run. The
 **Interpretation / boundary:** This establishes that the current 23-test publisher regression suite passes in the user's isolated P0 worktree. It does not establish that the code has been merged/pushed to production `main`, nor does it validate the broader independent-market-data-lane architecture, multi-asset expansion, source candle parity, or live production data freshness. Do not mark P0 architecture accepted solely on this result.
 
 **Next step:** Continue static review of the complete P0 workflow and data path, then design/implement the agreed independent instrument/timeframe lanes and their failure-isolation tests. Keep the isolated worktree and current no-merge/no-production-publish posture until the full review and required tests are complete.
+
+
+### 8.10 Market-structure engine review — scale-out and fault-isolation gap
+
+Reviewed the user's 2026-11-27/28 PowerShell output for `market_structure.py` (232 lines), alongside the previously shared `build_market_structure.py` and `market_structure_publish.py` implementations.
+
+**Confirmed current scope**
+- `market_structure.py` hard-codes `ALLOWED = {"BTCUSDT_PERP.A", "SOLUSDT_PERP.A"}`.
+- Its supported intervals are hard-coded to `1hour`, `4hour`, and `daily`.
+- It calculates BOS/CHoCH, heuristic candidate order blocks, three-candle FVGs, and equal-high/equal-low chart-liquidity candidates from closed OHLCV candles.
+- The code explicitly does not claim that candidate OBs or chart-liquidity levels prove institutional orders or live order-book liquidity.
+- The CLI rejects symbols outside the BTC/SOL allow-list.
+
+**Confirmed fault-isolation gap across the shared implementation**
+- The previously shared builder expects BTC and SOL across all three intervals (six groups), and raises if any expected group is missing, stale, insufficient, or not READY.
+- The publisher's closure validator also requires all six groups to be READY and their closures to match the current interval boundaries.
+- Therefore, one failed/stale symbol-timeframe lane can stop publication of the combined market-structure artifact, even when other lanes have valid data. This is not the intended independent-lane architecture.
+
+**Required architectural direction (agreed product goal)**
+Keep one canonical, unified ATLAS dataset for consumers, but make collection, validation, calculation, and recovery independent per instrument × venue/source × timeframe lane. A lane failure must not block healthy lanes. Preserve the last known-good lane output and explicitly mark its freshness/status (e.g. READY, STALE, UNAVAILABLE, ERROR); never present retained stale data as fresh. An aggregation/publication stage can assemble the lane outputs into the single canonical dataset. Avoid concurrent workers racing to overwrite the same monolithic file; use lane-scoped artifacts or an equivalent serialized/compare-and-swap aggregation design.
+
+**Expansion boundary**
+Do not treat the current BTC/SOL Binance-perpetual implementation as a universal market engine. Equities, FX, commodities, indices, spot, and futures require instrument/venue metadata and source adapters that understand their sessions, calendars, contracts/rolls, timestamp conventions, and volume semantics. The current three timeframes and Coinalyze perpetual symbol format are not a sufficient global abstraction.
+
+**Next review**
+Inspect the two workflow files (`.github/workflows/publish-market-structure.yml` and `.github/workflows/test-market-structure.yml`) before approving changes. Then design lane-level failure-isolation tests, including one failed lane while other lanes successfully refresh, stale last-known-good retention, recovery after source restoration, and concurrent publication safety. Keep the current P0 work isolated; do not merge or enable production publishing until the review and tests are complete.
