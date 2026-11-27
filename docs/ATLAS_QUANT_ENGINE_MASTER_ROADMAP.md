@@ -454,3 +454,22 @@ However, these tests do not yet demonstrate the complete agreed P0 architecture:
 5. No test execution result has been supplied. Source inspection is not equivalent to passing tests.
 
 **Next step:** Do not edit or merge yet. Obtain the actual test-run result from the isolated P0 worktree, then review the full workflow diffs and the complete publisher → builder → market-structure data chain. The P0 implementation should be revised against the agreed independent-lane model before it can be accepted.
+
+
+### 8.9 P0 publisher regression test run — passed
+
+On 2026-11-28, the user ran the isolated-worktree command:
+
+`python -m unittest discover -s tests -p "test_market_structure_publish.py" -v`
+
+Observed result from the pasted PowerShell output:
+
+- `Ran 23 tests in 39.449s`
+- `OK`
+- `TEST_EXIT_CODE=0`
+
+All 23 tests in `test_market_structure_publish.py` passed in this local run. The Git initialization hints and deliberate remote-rejection/fatal messages shown during certain tests are fixture/test scenarios; they did not cause the suite to fail.
+
+**Interpretation / boundary:** This establishes that the current 23-test publisher regression suite passes in the user's isolated P0 worktree. It does not establish that the code has been merged/pushed to production `main`, nor does it validate the broader independent-market-data-lane architecture, multi-asset expansion, source candle parity, or live production data freshness. Do not mark P0 architecture accepted solely on this result.
+
+**Next step:** Continue static review of the complete P0 workflow and data path, then design/implement the agreed independent instrument/timeframe lanes and their failure-isolation tests. Keep the isolated worktree and current no-merge/no-production-publish posture until the full review and required tests are complete.
