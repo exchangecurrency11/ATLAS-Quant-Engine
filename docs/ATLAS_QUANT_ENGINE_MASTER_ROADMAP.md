@@ -540,3 +540,21 @@ The current workflows are internally consistent with a single combined BTC/SOL s
 7. Keep write permissions least-privilege: read-only workflow default and write only in the minimal publication job.
 
 **Current status:** Static workflow review complete. No repository application code, production workflow, or main branch was changed by this review. P0 remains isolated and not approved for merge/production deployment.
+
+
+### 8.12 AI Duo operating model — use the integrated agents for engineering tasks
+
+The user correctly reminded us that ATLAS AI Duo Control Center was built specifically to coordinate the real Codex CLI and Claude Code CLI in the same project environment.
+
+The 2026-11-24 handover record confirms:
+- Current panel path: `C:\Users\HOME\atlas-ai-duo-control\atlas-ai-duo`.
+- Launch script: `ATLAS_Panel_Ac.bat`.
+- The panel manages real Codex CLI + Claude Code CLI workflows in an approved, isolated worktree arrangement.
+- The P0 repository worktree is separate from the actual `main` clone.
+- At the time of that handover, no new task had been started and the panel's last observed state was idle / 0%; real live Codex↔Claude progress-state transitions had not yet been independently validated.
+
+**Operating correction:** For future ATLAS engineering tasks, use the integrated AI Duo as the primary execution/review environment rather than routinely asking the user to manually inspect and paste large source files. Assign one agent a bounded implementation or architecture task and the other an independent review/challenge task, with explicit scope, acceptance tests, and stop conditions. Keep all work in the isolated P0 worktree or a fresh task-specific worktree. Do not allow either agent to write to production `main`, push, open PRs, merge, rebase, or trigger production workflows without the user's separate explicit approval.
+
+The ChatGPT conversation remains the coordinator: clarify architecture, prepare task briefs, assess evidence/results, challenge unsupported conclusions, and record decisions. It should not imply that the two CLI agents are automatically running merely because the panel is installed; a task must be explicitly launched/approved in the panel.
+
+**Immediate next action:** Route the P0.2 independent-lane architecture design through AI Duo. First request a read-only design/review (no file modifications), with Codex and Claude independently assessing lane identity, immutable OHLCV package/manifest, exact candle parity, per-lane failure recovery, stale last-known-good retention, and safe aggregation. Reconcile disagreements before authorizing any implementation.
