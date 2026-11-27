@@ -1,0 +1,168 @@
+{
+  "mode": "V92_ETH_VERIFIED_HOURLY_CANDLES_OBSERVATIONAL_PAPER",
+  "symbol": "ETHUSDT",
+  "targetClosed1HUTC": "2026-11-27T01:00:00Z",
+  "capturedAtUTC": "2026-11-27T01:16:42Z",
+  "originalV91CapturedAtUTC": "2026-11-27T01:16:24Z",
+  "originalV7ObservedAtUTC": "2026-11-27T01:15:11Z",
+  "verifiedSourceAndExactV7AndV91Replay": true,
+  "sourceIntegrity": {
+    "1hour": {
+      "closeUTC": "2026-11-27T01:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "4hour": {
+      "closeUTC": "2026-11-27T00:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    },
+    "daily": {
+      "closeUTC": "2026-11-27T00:00:00Z",
+      "verified": true,
+      "relativeDifference": {
+        "open": 0.0,
+        "high": 0.0,
+        "low": 0.0,
+        "close": 0.0,
+        "volume": 0.0
+      },
+      "notIndependentBinanceExchangeTruth": true
+    }
+  },
+  "sourceHashesIndependentRead": {
+    "1hour": "edc1b4b60ef3b92bf6ae328d41d23318b2749629fc1656a86c76694420ef7b9e",
+    "4hour": "29d706f31cb24933ba637e05ce3a8d17b3459363605bbd11a43979c672b0d88b",
+    "daily": "31f3623186a5d16a0a753993f41be9a849d30a4af6138ba3c402ee9883b7f44e"
+  },
+  "crossTimeframeOHLCV": {
+    "1H_matches_4H": 5,
+    "1H_matches_daily": 5
+  },
+  "independentBinanceTruthNotEstablished": true,
+  "ethReversalPatternRecognition1H4H": {
+    "1H": {
+      "lastCompletedCandleCloseUTC": "2026-11-27T01:00:00Z",
+      "confirmedReversalPatterns": [
+        {
+          "family": "STAR",
+          "name": "MORNING_STAR",
+          "direction": "bullish",
+          "firstUTC": "2026-11-26T22:00:00Z",
+          "confirmedUTC": "2026-11-27T01:00:00Z",
+          "prior20LiquiditySweepAndReentry": false,
+          "internalHikkakeFalseBreakConfirmed": false,
+          "crypto24hNoGapRequirement": true,
+          "signalIsNotStandaloneTrade": true,
+          "onlyClosedCandlesUsed": true,
+          "tf": "1H"
+        }
+      ],
+      "ethObservationalOnlyNoAutoVeto": true
+    },
+    "4H": {
+      "lastCompletedCandleCloseUTC": "2026-11-27T00:00:00Z",
+      "confirmedReversalPatterns": [
+        {
+          "family": "ENGULFING",
+          "name": "BEARISH_ENGULFING",
+          "direction": "bearish",
+          "firstUTC": "2026-11-26T16:00:00Z",
+          "confirmedUTC": "2026-11-27T00:00:00Z",
+          "prior20LiquiditySweepAndReentry": false,
+          "internalHikkakeFalseBreakConfirmed": false,
+          "crypto24hNoGapRequirement": true,
+          "signalIsNotStandaloneTrade": true,
+          "onlyClosedCandlesUsed": true,
+          "tf": "4H"
+        }
+      ],
+      "ethObservationalOnlyNoAutoVeto": true
+    }
+  },
+  "ethHigherTimeframeRecognition1D3D": {
+    "1D": {
+      "lastClosedCandleUTC": "2026-11-27T00:00:00Z",
+      "closedCandlesAvailable": 259,
+      "close": 1689.01,
+      "EMA20": 1850.5117024,
+      "EMA50": 2079.15713366,
+      "trendByCloseVsEMA20EMA50": "bearish",
+      "observedReversalsAtLastCompletedCandle": [],
+      "onlyFullyClosedCandlesUsed": true,
+      "informationOnlyNotAutomaticNewTrade": true,
+      "notVetoOrEntryFilter": true,
+      "threeDaySource": "VERIFIED_ORIGINAL_DAILY_CLOSED_OHLCV",
+      "exchangeNative3DParityNotProven": false
+    },
+    "3D": {
+      "lastClosedCandleUTC": "2026-11-27T00:00:00Z",
+      "closedCandlesAvailable": 86,
+      "close": 1689.01,
+      "EMA20": 2091.79788413,
+      "EMA50": 2183.77573126,
+      "trendByCloseVsEMA20EMA50": "bearish",
+      "observedReversalsAtLastCompletedCandle": [],
+      "onlyFullyClosedCandlesUsed": true,
+      "informationOnlyNotAutomaticNewTrade": true,
+      "notVetoOrEntryFilter": true,
+      "threeDaySource": "DERIVED_UTC_UNIX_EPOCH_ALIGNED_3_COMPLETE_DAILY_OHLCV_BARS",
+      "exchangeNative3DParityNotProven": true
+    }
+  },
+  "originalV7": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": null
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 1
+  },
+  "originalV91": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": null
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 1
+  },
+  "selectedV92": {
+    "newWatchAtThisClose": [],
+    "paperTradeExitsObservedAtThisClose": [],
+    "currentPaperState": {
+      "activeBOSWatch": null,
+      "pendingNextOpenPaperEntry": null,
+      "openHypotheticalPosition": null
+    },
+    "diagnosticTotalRollingWindowAlerts": 1,
+    "diagnosticTotalRollingWindowClosedTrades": 1
+  },
+  "ethV92RetestVetoEnabled": false,
+  "ethPatternObservationsOnly": true,
+  "sameV91Max4hEntryStopTPAndExitLogic": true,
+  "notNewETHTradeFromCandleAlone": true,
+  "noRetroactiveBackfill": true,
+  "originalBTCAndSOLV92RulesUnchanged": true,
+  "noBrokerOrders": true,
+  "noUserNotifications": true
+}
