@@ -397,3 +397,29 @@ On 2026-11-28, the user supplied lines 1–180 of the local `tests/test_market_s
 - The complete test suite has not yet been reported as executed successfully.
 
 **Next review action:** Obtain lines 181–360, then the remainder of `tests/test_market_structure_publish.py`. Review the rest of `scripts/market_structure_publish.py`, `build_market_structure.py`, `market_structure.py` and both workflow diffs as one chain before recommending implementation changes.
+
+
+### 8.7 P0 publisher test review — second excerpt received (lines 181–360)
+
+On 2026-11-28, the user supplied the next excerpt from `tests/test_market_structure_publish.py`. The same excerpt was pasted twice in the chat; it is treated as one review input. The received text starts at line 181 and is truncated partway through `test_publication_and_unchanged_output`; no conclusions are made about later lines.
+
+**Coverage visible in this excerpt:**
+
+- Builds a temporary local Git repository and bare remote for isolated publication tests.
+- Creates fixture copies of the pinned builder and market-structure source files and a six-group market-data snapshot.
+- Generates separate 1H, 4H and Daily history fixtures containing 250 candles per configured symbol/timeframe.
+- Runs the CLI in a child Python process with socket connection/name-resolution audit events blocked.
+- Tests a successful publication through the generated pre-push hook and verifies that the new remote commit is a direct child of the fixture base and changes only the structure output.
+- Tests rejection when the snapshot becomes stale during the push hook.
+- Tests rejection of invalid pinned market-data inputs, including false/missing `ok`, missing groups, non-UTC closure and duplicate groups.
+- Begins a test for publication and unchanged-output behavior, but the excerpt ends before its assertions.
+
+**Important provenance gap confirmed by the visible fixture:**
+
+- The fixture's `market_data.json` is created by `snapshots(NOW)[0]`, whose visible schema contains symbol, interval, status and close time, but no candle-by-candle OHLCV history.
+- Separate history fixtures are then generated with synthetic constant OHLCV values for the builder.
+- Consequently, the tests visible so far do not establish that the history candles used by the builder are byte-for-byte or value-for-value identical to the candles represented by `market_data.json`. They mainly exercise closure checks and safe Git publication mechanics.
+- The publisher's history digest check, as previously reviewed, detects changes to the local history files during calculation; it does not by itself prove those files are the same source content as the published market-data snapshot.
+- This is an acceptance gap to resolve in P0 design. It may require an immutable canonical OHLCV snapshot or a source manifest/hash referenced by both outputs, rather than trying to infer OHLCV equality from a summary JSON that does not contain those candles.
+
+**Review status:** Second excerpt partially reviewed; remainder of the test file is still outstanding. No test-suite execution result has been supplied.
