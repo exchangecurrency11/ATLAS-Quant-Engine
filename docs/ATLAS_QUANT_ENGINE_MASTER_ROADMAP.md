@@ -423,3 +423,34 @@ On 2026-11-28, the user supplied the next excerpt from `tests/test_market_struct
 - This is an acceptance gap to resolve in P0 design. It may require an immutable canonical OHLCV snapshot or a source manifest/hash referenced by both outputs, rather than trying to infer OHLCV equality from a summary JSON that does not contain those candles.
 
 **Review status:** Second excerpt partially reviewed; remainder of the test file is still outstanding. No test-suite execution result has been supplied.
+
+
+### 8.8 P0 publisher test review — final excerpt received (lines 361–515)
+
+On 2026-11-28, the user supplied the final excerpt of `tests/test_market_structure_publish.py`. Together with excerpts 1–180 and 181–360, the full test file (reported as 515 lines) has now been reviewed from pasted source. The tests have **not** yet been executed.
+
+**Coverage visible in the final excerpt:**
+
+- Verifies publication makes exactly one push, creates a direct child of the pinned base, changes only `market_structure_data.json`, and leaves the local HEAD and pre-existing Git index unchanged.
+- Verifies unchanged output causes a fetch/revalidation but no new candidate commit or push.
+- Verifies remote `main` movement during the builder causes publication to stop.
+- Verifies a history input file changing during calculation stops publication before candidate creation.
+- Verifies missing history stops before builder execution.
+- Verifies remote ref movement/deletion after fetch leads to a rejected push.
+- Includes a control test showing that a plain push, without the custom publisher guard, can accept a candidate that is a descendant of a rewound remote ref. This supports the need for the publisher's explicit expected-old-ref check; it is not evidence that the guarded publisher accepts such a rewind.
+- Simulates a server-side ref change after the client pre-push hook and expects rejection.
+- Verifies server rejection, stale-at-final-check, missing pinned blob and changed working-copy source all prevent publication.
+
+**Overall test-file review conclusion:**
+
+The test file has substantial coverage of the Git publication transaction, source pinning, stale-close rejection, idempotency, history-file mutation during calculation and several ref-race scenarios. This is a useful safety foundation for the current BTC/SOL publication mechanism.
+
+However, these tests do not yet demonstrate the complete agreed P0 architecture:
+
+1. The visible fixtures and publisher constants still assume exactly six BTC/SOL × 1H/4H/Daily groups.
+2. No test shown so far proves candle-by-candle OHLCV equality between the history used by the structure builder and the market-data source.
+3. No test shown so far proves independent instrument/timeframe failure isolation while healthy lanes continue to publish.
+4. No test shown so far demonstrates explicit stale last-known-good retention and prevention of stale data entering fresh-data analyses.
+5. No test execution result has been supplied. Source inspection is not equivalent to passing tests.
+
+**Next step:** Do not edit or merge yet. Obtain the actual test-run result from the isolated P0 worktree, then review the full workflow diffs and the complete publisher → builder → market-structure data chain. The P0 implementation should be revised against the agreed independent-lane model before it can be accepted.
