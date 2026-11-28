@@ -7,7 +7,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-28T15:00:00Z",
+      "lastCloseTimeUTC": "2026-11-28T16:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -321,14 +321,6 @@
           "high": 61272.3,
           "state": "open",
           "fullyFilledAt": null
-        },
-        {
-          "side": "bearish",
-          "formedAt": 1795863600,
-          "low": 59270.1,
-          "high": 59493.2,
-          "state": "open",
-          "fullyFilledAt": null
         }
       ],
       "liquidity": [
@@ -349,7 +341,7 @@
       ],
       "counts": {
         "activeCandidateOB": 6,
-        "openFVG": 4,
+        "openFVG": 3,
         "structureEventsInLookback": 20
       }
     },
@@ -357,7 +349,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "1hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-28T15:00:00Z",
+      "lastCloseTimeUTC": "2026-11-28T16:00:00Z",
       "closedCandles": 300,
       "structure": [
         {
@@ -611,7 +603,7 @@
       "symbol": "BTCUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-28T12:00:00Z",
+      "lastCloseTimeUTC": "2026-11-28T16:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -1072,7 +1064,7 @@
       "symbol": "SOLUSDT_PERP.A",
       "interval": "4hour",
       "status": "READY",
-      "lastCloseTimeUTC": "2026-11-28T12:00:00Z",
+      "lastCloseTimeUTC": "2026-11-28T16:00:00Z",
       "closedCandles": 299,
       "structure": [
         {
@@ -1176,7 +1168,7 @@
             "low": 111.35,
             "high": 113.38
           },
-          "volumeRatio": 2.732,
+          "volumeRatio": 2.804,
           "fvgConfluence": true,
           "note": "Candidate OHLCV order block; not verified institutional orders",
           "state": "fresh",
@@ -1314,53 +1306,9 @@
           "state": "fresh",
           "retests": 0,
           "invalidatedAt": null
-        },
-        {
-          "side": "bullish",
-          "event": "CHoCH",
-          "originAt": 1795723200,
-          "confirmedAt": 1795752000,
-          "breakAt": 1795737600,
-          "brokenLevel": 71.89,
-          "body": {
-            "low": 70.99,
-            "high": 71.25
-          },
-          "wick": {
-            "low": 70.78,
-            "high": 71.8
-          },
-          "volumeRatio": 0.869,
-          "fvgConfluence": false,
-          "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "retested",
-          "retests": 1,
-          "invalidatedAt": null
         }
       ],
       "recentInvalidatedOrderBlocks": [
-        {
-          "side": "bearish",
-          "event": "BOS",
-          "originAt": 1793577600,
-          "confirmedAt": 1793649600,
-          "breakAt": 1793635200,
-          "brokenLevel": 93.13,
-          "body": {
-            "low": 94.5,
-            "high": 95.54
-          },
-          "wick": {
-            "low": 93.78,
-            "high": 95.9
-          },
-          "volumeRatio": 2.863,
-          "fvgConfluence": false,
-          "note": "Candidate OHLCV order block; not verified institutional orders",
-          "state": "invalidated",
-          "retests": 2,
-          "invalidatedAt": 1793793600
-        },
         {
           "side": "bullish",
           "event": "CHoCH",
@@ -1404,6 +1352,28 @@
           "state": "invalidated",
           "retests": 0,
           "invalidatedAt": 1795622400
+        },
+        {
+          "side": "bullish",
+          "event": "CHoCH",
+          "originAt": 1795723200,
+          "confirmedAt": 1795752000,
+          "breakAt": 1795737600,
+          "brokenLevel": 71.89,
+          "body": {
+            "low": 70.99,
+            "high": 71.25
+          },
+          "wick": {
+            "low": 70.78,
+            "high": 71.8
+          },
+          "volumeRatio": 0.869,
+          "fvgConfluence": false,
+          "note": "Candidate OHLCV order block; not verified institutional orders",
+          "state": "invalidated",
+          "retests": 1,
+          "invalidatedAt": 1795867200
         }
       ],
       "openFVG": [
@@ -1496,7 +1466,7 @@
         }
       ],
       "counts": {
-        "activeCandidateOB": 8,
+        "activeCandidateOB": 7,
         "openFVG": 8,
         "structureEventsInLookback": 20
       }
