@@ -578,3 +578,10 @@ Coordinator's remaining acceptance conditions:
 - Earlier handover dated 2026-11-24 reports Windows and Ubuntu 28/28 combined publisher/structure tests, Ubuntu 96/96 full suite, 5/5 repeat rounds and a 4/4 SHA-verified backup; the later 23/23 Windows result is a fresh publisher-only run, not evidence those earlier checks did not occur. Earlier results are historical reports, not a verification of today's files.
 
 **Immediate next action:** diagnose local worktree identity/access with minimal read-only commands from user's Windows session, then verify backup and arrange genuine dual-source review. Do not authorize coding, commit, push, PR, rebase, production actions, Worker deployment, strategy or paper changes. Documentation updates only on existing docs branch.
+
+
+### 8.14 Local P0 worktree access checkpoint — 2026-11-28
+
+User's Windows PowerShell successfully ran `git --no-optional-locks -C "$p0Repo" rev-parse --show-toplevel` and `git --no-optional-locks -C "$p0Repo" status --short --branch`. The intended P0 worktree and branch `ai/duo-20261123-211942-71d632` were recognized. The expected two modified workflows and two added (previously reported intent-to-add) publisher/test paths remain present. Three untracked entries are visible: Python cache directories under scripts and tests, plus an unusually named entry of unknown origin. No content of the unexpected entry has been inspected; do not delete, stage, or execute it. The Windows result demonstrates local Git access under the user's session only; it does not resolve or prove the cause of the AI Duo agent's ownership/worktree errors.
+
+Next: verify the existing P0 backup against current four-file bytes, inventory the unexpected untracked entry using metadata only, and distinguish the agent's actual execution environment and authorized read scope from the user's Windows session. Keep original worktree and backup untouched. No global safe.directory change, commit, push, PR, merge, rebase, code modification or live workflow invocation. Independent Claude source review remains outstanding.
