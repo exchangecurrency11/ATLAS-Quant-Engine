@@ -2,8 +2,8 @@
 
 **Prospective paper only. No orders, alerts, or live strategy changes.**
 First eligible close: 2026-11-12T11:00:00Z
-Latest verified close: 2026-11-28T10:00:00Z
-Saved hours: 314; sealed: 314
+Latest verified close: 2026-11-28T12:00:00Z
+Saved hours: 316; sealed: 316
 
 | Arm | Closed trades | Win % | Net R (9bp/side) | Stress R (25bp/side) | Max DD R |
 |---|---:|---:|---:|---:|---:|
