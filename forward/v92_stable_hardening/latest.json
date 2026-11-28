@@ -1,5 +1,5 @@
 {
-  "status": "V92_STABLE_SHADOW_AUDIT_READY_FOR_NEW_ADMISSION_REVIEW",
+  "status": "V92_STABLE_SHADOW_AUDIT_FAIL_CLOSED",
   "mode": "V92_STABLE_SHADOW_HARDENING_ONLY",
   "sharedVirtualInitialUSDT": 1000,
   "policy": {
@@ -19,8 +19,8 @@
   "noRetroactiveTradesOrRewrittenCandles": true,
   "coverage": {
     "BTC_SOL": {
-      "expected": 378,
-      "saved": 308,
+      "expected": 382,
+      "saved": 312,
       "missingHoursUTC": [
         "2026-11-12T14:00:00Z",
         "2026-11-13T02:00:00Z",
@@ -93,12 +93,12 @@
         "2026-11-19T07:00:00Z",
         "2026-11-25T16:00:00Z"
       ],
-      "latestUTC": "2026-11-28T04:00:00Z",
-      "consecutiveRecentHours": 60
+      "latestUTC": "2026-11-28T08:00:00Z",
+      "consecutiveRecentHours": 64
     },
     "ETH": {
-      "expected": 377,
-      "saved": 314,
+      "expected": 381,
+      "saved": 317,
       "missingHoursUTC": [
         "2026-11-12T13:00:00Z",
         "2026-11-12T14:00:00Z",
@@ -162,15 +162,16 @@
         "2026-11-19T01:00:00Z",
         "2026-11-19T05:00:00Z",
         "2026-11-19T13:00:00Z",
-        "2026-11-25T16:00:00Z"
+        "2026-11-25T16:00:00Z",
+        "2026-11-28T08:00:00Z"
       ],
-      "latestUTC": "2026-11-28T04:00:00Z",
-      "consecutiveRecentHours": 60
+      "latestUTC": "2026-11-28T07:00:00Z",
+      "consecutiveRecentHours": 0
     }
   },
-  "latestCommonHourUTC": "2026-11-28T04:00:00Z",
-  "matchedVerifiedHours": 298,
-  "matchedAssetChecks": 894,
+  "latestCommonHourUTC": null,
+  "matchedVerifiedHours": 301,
+  "matchedAssetChecks": 903,
   "actualObservedOpenPositionSnapshots": 14,
   "actualObservedRetestPendingSnapshots": 3,
   "actualObservedExitEvents": 3,
@@ -184,27 +185,8 @@
   "crossAssetLastClosed1H4HDailyAlignmentChecked": true,
   "missingHourNotBackfilled": true,
   "parityErrors": [],
-  "newEntryAdmissionReadiness": true,
-  "latestShadowEntryDecisions": [
-    {
-      "symbol": "BTCUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "ETHUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    },
-    {
-      "symbol": "SOLUSDT",
-      "status": "NO_NEW_ENTRY_CANDIDATE",
-      "allowed": false,
-      "legacyUnchanged": true
-    }
-  ],
+  "newEntryAdmissionReadiness": false,
+  "latestShadowEntryDecisions": [],
   "limitsCannotGuaranteeExecutionOrStopFill": true,
   "fundingVariableSlippageAndLiquidationNotFullyModeled": true
 }
