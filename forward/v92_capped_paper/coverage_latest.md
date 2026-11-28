@@ -1,8 +1,8 @@
 # V9.2 capped paper — saatlik kayıt kapsaması (işlem değil)
 
-**Bitiş hariç UTC:** 2026-11-28T18:00:00Z
-**Beklenen kapanmış saat:** 375
-**Git'te doğrulanan paper saatleri:** 130
+**Bitiş hariç UTC:** 2026-11-28T19:00:00Z
+**Beklenen kapanmış saat:** 376
+**Git'te doğrulanan paper saatleri:** 131
 **Eksik kayıt:** 245
 
 Eksik saat sıfır sinyal değildir, geçmişe dönük işlem ya da PnL üretilmez.
