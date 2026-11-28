@@ -1,20 +1,20 @@
 # V7 — Engellenen BOS sinyalleri karşıolgusal inceleme
 
-**Analiz kapanış sınırı:** 2026-11-27T10:00:00Z (UTC)
+**Analiz kapanış sınırı:** 2026-11-28T09:00:00Z (UTC)
 **Sistem:** PAPER ONLY; canlı emir ve gerçek getiri yok
-**Orijinal doğrulanmış V7 gözlemi:** 503
+**Orijinal doğrulanmış V7 gözlemi:** 527
 
 | Ölçüm | Sonuç |
 |---|---:|
-| Gerçek zamanında kaydedilmiş BOS | 36 |
+| Gerçek zamanında kaydedilmiş BOS | 37 |
 | Eski V4 tarafından kabul edilen BOS | 12 |
 | V7 tarafından kabul edilen BOS | 6 |
-| V7 tarafından engellenen BOS | 30 |
+| V7 tarafından engellenen BOS | 31 |
 | **Yalnız yeni V7 filtrelerinin ek reddi** | **7** |
 | Yalnız yeni V7 filtreleri sayesinde kaçınılan zarar | 0 |
 | Yalnız yeni V7 filtreleri nedeniyle kaçırılan kârlı paper | 1 |
-| Engellenip karşıolgusal işlem kapanan | 10 |
-| Bunlardan maliyet sonrası zarar/sıfır | 4 |
+| Engellenip karşıolgusal işlem kapanan | 11 |
+| Bunlardan maliyet sonrası zarar/sıfır | 5 |
 | Bunlardan maliyet sonrası kâr | 6 |
 | Henüz kesin karşıolgusal işlem sonucu yok | 20 |
 
@@ -24,16 +24,16 @@
 
 | Parite | BOS | V7 kabul | V7 red | Red → kapanmış işlem | Zarar/0 kaçınıldı | Olası kârlı fırsat kaçtı |
 |---|---:|---:|---:|---:|---:|---:|
-| BTCUSDT_PERP.A | 20 | 2 | 18 | 4 | 1 | 3 |
-| SOLUSDT_PERP.A | 16 | 4 | 12 | 6 | 3 | 3 |
+| BTCUSDT_PERP.A | 21 | 2 | 19 | 4 | 1 | 3 |
+| SOLUSDT_PERP.A | 16 | 4 | 12 | 7 | 4 | 3 |
 
 ## Filtre gerekçeleri (bir BOS için birden fazla gerekçe olabilir)
 
-- 4H_DAILY_ALIGNMENT_VETO: 21
-- V7_QUALITY_LOW_RELATIVE_VOLUME: 10
+- 4H_DAILY_ALIGNMENT_VETO: 22
+- V7_QUALITY_LOW_RELATIVE_VOLUME: 11
+- V7_QUALITY_WEAK_BREAK_ATR: 10
 - V7_QUALITY_EMA20_OVEREXTENDED: 9
-- V7_QUALITY_WEAK_BREAK_ATR: 9
-- PREVIOUS_HOUR_VOLUME_VETO: 7
+- PREVIOUS_HOUR_VOLUME_VETO: 8
 - 1H_RSI_MACD_MOMENTUM_VETO: 4
 - SCANNER_OCCUPANCY_OR_OTHER_VETO: 1
 
@@ -72,9 +72,10 @@
 - **2026-11-25T08:00:00Z BTCUSDT_PERP.A bearish**, seviye 58920.0; V7 KABUL; neden: kabul; sonuç: CLOSED_COUNTERFACTUAL_PAPER, net 0.479169R; sınıf: ACCEPTED_BY_V7_NOT_A_REJECTED_SIGNAL
 - **2026-11-25T14:00:00Z BTCUSDT_PERP.A bearish**, seviye 58600.0; V7 RED; neden: SCANNER_OCCUPANCY_OR_OTHER_VETO; sonuç: EXPIRED_WITHOUT_V4_RETEST; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
 - **2026-11-26T02:00:00Z SOLUSDT_PERP.A bullish**, seviye 71.03; V7 RED; neden: 4H_DAILY_ALIGNMENT_VETO, PREVIOUS_HOUR_VOLUME_VETO, V7_QUALITY_WEAK_BREAK_ATR, V7_QUALITY_LOW_RELATIVE_VOLUME; sonuç: CLOSED_COUNTERFACTUAL_PAPER, net -1.222723R; sınıf: AVOIDED_NEGATIVE_OR_FLAT_PAPER
-- **2026-11-26T22:00:00Z SOLUSDT_PERP.A bullish**, seviye 71.54; V7 RED; neden: 4H_DAILY_ALIGNMENT_VETO, 1H_RSI_MACD_MOMENTUM_VETO, V7_QUALITY_WEAK_BREAK_ATR, V7_QUALITY_LOW_RELATIVE_VOLUME; sonuç: OPEN_COUNTERFACTUAL_NO_CLOSED_EXIT; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
+- **2026-11-26T22:00:00Z SOLUSDT_PERP.A bullish**, seviye 71.54; V7 RED; neden: 4H_DAILY_ALIGNMENT_VETO, 1H_RSI_MACD_MOMENTUM_VETO, V7_QUALITY_WEAK_BREAK_ATR, V7_QUALITY_LOW_RELATIVE_VOLUME; sonuç: CLOSED_COUNTERFACTUAL_PAPER, net -0.447424R; sınıf: AVOIDED_NEGATIVE_OR_FLAT_PAPER
 - **2026-11-27T03:00:00Z BTCUSDT_PERP.A bullish**, seviye 60979.0; V7 RED; neden: 4H_DAILY_ALIGNMENT_VETO; sonuç: EXPIRED_WITHOUT_V4_RETEST; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
 - **2026-11-27T03:00:00Z SOLUSDT_PERP.A bullish**, seviye 71.8; V7 RED; neden: 4H_DAILY_ALIGNMENT_VETO; sonuç: EXPIRED_WITHOUT_V4_RETEST; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
+- **2026-11-28T09:00:00Z BTCUSDT_PERP.A bearish**, seviye 59553.3; V7 RED; neden: 4H_DAILY_ALIGNMENT_VETO, PREVIOUS_HOUR_VOLUME_VETO, V7_QUALITY_WEAK_BREAK_ATR, V7_QUALITY_LOW_RELATIVE_VOLUME; sonuç: PENDING_RETEST_UNCLOSED; sınıf: UNRESOLVED_OR_NO_ACTIONABLE_ENTRY
 
 ## Yorum ve sınırlamalar
 
