@@ -18,4 +18,4 @@ The monthly Binance public data release may be the first Monday of the next
 month; for November 2026, that is December 7. Follow the daily audit to
 detect missing dates before then.
 
-**Last manually triggered check:** 2026-11-27 UTC.
+**Last manually triggered check:** 2026-11-28 UTC.
